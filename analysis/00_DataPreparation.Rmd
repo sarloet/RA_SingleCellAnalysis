@@ -2,13 +2,16 @@
 title: "Data Preparation"
 subtitle: "00_DataPreparation"
 author: "SarahL."
-date: "2024-03-28"
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
   html_document:
     toc: true
     number_sections: true   
     toc_float: true
     code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -92,12 +95,11 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 rawdata_folder <- paste0(path,"data/cellbender_data_h5/")
 
 
-#Load data as sce object
+#Get file names
 filenames <- list.files(rawdata_folder ,recursive = F, full.names = F,pattern = "\\_filtered.h5$")
-
-#filepaths <- list.dirs('D:/Masterthesis/cellbender_data_h5/',recursive = F, full.names = T)
 filepaths <- paste(rawdata_folder,filenames,sep = "")
 
+#Load data as sce object
 sce<-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,type="HDF5")
 
 
@@ -118,7 +120,7 @@ metadata_folder <- paste0(path,"data/metadata/Metadata_Master.csv")
 metadata_df <-read.csv(metadata_folder, header=TRUE, sep=",")
 metadata_df
 
-#Add metadata
+#Add metadata to sce
 colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
                                    metadata_df, 
                                    by= c("Sample" = "orig.ident"),
@@ -133,8 +135,6 @@ colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
 rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
 
 sce
-
-#ADD PROTOCOL
 
 ```
 
