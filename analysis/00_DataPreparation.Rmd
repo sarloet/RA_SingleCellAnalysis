@@ -1,0 +1,210 @@
+---
+title: "Data Preparation"
+subtitle: "00_DataPreparation"
+author: "SarahL."
+date: "2024-03-28"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Data Preparation and Overview
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2) 
+library(dplyr)
+library(DropletUtils)
+library(scater)
+})
+
+```
+
+### Set params
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+```
+
+
+## View CellRanger output
+
+
+- [SynBio028](Cellranger/web_summary_SynBio028.html)\n
+- [SynBio049](Cellranger/web_summary_SynBio049.html)\n
+- [SynBio050](Cellranger/web_summary_SynBio050.html)\n
+- [SynBio074](Cellranger/web_summary_SynBio074.html)\n
+- [SynBio076](Cellranger/web_summary_SynBio076.html)\n
+- [SynBio077a](Cellranger/web_summary_SynBio077a.html)\n
+- [SynBio077b](Cellranger/web_summary_SynBio077b.html)\n
+- [SynBio081](Cellranger/web_summary_SynBio081.html)\n
+- [SynBio083](Cellranger/web_summary_SynBio083.html)\n
+- [SynBio084](Cellranger/web_summary_SynBio084.html)\n
+- [SynBio087](Cellranger/web_summary_SynBio087.html)\n
+- [SynBio093](Cellranger/web_summary_SynBio093.html)\n
+- [SynBio098a](Cellranger/web_summary_SynBio098a.html)\n
+- [SynBio098b](Cellranger/web_summary_SynBio098b.html)\n
+- [SynBio127](Cellranger/web_summary_SynBio127.html)\n
+- [SynBio130](Cellranger/web_summary_SynBio130.html)\n
+
+## View CellBender output
+
+- [SynBio028](CellBender/cellbender_output_SynBio028_10000_w_introns_RL_report.html)\n
+- [SynBio049](CellBender/cellbender_output_SynBio049_w_introns_report.html)\n
+- [SynBio050](CellBender/cellbender_output_SynBio050_w_introns_report.html)\n
+- [SynBio074](CellBender/cellbender_output_SynBio074_w_introns_report.html)\n
+- [SynBio076](CellBender/cellbender_output_SynBio076_w_introns_report.html)\n
+- [SynBio077a](CellBender/cellbender_output_SynBio077a_w_introns_report.html)\n
+- [SynBio077b](CellBender/cellbender_output_SynBio077b_w_introns_RL2_report.html)\n
+- [SynBio081](CellBender/cellbender_output_SynBio081_w_introns_RL_report.html)\n
+- [SynBio083](CellBender/cellbender_output_SynBio083_w_introns_RL2_report.html)\n
+- [SynBio084](CellBender/cellbender_output_SynBio084_w_introns_report.html)\n
+- [SynBio087](CellBender/cellbender_output_SynBio087_w_introns_RL2_report.html)\n
+- [SynBio093](CellBender/cellbender_output_SynBio093_w_introns_report.html)\n
+- [SynBio098a](CellBender/cellbender_output_SynBio098a_w_introns_report.html)\n
+- [SynBio098b](CellBender/cellbender_output_SynBio098b_w_introns_report.html)\n
+- [SynBio127](CellBender/cellbender_output_SynBio127_w_introns_report.html)\n
+- [SynBio130](CellBender/cellbender_output_SynBio130_w_introns_RL2_reporthtml)\n
+
+
+## Load Data
+
+
+```{r LoadDataset}
+## RA DATASET
+rawdata_folder <- paste0(path,"data/cellbender_data_h5/")
+
+
+#Load data as sce object
+filenames <- list.files(rawdata_folder ,recursive = F, full.names = F,pattern = "\\_filtered.h5$")
+
+#filepaths <- list.dirs('D:/Masterthesis/cellbender_data_h5/',recursive = F, full.names = T)
+filepaths <- paste(rawdata_folder,filenames,sep = "")
+
+sce<-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,type="HDF5")
+
+
+colData(sce)$Sample = sub("\\_w_introns.*", "", sub("cellbender_output_", "", as.character(colData(sce)$Sample)))
+
+
+sce
+
+```
+
+### Load and add Metadata
+
+```{r,LoadMetadata}
+#Metadata path
+metadata_folder <- paste0(path,"data/metadata/Metadata_Master.csv")
+
+#Load metadata
+metadata_df <-read.csv(metadata_folder, header=TRUE, sep=",")
+metadata_df
+
+#Add metadata
+colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
+                                   metadata_df, 
+                                   by= c("Sample" = "orig.ident"),
+                                   suffix=c(".x",".y")) %>% 
+      #dplyr::select(Sample, Barcode, Diagnosis, sex, Age, Joint.Location, protocol, Pathotype,Krenn total score,) %>% 
+      dplyr::select(-one_of("Comments")) %>% 
+      DataFrame(row.names=colnames(sce))
+
+
+#make row and col names unique
+colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
+rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
+
+sce
+
+#ADD PROTOCOL
+
+```
+
+### Explore dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+
+```
+
+```{r ShowColData}
+#Feautures/row data
+colData(sce)
+```
+
+```{r ShowRowData}
+#Droplet details / row data
+rowData(sce)
+```
+
+### Exploratory QC plots
+
+```{r PlotCellsPerSample}
+#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+table(colData(sce)$Sample)
+
+```
+
+```{r PlotDetectedPerCell}
+#Number of genes detected per cell
+#Total UMI for a gene versus the number of times detected
+genesPerCell <- colSums(counts(sce) > 0)
+plot(density(genesPerCell), xlab="Genes per cell", main="Number of genes detected per cell")
+
+```
+
+```{r PlotCaptureEfficiency}
+#transcript_capture_efficiency
+#Total UMI for a gene versus the number of times detected
+tmpCounts <- counts(sce)
+
+plot(rowSums(tmpCounts),
+     rowMeans(tmpCounts > 0),
+     log = "x",
+     xlab="total number of UMIs",
+     ylab="proportion of cells expressing the gene",
+     main="Total UMI for a gene vs times detected")
+
+```
+
+```{r PlotTop20Genes,eval=FALSE}
+#Distribution of counts for the top 20 genes across cells
+
+#rel_expression <- t( t(tmpCounts) / colSums(tmpCounts)) * 100
+#rownames(rel_expression) <- rowData(sce)$Symbol
+#most_expressed <- sort(rowSums( rel_expression ), decreasing = T)[20:1] ##
+#plot_data <- as.matrix(t(rel_expression[names(most_expressed),]))
+
+#boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRUE, main="Distribution of counts for the top 20 genes before filtering")
+
+#rm(tmpCounts)
+
+plotHighestExprs(sce,n = 20)
+
+```
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','00_sce_DataPreparation.rds'))
+```

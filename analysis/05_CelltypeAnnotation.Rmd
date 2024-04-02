@@ -1,0 +1,475 @@
+---
+title: "Marker Genes and Celltype Annotation"
+subtitle: "05_CelltypeAnnotation"
+author: "SarahL."
+date: "2024-03-28"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Marker Genes and Celltype Annotation
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2)
+library(dplyr)
+library(scran)
+library(scater)
+library(scuttle)
+library(dittoSeq)
+library(gridExtra)
+library(pheatmap)
+library(GSEABase)
+})
+
+```
+
+### Set params
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce.filtered <- readRDS(file = paste0(path,'output/04_sce_Clustering.rds'))
+
+```
+
+### Change rownames to the symbol
+
+```{r}
+#Change to genesymbol whenever possible
+rowData(sce)$UniqID <-rownames(sce)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
+rowData(sce)
+```
+
+
+### Explore dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+
+## Plot clustering and QC
+
+```{r}
+plotReducedDim(sce, dimred="MNN", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
+plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
+```
+
+```{r}
+p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
+p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
+grid.arrange(p1, p2, p3, nrow = 1)
+```
+
+## Identify marker genes
+
+### Wilcoxon rank-sum test
+
+```{r}
+#Wilcoxon rank-sum test
+markers_wilcox_up <- findMarkers(sce, groups = sce$leiden, block = sce$Sample, direction = "up")
+
+```
+
+```{r}
+#Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
+topDEgenes <-c()
+
+for (i in 1:length(markers_wilcox_up)){
+  tmp<-markers_wilcox_up[[i]]
+  topDEgenes <- c(topDEgenes, row.names(tmp[order(tmp$summary.logFC, decreasing = TRUE),][1:5,]))
+}
+topDEgenes
+
+
+#plotHeatmap(sce,breaks = seq(0, 1, length.out = 21),color = viridis::cividis(21), cluster_rows = FALSE)
+
+plotGroupedHeatmap(sce, cluster_rows = FALSE,features = unique(topDEgenes),group = "label",scale = TRUE,center = TRUE,zlim = c(-3, 3),order_columns_by = c("label"))
+
+plotHeatmap(sce, features = unique(topDEgenes),order_columns_by = c("label"),scale = TRUE,center = TRUE,cluster_rows=FALSE,zlim = c(-3, 3))
+
+#Dotplot of top marker genes by Wilcoxon rank-sum 
+
+dittoDotPlot(sce, vars = unique(topDEgenes), group.by = "label",min.color="white", max.color="red")
+        #+ scale_colour_gradient2(low="steelblue", mid="lightgrey", high="red")
+
+
+plotDots(sce, features = unique(topDEgenes),group = "label", block = "Sample",scale = TRUE, center = TRUE, zlim = c(-3, 3))
+
+```
+
+## Celltype Annotation Using existing references
+
+### Using existing references using SingleR and Human CellAtlas
+
+```{r}
+library(celldex)
+ref <- HumanPrimaryCellAtlasData()
+ref
+
+library(SingleR)
+pred <- SingleR(test=sce, ref=ref, labels=ref$label.main)
+table(pred$labels)
+
+```
+
+```{r}
+plotScoreHeatmap(pred)
+```
+
+```{r}
+tab <- table(Assigned=pred$pruned.labels, Cluster=colLabels(sce))
+
+# Adding a pseudo-count of 10 to avoid strong color jumps with just 1 cell.
+pheatmap(log2(tab+10), color=colorRampPalette(c("white", "blue"))(101))
+```
+
+## Assigning cell labels from gene sets/ gene signatures
+
+### Anno with AUCell using marker gene signatures from expected celltypes in literature and panglaoDB
+
+```{r}
+# Read in genesig file from panglaoDB
+markerfile <- read.delim("C:/Users/Sarlo/Desktop/ETH/Master thesis/MarkerGeneSigs/PanglaoDB_markers_27_Mar_2020.tsv/PanglaoDB_markers_27_Mar_2020.tsv")
+
+expcelltype <-c("Endothelial cells","B cells","T cells","Fibroblasts","Dendritic cells","Natural killer T cells","NK cells","Mast cells","Monocytes","Plasmacytoid dendritic cells","Smooth muscle cells","Stromal cells","Adipocytes","Myoblasts","Macrophages" )
+markers <- markerfile[markerfile$cell.type %in% expcelltype & markerfile$species!= "Mm",]
+
+
+library(GSEABase)
+
+all.sets <- lapply(unique(markers$cell.type), function(x) {
+    GeneSet(markers$official.gene.symbol[markers$cell.type==x], setName=x)})
+
+all.sets <- GeneSetCollection(all.sets)
+
+
+
+```
+
+```{r}
+# Manually Created Sigs
+
+Macrophage.geneset = GeneSet(c("LYZ", "AIF1", "IFI30", "MARCO"), setName="Macrophage")
+Fibroblast.geneset = GeneSet(c("COL1A1", "DCN", "COL1A2", "COL13A1"), setName="Fibroblast")
+BCell.geneset = GeneSet(c("CD79A", "IGKC", "MS4A1", "IGHM"), setName="BCell")
+TCell.geneset = GeneSet(c("IL32", "CD3D", "TRBC2", "CD52"), setName="TCell")
+Endothelial.geneset = GeneSet(c("PECAM1", "VWF", "CCL14", "ACKR1"), setName="Endothelial")
+LiningFibroblast.geneset = GeneSet(c("PRG4", "CRTAC1", "CLU", "ITGBL1"), setName="LiningFibroblast")
+Neutrophils.geneset = GeneSet(c("G0S2", "S100A8", "FCGR3B", "CXCL8"), setName="Neutrophils")
+SmoothMuscle.geneset = GeneSet(c("ACTA2", "TAGLN", "MYL9", "TPM2"), setName="SmoothMuscle")
+PlasmaCell.geneset = GeneSet(c("IGHG1", "IGHG3", "IGKC", "MZB1"), setName="PlasmaCell")
+MastCell.geneset = GeneSet(c("TPSB2", "TBSAB1", "CPA3", "HPGD"), setName="MastCell")
+ProliferatingCell.geneset = GeneSet(c("STMN1", "MKI67", "CENPF", "HMGB2"), setName="ProliferatingCell")
+PlasmacytoidDC.geneset = GeneSet(c("GZMB", "CLEC4C", "LRRC26", "LILRA4"), setName="PlasmacytoidDC")
+LymphaticEndothelial.geneset = GeneSet(c("PROX1", "LYVE1", "CCL21", "TFF3"), setName="LymphaticEndothelial")
+
+
+
+all.sets = GeneSetCollection(c(Macrophage.geneset, Fibroblast.geneset, BCell.geneset, TCell.geneset, Endothelial.geneset, LiningFibroblast.geneset, Neutrophils.geneset, SmoothMuscle.geneset, PlasmaCell.geneset, MastCell.geneset, ProliferatingCell.geneset, PlasmacytoidDC.geneset, LymphaticEndothelial.geneset))
+
+```
+
+```{r}
+
+
+library(AUCell)
+rankings <- AUCell_buildRankings(counts(sce),
+    plotStats=FALSE, verbose=FALSE)
+cell.aucs <- AUCell_calcAUC(all.sets, rankings)
+results <- t(assay(cell.aucs))
+head(results)
+
+#AUCell_exploreThresholds(cell.aucs, plotHist=TRUE, assign=TRUE) 
+cells_assignment<-AUCell_exploreThresholds(cell.aucs, plotHist=FALSE, assign=TRUE) 
+```
+
+```{r}
+dataauc <- getAUC(cell.aucs)
+AUCannotations = apply(dataauc, 2, function(x){names(which.max(x))})
+
+colData(sce)$AUCellAnno = unname(AUCannotations)
+
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="AUCellAnno")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="AUCellAnno", text_by="AUCellAnno")+ ggtitle("UMAP Celllabel")
+```
+
+## Manual Celltype annotation
+
+```{r}
+#Initialisation of labeling
+sce$ManualAnno <- as.integer(sce$cluster)
+unique(sce$ManualAnno)
+```
+
+### Check Expected Celltypes
+
+```{r}
+#Macrophage
+markr <- c("LYZ","MSR1","MARCO")
+for(i in markr){
+  par(mfrow = c(1, 2))
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(7,11,13,18)] <- "Macrophage"
+```
+
+```{r}
+#Monocyte
+markr <- c("FCN1","SLC11A1","CD300E")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(8)] <- "Monocyte"
+```
+
+```{r}
+#Fibroblast
+markr <- c("PDGFRB","DCN","COL1A1")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(3,5,16)] <- "Fibroblast"
+```
+
+```{r}
+#Lining Fibroblast
+markr <- c("PRG4","CRTAC1", "CLU")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(1,12,20)] <- "Lining Fibroblast"
+```
+
+```{r}
+#Endothelial
+markr <- c("CDH5","VWF", "PECAM1","CCL14")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(10)] <- "Endothelial"
+```
+
+```{r}
+#Lymphatic Endothelial
+markr <- c("PROX1","LYVE1", "CCL21")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(19)] <- "Lymphatic_Endothelial"
+```
+
+```{r}
+#BCell
+markr <- c("CD19","MS4A1", "TNFRSF13C")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(9)] <- "Bcell"
+```
+
+```{r}
+#Plasma
+markr <- c("JSRP1","DERL3", "JCHAIN")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(21)] <- "Plasma"
+```
+
+```{r}
+#Tcell
+markr <- c("CD3E","CD3D", "CD3G","TRAC")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(2,6,14)] <- "Tcell"
+```
+
+```{r}
+#smooth muscle cell?
+markr <- c("ACTA2","MYL9", "DES", "MYH11")#Myofibroblast
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Pericyte?
+markr <- c("SOD3","CSPG4", "RGS5")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+
+
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(17)] <- "smooth_muscle_cell"
+```
+
+```{r}
+#Mastcell
+markr <- c("TPSAB1","CPA3","HPGDS","VWA5A")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(15)] <- "Mastcell"
+```
+
+```{r}
+#neutrophil
+markr <- c("CSF3R","S100A8","TREM1")
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(4)] <- "Neutrophil"
+```
+
+```{r}
+#plasmacytoid dendritic cell
+markr <- c("PTPRC","CLEC4C","LILRA4","LRRC26",)
+for(i in markr){
+  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
+  print(plotExpression(sce, features = i, x = "cluster"))}
+
+#Assignement
+sce$ManualAnno[sce$cluster %in% c(4)] <- "plasmacytoid dendritic cell"
+```
+
+```{r}
+#Manual Annotation
+sce$ManualAnno_L1 <- as.integer(sce$cluster)
+unique(sce$ManualAnno_L1)
+
+sce$ManualAnno_L1[sce$cluster %in% c(7,17,20,22,24,25,26,27,28,32,35,36,40)] <- "Lymphocyte"
+sce$ManualAnno_L1[sce$cluster %in% c(5,10,11,12,13,15,18,19,21,29,31,33,34,38,39)] <- "Myeloid cell"
+sce$ManualAnno_L1[sce$cluster %in% c(2,3,4,6,8,14,16,23,29)] <- "Fibroblast"
+sce$ManualAnno_L1[sce$cluster %in% c(1,9,30,37,41)] <- "Endothelial cell"
+
+
+sce$ManualAnno_L2 <- as.integer(sce$cluster)
+unique(sce$ManualAnno_L2)
+
+sce$ManualAnno_L2[sce$cluster %in% c(2,3,8,14,16,29)] <- "Fibroblast"
+sce$ManualAnno_L2[sce$cluster %in% c(4,6,23)] <- "Lining fibroblast"
+sce$ManualAnno_L2[sce$cluster %in% c(29)] <- "Smooth muscle cell"
+sce$ManualAnno_L2[sce$cluster %in% c(1,9,30,37,41)] <- "Edothelial cell"
+sce$ManualAnno_L2[sce$cluster %in% c(17,20,22,24,25,27,28,32,36,40)] <- "Tcell"
+sce$ManualAnno_L2[sce$cluster %in% c(35)] <- "Bcell"
+sce$ManualAnno_L2[sce$cluster %in% c(39)] <- "Neutrophil"
+sce$ManualAnno_L2[sce$cluster %in% c(34)] <- "Mast cell"
+sce$ManualAnno_L2[sce$cluster %in% c(5,10,11,12,13,15,18,19,21,31,33,38)] <- "Macrophage"
+sce$ManualAnno_L2[sce$cluster %in% c(7)] <- "Plasma"
+sce$ManualAnno_L2[sce$cluster %in% c(26)] <- "plasmacytoid dendritic cell"
+```
+
+```{r}
+#Check if all clusters assigned
+unique(sce$ManualAnno_L1)
+unique(sce$ManualAnno_L2)
+```
+
+```{r}
+#Plot manual Annotation
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L2")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L2", text_by="ManualAnno_L2")+ ggtitle("UMAP Celllabel")
+```
+
+## Set the final Cell labels
+
+```{r}
+## Set Celltypes to use downstream as colLabels
+
+colLabels(sce) <- colData(sce)$AUCellanno
+colLabels(sce) <- colData(sce)$ManualAnno
+colLabels(sce) <- colData(sce)$ManualAnno_L2
+
+sce$celltype <- colData(sce)$ManualAnno_L2
+
+```
+
+# Plot the assigned Cell labels
+
+```{r}
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by= "celltype")+ ggtitle("UMAP Celllabel")
+
+```
+
+## Frequencies of celltypes in clusters per Sample
+
+```{r}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")
+
+
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")
+
+
+```
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','05_CelltypeAnnotation'))
+```

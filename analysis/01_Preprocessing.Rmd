@@ -1,0 +1,429 @@
+---
+title: "QC and Preprocessing"
+subtitle: "01_Preprocessing"
+author: "SarahL."
+date: "2024-03-28"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Quality Controll and Preprocessing
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2) 
+library(dplyr)
+library(scater)
+library(scran)
+library(DropletUtils)
+library(gridExtra)
+library(scDblFinder)
+})
+
+```
+
+### Set params
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## Load the RA DATASET
+sce.filtered <- readRDS(file = paste0(path,'output/00_sce_DataPreparation.rds'))
+
+```
+
+
+### Explore dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+### Exploratory QC plots
+
+```{r PlotCellsPerSample}
+#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+table(colData(sce)$Sample)
+
+```
+
+## Initial filtering
+
+```{r}
+#Initial filtering
+dim_before_filtering <- dim(sce)
+
+#Get only the detected Genes
+detected_genes <- rowSums(counts(sce)> 0)
+detected_cells <- colSums(counts(sce)> 0)
+
+
+
+#Remove Genes not expressed in at least 10 Cells & Cells with less than 150 genes expressed
+#sce <- sce[detected_genes > 10, detected_Cells >150]
+
+#Remove Genes not expressed in at least 10 Cells & Cells with less than 150 genes expressed
+sce <- sce[detected_genes > 0, detected_cells > 0]
+
+
+dim_after_filtering <- dim(sce)
+
+cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
+    "\nNR of Cells After Initial Filtering ", dim_after_filtering[2],
+    "\nNR of Cells Filtered out ", dim_before_filtering[2] - dim_after_filtering[2],
+    
+    "\n\nNR of Genes Before Initial Filtering ", dim_before_filtering[1],
+    "\nNR of Genes After Initial Filtering ", dim_after_filtering[1],
+    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
+    )
+
+```
+
+## Doublet detection
+
+```{r}
+#Detection
+sce <- scDblFinder::scDblFinder(sce, samples="Sample", BPPARAM = bpp) 
+
+table(sce$scDblFinder.class)
+table(sce$Sample,sce$scDblFinder.class)
+
+```
+
+```{r}
+#Plot singlet/doublet histogramm
+
+print(as.data.frame(colData(sce)) %>%
+  dplyr::group_by(Sample, scDblFinder.class) %>%
+  dplyr::summarise(counts=n()) %>%
+  ggplot(aes(x=Sample, y=counts, fill=scDblFinder.class)) + 
+  geom_bar(stat="identity") +
+    labs(title="Doublet detection results",
+    subtitle="By sample") +
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()))
+
+#Plot singlet/doublet qcplots
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(scDblFinder.class) %>% 
+    ggplot(aes(x = sum, y = detected)) +
+      geom_point(aes(colour = scDblFinder.class)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(scDblFinder.class) %>% 
+    ggplot(aes(x = sum, y = subsets_Mito_percent)) +
+      geom_point(aes(colour = scDblFinder.class)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") 
+
+
+
+```
+
+```{r}
+#Removal
+print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
+sce <- sce[ ,sce$scDblFinder.class == "singlet"]
+print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
+
+```
+
+### Filtering
+
+-   remove undetected genes
+-   remove cells with very few or many detected genes
+-   remove very lowly expressed genes
+-   compute normalized expression values for visualization
+
+```{r}
+# calculate per-cell quality control (QC) metrics using scater
+
+is_mito<- grepl("(^MT-)|(^mt-)", rowData(sce)$Symbol)
+rowData(sce)$Symbol[is_mito] #Show the MT genes
+
+sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
+```
+
+```{r}
+# Library size?
+
+hist(sce$total,breaks = 100)
+```
+
+```{r}
+# calculate per-cell quality control (QC) metrics using scater
+
+hist(data.frame(colData(sce))$detected,breaks = 100)
+```
+
+```{r}
+#Some Fixed thresholds
+
+colData(sce)$qc.count_manual <- sce$sum < 750 # Cells have at least a count of 750
+colData(sce)$qc.genexp_manual <- sce$detected < 500 # Cells have at least 500 genes expressed
+colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 25 #Mitochondrial contamination has to be lower than 25%
+
+
+#discard <- qc.count  | qc.genexp  | qc.mito
+
+```
+
+```{r}
+#With Adaptive thresholds (for each batch/sample)
+
+#Discard bad cells
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
+attr(colData(sce)$qc.count, "thresholds")
+
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
+attr(colData(sce)$qc.genexp, "thresholds")
+
+colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent, type="higher",batch =sce$Sample)
+attr(colData(sce)$qc.mito, "thresholds")
+
+
+
+colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual
+
+```
+
+```{r}
+
+# Summary of all discarted cells
+data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
+           `Genes_detected` = sum(sce$qc.genexp| sce$qc.genexp_manual),
+           `Mitochondrial_percentage` = sum(sce$qc.mito| sce$qc.mito_manual),
+           Total_discarded = sum(sce$discard))
+
+```
+
+The aim by plotting the proportion of mitochondrial counts against some of the other QC metrics is to confirm that there are no cells with both large total counts and large mitochondrial counts, to ensure that we are not inadvertently removing high-quality cells that happen to be highly metabolically active (e.g., hepatocytes).
+
+```{r}
+# QCplots after filtering whole dataset
+
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(discard) %>% 
+    ggplot(aes(x = sum, y = detected, colour = discard)) +
+      geom_point() + ggtitle("Total number of detected genes plotted against total number of UMIs") 
+
+colData(sce) %>% 
+    as.data.frame() %>%
+    arrange(discard) %>% 
+    ggplot(aes(x = sum, y = subsets_Mito_percent, colour = discard)) +
+      geom_point()+ ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") 
+
+```
+
+```{r}
+#Plot Total count
+p1<-plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Total count") +guides(colour=guide_legend(title="Discarded"))
+
+#Plot Detected Feaututes
+p2<-plotColData(sce, y="detected",colour_by = "discard") + scale_y_log10() + ggtitle("Detected features") +guides(colour=guide_legend(title="Discarded"))
+
+#Plot Mito percent
+p3<-plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("Mito percent") +guides(colour=guide_legend(title="Discarded"))
+
+grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
+```
+
+```{r}
+#Look at samples individually
+
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(discard) %>% 
+    ggplot(aes(x = sum, y = detected)) +
+      geom_point(aes(colour = discard)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(discard) %>% 
+    ggplot(aes(x = sum, y = subsets_Mito_percent)) +
+      geom_point(aes(colour = discard)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") 
+
+
+```
+
+```{r}
+#Look at samples individually
+
+#Plot Total count
+p1<-plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard") + 
+    facet_wrap(~Sample, nrow=1, scales = "free_x") + 
+    scale_y_log10() + 
+    ggtitle("Total count")+
+    guides(colour=guide_legend(title="Discarded"))
+
+#Plot Detected Feaututes
+p2<-plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
+    facet_wrap(~Sample, nrow=1, scales = "free_x") + 
+    scale_y_log10() + 
+    ggtitle("Detected features")+
+    guides(colour=guide_legend(title="Discarded"))
+
+#Plot Mito percent
+p3<-plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
+    facet_wrap(~Sample, nrow=1, scales = "free_x") +
+    ggtitle("Mito percent")+
+    guides(colour=guide_legend(title="Discarded"))
+
+grid.arrange(p1, p2, p3, nrow = 3)
+
+```
+
+```{r}
+#Cells marked to be dropped per samples
+
+# Relative comparison / by sample
+as.data.frame(colData(sce)) %>%
+  group_by(Sample, discard) %>%
+  summarise(Freq=n()) %>% 
+  ggplot(aes(x=Sample, y=Freq, fill=discard, label=Freq)) +
+         geom_bar(stat="identity", position="fill") +
+  labs(title="Cells to be dropped",
+       subtitle="Labels represent absolute number of cells",
+       x="",
+       y="Number of cells") + 
+  geom_text(size=3.5, position = position_fill(vjust=0.5)) 
+
+# Absolute comparison / by sample
+as.data.frame(colData(sce)) %>%
+  group_by(Sample, discard) %>%
+  summarise(Freq=n()) %>% 
+  ggplot(aes(x=Sample, y=Freq, fill=discard, label=Freq)) +
+         geom_bar(stat="identity", position="stack") +
+  labs(title="Cells to be dropped",
+       subtitle="Labels represent absolute number of cells",
+       x="",
+       y="Number of cells") + 
+  geom_text(size=3.5, position = position_stack(vjust=0.5)) 
+
+```
+
+```{r}
+# Create the filtered sce element
+sce.filtered <- sce[, !colData(sce)$discard]
+
+```
+
+```{r}
+#Histogramm with number of cells per sample after filtering
+ggplot(colData(sce.filtered), aes(x=Sample))+geom_bar()+ coord_flip()+ggtitle("Number of cells per sample")
+
+```
+
+```{r}
+#Histogramm with number of cells per sample after filtering
+ggplot(colData(sce.filtered), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
+
+```
+
+```{r}
+#Check top 20 expressed genes after filtering
+
+rel_expression <- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
+rownames(rel_expression) <- rowData(sce.filtered)$Symbol
+most_expressed <- sort(rowSums( rel_expression ),T)[20:1]
+plot_data <- as.matrix(t(rel_expression[names(most_expressed),]))
+
+boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRUE, main="Distribution of counts for the top 20 genes before filtering")
+```
+
+### Normalization
+
+```{r}
+# Library size normalization
+sce.lib <- computeLibraryFactors(sce.filtered)
+
+
+ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +xlab("Log10 Library size factor") + geom_histogram(bins=50)+ggtitle("Distribution of size factors")
+```
+
+```{r}
+# Normalization by deconvolution
+clust.filtered <- quickCluster(sce.filtered) #block=factor(sce.filtered$Protocol)
+table(clust.filtered)
+
+sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered)
+```
+
+```{r}
+print("Library size factors")
+summary(sizeFactors(sce.lib))
+print("Deconvolution size factors")
+summary(sizeFactors(sce.deconv))
+
+#Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors. 
+plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(clust.filtered)), main="Deconvolution factors for individual cluster")
+abline(a=0, b=1, col="red")
+
+#Color by sample
+plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(sce.filtered$Sample)), main="Deconvolution factors for individual Sample")
+abline(a=0, b=1, col="red")
+
+#Color by protocol
+#plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(syn_sce_tidy_filtered$Protocol)), main="Deconvolution factors for individual Protocol")
+#abline(a=0, b=1, col="red")
+
+```
+
+```{r}
+# Normalise 
+sce.filtered <- logNormCounts(sce.deconv)
+summary(sizeFactors(sce.filtered))
+assayNames(sce.filtered)
+```
+
+## Variable-level metrics
+
+Variable-level metrics are computed by the getVarianceExplained() function. This calculates the percentage of variance of each gene’s expression that is explained by each variable in the colData of the SingleCellExperiment object. We can then use this to determine which experimental factors are contributing most to the variance in expression. This is useful for diagnosing batch effects or to quickly verify that a treatment has an effect.
+
+```{r}
+vars <- getVarianceExplained(sce.filtered,assay.type="logcounts",
+    variables=c("Sample", "Joint.Location", "sex", "Age"))
+head(vars)
+
+plotExplanatoryVariables(vars)
+```
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','01_sce_Preprocessing.rds'))
+```

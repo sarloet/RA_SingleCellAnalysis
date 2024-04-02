@@ -9,9 +9,14 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  - text: Analysis
+    - text: Data Preparation
+      href: 00_DataPreparation.html
+
 output:
   workflowr::wflow_html:
     toc: yes
     toc_float: yes
     theme: cosmo
     highlight: textmate
+    code_folding: show

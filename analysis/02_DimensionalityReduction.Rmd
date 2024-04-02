@@ -1,0 +1,236 @@
+---
+title: "Dimensionality Reduction and Clustering"
+subtitle: "02_DimensionalityReduction"
+author: "SarahL."
+date: "2024-03-28"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Feature selection and dimensionality reduction
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2)
+library(dplyr)
+library(scran)
+library(BiocSingular)
+library(scater)
+})
+
+```
+
+### Set params
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce.filtered <- readRDS(file = paste0(path,'output/01_sce_Preprocessing.rds'))
+
+```
+
+
+### Explore dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+
+## HVG
+
+### Select HVG
+
+```{r}
+# HVG selection with Turned off weighting to avoid overfitting for each donor.
+dec <- modelGeneVar(sce.filtered, block=sce.filtered$Sample, density.weights=FALSE)
+
+
+```
+
+```{r}
+#Top HVG table
+as.data.frame(dec[order(dec$bio, decreasing=TRUE),]) %>%
+  dplyr::select(c("mean", "total", "tech", "bio", "p.value", "FDR")) %>%
+  head(n=10)
+
+
+```
+
+```{r}
+## Extract top genes using scater package
+
+# Get the top 10% of genes.
+#top.hvgs <- getTopHVGs(dec, prop=0.1)
+
+# Get the top 2000 genes.
+top.hvgs <- getTopHVGs(dec, n=3000)
+
+# Get all genes with positive biological components.
+#top.hvgs <- getTopHVGs(dec, var.threshold=0)
+
+# Get all genes with FDR below 5%.
+#top.hvgs <- getTopHVGs(dec, fdr.threshold=0.05)
+
+length(top.hvgs)
+```
+
+```{r}
+#EVT add col if hvg
+
+rowData(sce.filtered)$is_hvg <- rownames(sce.filtered) %in% top.hvgs
+
+
+per.block <- dec$per.block
+par(mfrow=c(3, 2))
+for (i in seq_along(per.block)) {
+    decX <- per.block[[i]]
+    plot(decX$mean, decX$total, xlab="Mean log-expression", 
+        ylab="Variance", main=names(per.block)[i])#col=rowData(sce.filtered)$is_hvg
+    curve(metadata(decX)$trend(x), col="blue", add=TRUE)
+}
+```
+
+```{r}
+#Run PCA
+sce.filtered <- runPCA(sce.filtered, subset_row = top.hvgs)
+
+```
+
+```{r}
+#Visualise PCA
+reducedDim(sce.filtered, "PCA")[1:10, 1:5]
+
+# extract variance explained
+pca_pct_variance <- data.frame(variance = attr(reducedDim(sce.filtered, "PCA"), "percentVar"))
+pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
+
+
+# scree plot (PC vs variance)
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")
+
+```
+
+```{r}
+#PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
+intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce.filtered, "PCA")), k=20)
+
+```
+
+```{r}
+#PCA select nr of PC
+
+reducedDim(sce.filtered,"PCA_reduced") <- reducedDim(sce.filtered,"PCA")[,seq_len(12)]
+reducedDimNames(sce.filtered)
+
+ncol(reducedDim(sce.filtered,"PCA"))
+ncol(reducedDim(sce.filtered,"PCA_reduced"))
+
+```
+
+```{r}
+#Plot PCA 
+
+plotReducedDim(sce.filtered, dimred = "PCA", colour_by = "Sample")
+plotReducedDim(sce.filtered, dimred = "PCA_reduced", colour_by = "Sample")
+plotReducedDim(sce.filtered, dimred = "PCA", ncomponents = 3, colour_by = "Sample")
+```
+
+```{r}
+#Plot PCA per sample
+
+plotReducedDim(sce.filtered, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce.filtered$Sample)
+
+plotReducedDim(sce.filtered, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce.filtered$Joint.Location)
+
+
+#ggcells(sce.filtered, aes(x = PCA.1, y = PCA.2, colour = Sample)) +
+  #geom_point(size = 0.5) +
+  #facet_wrap(~ Sample) +
+  #labs(x = "PC1", y = "PC2", colour = "Sample")+
+  #theme_classic()+
+  #theme(strip.background = element_rect(colour = "grey", fill = "grey"))
+
+```
+
+## PCA-level metrics
+
+The plot below shows, for each of the PCs, the variance explained by the variables in colData(sce) that are most strongly associated with the PCs. \[We will ignore the sample_id variable: it has a unique value for each cell, so can explain all the variation for all PCs.\]
+
+```{r}
+explanPc <- getExplanatoryPCs(sce.filtered,dimred = "PCA",n_dimred=12,variables = c(
+      "sum",
+      "detected",
+      "Sample",
+      "Joint.Location",
+      "subsets_Mito_percent"))
+
+plotExplanatoryPCs(explanPc) 
+```
+
+```{r}
+#Run UMAP
+sce.filtered <- runUMAP(sce.filtered,name = "UMAP", dimred = "PCA_reduced")
+
+```
+
+```{r}
+#Plot UMAP before data integration
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Joint.Location")
+#plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Protocol")
+
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Sample)
+
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Joint.Location)
+
+#ggcells(sce.filtered, aes(x = UMAP.1, y = UMAP.2, colour = JointLocation)) +
+  #geom_point(size = 0.5) +
+  #facet_wrap(~ JointLocation) +
+  #labs(x = "PC1", y = "PC2", colour = "JointLocation")
+
+```
+
+```{r}
+#Plot UMAP with QC values
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
+plotReducedDim(sce.filtered, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce.filtered)[grepl("(^B2M)", rowData(sce.filtered)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
+
+
+```
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','02_sce_DimensionalityReduction.rds'))
+```

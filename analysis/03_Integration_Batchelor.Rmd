@@ -1,0 +1,194 @@
+---
+title: "Batch correction and data set integration"
+subtitle: "03_Integration_Batchelor"
+author: "SarahL."
+date: "2024-03-28"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Batch correction and data set integration
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2)
+library(dplyr)
+library(scater)
+library(scran)
+library(batchelor)
+library(reticulate)
+library(bluster)
+})
+
+```
+
+### Set params
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce.filtered <- readRDS(file = paste0(path,'output/02_sce_DimensionalityReduction.rds'))
+
+```
+
+
+### Explore dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+## Pre-batch correction plots
+
+```{r}
+#Plot UMAP before data integration
+plotReducedDim(sce, dimred="PCA", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
+```
+
+## Batch removal
+
+```{r}
+#Initialize sce element with batch removal
+sce.BatchR <- sce 
+
+```
+
+
+## Pre-batch correction plots
+
+```{r}
+#Plot UMAP before data integration
+plotReducedDim(sce, dimred="PCA", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
+```
+
+## Batch removal
+
+```{r}
+#Initialize sce element with batch removal
+sce.BatchR <- sce 
+
+```
+
+### Batch removal with batchelor package
+
+```{r}
+#Perform scaling normalization within each batch
+sce.Batchelor <-batchelor::multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
+summary(sizeFactors(sce.BatchR))
+
+```
+
+```{r}
+#Set manual merge_order
+merge_order <- list(
+          list("SynBio028_1000","SynBio050", "SynBio074",list("SynBio077a", "SynBio077b")), #seronegative
+          list("SynBio076", "SynBio081", "SynBio083","SynBio084","SynBio087","SynBio093", "SynBio096",list("SynBio098a", "SynBio098b"), "SynBio127", "SynBio130", "SynBio049"))#seropositive
+
+merge_order <- list(
+          list("SynBio124", "SynBio110", "SynBio079"),
+          list("SynBio121"),
+          list("SynBio023"))
+
+```
+
+```{r, warning=FALSE}
+#Perform fastMNN
+bpstart(bpp)
+sce.Batchelor <- batchelor::fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,merge.order = merge_order,BPPARAM = bpp)#merge.order = merge_order,
+bpstop(bpp)
+
+
+#Save to BatchR sce object
+assay(sce.BatchR, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
+reducedDim(sce.BatchR, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
+
+
+```
+
+### QC plots batchelor
+
+```{r}
+#We use the percentage of variance lost as a diagnostic measure:
+metadata(sce.Batchelor)$merge.info$lost.var
+
+#Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity
+```
+
+## PCA and UMAP Plots after Integration
+
+```{r}
+#Plot UMAP before data integration
+plotReducedDim(sce.BatchR, dimred="PCA", colour_by="Sample") + ggtitle("PCA before data integration")
+plotReducedDim(sce.BatchR, dimred="PCA", colour_by="JointLocation") + ggtitle("PCA before data integration")
+
+#Plot UMAP after data integration
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")#+ facet_wrap(~sce.filtered$Sample)
+
+
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
+#ggcells(sce.BatchR, aes(x = MNN_UMAP.1, y = MNN_UMAP.2, colour = Sample)) +geom_point(size = 0.5) +facet_wrap(~ Sample) +labs(x = "PC1", y = "PC2", colour = "Sample")
+
+#Plot UMAP before data integration per joint
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
+
+```
+
+```{r}
+#Run UMAP
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")
+
+```
+
+```{r}
+#Plot UMAP before data integration
+plotReducedDim(sce.BatchR, dimred="UMAP", colour_by="Sample") + ggtitle("UMAP before data integration")
+plotReducedDim(sce.BatchR, dimred="UMAP", colour_by="JointLocation") + ggtitle("UMAP before data integration")
+
+#Plot UMAP after data integration
+plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")#+ facet_wrap(~sce.filtered$Sample)
+
+
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
+#ggcells(sce.BatchR, aes(x = MNN_UMAP.1, y = MNN_UMAP.2, colour = Sample)) +geom_point(size = 0.5) +facet_wrap(~ Sample) +labs(x = "PC1", y = "PC2", colour = "Sample")
+
+#Plot UMAP before data integration per joint
+plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
+
+```
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','03_sce_Integrated_Batchelor.rds'))
+```

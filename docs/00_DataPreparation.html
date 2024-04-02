@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SarahL." />
+
+<meta name="date" content="2024-03-28" />
+
+<title>Data Preparation</title>
+
+<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">RA_SingleCellAnalysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Data Preparation</h1>
+<h3 class="subtitle">00_DataPreparation</h3>
+<h4 class="author">SarahL.</h4>
+<h4 class="date">2024-03-28</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-04-02
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 2
+</p>
+<p>
+<strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240328code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240328)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240328code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240328)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it
+difficult for you and others to run your code on a different machine.
+Change the absolute path(s) below to the suggested relative path(s) to
+make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/
+</td>
+<td style="text-align:left;">
+.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/
+</td>
+<td style="text-align:left;">
+output
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong3cb3cd7">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> 3cb3cd7
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrong3cb3cd7"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version 3cb3cd7.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/cellbender_data_h5/
+    Ignored:    data/metadata/
+
+Untracked files:
+    Untracked:  analysis/00_DataPreparation.Rmd
+    Untracked:  analysis/01_Preprocessing.Rmd
+    Untracked:  analysis/02_DimensionalityReduction.Rmd
+    Untracked:  analysis/03_Integration_Batchelor.Rmd
+    Untracked:  analysis/03_Integration_Harmony.Rmd
+    Untracked:  analysis/03_Integration_STACAS.Rmd
+    Untracked:  analysis/04_Clustering.Rmd
+    Untracked:  analysis/05_CelltypeAnnotation.Rmd
+    Untracked:  analysis/06_SubClustering.Rmd
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/_site.yml
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="data-preparation-and-overview" class="section level1">
+<h1>Data Preparation and Overview</h1>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="load-packages" class="section level3">
+<h3>Load Packages</h3>
+<pre class="r"><code>#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2) 
+library(dplyr)
+library(DropletUtils)
+library(scater)
+})</code></pre>
+</div>
+<div id="set-params" class="section level3">
+<h3>Set params</h3>
+<pre class="r"><code>set.seed(100)
+bpp &lt;- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path &lt;- &quot;/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/&quot;</code></pre>
+</div>
+</div>
+<div id="view-cellranger-output" class="section level2">
+<h2>View CellRanger output</h2>
+<ul>
+<li><a href="Cellranger/web_summary_SynBio028.html">SynBio028</a></li>
+<li><a href="Cellranger/web_summary_SynBio049.html">SynBio049</a></li>
+<li><a href="Cellranger/web_summary_SynBio050.html">SynBio050</a></li>
+<li><a href="Cellranger/web_summary_SynBio074.html">SynBio074</a></li>
+<li><a href="Cellranger/web_summary_SynBio076.html">SynBio076</a></li>
+<li><a href="Cellranger/web_summary_SynBio077a.html">SynBio077a</a></li>
+<li><a href="Cellranger/web_summary_SynBio077b.html">SynBio077b</a></li>
+<li><a href="Cellranger/web_summary_SynBio081.html">SynBio081</a></li>
+<li><a href="Cellranger/web_summary_SynBio083.html">SynBio083</a></li>
+<li><a href="Cellranger/web_summary_SynBio084.html">SynBio084</a></li>
+<li><a href="Cellranger/web_summary_SynBio087.html">SynBio087</a></li>
+<li><a href="Cellranger/web_summary_SynBio093.html">SynBio093</a></li>
+<li><a href="Cellranger/web_summary_SynBio098a.html">SynBio098a</a></li>
+<li><a href="Cellranger/web_summary_SynBio098b.html">SynBio098b</a></li>
+<li><a href="Cellranger/web_summary_SynBio127.html">SynBio127</a></li>
+<li><a href="Cellranger/web_summary_SynBio130.html">SynBio130</a></li>
+</ul>
+</div>
+<div id="view-cellbender-output" class="section level2">
+<h2>View CellBender output</h2>
+<ul>
+<li><a
+href="CellBender/cellbender_output_SynBio028_10000_w_introns_RL_report.html">SynBio028</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio049_w_introns_report.html">SynBio049</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio050_w_introns_report.html">SynBio050</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio074_w_introns_report.html">SynBio074</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio076_w_introns_report.html">SynBio076</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio077a_w_introns_report.html">SynBio077a</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio077b_w_introns_RL2_report.html">SynBio077b</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio081_w_introns_RL_report.html">SynBio081</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio083_w_introns_RL2_report.html">SynBio083</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio084_w_introns_report.html">SynBio084</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio087_w_introns_RL2_report.html">SynBio087</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio093_w_introns_report.html">SynBio093</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio098a_w_introns_report.html">SynBio098a</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio098b_w_introns_report.html">SynBio098b</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio127_w_introns_report.html">SynBio127</a></li>
+<li><a
+href="CellBender/cellbender_output_SynBio130_w_introns_RL2_reporthtml">SynBio130</a></li>
+</ul>
+</div>
+<div id="load-data" class="section level2">
+<h2>Load Data</h2>
+<pre class="r"><code>## RA DATASET
+rawdata_folder &lt;- paste0(path,&quot;data/cellbender_data_h5/&quot;)
+
+
+#Load data as sce object
+filenames &lt;- list.files(rawdata_folder ,recursive = F, full.names = F,pattern = &quot;\\_filtered.h5$&quot;)
+
+#filepaths &lt;- list.dirs(&#39;D:/Masterthesis/cellbender_data_h5/&#39;,recursive = F, full.names = T)
+filepaths &lt;- paste(rawdata_folder,filenames,sep = &quot;&quot;)
+
+sce&lt;-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,type=&quot;HDF5&quot;)
+
+
+colData(sce)$Sample = sub(&quot;\\_w_introns.*&quot;, &quot;&quot;, sub(&quot;cellbender_output_&quot;, &quot;&quot;, as.character(colData(sce)$Sample)))
+
+
+sce</code></pre>
+<pre><code>class: SingleCellExperiment 
+dim: 36601 119652 
+metadata(1): Samples
+assays(1): counts
+rownames(36601): ENSG00000243485 ENSG00000237613 ... ENSG00000278817
+  ENSG00000277196
+rowData names(3): ID Symbol Type
+colnames(119652): 1_AAGTACCGTCTCTCAC-1 1_GACTCTCAGGTAACTA-1 ...
+  17_AGGTGTTGTGGCATCC-1 17_GCCAGCACACAAGTGG-1
+colData names(2): Sample Barcode
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):</code></pre>
+<div id="load-and-add-metadata" class="section level3">
+<h3>Load and add Metadata</h3>
+<pre class="r"><code>#Metadata path
+metadata_folder &lt;- paste0(path,&quot;data/metadata/Metadata_Master.csv&quot;)
+
+#Load metadata
+metadata_df &lt;-read.csv(metadata_folder, header=TRUE, sep=&quot;,&quot;)
+metadata_df</code></pre>
+<pre><code>         sample      orig.ident      Age    sex   protocol Joint.Location
+1   Syn_Bio_028 SynBio028_10000 79.00000 female Protocol 1            MCP
+2   Syn_Bio_049       SynBio049 69.00000 female Protocol 1            MCP
+3   Syn_Bio_050       SynBio050 79.00000 female Protocol 1          Wrist
+4   Syn_Bio_074       SynBio074 38.00000 female Protocol 1          Wrist
+5   Syn_Bio_076       SynBio076 75.00000 female Protocol 2            MCP
+6  Syn_Bio_077a      SynBio077a 62.00000 female Protocol 2           Knee
+7  Syn_Bio_077b      SynBio077b 62.00000 female Protocol 2          Wrist
+8   Syn_Bio_081       SynBio081 47.00000 female Protocol 2            MCP
+9   Syn_Bio_083       SynBio083 58.00000 female Protocol 2          Wrist
+10  Syn_Bio_084       SynBio084 54.00000 female Protocol 2          Wrist
+11  Syn_Bio_087       SynBio087 55.00000 female Protocol 2            MCP
+12  Syn_Bio_093       SynBio093 30.00000 female Protocol 2           Knee
+13  Syn_Bio_096       SynBio096 67.00000 female Protocol 2           Knee
+14 Syn_Bio_098a      SynBio098a 56.00000   male Protocol 2           Knee
+15 Syn_Bio_098b      SynBio098b 56.00000   male Protocol 2          Wrist
+16  Syn_Bio_127       SynBio127 38.00000 female Protocol 2           Knee
+17  Syn_Bio_130       SynBio130 45.00000 female Protocol 2            MCP
+18      RA934A1   SynBioRA934A1 73.00000 female   external           Knee
+19                                    NA                                 
+20         Mean                 57.81250                                 
+21           SD                 14.47397                                 
+   Diagnosis       Pathotype Krenn.total.score CD15 Vascularisation
+1       Gout  lympho-myeloid          5.000000   no              &lt;5
+2         RA         fibroid          2.000000   no              &lt;3
+3         RA  lympho-myeloid          8.000000  yes            5-10
+4         RA  lympho-myeloid          4.000000   no            5-10
+5         RA         fibroid                NA &lt;NA&gt;            &lt;NA&gt;
+6         RA  lympho-myeloid          5.000000  yes              &lt;5
+7         RA  lympho-myeloid          5.000000  yes            5-10
+8         RA  lympho-myeloid          4.000000  yes             &gt;10
+9         RA  lympho-myeloid          6.000000  yes           10-15
+10        RA diffuse-myeloid          4.000000  yes            5-10
+11        RA diffuse-myeloid                NA  yes             &gt;10
+12        RA         fibroid          4.000000  yes            5-10
+13        RA         fibroid          4.000000   no              &lt;5
+14        RA  lympho-myeloid                NA  yes             &gt;20
+15        RA         fibroid          3.000000  yes           10-15
+16        RA diffuse-myeloid          5.000000   no             &gt;10
+17        RA  lympho-myeloid                NA  yes             &gt;10
+18        RA                                NA                     
+19                                          NA                     
+20                                    4.538462                     
+21                                    1.450022                     
+   Lymphoidfollicle     Fibrosis GCTreatment DMARDTreatment
+1                no           no         yes             no
+2                no          low          no           TNFi
+3               yes           no         yes             no
+4               yes intermediate          no           TNFi
+5              &lt;NA&gt;         &lt;NA&gt;         yes         CTLA4i
+6               yes          low          no           TNFi
+7               yes          low          no           TNFi
+8                no          low          no         CTLA4i
+9               yes          low         yes           JAKi
+10               no          low          no           JAKi
+11               no          low          no           TNFi
+12               no          low          no           JAKi
+13              yes          low          no           TNFi
+14               no intermediate          no           TNFi
+15               no          low          no           TNFi
+16               no          low          no           TNFi
+17               no          low          no           TNFi
+18                                                         
+19                                                         
+20                                                         
+21                                                         
+   NR.previous.DMARD.Treatments Seropositivity  HLAB.27 Ultrasound.B.Score
+1                             2   seronegative     &lt;NA&gt;                  3
+2                             8   seropositive     &lt;NA&gt;                  2
+3                             0   seronegative negative                  3
+4                             1   seronegative negative                  2
+5                             9   seropositive negative                  1
+6                             2   seronegative negative                  3
+7                             2   seronegative negative                  3
+8                             2   seropositive negative                  3
+9                             3   seropositive negative                  3
+10                            8   seropositive negative                  3
+11                            8   seropositive     &lt;NA&gt;                  3
+12                            7   seropositive negative                  3
+13                            2   seropositive negative                  3
+14                            7   seropositive negative                  3
+15                            7   seropositive negative                  3
+16                            7   seropositive     &lt;NA&gt;                  3
+17                            2   seropositive     &lt;NA&gt;                  3
+18                           NA                                         NA
+19                           NA                                         NA
+20                           NA                                         NA
+21                           NA                                         NA
+   Ultrasound.PD.Score      CRP       SJC Largejoints.Involvement Smoking  BMI
+1                    3 30.00000  2.000000                      no      no 20.1
+2                    1 16.00000 13.000000                     yes      no   NA
+3                    2 13.00000 18.000000                      no      no   NA
+4                    1  0.90000  8.000000                      no      no 21.4
+5                    1  5.40000  7.000000                      no      no 36.0
+6                    1 28.00000 14.000000                     yes     yes   NA
+7                    3 28.00000 14.000000                     yes     yes   NA
+8                    3 31.00000 10.000000                      no     yes 20.1
+9                    2  8.90000  5.000000                     yes    &lt;NA&gt;   NA
+10                   2 22.00000 10.000000                      no     yes 27.7
+11                   2  6.40000 15.000000                     yes      no 20.3
+12                   2 29.00000  9.000000                     yes      no 22.1
+13                   2 27.00000  6.000000                     yes     yes 21.5
+14                   3 75.00000  6.000000                     yes      no 23.9
+15                   2 75.00000  6.000000                     yes      no 23.9
+16                   2  4.30000  3.000000                     yes     yes 19.4
+17                   2 10.00000  2.000000                      No      no 23.9
+18                  NA       NA        NA                                   NA
+19                  NA       NA        NA                                   NA
+20                  NA 24.99375  9.125000                                   NA
+21                  NA 22.10826  4.602536                                   NA
+               Comments
+1  File SynBio028_10000
+2                      
+3                      
+4                      
+5                      
+6                      
+7                      
+8                      
+9                      
+10                     
+11                     
+12                     
+13                     
+14                     
+15                     
+16                     
+17                     
+18                     
+19                     
+20                     
+21                     </code></pre>
+<pre class="r"><code>#Add metadata
+colData(sce) &lt;- dplyr::left_join(as.data.frame(colData(sce)),
+                                   metadata_df, 
+                                   by= c(&quot;Sample&quot; = &quot;orig.ident&quot;),
+                                   suffix=c(&quot;.x&quot;,&quot;.y&quot;)) %&gt;% 
+      #dplyr::select(Sample, Barcode, Diagnosis, sex, Age, Joint.Location, protocol, Pathotype,Krenn total score,) %&gt;% 
+      dplyr::select(-one_of(&quot;Comments&quot;)) %&gt;% 
+      DataFrame(row.names=colnames(sce))
+
+
+#make row and col names unique
+colnames(sce) &lt;- paste0(sce$Sample, &quot;.&quot;, sce$Barcode)
+rownames(sce) &lt;- paste0(rowData(sce)$ID, &quot;.&quot;, rowData(sce)$Symbol)
+
+sce</code></pre>
+<pre><code>class: SingleCellExperiment 
+dim: 36601 119652 
+metadata(1): Samples
+assays(1): counts
+rownames(36601): ENSG00000243485.MIR1302-2HG ENSG00000237613.FAM138A
+  ... ENSG00000278817.AC007325.4 ENSG00000277196.AC007325.2
+rowData names(3): ID Symbol Type
+colnames(119652): SynBio028_10000.AAGTACCGTCTCTCAC-1
+  SynBio028_10000.GACTCTCAGGTAACTA-1 ... SynBio130.AGGTGTTGTGGCATCC-1
+  SynBio130.GCCAGCACACAAGTGG-1
+colData names(26): Sample Barcode ... Smoking BMI
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):</code></pre>
+<pre class="r"><code>#ADD PROTOCOL</code></pre>
+</div>
+<div id="explore-dataset" class="section level3">
+<h3>Explore dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce)</code></pre>
+<pre><code>[1]  36601 119652</code></pre>
+<pre class="r"><code>#Feautures/row data
+colData(sce)</code></pre>
+<pre><code>DataFrame with 119652 rows and 26 columns
+                                            Sample            Barcode
+                                       &lt;character&gt;        &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1 SynBio028_10000 AAGTACCGTCTCTCAC-1
+SynBio028_10000.GACTCTCAGGTAACTA-1 SynBio028_10000 GACTCTCAGGTAACTA-1
+SynBio028_10000.GTTCCGTAGCATACTC-1 SynBio028_10000 GTTCCGTAGCATACTC-1
+SynBio028_10000.AAACGAAGTAGTCCTA-1 SynBio028_10000 AAACGAAGTAGTCCTA-1
+SynBio028_10000.TACTTGTAGCAGGCAT-1 SynBio028_10000 TACTTGTAGCAGGCAT-1
+...                                            ...                ...
+SynBio130.CATTGAGGTTATAGCC-1             SynBio130 CATTGAGGTTATAGCC-1
+SynBio130.GTCGCGACATATGAAG-1             SynBio130 GTCGCGACATATGAAG-1
+SynBio130.GTTGTAGTCGCCTCTA-1             SynBio130 GTTGTAGTCGCCTCTA-1
+SynBio130.AGGTGTTGTGGCATCC-1             SynBio130 AGGTGTTGTGGCATCC-1
+SynBio130.GCCAGCACACAAGTGG-1             SynBio130 GCCAGCACACAAGTGG-1
+                                        sample       Age         sex
+                                   &lt;character&gt; &lt;numeric&gt; &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1 Syn_Bio_028        79      female
+SynBio028_10000.GACTCTCAGGTAACTA-1 Syn_Bio_028        79      female
+SynBio028_10000.GTTCCGTAGCATACTC-1 Syn_Bio_028        79      female
+SynBio028_10000.AAACGAAGTAGTCCTA-1 Syn_Bio_028        79      female
+SynBio028_10000.TACTTGTAGCAGGCAT-1 Syn_Bio_028        79      female
+...                                        ...       ...         ...
+SynBio130.CATTGAGGTTATAGCC-1       Syn_Bio_130        45      female
+SynBio130.GTCGCGACATATGAAG-1       Syn_Bio_130        45      female
+SynBio130.GTTGTAGTCGCCTCTA-1       Syn_Bio_130        45      female
+SynBio130.AGGTGTTGTGGCATCC-1       Syn_Bio_130        45      female
+SynBio130.GCCAGCACACAAGTGG-1       Syn_Bio_130        45      female
+                                      protocol Joint.Location   Diagnosis
+                                   &lt;character&gt;    &lt;character&gt; &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1  Protocol 1            MCP        Gout
+SynBio028_10000.GACTCTCAGGTAACTA-1  Protocol 1            MCP        Gout
+SynBio028_10000.GTTCCGTAGCATACTC-1  Protocol 1            MCP        Gout
+SynBio028_10000.AAACGAAGTAGTCCTA-1  Protocol 1            MCP        Gout
+SynBio028_10000.TACTTGTAGCAGGCAT-1  Protocol 1            MCP        Gout
+...                                        ...            ...         ...
+SynBio130.CATTGAGGTTATAGCC-1        Protocol 2            MCP          RA
+SynBio130.GTCGCGACATATGAAG-1        Protocol 2            MCP          RA
+SynBio130.GTTGTAGTCGCCTCTA-1        Protocol 2            MCP          RA
+SynBio130.AGGTGTTGTGGCATCC-1        Protocol 2            MCP          RA
+SynBio130.GCCAGCACACAAGTGG-1        Protocol 2            MCP          RA
+                                        Pathotype Krenn.total.score        CD15
+                                      &lt;character&gt;         &lt;numeric&gt; &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1 lympho-myeloid                 5          no
+SynBio028_10000.GACTCTCAGGTAACTA-1 lympho-myeloid                 5          no
+SynBio028_10000.GTTCCGTAGCATACTC-1 lympho-myeloid                 5          no
+SynBio028_10000.AAACGAAGTAGTCCTA-1 lympho-myeloid                 5          no
+SynBio028_10000.TACTTGTAGCAGGCAT-1 lympho-myeloid                 5          no
+...                                           ...               ...         ...
+SynBio130.CATTGAGGTTATAGCC-1       lympho-myeloid                NA         yes
+SynBio130.GTCGCGACATATGAAG-1       lympho-myeloid                NA         yes
+SynBio130.GTTGTAGTCGCCTCTA-1       lympho-myeloid                NA         yes
+SynBio130.AGGTGTTGTGGCATCC-1       lympho-myeloid                NA         yes
+SynBio130.GCCAGCACACAAGTGG-1       lympho-myeloid                NA         yes
+                                   Vascularisation Lymphoidfollicle    Fibrosis
+                                       &lt;character&gt;      &lt;character&gt; &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1              &lt;5               no          no
+SynBio028_10000.GACTCTCAGGTAACTA-1              &lt;5               no          no
+SynBio028_10000.GTTCCGTAGCATACTC-1              &lt;5               no          no
+SynBio028_10000.AAACGAAGTAGTCCTA-1              &lt;5               no          no
+SynBio028_10000.TACTTGTAGCAGGCAT-1              &lt;5               no          no
+...                                            ...              ...         ...
+SynBio130.CATTGAGGTTATAGCC-1                   &gt;10               no         low
+SynBio130.GTCGCGACATATGAAG-1                   &gt;10               no         low
+SynBio130.GTTGTAGTCGCCTCTA-1                   &gt;10               no         low
+SynBio130.AGGTGTTGTGGCATCC-1                   &gt;10               no         low
+SynBio130.GCCAGCACACAAGTGG-1                   &gt;10               no         low
+                                   GCTreatment DMARDTreatment
+                                   &lt;character&gt;    &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1         yes             no
+SynBio028_10000.GACTCTCAGGTAACTA-1         yes             no
+SynBio028_10000.GTTCCGTAGCATACTC-1         yes             no
+SynBio028_10000.AAACGAAGTAGTCCTA-1         yes             no
+SynBio028_10000.TACTTGTAGCAGGCAT-1         yes             no
+...                                        ...            ...
+SynBio130.CATTGAGGTTATAGCC-1                no           TNFi
+SynBio130.GTCGCGACATATGAAG-1                no           TNFi
+SynBio130.GTTGTAGTCGCCTCTA-1                no           TNFi
+SynBio130.AGGTGTTGTGGCATCC-1                no           TNFi
+SynBio130.GCCAGCACACAAGTGG-1                no           TNFi
+                                   NR.previous.DMARD.Treatments Seropositivity
+                                                      &lt;integer&gt;    &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1                            2   seronegative
+SynBio028_10000.GACTCTCAGGTAACTA-1                            2   seronegative
+SynBio028_10000.GTTCCGTAGCATACTC-1                            2   seronegative
+SynBio028_10000.AAACGAAGTAGTCCTA-1                            2   seronegative
+SynBio028_10000.TACTTGTAGCAGGCAT-1                            2   seronegative
+...                                                         ...            ...
+SynBio130.CATTGAGGTTATAGCC-1                                  2   seropositive
+SynBio130.GTCGCGACATATGAAG-1                                  2   seropositive
+SynBio130.GTTGTAGTCGCCTCTA-1                                  2   seropositive
+SynBio130.AGGTGTTGTGGCATCC-1                                  2   seropositive
+SynBio130.GCCAGCACACAAGTGG-1                                  2   seropositive
+                                       HLAB.27 Ultrasound.B.Score
+                                   &lt;character&gt;          &lt;integer&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1          NA                  3
+SynBio028_10000.GACTCTCAGGTAACTA-1          NA                  3
+SynBio028_10000.GTTCCGTAGCATACTC-1          NA                  3
+SynBio028_10000.AAACGAAGTAGTCCTA-1          NA                  3
+SynBio028_10000.TACTTGTAGCAGGCAT-1          NA                  3
+...                                        ...                ...
+SynBio130.CATTGAGGTTATAGCC-1                NA                  3
+SynBio130.GTCGCGACATATGAAG-1                NA                  3
+SynBio130.GTTGTAGTCGCCTCTA-1                NA                  3
+SynBio130.AGGTGTTGTGGCATCC-1                NA                  3
+SynBio130.GCCAGCACACAAGTGG-1                NA                  3
+                                   Ultrasound.PD.Score       CRP       SJC
+                                             &lt;integer&gt; &lt;numeric&gt; &lt;numeric&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1                   3        30         2
+SynBio028_10000.GACTCTCAGGTAACTA-1                   3        30         2
+SynBio028_10000.GTTCCGTAGCATACTC-1                   3        30         2
+SynBio028_10000.AAACGAAGTAGTCCTA-1                   3        30         2
+SynBio028_10000.TACTTGTAGCAGGCAT-1                   3        30         2
+...                                                ...       ...       ...
+SynBio130.CATTGAGGTTATAGCC-1                         2        10         2
+SynBio130.GTCGCGACATATGAAG-1                         2        10         2
+SynBio130.GTTGTAGTCGCCTCTA-1                         2        10         2
+SynBio130.AGGTGTTGTGGCATCC-1                         2        10         2
+SynBio130.GCCAGCACACAAGTGG-1                         2        10         2
+                                   Largejoints.Involvement     Smoking
+                                               &lt;character&gt; &lt;character&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1                      no          no
+SynBio028_10000.GACTCTCAGGTAACTA-1                      no          no
+SynBio028_10000.GTTCCGTAGCATACTC-1                      no          no
+SynBio028_10000.AAACGAAGTAGTCCTA-1                      no          no
+SynBio028_10000.TACTTGTAGCAGGCAT-1                      no          no
+...                                                    ...         ...
+SynBio130.CATTGAGGTTATAGCC-1                            No          no
+SynBio130.GTCGCGACATATGAAG-1                            No          no
+SynBio130.GTTGTAGTCGCCTCTA-1                            No          no
+SynBio130.AGGTGTTGTGGCATCC-1                            No          no
+SynBio130.GCCAGCACACAAGTGG-1                            No          no
+                                         BMI
+                                   &lt;numeric&gt;
+SynBio028_10000.AAGTACCGTCTCTCAC-1      20.1
+SynBio028_10000.GACTCTCAGGTAACTA-1      20.1
+SynBio028_10000.GTTCCGTAGCATACTC-1      20.1
+SynBio028_10000.AAACGAAGTAGTCCTA-1      20.1
+SynBio028_10000.TACTTGTAGCAGGCAT-1      20.1
+...                                      ...
+SynBio130.CATTGAGGTTATAGCC-1            23.9
+SynBio130.GTCGCGACATATGAAG-1            23.9
+SynBio130.GTTGTAGTCGCCTCTA-1            23.9
+SynBio130.AGGTGTTGTGGCATCC-1            23.9
+SynBio130.GCCAGCACACAAGTGG-1            23.9</code></pre>
+<pre class="r"><code>#Droplet details / row data
+rowData(sce)</code></pre>
+<pre><code>DataFrame with 36601 rows and 3 columns
+                                         ID      Symbol            Type
+                                &lt;character&gt; &lt;character&gt;     &lt;character&gt;
+ENSG00000243485.MIR1302-2HG ENSG00000243485 MIR1302-2HG Gene Expression
+ENSG00000237613.FAM138A     ENSG00000237613     FAM138A Gene Expression
+ENSG00000186092.OR4F5       ENSG00000186092       OR4F5 Gene Expression
+ENSG00000238009.AL627309.1  ENSG00000238009  AL627309.1 Gene Expression
+ENSG00000239945.AL627309.3  ENSG00000239945  AL627309.3 Gene Expression
+...                                     ...         ...             ...
+ENSG00000277836.AC141272.1  ENSG00000277836  AC141272.1 Gene Expression
+ENSG00000278633.AC023491.2  ENSG00000278633  AC023491.2 Gene Expression
+ENSG00000276017.AC007325.1  ENSG00000276017  AC007325.1 Gene Expression
+ENSG00000278817.AC007325.4  ENSG00000278817  AC007325.4 Gene Expression
+ENSG00000277196.AC007325.2  ENSG00000277196  AC007325.2 Gene Expression</code></pre>
+</div>
+<div id="exploratory-qc-plots" class="section level3">
+<h3>Exploratory QC plots</h3>
+<pre class="r"><code>#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
+<p><img src="figure/00_DataPreparation.Rmd/PlotCellsPerSample-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>table(colData(sce)$Sample)</code></pre>
+<pre><code>
+SynBio028_10000       SynBio049       SynBio050       SynBio074       SynBio076 
+           4388             766            6503            4879            3415 
+     SynBio077a      SynBio077b       SynBio081       SynBio083       SynBio084 
+           9323            9790            7550           12550            6214 
+      SynBio087       SynBio093       SynBio096      SynBio098a      SynBio098b 
+           4280            7505            8919            7890           11514 
+      SynBio127       SynBio130 
+           5154            9012 </code></pre>
+<pre class="r"><code>#Number of genes detected per cell
+#Total UMI for a gene versus the number of times detected
+genesPerCell &lt;- colSums(counts(sce) &gt; 0)
+plot(density(genesPerCell), xlab=&quot;Genes per cell&quot;, main=&quot;Number of genes detected per cell&quot;)</code></pre>
+<p><img src="figure/00_DataPreparation.Rmd/PlotDetectedPerCell-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#transcript_capture_efficiency
+#Total UMI for a gene versus the number of times detected
+tmpCounts &lt;- counts(sce)
+
+plot(rowSums(tmpCounts),
+     rowMeans(tmpCounts &gt; 0),
+     log = &quot;x&quot;,
+     xlab=&quot;total number of UMIs&quot;,
+     ylab=&quot;proportion of cells expressing the gene&quot;,
+     main=&quot;Total UMI for a gene vs times detected&quot;)</code></pre>
+<pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 2007 x values &lt;= 0 omitted
+from logarithmic plot</code></pre>
+<p><img src="figure/00_DataPreparation.Rmd/PlotCaptureEfficiency-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Distribution of counts for the top 20 genes across cells
+
+#rel_expression &lt;- t( t(tmpCounts) / colSums(tmpCounts)) * 100
+#rownames(rel_expression) &lt;- rowData(sce)$Symbol
+#most_expressed &lt;- sort(rowSums( rel_expression ), decreasing = T)[20:1] ##
+#plot_data &lt;- as.matrix(t(rel_expression[names(most_expressed),]))
+
+#boxplot(plot_data, cex=0.1, las=1, xlab=&quot;% total count per cell&quot;, horizontal=TRUE, main=&quot;Distribution of counts for the top 20 genes before filtering&quot;)
+
+#rm(tmpCounts)
+
+plotHighestExprs(sce,n = 20)</code></pre>
+</div>
+</div>
+<div id="save-the-dataset" class="section level2">
+<h2>Save the dataset</h2>
+<pre class="r"><code>saveRDS(sce, file =paste0(&#39;/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/&#39;,&#39;00_sce_DataPreparation.rds&#39;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.3 (2024-02-29)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Warsaw
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] scater_1.30.1               scuttle_1.12.0             
+ [3] DropletUtils_1.22.0         SingleCellExperiment_1.24.0
+ [5] SummarizedExperiment_1.32.0 Biobase_2.62.0             
+ [7] GenomicRanges_1.54.1        GenomeInfoDb_1.38.8        
+ [9] IRanges_2.36.0              S4Vectors_0.40.2           
+[11] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
+[13] matrixStats_1.2.0           dplyr_1.1.4                
+[15] ggplot2_3.5.0               BiocParallel_1.36.0        
+[17] workflowr_1.7.1            
+
+loaded via a namespace (and not attached):
+ [1] bitops_1.0-7              gridExtra_2.3            
+ [3] rlang_1.1.3               magrittr_2.0.3           
+ [5] git2r_0.33.0              compiler_4.3.3           
+ [7] getPass_0.2-4             DelayedMatrixStats_1.24.0
+ [9] callr_3.7.6               vctrs_0.6.5              
+[11] stringr_1.5.1             pkgconfig_2.0.3          
+[13] crayon_1.5.2              fastmap_1.1.1            
+[15] XVector_0.42.0            labeling_0.4.3           
+[17] utf8_1.2.4                promises_1.2.1           
+[19] rmarkdown_2.26            ggbeeswarm_0.7.2         
+[21] ps_1.7.6                  xfun_0.43                
+[23] zlibbioc_1.48.2           cachem_1.0.8             
+[25] beachmat_2.18.1           jsonlite_1.8.8           
+[27] highr_0.10                later_1.3.2              
+[29] rhdf5filters_1.14.1       DelayedArray_0.28.0      
+[31] Rhdf5lib_1.24.2           irlba_2.3.5.1            
+[33] parallel_4.3.3            R6_2.5.1                 
+[35] bslib_0.6.2               stringi_1.8.3            
+[37] limma_3.58.1              jquerylib_0.1.4          
+[39] Rcpp_1.0.12               knitr_1.45               
+[41] R.utils_2.12.3            httpuv_1.6.15            
+[43] Matrix_1.6-5              tidyselect_1.2.1         
+[45] viridis_0.6.5             rstudioapi_0.16.0        
+[47] abind_1.4-5               yaml_2.3.8               
+[49] codetools_0.2-19          processx_3.8.4           
+[51] lattice_0.22-5            tibble_3.2.1             
+[53] withr_3.0.0               evaluate_0.23            
+[55] pillar_1.9.0              whisker_0.4.1            
+[57] generics_0.1.3            rprojroot_2.0.4          
+[59] RCurl_1.98-1.14           sparseMatrixStats_1.14.0 
+[61] munsell_0.5.0             scales_1.3.0             
+[63] glue_1.7.0                tools_4.3.3              
+[65] BiocNeighbors_1.20.2      ScaledMatrix_1.10.0      
+[67] locfit_1.5-9.9            fs_1.6.3                 
+[69] rhdf5_2.46.1              grid_4.3.3               
+[71] edgeR_4.0.16              colorspace_2.1-0         
+[73] GenomeInfoDbData_1.2.11   beeswarm_0.4.0           
+[75] BiocSingular_1.18.0       HDF5Array_1.30.1         
+[77] vipor_0.4.7               cli_3.6.2                
+[79] rsvd_1.0.5                fansi_1.0.6              
+[81] viridisLite_0.4.2         S4Arrays_1.2.1           
+[83] gtable_0.3.4              R.methodsS3_1.8.2        
+[85] sass_0.4.9                digest_0.6.35            
+[87] ggrepel_0.9.5             SparseArray_1.2.4        
+[89] dqrng_0.3.2               farver_2.1.1             
+[91] htmltools_0.5.8           R.oo_1.26.0              
+[93] lifecycle_1.0.4           httr_1.4.7               
+[95] statmod_1.5.0            </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
