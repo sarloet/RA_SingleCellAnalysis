@@ -2,18 +2,27 @@
 title: "QC and Preprocessing"
 subtitle: "01_Preprocessing"
 author: "SarahL."
-date: "2024-03-28"
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
   html_document:
     toc: true
     number_sections: true   
     toc_float: true
     code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
+
 
 
 # Quality Controll and Preprocessing
@@ -154,7 +163,7 @@ print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
 
 ```
 
-### Filtering
+## Filtering
 
 -   remove undetected genes
 -   remove cells with very few or many detected genes
@@ -362,8 +371,9 @@ plot_data <- as.matrix(t(rel_expression[names(most_expressed),]))
 boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRUE, main="Distribution of counts for the top 20 genes before filtering")
 ```
 
-### Normalization
+## Normalization
 
+### Library size normalization
 ```{r}
 # Library size normalization
 sce.lib <- computeLibraryFactors(sce.filtered)
@@ -371,6 +381,9 @@ sce.lib <- computeLibraryFactors(sce.filtered)
 
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +xlab("Log10 Library size factor") + geom_histogram(bins=50)+ggtitle("Distribution of size factors")
 ```
+
+
+### Normalization by deconvolution
 
 ```{r}
 # Normalization by deconvolution
@@ -400,11 +413,41 @@ abline(a=0, b=1, col="red")
 
 ```
 
+### Normalization with variance stabilising transformation
+
 ```{r}
-# Normalise 
+# Normalization with variance stabilising transformation
+counts <- counts(sce)
+vst_out <- vst(umi = counts,latent_var = 'log_umi',return_gene_attr = TRUE,return_cell_attr = TRUE)
+
+```
+
+
+
+```{r}
+# Apply Normalisation
 sce.filtered <- logNormCounts(sce.deconv)
 summary(sizeFactors(sce.filtered))
 assayNames(sce.filtered)
+
+#Check that the model used is the one we want (regressing out the effect of library size).
+print(vst_out$model_str)
+
+#The distribution of residual mean should be centered around 0
+ggplot(vst_out$gene_attr, aes(residual_mean)) +
+  geom_histogram(binwidth=0.01)
+
+#The distribution of residual variance should be centered around 1
+ggplot(vst_out$gene_attr, aes(residual_variance)) +
+  geom_histogram(binwidth=0.1) +
+  geom_vline(xintercept=1, color='red') +
+  xlim(0, 10)
+
+#Finally, check that the relationship between variance and mean has been removed
+ggplot(vst_out$gene_attr,
+       aes(log10(gmean), residual_variance)) +
+       geom_point(alpha=0.3, shape=16)
+
 ```
 
 ## Variable-level metrics

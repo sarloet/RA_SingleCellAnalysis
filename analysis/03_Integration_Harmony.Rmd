@@ -2,13 +2,16 @@
 title: "Batch correction and data set integration"
 subtitle: "03_Integration_Harmony"
 author: "SarahL."
-date: "2024-03-28"
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
   html_document:
     toc: true
     number_sections: true   
     toc_float: true
     code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
