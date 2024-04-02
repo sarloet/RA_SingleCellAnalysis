@@ -1,7 +1,7 @@
 name: "RA_SingleCellAnalysis"
 output_dir: ../docs
 navbar:
-  title: "RA_SingleCellAnalysis"
+  title: "RA SingleCellAnalysis"
   left:
   - text: Home
     icon: fa-home

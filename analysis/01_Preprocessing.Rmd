@@ -51,12 +51,12 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## Load the RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/00_sce_DataPreparation.rds'))
+sce <- readRDS(file = paste0(path,'output/00_sce_DataPreparation.rds'))
 
 ```
 
 
-### Explore dataset
+### Explore Dataset Dimensions
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -68,7 +68,7 @@ dim(sce)
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
-table(colData(sce)$Sample)
+knitr::kable(colData(sce)$Sample)
 
 ```
 
@@ -82,12 +82,10 @@ dim_before_filtering <- dim(sce)
 detected_genes <- rowSums(counts(sce)> 0)
 detected_cells <- colSums(counts(sce)> 0)
 
-
-
 #Remove Genes not expressed in at least 10 Cells & Cells with less than 150 genes expressed
 #sce <- sce[detected_genes > 10, detected_Cells >150]
 
-#Remove Genes not expressed in at least 10 Cells & Cells with less than 150 genes expressed
+#Remove Cells with very low expression of less than 150 genes expressed and genes not expressed
 sce <- sce[detected_genes > 0, detected_cells > 0]
 
 
