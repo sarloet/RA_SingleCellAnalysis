@@ -11,7 +11,6 @@
 
 <meta name="author" content="SarahL." />
 
-<meta name="date" content="2024-03-28" />
 
 <title>Data Preparation</title>
 
@@ -38,6 +37,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
@@ -330,22 +331,50 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">RA_SingleCellAnalysis</a>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
 </li>
 <li>
-  <a href="about.html">About</a>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="license.html">License</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -366,7 +395,7 @@ div.tocify {
 <h1 class="title toc-ignore">Data Preparation</h1>
 <h3 class="subtitle">00_DataPreparation</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">2024-03-28</h4>
+<h4 class="date">Apr 2 2024 16:29:48</h4>
 
 </div>
 
@@ -399,9 +428,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 2
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
@@ -424,21 +453,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -563,13 +589,15 @@ output
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong3cb3cd7">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9e3e00a54d0d49113304998a5683192e434cdfbetargetblank9e3e00aa">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> 3cb3cd7
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9e3e00a54d0d49113304998a5683192e434cdfbe" target="_blank">9e3e00a</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrong3cb3cd7"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9e3e00a54d0d49113304998a5683192e434cdfbetargetblank9e3e00aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -578,7 +606,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version 3cb3cd7.
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9e3e00a54d0d49113304998a5683192e434cdfbe" target="_blank">9e3e00a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -597,23 +626,10 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    data/cellbender_data_h5/
     Ignored:    data/metadata/
-
-Untracked files:
-    Untracked:  analysis/00_DataPreparation.Rmd
-    Untracked:  analysis/01_Preprocessing.Rmd
-    Untracked:  analysis/02_DimensionalityReduction.Rmd
-    Untracked:  analysis/03_Integration_Batchelor.Rmd
-    Untracked:  analysis/03_Integration_Harmony.Rmd
-    Untracked:  analysis/03_Integration_STACAS.Rmd
-    Untracked:  analysis/04_Clustering.Rmd
-    Untracked:  analysis/05_CelltypeAnnotation.Rmd
-    Untracked:  analysis/06_SubClustering.Rmd
+    Ignored:    output/00_sce_DataPreparation.rds
 
 Unstaged changes:
-    Modified:   .gitignore
-    Modified:   analysis/_site.yml
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
+    Modified:   analysis/01_Preprocessing.Rmd
 
 </code></pre>
 <p>
@@ -628,10 +644,91 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/00_DataPreparation.Rmd</code>)
+and HTML (<code>docs/00_DataPreparation.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9e3e00a54d0d49113304998a5683192e434cdfbe/analysis/00_DataPreparation.Rmd" target="_blank">9e3e00a</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+commit changes
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/analysis/00_DataPreparation.Rmd" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/d291fd3d613887958acc4824a320465eb9cb974d/docs/00_DataPreparation.html" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -723,12 +820,11 @@ href="CellBender/cellbender_output_SynBio130_w_introns_RL2_reporthtml">SynBio130
 rawdata_folder &lt;- paste0(path,&quot;data/cellbender_data_h5/&quot;)
 
 
-#Load data as sce object
+#Get file names
 filenames &lt;- list.files(rawdata_folder ,recursive = F, full.names = F,pattern = &quot;\\_filtered.h5$&quot;)
-
-#filepaths &lt;- list.dirs(&#39;D:/Masterthesis/cellbender_data_h5/&#39;,recursive = F, full.names = T)
 filepaths &lt;- paste(rawdata_folder,filenames,sep = &quot;&quot;)
 
+#Load data as sce object
 sce&lt;-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,type=&quot;HDF5&quot;)
 
 
@@ -889,7 +985,7 @@ metadata_df</code></pre>
 19                     
 20                     
 21                     </code></pre>
-<pre class="r"><code>#Add metadata
+<pre class="r"><code>#Add metadata to sce
 colData(sce) &lt;- dplyr::left_join(as.data.frame(colData(sce)),
                                    metadata_df, 
                                    by= c(&quot;Sample&quot; = &quot;orig.ident&quot;),
@@ -918,7 +1014,6 @@ colData names(26): Sample Barcode ... Smoking BMI
 reducedDimNames(0):
 mainExpName: NULL
 altExpNames(0):</code></pre>
-<pre class="r"><code>#ADD PROTOCOL</code></pre>
 </div>
 <div id="explore-dataset" class="section level3">
 <h3>Explore dataset</h3>
@@ -1093,6 +1188,43 @@ ENSG00000277196.AC007325.2  ENSG00000277196  AC007325.2 Gene Expression</code></
 <pre class="r"><code>#Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
 <p><img src="figure/00_DataPreparation.Rmd/PlotCellsPerSample-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCellsPerSample-1">
+Past versions of PlotCellsPerSample-1.png
+</button>
+</p>
+<div id="fig-PlotCellsPerSample-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/docs/figure/00_DataPreparation.Rmd/PlotCellsPerSample-1.png" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>table(colData(sce)$Sample)</code></pre>
 <pre><code>
 SynBio028_10000       SynBio049       SynBio050       SynBio074       SynBio076 
@@ -1108,6 +1240,43 @@ SynBio028_10000       SynBio049       SynBio050       SynBio074       SynBio076
 genesPerCell &lt;- colSums(counts(sce) &gt; 0)
 plot(density(genesPerCell), xlab=&quot;Genes per cell&quot;, main=&quot;Number of genes detected per cell&quot;)</code></pre>
 <p><img src="figure/00_DataPreparation.Rmd/PlotDetectedPerCell-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotDetectedPerCell-1">
+Past versions of PlotDetectedPerCell-1.png
+</button>
+</p>
+<div id="fig-PlotDetectedPerCell-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/docs/figure/00_DataPreparation.Rmd/PlotDetectedPerCell-1.png" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#transcript_capture_efficiency
 #Total UMI for a gene versus the number of times detected
 tmpCounts &lt;- counts(sce)
@@ -1121,6 +1290,43 @@ plot(rowSums(tmpCounts),
 <pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 2007 x values &lt;= 0 omitted
 from logarithmic plot</code></pre>
 <p><img src="figure/00_DataPreparation.Rmd/PlotCaptureEfficiency-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCaptureEfficiency-1">
+Past versions of PlotCaptureEfficiency-1.png
+</button>
+</p>
+<div id="fig-PlotCaptureEfficiency-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/docs/figure/00_DataPreparation.Rmd/PlotCaptureEfficiency-1.png" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Distribution of counts for the top 20 genes across cells
 
 #rel_expression &lt;- t( t(tmpCounts) / colSums(tmpCounts)) * 100

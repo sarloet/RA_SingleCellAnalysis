@@ -33,6 +33,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
 <!-- Add a small amount of space between sections. -->
@@ -252,22 +254,50 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">RA_SingleCellAnalysis</a>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
 </li>
 <li>
-  <a href="about.html">About</a>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="license.html">License</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -293,7 +323,7 @@ $(document).ready(function () {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -304,8 +334,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -318,9 +348,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
@@ -343,34 +373,33 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong3cb3cd7">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9e3e00a54d0d49113304998a5683192e434cdfbetargetblank9e3e00aa">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> 3cb3cd7
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9e3e00a54d0d49113304998a5683192e434cdfbe" target="_blank">9e3e00a</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrong3cb3cd7"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9e3e00a54d0d49113304998a5683192e434cdfbetargetblank9e3e00aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -379,7 +408,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version 3cb3cd7.
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9e3e00a54d0d49113304998a5683192e434cdfbe" target="_blank">9e3e00a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -398,23 +428,12 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    data/cellbender_data_h5/
     Ignored:    data/metadata/
-
-Untracked files:
-    Untracked:  analysis/00_DataPreparation.Rmd
-    Untracked:  analysis/01_Preprocessing.Rmd
-    Untracked:  analysis/02_DimensionalityReduction.Rmd
-    Untracked:  analysis/03_Integration_Batchelor.Rmd
-    Untracked:  analysis/03_Integration_Harmony.Rmd
-    Untracked:  analysis/03_Integration_STACAS.Rmd
-    Untracked:  analysis/04_Clustering.Rmd
-    Untracked:  analysis/05_CelltypeAnnotation.Rmd
-    Untracked:  analysis/06_SubClustering.Rmd
+    Ignored:    output/00_sce_DataPreparation.rds
 
 Unstaged changes:
-    Modified:   .gitignore
-    Modified:   analysis/_site.yml
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
+    Modified:   analysis/01_Preprocessing.Rmd
+    Modified:   analysis/02_DimensionalityReduction.Rmd
+    Modified:   analysis/03_Integration_Batchelor.Rmd
 
 </code></pre>
 <p>
@@ -464,7 +483,41 @@ Message
 Rmd
 </td>
 <td>
-3cb3cd7
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/analysis/index.Rmd" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/d291fd3d613887958acc4824a320465eb9cb974d/docs/index.html" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/3cb3cd7a4587544fb6737264da0c78be4fb073c9/analysis/index.Rmd" target="_blank">3cb3cd7</a>
 </td>
 <td>
 sarloet
