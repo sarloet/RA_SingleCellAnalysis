@@ -46,7 +46,7 @@ library(bluster)
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -54,7 +54,7 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/03_sce_Integration_Batchelor.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 
 ```
 
@@ -208,5 +208,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','04_sce_Clustering.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/04_sce_Clustering.rds'))
 ```

@@ -48,7 +48,7 @@ library(GSEABase)
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -56,7 +56,7 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/04_sce_Clustering.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/04_sce_Clustering.rds'))
 
 ```
 
@@ -483,5 +483,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','05_CelltypeAnnotation'))
+saveRDS(sce.filtered, file =paste0(path,'/output/05_CelltypeAnnotation'))
 ```

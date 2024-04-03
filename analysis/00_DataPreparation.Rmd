@@ -49,7 +49,7 @@ library(scater)
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 ## Reports {.tabset}
@@ -99,11 +99,13 @@ View the CellBender html report output for each sample
 
 ## Load Data
 
-Load in the filtered feature barcode matrices from Cellbender.
+### Load Cellbender output matrices
+
+Load in the filtered feature barcode matrices from Cellbender of each sample and save them as sce object.
 
 ```{r LoadDataset}
 ## RA DATASET
-rawdata_folder <- paste0(path,"data/cellbender_data_h5/")
+rawdata_folder <- paste0(path,"/data/cellbender_data_h5/")
 
 
 #Get file names
@@ -125,7 +127,7 @@ sce
 
 ```{r,LoadMetadata}
 #Metadata path
-metadata_folder <- paste0(path,"data/metadata/Metadata_Master.csv")
+metadata_folder <- paste0(path,"/data/metadata/Metadata_Master.csv")
 
 #Load metadata
 metadata_df <-read.csv(metadata_folder, header=TRUE, sep=",")
@@ -160,15 +162,15 @@ dim(sce)
 
 ```{r ShowColData}
 #Feautures/row data
-colData(sce)
+data.frame(colData(sce))
 ```
 
 ```{r ShowRowData}
 #Droplet details / row data
-rowData(sce)
+data.frame(rowData(sce))
 ```
 
-## Exploratory QC plots
+## Exploratory plots
 
 ### Histogramm with number of cells {.tabset}
 
@@ -242,5 +244,5 @@ plotHighestExprs(sce,n = 25)
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','00_sce_DataPreparation.rds'))
+saveRDS(sce, file =paste0(path,'/output/00_sce_DataPreparation.rds'))
 ```

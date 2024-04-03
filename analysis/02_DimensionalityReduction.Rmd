@@ -39,12 +39,12 @@ library(scater)
 
 ```
 
-### Set parameter
+### Set Parameter
 
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -52,12 +52,12 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/01_sce_Preprocessing.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/01_sce_Preprocessing.rds'))
 
 ```
 
 
-### Explore dataset
+### Explore Dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -65,9 +65,11 @@ dim(sce)
 ```
 
 
-## HVG
+## Feature selection
 
-### Select HVG
+In feature selection the goal is to remove genes which are uninteresting or uninformative to both improve computation and by reducing this ‘noise’ hopefully enable us to more clearly see the true biology in our data. We make the assumption that most of the low level variance is not caused by real biology and is due to stochastic sampling in the single cell protocol and various other technical effects. The genes which have the most variance are therefore the ones that reflect the real biological difference and are what we want to focus on. 
+
+### Quantifying per-gene variation
 
 ```{r}
 # HVG selection with Turned off weighting to avoid overfitting for each donor.
@@ -85,6 +87,9 @@ as.data.frame(dec[order(dec$bio, decreasing=TRUE),]) %>%
 
 ```
 
+### Select Highly Variable Genes
+
+In this analysis we take the top 3000 genes with largest (biological) variation.
 ```{r}
 ## Extract top genes using scater package
 
@@ -103,6 +108,10 @@ top.hvgs <- getTopHVGs(dec, n=3000)
 length(top.hvgs)
 ```
 
+
+### Plot per-gene variation
+
+Plot variance vs mean for each gene and visualise the limit of technical variance according to the fitted trend line. We would regard those features below the trend line as technical noise.
 ```{r}
 #EVT add col if hvg
 
@@ -119,11 +128,24 @@ for (i in seq_along(per.block)) {
 }
 ```
 
+
+## Dimensionality Reduction
+
+Dimensionality reduction aims to reduce the number of separate dimensions in the data. This is possible because different genes are correlated if they are affected by the same biological process. Thus, we do not need to store separate information for individual genes, but can instead compress multiple features into a single dimension. This reduces computational work in downstream analyses like clustering, as calculations only need to be performed for a few dimensions, rather than thousands.
+
+### Perform Principal Components Analysis
+
+PCA is a linear transformation of the data, such that a set of variables (genes) are turned into new variables called Principal Components (PCs). PCs combine information across several genes in a way that best captures the variability observed across samples (cells).
+
 ```{r}
 #Run PCA
 sce.filtered <- runPCA(sce.filtered, subset_row = top.hvgs)
 
 ```
+
+#### Chosing the number of PCs
+
+The advantage of using PCA is that the total amount of variance explained by the first few PCs is usually enough to capture most of the signal in the data. Therefore, we can exclude the remaining PCs without much loss of information. 
 
 ```{r}
 #Visualise PCA
@@ -133,21 +155,19 @@ reducedDim(sce.filtered, "PCA")[1:10, 1:5]
 pca_pct_variance <- data.frame(variance = attr(reducedDim(sce.filtered, "PCA"), "percentVar"))
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
-
-# scree plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")
-
-```
-
-```{r}
 #PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
 intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce.filtered, "PCA")), k=20)
 
 ```
 
 ```{r}
-#PCA select nr of PC
+# scree plot (PC vs variance)
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 12)
 
+```
+
+```{r}
+#PCA select nr of PC
 reducedDim(sce.filtered,"PCA_reduced") <- reducedDim(sce.filtered,"PCA")[,seq_len(12)]
 reducedDimNames(sce.filtered)
 
@@ -156,21 +176,35 @@ ncol(reducedDim(sce.filtered,"PCA_reduced"))
 
 ```
 
+#### Plot PCA  {.tabset}
+
+##### PCA Normal
 ```{r}
 #Plot PCA 
-
 plotReducedDim(sce.filtered, dimred = "PCA", colour_by = "Sample")
+```
+##### PCA reduced
+```{r}
+#Plot PCA 
 plotReducedDim(sce.filtered, dimred = "PCA_reduced", colour_by = "Sample")
-plotReducedDim(sce.filtered, dimred = "PCA", ncomponents = 3, colour_by = "Sample")
+```
+##### PCA three PC's
+```{r}
+#Plot PCA 
+plotReducedDim(sce.filtered, dimred = "PCA_reduced", ncomponents = 3, colour_by = "Sample")
 ```
 
+
+#### Plot PCA Facet {.tabset}
+
+##### PCA per Sample
 ```{r}
 #Plot PCA per sample
-
 plotReducedDim(sce.filtered, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce.filtered$Sample)
-
+```
+##### PCA per Joint
+```{r}
 plotReducedDim(sce.filtered, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce.filtered$Joint.Location)
-
 
 #ggcells(sce.filtered, aes(x = PCA.1, y = PCA.2, colour = Sample)) +
   #geom_point(size = 0.5) +
@@ -178,12 +212,12 @@ plotReducedDim(sce.filtered, dimred="PCA_reduced", colour_by="Sample",point_size
   #labs(x = "PC1", y = "PC2", colour = "Sample")+
   #theme_classic()+
   #theme(strip.background = element_rect(colour = "grey", fill = "grey"))
-
 ```
 
-## PCA-level metrics
 
-The plot below shows, for each of the PCs, the variance explained by the variables in colData(sce) that are most strongly associated with the PCs. \[We will ignore the sample_id variable: it has a unique value for each cell, so can explain all the variation for all PCs.\]
+#### PCA-level metrics
+
+The plot below shows, for each of the PCs, the variance explained by the variables in colData(sce) that are most strongly associated with the PCs. The sample_id variable: it has a unique value for each cell, so can explain all the variation for all PCs.
 
 ```{r}
 explanPc <- getExplanatoryPCs(sce.filtered,dimred = "PCA",n_dimred=12,variables = c(
@@ -196,15 +230,26 @@ explanPc <- getExplanatoryPCs(sce.filtered,dimred = "PCA",n_dimred=12,variables 
 plotExplanatoryPCs(explanPc) 
 ```
 
+
+### Perform Uniform Manifold Approximation and Projection
+
+While PCA can only capture linear transformations of the original variables (genes), UMAP performs a non-linear transformation of the data to project it down to lower dimensions. This preserves both local and global structures.
+
 ```{r}
 #Run UMAP
 sce.filtered <- runUMAP(sce.filtered,name = "UMAP", dimred = "PCA_reduced")
 
 ```
 
+
+#### Plot UMAP  {.tabset}
+
+##### Colored by Sample
 ```{r}
-#Plot UMAP before data integration
 plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
+```
+##### Colored by Joint
+```{r}
 plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Joint.Location")
 #plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Protocol")
 
@@ -214,26 +259,47 @@ plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sc
 #Plot UMAP before data integration per sample
 plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Joint.Location)
 
-#ggcells(sce.filtered, aes(x = UMAP.1, y = UMAP.2, colour = JointLocation)) +
-  #geom_point(size = 0.5) +
-  #facet_wrap(~ JointLocation) +
-  #labs(x = "PC1", y = "PC2", colour = "JointLocation")
-
 ```
 
+
+#### Plot UMAP Facet {.tabset}
+
+##### Facet by Sample
 ```{r}
-#Plot UMAP with QC values
-plotReducedDim(sce.filtered, dimred="UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
-plotReducedDim(sce.filtered, dimred="UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
-plotReducedDim(sce.filtered, dimred="UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
-plotReducedDim(sce.filtered, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce.filtered)[grepl("(^B2M)", rowData(sce.filtered)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
-
-
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Sample)
+```
+##### Facet by Joint
+```{r}
+#Plot UMAP before data integration per sample
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Joint.Location)
 ```
 
+#### Plot UMAP with QC metrics {.tabset}
 
-## Save the dataset
+##### Colored by Mitochondrial Genes
+```{r}
+#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+```
+##### Colored by nr of Genes
+```{r}
+#Plot UMAP colored by detected
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
+```
+##### Colored by nr of Counts
+```{r}
+#Plot UMAP colored by sum
+plotReducedDim(sce.filtered, dimred="UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
+```
+##### Colored by Ubi Markergene
+```{r}
+#Plot UMAP colored by Ubi Markergene expression
+plotReducedDim(sce.filtered, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce.filtered)[grepl("(^B2M)", rowData(sce.filtered)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
+```
+
+## Save Dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','02_sce_DimensionalityReduction.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
 ```

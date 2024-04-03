@@ -44,7 +44,7 @@ library(bluster)
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -52,7 +52,7 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/05_sce_CelltypeAnnotation.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
 ```
 
@@ -185,5 +185,5 @@ for (name in SC_celltypes){
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','06_sce_SubClustering.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/06_sce_SubClustering.rds'))
 ```

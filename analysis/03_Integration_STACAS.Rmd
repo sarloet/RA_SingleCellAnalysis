@@ -44,7 +44,7 @@ library(scater)
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -52,7 +52,7 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/02_sce_DimensionalityReduction.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
 
 ```
 
@@ -157,5 +157,5 @@ plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="JointLocation") + g
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','03_Integration_STACAS'))
+saveRDS(sce.filtered, file =paste0(path,'/output/03_Integration_STACAS'))
 ```

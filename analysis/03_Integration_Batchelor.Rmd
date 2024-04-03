@@ -41,12 +41,12 @@ library(bluster)
 
 ```
 
-### Set parameter
+### Set Parameter
 
 ```{r Setup}
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
-path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
+path <- here::here()
 ```
 
 
@@ -54,19 +54,19 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'output/02_sce_DimensionalityReduction.rds'))
+sce.filtered <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
 
 ```
 
 
-### Explore dataset
+### Explore Dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
 dim(sce)
 ```
 
-## Pre-batch correction plots
+## Pre-Batch Correction Plots
 
 ```{r}
 #Plot UMAP before data integration
@@ -74,7 +74,8 @@ plotReducedDim(sce, dimred="PCA", colour_by="Sample") #+ facet_wrap(~sce.filtere
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
 ```
 
-## Batch removal
+## Batch Removal with Mutual Nearest Neighbour
+The Mutual Nearest Neighbours algorithm works by determining if pairs of cells from two different batches are within the top K closest neighbours of each other.
 
 ```{r}
 #Initialize sce element with batch removal
@@ -83,23 +84,7 @@ sce.BatchR <- sce
 ```
 
 
-## Pre-batch correction plots
-
-```{r}
-#Plot UMAP before data integration
-plotReducedDim(sce, dimred="PCA", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
-```
-
-## Batch removal
-
-```{r}
-#Initialize sce element with batch removal
-sce.BatchR <- sce 
-
-```
-
-### Batch removal with batchelor package
+### Run Batchelor 
 
 ```{r}
 #Perform scaling normalization within each batch
@@ -108,18 +93,17 @@ summary(sizeFactors(sce.BatchR))
 
 ```
 
+Batches are merged in a pairwise manner (first two batches are merged to create a new cohort, then the next batch is merged with this new cohort, and so on until all batches have been integrated). Batch correction will work more effectively between batches with large number of cells and between batches that have many cells of the same cell type. As a result it is often beneficial to specify the order in which batches should be combined.
+
 ```{r}
 #Set manual merge_order
 merge_order <- list(
-          list("SynBio028_1000","SynBio050", "SynBio074",list("SynBio077a", "SynBio077b")), #seronegative
-          list("SynBio076", "SynBio081", "SynBio083","SynBio084","SynBio087","SynBio093", "SynBio096",list("SynBio098a", "SynBio098b"), "SynBio127", "SynBio130", "SynBio049"))#seropositive
+          list("SynBio028_1000","SynBio050", "SynBio074","SynBio077a", "SynBio077b"), #seronegative
+          list("SynBio076", "SynBio081", "SynBio083","SynBio084","SynBio087","SynBio093", "SynBio096","SynBio098a", "SynBio098b", "SynBio127", "SynBio130", "SynBio049"))#seropositive
 
-merge_order <- list(
-          list("SynBio124", "SynBio110", "SynBio079"),
-          list("SynBio121"),
-          list("SynBio023"))
 
 ```
+
 
 ```{r, warning=FALSE}
 #Perform fastMNN
@@ -144,7 +128,7 @@ metadata(sce.Batchelor)$merge.info$lost.var
 #Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity
 ```
 
-## PCA and UMAP Plots after Integration
+## PCA Plots after Integration
 
 ```{r}
 #Plot UMAP before data integration
@@ -171,6 +155,8 @@ sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")
 
 ```
 
+## UMAP Plots after Integration
+
 ```{r}
 #Plot UMAP before data integration
 plotReducedDim(sce.BatchR, dimred="UMAP", colour_by="Sample") + ggtitle("UMAP before data integration")
@@ -193,5 +179,5 @@ plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtit
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0('/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/output/','03_sce_Integrated_Batchelor.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/03_sce_Integrated_Batchelor.rds'))
 ```
