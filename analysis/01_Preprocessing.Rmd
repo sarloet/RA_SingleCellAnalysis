@@ -72,7 +72,11 @@ sce <- readRDS(file = paste0(path,'output/00_sce_DataPreparation.rds'))
 dim(sce)
 ```
 
-### Exploratory QC plots
+### Histogramm with number of cells {.tabset}
+
+Show the number of cells detected in each sample or joint location before filtering
+
+#### Per Sample
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
@@ -81,7 +85,18 @@ data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
 
+#### Per Joint Location
+
+```{r PlotDetectedPerCell}
+#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+data.frame(as.list(table(colData(sce)$Joint.Location)))
+```
+
+
 ## Initial filtering
+
+Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <200 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
 
 ```{r}
 #Initial filtering before droplet removal
@@ -112,6 +127,8 @@ cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
 ```
 
 ## Doublet detection
+
+Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets.
 
 ```{r}
 #Detection
@@ -171,11 +188,11 @@ print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
 -   compute normalized expression values for visualization
 
 ```{r}
-# calculate per-cell quality control (QC) metrics using scater
-
+# Indentify mitochondrial genes
 is_mito<- grepl("(^MT-)|(^mt-)", rowData(sce)$Symbol)
 rowData(sce)$Symbol[is_mito] #Show the MT genes
 
+# calculate per-cell quality control (QC) metrics using scater
 sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 ```
 

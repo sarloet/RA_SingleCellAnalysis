@@ -14,7 +14,8 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = TRUE)}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(warning = FALSE)
 knitr::opts_chunk$set(message = FALSE)
@@ -148,6 +149,8 @@ rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
 ```
 
 ## Explore dataset
+
+Dimensions of the count matrix
 
 ```{r ShowDim}
 #Dimensions of count matrix
