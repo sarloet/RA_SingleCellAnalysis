@@ -87,7 +87,7 @@ data.frame(as.list(table(colData(sce)$Sample)))
 
 #### Per Joint Location
 
-```{r PlotDetectedPerCell}
+```{r PlotCellsJoint}
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
 data.frame(as.list(table(colData(sce)$Joint.Location)))
@@ -98,7 +98,7 @@ data.frame(as.list(table(colData(sce)$Joint.Location)))
 
 Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <200 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
 
-```{r}
+```{r InitialFiltering}
 #Initial filtering before droplet removal
 dim_before_filtering <- dim(sce)
 
@@ -130,7 +130,7 @@ cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
 
 Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets.
 
-```{r}
+```{r DoubletDetection}
 #Detection
 sce <- scDblFinder::scDblFinder(sce, samples="Sample", BPPARAM = bpp) 
 
@@ -139,7 +139,7 @@ table(sce$Sample,sce$scDblFinder.class)
 
 ```
 
-```{r}
+```{r DoubletDetectionPlots}
 #Plot singlet/doublet histogramm
 
 print(as.data.frame(colData(sce)) %>%
@@ -172,22 +172,18 @@ colData(sce) %>%
 
 ```
 
-```{r}
-#Removal
+```{r DoubletRemoval}
+#Apply Doublet Removal
 print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
 sce <- sce[ ,sce$scDblFinder.class == "singlet"]
 print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
 
 ```
 
-## Filtering
+## Filter Cells
 
--   remove undetected genes
--   remove cells with very few or many detected genes
--   remove very lowly expressed genes
--   compute normalized expression values for visualization
 
-```{r}
+```{r CalcQcMetrics}
 # Indentify mitochondrial genes
 is_mito<- grepl("(^MT-)|(^mt-)", rowData(sce)$Symbol)
 rowData(sce)$Symbol[is_mito] #Show the MT genes
@@ -196,28 +192,16 @@ rowData(sce)$Symbol[is_mito] #Show the MT genes
 sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 ```
 
-```{r}
-# Library size?
 
-hist(sce$total,breaks = 100)
-```
-
-```{r}
-# calculate per-cell quality control (QC) metrics using scater
-
-hist(data.frame(colData(sce))$detected,breaks = 100)
-```
-
-```{r}
+```{r FixedThresholds}
 #Some Fixed thresholds
-
 colData(sce)$qc.count_manual <- sce$sum < 1000 # Cells have at least a count of 750
 colData(sce)$qc.genexp_manual <- sce$detected < 500 # Cells have at least 500 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
 
-```{r}
+```{r AdaptiveThresholds}
 #With Adaptive thresholds (for each batch/sample)
 
 colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="lower",batch =sce$Sample )
@@ -235,7 +219,7 @@ colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce
 
 ```
 
-```{r}
+```{r QcSummary}
 
 # Summary of all discarted cells
 data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
@@ -245,9 +229,12 @@ data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
 
 ```
 
+
+### QC filtering Plots
+
 The aim by plotting the proportion of mitochondrial counts against some of the other QC metrics is to confirm that there are no cells with both large total counts and large mitochondrial counts, to ensure that we are not inadvertently removing high-quality cells that happen to be highly metabolically active (e.g., hepatocytes).
 
-```{r}
+```{r QcPlots}
 # QCplots after filtering whole dataset
 
 colData(sce) %>% 
@@ -264,7 +251,7 @@ colData(sce) %>%
 
 ```
 
-```{r}
+```{r QcPlots}
 #Plot Total count
 p1<-plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Total count") +guides(colour=guide_legend(title="Discarded"))
 
@@ -277,7 +264,7 @@ p3<-plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("
 grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
 ```
 
-```{r}
+```{r QcPlots}
 #Look at samples individually
 
 colData(sce) %>% 
@@ -299,7 +286,7 @@ colData(sce) %>%
 
 ```
 
-```{r}
+```{r QcPlots}
 #Look at samples individually
 
 #Plot Total count
@@ -326,7 +313,7 @@ grid.arrange(p1, p2, p3, nrow = 3)
 
 ```
 
-```{r}
+```{r QcPlots}
 #Cells marked to be dropped per samples
 
 # Relative comparison / by sample
@@ -355,25 +342,57 @@ as.data.frame(colData(sce)) %>%
 
 ```
 
+### Apply filtering
 ```{r}
 # Create the filtered sce element
 sce.filtered <- sce[, !colData(sce)$discard]
 
 ```
 
-```{r}
+
+## Filter Genes
+
+```{r GeneFiltering}
+
+#Filter out genes 
+dim_before_filtering <- dim(sce)
+
+#Get only the detected Genes
+detected_genes <- rowSums(counts(sce)> 0)
+
+#Remove Genes not expressed in at least 10 Cells 
+sce <- sce[detected_genes > 10,]
+
+
+dim_after_filtering <- dim(sce)
+
+cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
+    "\nNR of Cells After Initial Filtering ", dim_after_filtering[2],
+    "\nNR of Cells Filtered out ", dim_before_filtering[2] - dim_after_filtering[2],
+    
+    "\n\nNR of Genes Before Initial Filtering ", dim_before_filtering[1],
+    "\nNR of Genes After Initial Filtering ", dim_after_filtering[1],
+    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
+    )
+
+```
+
+
+## Cells after filtering
+
+```{r PlotCellsPerSampleAfterFiltering}
 #Histogramm with number of cells per sample after filtering
 ggplot(colData(sce.filtered), aes(x=Sample))+geom_bar()+ coord_flip()+ggtitle("Number of cells per sample")
 
 ```
 
-```{r}
+```{r PlotCellsPerJointAfterFiltering}
 #Histogramm with number of cells per sample after filtering
 ggplot(colData(sce.filtered), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
 
 ```
 
-```{r}
+```{r PlotTop25GenesAfterFiltering}
 #Check top 20 expressed genes after filtering
 
 rel_expression <- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
@@ -385,6 +404,18 @@ boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRU
 ```
 
 ## Normalization
+
+```{r}
+# Library size?
+
+hist(sce$total,breaks = 100)
+```
+
+```{r}
+# calculate per-cell quality control (QC) metrics using scater
+
+hist(data.frame(colData(sce))$detected,breaks = 100)
+```
 
 ### Library size normalization
 ```{r}
