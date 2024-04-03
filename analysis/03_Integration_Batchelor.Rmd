@@ -41,7 +41,7 @@ library(bluster)
 
 ```
 
-### Set params
+### Set parameter
 
 ```{r Setup}
 set.seed(100)

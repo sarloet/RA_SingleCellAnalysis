@@ -43,7 +43,7 @@ library(GSEABase)
 
 ```
 
-### Set params
+### Set parameter
 
 ```{r Setup}
 set.seed(100)
@@ -126,6 +126,15 @@ dittoDotPlot(sce, vars = unique(topDEgenes), group.by = "label",min.color="white
 
 
 plotDots(sce, features = unique(topDEgenes),group = "label", block = "Sample",scale = TRUE, center = TRUE, zlim = c(-3, 3))
+
+#for (t in tests) {
+  #cat('### Markers via', t, 'test\n')
+  #top_dt  = top_fms[[t]]
+  #suppressWarnings(print(plot_dotplot(pb_fine, props_fine, top_dt, labels_dt, 
+    #row_split = 'broad_marker')))
+  #cat('\n\n')
+#}
+
 
 ```
 

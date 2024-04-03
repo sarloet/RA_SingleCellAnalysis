@@ -8,7 +8,7 @@ output:
     toc: true
     number_sections: true   
     toc_float: true
-    code_folding: hide
+    code_folding: show
     df_print: paged
 editor_options:
   chunk_output_type: inline
@@ -47,7 +47,7 @@ library(scDblFinder)
 
 ```
 
-### Set params
+### Set parameter
 
 ```{r Setup}
 set.seed(100)
@@ -77,14 +77,14 @@ dim(sce)
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
-knitr::kable(colData(sce)$Sample)
+data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
 
 ## Initial filtering
 
 ```{r}
-#Initial filtering
+#Initial filtering before droplet removal
 dim_before_filtering <- dim(sce)
 
 #Get only the detected Genes
@@ -92,10 +92,10 @@ detected_genes <- rowSums(counts(sce)> 0)
 detected_cells <- colSums(counts(sce)> 0)
 
 #Remove Genes not expressed in at least 10 Cells & Cells with less than 150 genes expressed
-#sce <- sce[detected_genes > 10, detected_Cells >150]
+#sce <- sce[detected_genes > 10, detected_Cells >200]
 
-#Remove Cells with very low expression of less than 150 genes expressed and genes not expressed
-sce <- sce[detected_genes > 0, detected_cells > 0]
+#Remove Cells with very low expression of less than 200 genes expressed and genes not expressed
+sce <- sce[detected_genes > 0, detected_cells > 200]
 
 
 dim_after_filtering <- dim(sce)
@@ -194,27 +194,23 @@ hist(data.frame(colData(sce))$detected,breaks = 100)
 ```{r}
 #Some Fixed thresholds
 
-colData(sce)$qc.count_manual <- sce$sum < 750 # Cells have at least a count of 750
+colData(sce)$qc.count_manual <- sce$sum < 1000 # Cells have at least a count of 750
 colData(sce)$qc.genexp_manual <- sce$detected < 500 # Cells have at least 500 genes expressed
-colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 25 #Mitochondrial contamination has to be lower than 25%
-
-
-#discard <- qc.count  | qc.genexp  | qc.mito
+colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
 
 ```{r}
 #With Adaptive thresholds (for each batch/sample)
 
-#Discard bad cells
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
-attr(colData(sce)$qc.count, "thresholds")
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="lower",batch =sce$Sample )
+attr(colData(sce)$qc.count, "thresholds") # Cells with very low number of counts
 
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
-attr(colData(sce)$qc.genexp, "thresholds")
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
+attr(colData(sce)$qc.genexp, "thresholds") # Cells with very low number of genes
 
 colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent, type="higher",batch =sce$Sample)
-attr(colData(sce)$qc.mito, "thresholds")
+attr(colData(sce)$qc.mito, "thresholds") # Cells with high mitochondrial content
 
 
 

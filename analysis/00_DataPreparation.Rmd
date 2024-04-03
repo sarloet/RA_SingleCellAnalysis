@@ -16,6 +16,11 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
@@ -38,7 +43,7 @@ library(scater)
 
 ```
 
-### Set params
+### Set parameter
 
 ```{r Setup}
 set.seed(100)
@@ -46,28 +51,32 @@ bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
 path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 ```
 
+## Reports {.tabset}
 
-## View CellRanger output
+### CellRanger
 
+View the CellRanger html report output for each sample
 
-- [SynBio028](Cellranger/web_summary_SynBio028.html)\n
-- [SynBio049](Cellranger/web_summary_SynBio049.html)\n
-- [SynBio050](Cellranger/web_summary_SynBio050.html)\n
-- [SynBio074](Cellranger/web_summary_SynBio074.html)\n
-- [SynBio076](Cellranger/web_summary_SynBio076.html)\n
-- [SynBio077a](Cellranger/web_summary_SynBio077a.html)\n
-- [SynBio077b](Cellranger/web_summary_SynBio077b.html)\n
-- [SynBio081](Cellranger/web_summary_SynBio081.html)\n
-- [SynBio083](Cellranger/web_summary_SynBio083.html)\n
-- [SynBio084](Cellranger/web_summary_SynBio084.html)\n
-- [SynBio087](Cellranger/web_summary_SynBio087.html)\n
-- [SynBio093](Cellranger/web_summary_SynBio093.html)\n
-- [SynBio098a](Cellranger/web_summary_SynBio098a.html)\n
-- [SynBio098b](Cellranger/web_summary_SynBio098b.html)\n
-- [SynBio127](Cellranger/web_summary_SynBio127.html)\n
-- [SynBio130](Cellranger/web_summary_SynBio130.html)\n
+- [SynBio028](CellRanger/web_summary_SynBio028.html)\n
+- [SynBio049](CellRanger/web_summary_SynBio049.html)\n
+- [SynBio050](CellRanger/web_summary_SynBio050.html)\n
+- [SynBio074](CellRanger/web_summary_SynBio074.html)\n
+- [SynBio076](CellRanger/web_summary_SynBio076.html)\n
+- [SynBio077a](CellRanger/web_summary_SynBio077a.html)\n
+- [SynBio077b](CellRanger/web_summary_SynBio077b.html)\n
+- [SynBio081](CellRanger/web_summary_SynBio081.html)\n
+- [SynBio083](CellRanger/web_summary_SynBio083.html)\n
+- [SynBio084](CellRanger/web_summary_SynBio084.html)\n
+- [SynBio087](CellRanger/web_summary_SynBio087.html)\n
+- [SynBio093](CellRanger/web_summary_SynBio093.html)\n
+- [SynBio098a](CellRanger/web_summary_SynBio098a.html)\n
+- [SynBio098b](CellRanger/web_summary_SynBio098b.html)\n
+- [SynBio127](CellRanger/web_summary_SynBio127.html)\n
+- [SynBio130](CellRanger/web_summary_SynBio130.html)\n
 
-## View CellBender output
+### CellBender
+
+View the CellBender html report output for each sample
 
 - [SynBio028](CellBender/cellbender_output_SynBio028_10000_w_introns_RL_report.html)\n
 - [SynBio049](CellBender/cellbender_output_SynBio049_w_introns_report.html)\n
@@ -89,6 +98,7 @@ path <- "/Volumes/Elements/Masterthesis/RA_SingleCellAnalysis/"
 
 ## Load Data
 
+Load in the filtered feature barcode matrices from Cellbender.
 
 ```{r LoadDataset}
 ## RA DATASET
@@ -126,7 +136,7 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
                                    by= c("Sample" = "orig.ident"),
                                    suffix=c(".x",".y")) %>% 
       #dplyr::select(Sample, Barcode, Diagnosis, sex, Age, Joint.Location, protocol, Pathotype,Krenn total score,) %>% 
-      dplyr::select(-one_of("Comments")) %>% 
+      dplyr::select(-one_of("Comments")) %>% #select all except
       DataFrame(row.names=colnames(sce))
 
 
@@ -134,11 +144,10 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
 colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
 rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
 
-sce
 
 ```
 
-### Explore dataset
+## Explore dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -156,14 +165,31 @@ colData(sce)
 rowData(sce)
 ```
 
-### Exploratory QC plots
+## Exploratory QC plots
+
+### Histogramm with number of cells {.tabset}
+
+Show the number of cells detected in each sample or joint location before filtering
+
+#### Per Sample
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
-table(colData(sce)$Sample)
+data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
+#### Per Joint Location
+
+```{r PlotDetectedPerCell}
+#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+data.frame(as.list(table(colData(sce)$Joint.Location)))
+```
+
+### Plot number of genes detected per cell
+
+This plot shows cell counts per sample / count occurrence
 
 ```{r PlotDetectedPerCell}
 #Number of genes detected per cell
@@ -172,6 +198,9 @@ genesPerCell <- colSums(counts(sce) > 0)
 plot(density(genesPerCell), xlab="Genes per cell", main="Number of genes detected per cell")
 
 ```
+### Plot transcript capture efficiency
+
+This plot gives an idea about the sequencing depth and if the sequencing has reached saturation or not. Plotted is the total gene count across all cells (x-axis) vs Proportion of cells the gene is detected in (y-axis) where each dot represents a gene.
 
 ```{r PlotCaptureEfficiency}
 #transcript_capture_efficiency
@@ -186,8 +215,11 @@ plot(rowSums(tmpCounts),
      main="Total UMI for a gene vs times detected")
 
 ```
+### Plot top 25 genes in the dataset
 
-```{r PlotTop20Genes,eval=FALSE}
+The most strongly and commonly expressed genes expected among all cells  are ribosomal and mitochondrial.
+
+```{r PlotTop25Genes,eval=FALSE}
 #Distribution of counts for the top 20 genes across cells
 
 #rel_expression <- t( t(tmpCounts) / colSums(tmpCounts)) * 100
@@ -199,9 +231,10 @@ plot(rowSums(tmpCounts),
 
 #rm(tmpCounts)
 
-plotHighestExprs(sce,n = 20)
+plotHighestExprs(sce,n = 25)
 
 ```
+
 
 ## Save the dataset
 
