@@ -9,5 +9,5 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
-data/*
+data/cellbender_data_h5
 output/*

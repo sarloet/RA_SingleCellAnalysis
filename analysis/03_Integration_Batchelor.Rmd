@@ -55,7 +55,6 @@ path <- here::here()
 ```{r LoadDataset}
 ## RA DATASET
 sce.filtered <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
-
 ```
 
 
@@ -66,11 +65,15 @@ sce.filtered <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReducti
 dim(sce)
 ```
 
-## Pre-Batch Correction Plots
-
+## Pre-Batch Correction Plots {.tabset}
+### PCA
 ```{r}
 #Plot UMAP before data integration
-plotReducedDim(sce, dimred="PCA", colour_by="Sample") #+ facet_wrap(~sce.filtered$Sample)
+plotReducedDim(sce, dimred="PCA", colour_by="Sample")
+```
+### UMAP
+```{r}
+#Plot UMAP before data integration
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
 ```
 
@@ -80,7 +83,6 @@ The Mutual Nearest Neighbours algorithm works by determining if pairs of cells f
 ```{r}
 #Initialize sce element with batch removal
 sce.BatchR <- sce 
-
 ```
 
 
@@ -116,38 +118,43 @@ bpstop(bpp)
 assay(sce.BatchR, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
 reducedDim(sce.BatchR, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
 
-
 ```
 
-### QC plots batchelor
 
+
+### QC Plots Batchelor
+
+We use the percentage of variance lost as a diagnostic measure. Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity.
 ```{r}
-#We use the percentage of variance lost as a diagnostic measure:
+#Percentage Variance lost
 metadata(sce.Batchelor)$merge.info$lost.var
 
-#Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity
 ```
 
-## PCA Plots after Integration
-
+## PCA Plots after Integration {.tabset}
+### Colored by Sample
 ```{r}
-#Plot UMAP before data integration
-plotReducedDim(sce.BatchR, dimred="PCA", colour_by="Sample") + ggtitle("PCA before data integration")
-plotReducedDim(sce.BatchR, dimred="PCA", colour_by="JointLocation") + ggtitle("PCA before data integration")
-
-#Plot UMAP after data integration
+#Plot PCA after data integration
 plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")#+ facet_wrap(~sce.filtered$Sample)
-
-
-#Plot UMAP before data integration per sample
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
-#ggcells(sce.BatchR, aes(x = MNN_UMAP.1, y = MNN_UMAP.2, colour = Sample)) +geom_point(size = 0.5) +facet_wrap(~ Sample) +labs(x = "PC1", y = "PC2", colour = "Sample")
-
-#Plot UMAP before data integration per joint
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
-
 ```
+### Colored by Joint
+```{r}
+#Plot PCA after data integration
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")
+```
+### Facet by Sample
+```{r}
+#Plot PCA after data integration per sample
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
+```
+### Facet by Joint
+```{r}
+#Plot PCA before data integration per joint
+plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
+```
+
+
+## UMAP Plots after Integration {.tabset}
 
 ```{r}
 #Run UMAP
@@ -155,25 +162,25 @@ sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")
 
 ```
 
-## UMAP Plots after Integration
-
+### Colored by Sample
 ```{r}
-#Plot UMAP before data integration
-plotReducedDim(sce.BatchR, dimred="UMAP", colour_by="Sample") + ggtitle("UMAP before data integration")
-plotReducedDim(sce.BatchR, dimred="UMAP", colour_by="JointLocation") + ggtitle("UMAP before data integration")
-
 #Plot UMAP after data integration
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
+```
+### Colored by Joint
+```{r}
+#Plot UMAP after data integration
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")#+ facet_wrap(~sce.filtered$Sample)
-
-
+```
+### Facet by Sample
+```{r}
 #Plot UMAP before data integration per sample
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
-#ggcells(sce.BatchR, aes(x = MNN_UMAP.1, y = MNN_UMAP.2, colour = Sample)) +geom_point(size = 0.5) +facet_wrap(~ Sample) +labs(x = "PC1", y = "PC2", colour = "Sample")
-
+```
+### Facet by Joint
+```{r}
 #Plot UMAP before data integration per joint
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
-
 ```
 
 ## Save the dataset

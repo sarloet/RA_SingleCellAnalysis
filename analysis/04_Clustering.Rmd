@@ -41,7 +41,7 @@ library(bluster)
 
 ```
 
-### Set parameter
+### Set Parameter
 
 ```{r Setup}
 set.seed(100)
@@ -54,12 +54,12 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 
 ```
 
 
-### Explore dataset
+### Explore Dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -71,32 +71,31 @@ dim(sce)
 ### Louvain Clustering
 
 ```{r}
-#Setup Hierarchical Clustering
-#use the bluster package
+#Setup Hierarchical Clustering -use the bluster package
 
-#colData(sce.BatchR)$louvain <- clusterRows(reducedDim(sce.BatchR, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
-colData(sce.BatchR)$louvain <- clusterCells(sce.BatchR, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain"))
+#colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
+colData(sce)$louvain <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain"))
 
-table(colData(sce.BatchR)$louvain)
+table(colData(sce)$louvain)
 
 
 ```
 
-```{r}
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="louvain",text_by="louvain") + ggtitle("UMAP with louvain clusters")
-plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="louvain",text_by="louvain") + ggtitle("UMAP with louvain clusters")
 
+```{r}
+plotReducedDim(sce, dimred="MNN", colour_by="louvain",text_by="louvain") + ggtitle("UMAP with louvain clusters")
+plotReducedDim(sce, dimred="MNN_UMAP", colour_by="louvain",text_by="louvain") + ggtitle("UMAP with louvain clusters")
 ```
 
 ```{r}
 ## Silhouette plot
 
-sil.approx <- approxSilhouette(reducedDim(sce.BatchR, "MNN"), clusters=colData(sce.BatchR)$louvain)
+sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)$louvain)
 sil.approx
 
 sil.data <- as.data.frame(sil.approx)
-sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce.BatchR)$louvain, sil.data$other))
-sil.data$cluster <- colData(sce.BatchR)$louvain
+sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)$louvain, sil.data$other))
+sil.data$cluster <- colData(sce)$louvain
 
 ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle("Silhouette plot Louvain Clustering")+theme_bw()
 
@@ -110,28 +109,28 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 #use the bluster package
 
 #colData(sce.BatchR)$leiden <- clusterRows(reducedDim(sce.BatchR, "MNN"),TwoStepParam(KmeansParam(centers=100), NNGraphParam(k=5,cluster.fun="leiden")))
-colData(sce.BatchR)$leiden <- clusterCells(sce.BatchR, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=40,cluster.fun="leiden"))
+colData(sce)$leiden <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=40,cluster.fun="leiden"))
 
 
-table(colData(sce.BatchR)$leiden)
+table(colData(sce)$leiden)
 
 
 ```
 
 ```{r}
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="leiden",text_by="leiden") + ggtitle("UMAP with leiden clusters")
-plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="leiden",text_by="leiden") + ggtitle("UMAP with leiden clusters")
+plotReducedDim(sce, dimred="MNN", colour_by="leiden",text_by="leiden") + ggtitle("UMAP with leiden clusters")
+plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="leiden") + ggtitle("UMAP with leiden clusters")
 ```
 
 ```{r}
 ## Silhouette plot
 
-sil.approx <- approxSilhouette(reducedDim(sce.BatchR, "MNN"), clusters=colData(sce.BatchR)$leiden)
+sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)$leiden)
 sil.approx
 
 sil.data <- as.data.frame(sil.approx)
-sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce.BatchR)$leiden, sil.data$other))
-sil.data$cluster <- colData(sce.BatchR)$leiden
+sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)$leiden, sil.data$other))
+sil.data$cluster <- colData(sce)$leiden
 
 ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle("Silhouette plot leiden Clustering")+theme_bw()
   
@@ -145,32 +144,96 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 #use the bluster package
 
 #colData(sce.BatchR)$walktrap <- clusterRows(reducedDim(sce.BatchR, "MNN"),TwoStepParam(KmeansParam(centers=100), NNGraphParam(k=2,cluster.fun="walktrap")))
-colData(sce.BatchR)$walktrap <- clusterCells(sce.BatchR, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
+colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
-table(colData(sce.BatchR)$walktrap)
+table(colData(sce)$walktrap)
 
 
 ```
 
 ```{r}
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="walktrap",text_by="walktrap") + ggtitle("UMAP with walktrap clusters")
-plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="walktrap",text_by="walktrap") + ggtitle("UMAP with walktrap clusters")
+plotReducedDim(sce, dimred="MNN", colour_by="walktrap",text_by="walktrap") + ggtitle("PCA with walktrap clusters")
+plotReducedDim(sce, dimred="MNN_UMAP", colour_by="walktrap",text_by="walktrap") + ggtitle("UMAP with walktrap clusters")
 ```
 
 ```{r}
 ## Silhouette plot
 
-sil.approx <- approxSilhouette(reducedDim(sce.BatchR, "MNN"), clusters=colData(sce.BatchR)$walktrap)
+sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)$walktrap)
 sil.approx
 
 sil.data <- as.data.frame(sil.approx)
-sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce.BatchR)$walktrap, sil.data$other))
-sil.data$cluster <- colData(sce.BatchR)$walktrap
+sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)$walktrap, sil.data$other))
+sil.data$cluster <- colData(sce)$walktrap
 
 ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle("Silhouette plot leiden Clustering")+theme_bw()
   
 
+```
+
+## Clustering Plots
+```{r}
+methods <- c("lovain","leiden","walktrap")
+```
+
+### PCA Plots   {.tabset}
+```{r}
+for (i in methods){
+  cat(paste0("###  ",i, "\n")
+  plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i ) + ggtitle(paste0("PCA with ",i," clusters"))
+  }
+```
+### UMAP Plots   {.tabset}
+```{r}
+for (i in methods){
+  cat(paste0("###  ", i, "\n"))
+  plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
+  }
+```
+### Silhouette Plots   {.tabset}
+```{r}
+for (i in methods){
+  cat(paste0("###  ", i, "\n"))
+  
+  ## Silhouette plot
+  sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)$i)
+  
+  sil.data <- as.data.frame(sil.approx)
+  sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)$i, sil.data$other))
+  sil.data$cluster <- colData(sce)$i
+  
+  ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle(paste0("Silhouette plot ",i," Clustering"))+theme_bw()
+    
+  }
+```
+### Barplots Plots Absolute Cell Counts   {.tabset}
+```{r}
+for (i in methods){
+  cat(paste0("###  ", i, "\n"))
+  
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(i, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=i)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title=paste0("Absolute comparison nr Cells in ",i," Cluster"),subtitle="Per Sample",x="",y="Number of cells")
+  }
+```
+### Barplots Plots Relative Cell Counts   {.tabset}
+```{r}
+for (i in methods){
+  cat(paste0("###  ", i, "\n"))
+  
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(i, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=i)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title=paste0("Relative comparison nr Cells in ",i," Cluster"),subtitle="Per Sample",x="",y="Number of cells")
+  }
 ```
 
 ## Set clustering to use downstream
@@ -179,15 +242,15 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 ## Set main clustering for downstream use also as colLabels
 ##leiden or louvain or walktrap
 
-colData(sce.BatchR)$cluster<- colData(sce.BatchR)$leiden
-colLabels(sce.BatchR)<- colData(sce.BatchR)$cluster
+colData(sce)$cluster<- colData(sce)$leiden
+colLabels(sce)<- colData(sce)$cluster
 
 ```
 
 ## Frequencies of cells in clusters per Sample
 
 ```{r}
-ClusterInfo <- as.data.frame(colData(sce.BatchR)) %>% 
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(cluster, Sample) %>%
   summarise(cells = n(),.groups = 'drop') 
 

@@ -43,6 +43,7 @@ library(scran)
 library(DropletUtils)
 library(gridExtra)
 library(scDblFinder)
+library(sctransform)
 })
 
 ```
@@ -129,7 +130,7 @@ Doublets are defined as two cells that are sequenced under the same cellular bar
 
 ### Detection
 
-```{r DoubletDetection}
+```{r DoubletDetection,  warning=FALSE}
 #Detection
 sce <- scDblFinder::scDblFinder(sce, samples="Sample", BPPARAM = bpp) 
 
@@ -159,16 +160,17 @@ print(as.data.frame(colData(sce)) %>%
 ##### Relative comparison
 ```{r DoubletDetectionPlots}
 # Plot singlet/doublet histogramm Relative comparison / by sample
-as.data.frame(colData(sce)) %>%
+print(as.data.frame(colData(sce)) %>%
   dplyr::group_by(Sample, scDblFinder.class) %>%
   dplyr::summarise(Freq=n()) %>% 
   ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
     geom_bar(stat="identity", position="fill") +
     labs(title="Doublet detection results",
        subtitle="By sample",
-       x="",
+       x="Sample",
        y="Number of cells") + 
-    geom_text(size=3.5, position = position_fill(vjust=0.5)) 
+    geom_text(size=2.5, position = position_fill(vjust=0.5)) +
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()))
 ```
 
 #### Singlet/Doublet Scatter
@@ -182,7 +184,9 @@ colData(sce) %>%
     ggplot(aes(x = sce$sum, y = sce$detected )) +
       geom_point(aes(colour = scDblFinder.class)) + 
       facet_wrap(vars(Sample))+ 
-      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+      labs(title="Total number of detected genes plotted against total number of UMIs",
+       x="Total counts",
+       y="Detected genes") 
 
 
 ```
@@ -239,7 +243,7 @@ attr(colData(sce)$qc.count, "thresholds") # Cells with very low number of counts
 colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
 attr(colData(sce)$qc.genexp, "thresholds") # Cells with very low number of genes
 
-colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent, type="higher",batch =sce$Sample)
+colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
 attr(colData(sce)$qc.mito, "thresholds") # Cells with high mitochondrial content
 
 
@@ -331,24 +335,27 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard"
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Total count")+
-    guides(colour=guide_legend(title="Discarded"))
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 ##### Genes detected
 ```{r QcPlots}
 #Plot Detected Genes
-p2<-plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
+plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Detected features")+
-    guides(colour=guide_legend(title="Discarded"))
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 ##### Mitochondrial percentage
 ```{r QcPlots}
 #Plot Mito percent
-p3<-plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
+plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
-    guides(colour=guide_legend(title="Discarded"))
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 
 
@@ -367,7 +374,8 @@ as.data.frame(colData(sce)) %>%
        subtitle="Labels represent absolute number of cells",
        x="",
        y="Number of cells") + 
-    geom_text(size=3.5, position = position_stack(vjust=0.5)) 
+    geom_text(size=3, position = position_stack(vjust=0.5))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) 
 
 ```
 ##### Relative comparison
@@ -383,7 +391,8 @@ as.data.frame(colData(sce)) %>%
        subtitle="Labels represent absolute number of cells",
        x="",
        y="Number of cells") + 
-    geom_text(size=3.5, position = position_fill(vjust=0.5)) 
+    geom_text(size=3, position = position_fill(vjust=0.5))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) 
 
 ```
 
@@ -402,23 +411,20 @@ Additionally, perform some filtering by prevalence. If a gene is only expressed 
 ```{r GeneFiltering}
 
 #Filter out genes 
-dim_before_filtering <- dim(sce)
+dim_before_filtering <- dim(sce.filtered)
 
 #Get only the detected Genes
-detected_genes <- rowSums(counts(sce)> 0)
+detected_genes <- rowSums(counts(sce.filtered)> 0)
 
 #Remove Genes not expressed in at least 10 Cells 
-sce <- sce[detected_genes > 10,]
+sce.filtered <- sce.filtered[detected_genes > 10,]
 
 
-dim_after_filtering <- dim(sce)
+dim_after_filtering <- dim(sce.filtered)
 
-cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
-    "\nNR of Cells After Initial Filtering ", dim_after_filtering[2],
-    "\nNR of Cells Filtered out ", dim_before_filtering[2] - dim_after_filtering[2],
-    
-    "\n\nNR of Genes Before Initial Filtering ", dim_before_filtering[1],
-    "\nNR of Genes After Initial Filtering ", dim_after_filtering[1],
+cat(
+    "\nNR of Genes Before Filtering ", dim_before_filtering[1],
+    "\nNR of Genes After Filtering ", dim_after_filtering[1],
     "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
     )
 
@@ -434,13 +440,13 @@ Show the number of cells detected in each sample or joint location after filteri
 #### Per Sample
 ```{r PlotCellsPerSampleAfterFiltering}
 #Histogramm with number of cells per sample after filtering
-ggplot(colData(sce.filtered), aes(x=Sample))+geom_bar()+ coord_flip()+ggtitle("Number of cells per sample")
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
 data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```
 #### Per Joint Location
 ```{r PlotCellsPerJointAfterFiltering}
 #Histogramm with number of cells per sample after filtering
-ggplot(colData(sce.filtered), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
 data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 ```
 
@@ -449,7 +455,7 @@ data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 
 The most strongly and commonly expressed genes expected among all cells should not be mitochondrial anymore.
 
-```{r PlotTop25GenesAfterFiltering}
+```{r PlotTop25GenesAfterFiltering, eval=FALSE}
 #Check top 20 expressed genes after filtering
 
 rel_expression <- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
@@ -465,17 +471,6 @@ boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRU
 
 The preprocessing step of normalization aims to adjust the raw counts in the dataset for variable sampling effects by scaling the observable variance to a specified range. Several normalization techniques are used in practice varying in complexity.
 
-```{r}
-# Library size?
-hist(sce$total,breaks = 100)
-```
-
-```{r}
-# calculate per-cell quality control (QC) metrics using scater
-
-hist(data.frame(colData(sce))$detected,breaks = 100)
-```
-
 ### Normalization by Library size
 
 Library size normalization is the simplest strategy for performing scaling normalization. The library size is defined as the total sum of counts across all genes for each cell, the expected value of which is assumed to scale with any cell-specific biases. The “library size factor” for each cell is then directly proportional to its library size where the proportionality constant is defined such that the mean size factor across all cells is equal to 1. 
@@ -488,7 +483,7 @@ sce.lib <- computeLibraryFactors(sce.filtered)
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +
   xlab("Log10 Library size factor") +
   geom_histogram(bins=50)+
-  ggtitle("Distribution of size factors")
+  ggtitle("Distribution of Library size factors")
 
 ```
 
@@ -500,9 +495,14 @@ Deconvolution aims to normalize expression values based on summed values from po
 ```{r DeconvolutionNorm}
 # Normalization by deconvolution
 clust.filtered <- quickCluster(sce.filtered) #block=factor(sce.filtered$Protocol)
-table(clust.filtered)
 
 sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered)
+
+ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.deconv))), aes(x=log10libSf)) +
+  xlab("Log10 Library size factor") +
+  geom_histogram(bins=50)+
+  ggtitle("Distribution of Deconvolution size factors")
+
 ```
 
 ```{r PrintSizeFactors}
