@@ -14,6 +14,8 @@ navbar:
     menu:
     - text: Data Preparation
       href: 00_DataPreparation.html
+    - text: Preprocessing
+      href: 01_Preprocessing.html
   - text: License
     href: license.html
 

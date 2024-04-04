@@ -41,7 +41,6 @@ library(dplyr)
 library(scater)
 library(scran)
 library(DropletUtils)
-library(gridExtra)
 library(scDblFinder)
 library(sctransform)
 })
@@ -144,23 +143,23 @@ as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))
 #### Singlet/Doublet Histogramm  {.tabset}
 
 ##### Absolute comparison
-```{r DoubletDetectionPlots}
+```{r DoubletDetectionPlotsAbs}
 
 #Plot singlet/doublet histogramm Absolute comparison / by sample
-print(as.data.frame(colData(sce)) %>%
+as.data.frame(colData(sce)) %>%
   dplyr::group_by(Sample, scDblFinder.class) %>%
   dplyr::summarise(counts=n()) %>%
   ggplot(aes(x=Sample, y=counts, fill=scDblFinder.class)) + 
-  geom_bar(stat="identity") +
+    geom_bar(stat="identity") +
     labs(title="Doublet detection results",
     subtitle="By sample") +
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()))
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 
 ```
 ##### Relative comparison
-```{r DoubletDetectionPlots}
+```{r DoubletDetectionPlotsRel}
 # Plot singlet/doublet histogramm Relative comparison / by sample
-print(as.data.frame(colData(sce)) %>%
+as.data.frame(colData(sce)) %>%
   dplyr::group_by(Sample, scDblFinder.class) %>%
   dplyr::summarise(Freq=n()) %>% 
   ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
@@ -170,7 +169,7 @@ print(as.data.frame(colData(sce)) %>%
        x="Sample",
        y="Number of cells") + 
     geom_text(size=2.5, position = position_fill(vjust=0.5)) +
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()))
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 
 #### Singlet/Doublet Scatter
@@ -267,7 +266,7 @@ data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
 
 The aim by plotting the proportion of mitochondrial counts against some of the other QC metrics is to confirm that there are no cells with both large total counts and large mitochondrial counts, to ensure that we are not inadvertently removing high-quality cells that happen to be highly metabolically active (e.g., hepatocytes).
 
-```{r QcPlots}
+```{r QcPlotsWhole1}
 # QCplots after filtering whole dataset
 
 colData(sce) %>% 
@@ -286,23 +285,22 @@ colData(sce) %>%
 
 ```
 
-```{r QcPlots}
+```{r QcPlotsWhole2}
 #Plot Total count
-p1<-plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Total count") +guides(colour=guide_legend(title="Discarded"))
+plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Total count") +guides(colour=guide_legend(title="Discarded"))
 
 #Plot Detected Feaututes
-p2<-plotColData(sce, y="detected",colour_by = "discard") + scale_y_log10() + ggtitle("Detected features") +guides(colour=guide_legend(title="Discarded"))
+plotColData(sce, y="detected",colour_by = "discard") + scale_y_log10() + ggtitle("Detected features") +guides(colour=guide_legend(title="Discarded"))
 
 #Plot Mito percent
-p3<-plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("Mito percent") +guides(colour=guide_legend(title="Discarded"))
+plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("Mito percent") +guides(colour=guide_legend(title="Discarded"))
 
-grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
 ```
 
 #### Scatter Plots Per Sample {.tabset}
 
 ##### Detected genes vs total number of UMIs
-```{r QcPlots}
+```{r QcPlots1}
 colData(sce) %>% 
     as.data.frame() %>% 
     arrange(discard) %>% 
@@ -313,7 +311,7 @@ colData(sce) %>%
 
 ```
 ##### Mitochondrial percentage vs total number of UMIs
-```{r QcPlots}
+```{r QcPlots2}
 colData(sce) %>% 
     as.data.frame() %>% 
     arrange(discard) %>% 
@@ -329,7 +327,7 @@ colData(sce) %>%
 #### Violin Plots Per Sample {.tabset}
 
 ##### Total counts
-```{r QcPlots}
+```{r QcPlots3}
 #Plot Total count
 plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
@@ -339,7 +337,7 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard"
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 ##### Genes detected
-```{r QcPlots}
+```{r QcPlots4}
 #Plot Detected Genes
 plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
@@ -349,7 +347,7 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "di
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 ##### Mitochondrial percentage
-```{r QcPlots}
+```{r QcPlots5}
 #Plot Mito percent
 plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
@@ -362,7 +360,7 @@ plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",col
 #### Cells to be Removed Histogramm {.tabset}
 
 ##### Absolute comparison
-```{r QcPlots}
+```{r QcPlots6}
 #Cells marked to be dropped per samples
 # Absolute comparison / by sample
 as.data.frame(colData(sce)) %>%
@@ -379,7 +377,7 @@ as.data.frame(colData(sce)) %>%
 
 ```
 ##### Relative comparison
-```{r QcPlots}
+```{r QcPlots7}
 #Cells marked to be dropped per samples
 # Relative comparison / by sample
 as.data.frame(colData(sce)) %>%
@@ -438,13 +436,13 @@ cat(
 Show the number of cells detected in each sample or joint location after filtering
 
 #### Per Sample
-```{r PlotCellsPerSampleAfterFiltering}
+```{r PlotCellsPerSampleAfterFiltering1}
 #Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
 data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```
 #### Per Joint Location
-```{r PlotCellsPerJointAfterFiltering}
+```{r PlotCellsPerJointAfterFiltering2}
 #Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
 data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
@@ -523,9 +521,6 @@ abline(a=0, b=1, col="red")
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(sce.filtered$Sample)), main="Deconvolution factors for individual Sample")
 abline(a=0, b=1, col="red")
 
-#Color by protocol
-#plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(syn_sce_tidy_filtered$Protocol)), main="Deconvolution factors for individual Protocol")
-#abline(a=0, b=1, col="red")
 
 ```
 
@@ -590,7 +585,7 @@ Variable-level metrics are computed by the getVarianceExplained() function. This
 
 ```{r VariableMetrics}
 vars <- getVarianceExplained(sce.filtered,assay.type="logcounts",
-    variables=c("Sample", "Joint.Location", "sex", "Age"))
+    variables=c("Sample", "Joint.Location", "Pathotype","Seropositivity","GCTreatment","protocol","sex", "Age"))
 head(vars)
 
 plotExplanatoryVariables(vars)

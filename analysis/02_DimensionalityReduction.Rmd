@@ -221,11 +221,7 @@ The plot below shows, for each of the PCs, the variance explained by the variabl
 
 ```{r}
 explanPc <- getExplanatoryPCs(sce.filtered,dimred = "PCA",n_dimred=12,variables = c(
-      "sum",
-      "detected",
-      "Sample",
-      "Joint.Location",
-      "subsets_Mito_percent"))
+      "sum","detected","subsets_Mito_percent","Sample","Joint.Location","Pathotype","GCTreatment","Seropositivity","protocol"))
 
 plotExplanatoryPCs(explanPc) 
 ```
@@ -251,14 +247,6 @@ plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") #+ facet_wrap(~s
 ##### Colored by Joint
 ```{r}
 plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Joint.Location")
-#plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Protocol")
-
-#Plot UMAP before data integration per sample
-plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Sample)
-
-#Plot UMAP before data integration per sample
-plotReducedDim(sce.filtered, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce.filtered$Joint.Location)
-
 ```
 
 

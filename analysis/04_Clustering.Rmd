@@ -180,7 +180,7 @@ methods <- c("lovain","leiden","walktrap")
 ### PCA Plots   {.tabset}
 ```{r}
 for (i in methods){
-  cat(paste0("###  ",i, "\n")
+  cat(paste0("###  ",i, "\n"))
   plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i ) + ggtitle(paste0("PCA with ",i," clusters"))
   }
 ```
