@@ -534,14 +534,14 @@ abline(a=0, b=1, col="red")
 
 Variance stabilising transformation models the expression of each gene as a negative binomial random variable with a mean that depends on other variables. Here the other variables can be used to model the differences in sequencing depth between cells and are used as independent variables in a regression model. The model is fit for each gene, then combined data across genes is used to fit parameters and convert UMI counts to residuals akin to the number of standard deviations away from the expected mean.
 
-```{r VSTNorm}
+```{r VSTNorm, eval=FALSE}
 # Normalization with variance stabilising transformation
 counts <- counts(sce.filtered)
 vst_out <- vst(umi = counts,latent_var = 'log_umi',return_gene_attr = TRUE,return_cell_attr = TRUE)
 
 ```
 
-```{r PlotVSTNorm}
+```{r PlotVSTNorm, eval=FALSE}
 #Make Parameter plot
 plot_model_pars(vst_out)
 
@@ -564,7 +564,7 @@ ggplot(vst_out$gene_attr,aes(log10(gmean), residual_variance)) +
 
 ```
 
-```{r ApplyVSTNorm}
+```{r ApplyVSTNorm, eval=FALSE}
 # Apply Normalisation
 sce.VST <- sce.filtered
 vstMat <- as(vst_out$y[rownames(sce.VST),], "dgCMatrix")
