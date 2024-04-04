@@ -43,7 +43,7 @@ library(GSEABase)
 
 ```
 
-### Set parameter
+### Set Parameter
 
 ```{r Setup}
 set.seed(100)
@@ -60,7 +60,7 @@ sce.filtered <- readRDS(file = paste0(path,'/output/04_sce_Clustering.rds'))
 
 ```
 
-### Change rownames to the symbol
+### Change Rownames to the Symbol
 
 ```{r}
 #Change to genesymbol whenever possible
@@ -70,7 +70,7 @@ rowData(sce)
 ```
 
 
-### Explore dataset
+### Explore Dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -78,19 +78,24 @@ dim(sce)
 ```
 
 
-## Plot clustering and QC
+## Plot Clustering and QC {.tabset}
 
+### PCA
 ```{r}
 plotReducedDim(sce, dimred="MNN", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
+```
+### UMAP
+```{r}
 plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
 ```
-
+### QC UMAPs
 ```{r}
 p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
 p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
 p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
 grid.arrange(p1, p2, p3, nrow = 1)
 ```
+
 
 ## Identify marker genes
 
