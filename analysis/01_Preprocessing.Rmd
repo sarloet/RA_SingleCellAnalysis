@@ -51,7 +51,7 @@ library(sctransform)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -365,7 +365,7 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard"
     scale_y_log10() + 
     ggtitle("Total count")+
     guides(colour=guide_legend(title="Discarded"))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 ```
 
 ##### Genes detected
@@ -377,7 +377,7 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "di
     scale_y_log10() + 
     ggtitle("Detected features")+
     guides(colour=guide_legend(title="Discarded"))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 ```
 
 ##### Mitochondrial percentage
@@ -388,7 +388,7 @@ plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",col
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
     guides(colour=guide_legend(title="Discarded"))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 ```
 
 
@@ -550,18 +550,24 @@ print("Deconvolution size factors")
 summary(sizeFactors(sce.deconv))
 ```
 
+### Plot Deconvolution against Dibrary Size Factors {.tabset}
 
+Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors.
+
+#### Color by Individual Cluster
 
 ```{r PlotSizeFactors}
-#Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors. 
+#Color by individual cluster
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(clust.filtered)), main="Deconvolution factors for individual cluster")
 abline(a=0, b=1, col="red")
+```
 
+#### Color by Sample
+
+```{r PlotSizeFactors}
 #Color by sample
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(sce.filtered$Sample)), main="Deconvolution factors for individual Sample")
 abline(a=0, b=1, col="red")
-
-
 ```
 
 

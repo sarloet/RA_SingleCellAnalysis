@@ -39,7 +39,7 @@ library(bluster)
 
 ```
 
-### Set parameter
+### Set Parameter
 
 ```{r Setup}
 set.seed(100)
@@ -57,7 +57,7 @@ sce.filtered <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rd
 ```
 
 
-### Explore dataset
+### Explore Dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -153,28 +153,40 @@ sce.sc<-SUBCLUSTER(sce, SC_celltypes, clust_param="leiden", k_param=40)
 
 ## Plot Subclusters
 
+### Plot UMAP of Subclusters  {.tabset}
+
 ```{r}
 # plot UMAP of the subclusters
 
 for (name in SC_celltypes){
+  cat(paste0("###  ", SC_celltypes, " {.tabset} \n"))
+  
+  cat(paste0("####  Colored by Clustering\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], "MNN_UMAP",colour_by = "subcluster", text_by="subcluster") +
           labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering"))
+    
+  cat(paste0("####  Colored by Sample\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], "MNN_UMAP",colour_by = "Sample") +
           labs(title=paste0("SubCluster ", name),subtitle="Colored by Sample"))
 }
 
 ```
 
-## Plot Subclusters
+## Plot Recalculated UMAP of Subclusters  {.tabset}
 
 ```{r}
 # plot the Recalculated UMAP of the subcluster
 
 for (name in SC_celltypes){
+  cat(paste0("###  ", SC_celltypes, " {.tabset} \n"))  
+  
   column_name <- paste0("SC_UMAP_", name)
   
+  cat(paste0("####  Colored by Clustering\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "subcluster",text_by="subcluster") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by clustering"))
+
+  cat(paste0("####  Colored by Sample\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "Sample") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Sample"))
 }
