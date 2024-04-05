@@ -1,4 +1,4 @@
-sample,orig.ident,Age,sex,protocol,Joint.Location,Diagnosis,Pathotype,Krenn.total.score,CD15 ,Vascularisation,Lymphoidfollicle,Fibrosis,GCTreatment,DMARDTreatment,NR.previous.DMARD-Treatments,Seropositivity,HLAB-27,Ultrasound.B-Score,Ultrasound.PD-Score,CRP,SJC, Largejoints.Involvement,Smoking,BMI,Comments
+sample,orig.ident,Age,sex,Protocol,Joint.Location,Diagnosis,Pathotype,Krenn.total.score,CD15 ,Vascularisation,Lymphoidfollicle,Fibrosis,GCTreatment,DMARDTreatment,NR.previous.DMARD-Treatments,Seropositivity,HLAB-27,Ultrasound.B-Score,Ultrasound.PD-Score,CRP,SJC, Largejoints.Involvement,Smoking,BMI,Comments
 Syn_Bio_028,SynBio028_10000,79,female,Protocol 1,MCP,RA,lympho-myeloid,5,no,<5,no,no,yes,no,2,seronegative,NA,3,3,30,2,no,no,20.1,File SynBio028_10000
 Syn_Bio_049,SynBio049,69,female,Protocol 1,MCP,RA,fibroid,2,no,<3,no,low,no,TNFi,8,seropositive,NA,2,1,16,13,yes,no,NA,
 Syn_Bio_050,SynBio050,79,female,Protocol 1,Wrist,RA,lympho-myeloid,8,yes,5-10,yes,no,yes,no,0,seronegative,negative,3,2,13,18,no,no,NA,

@@ -86,8 +86,8 @@ plotReducedDim(sce, dimred="PCA", colour_by="Sample")
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
 ```
 
-## Batch Removal with Mutual Nearest Neighbour
-The Mutual Nearest Neighbours algorithm works by determining if pairs of cells from two different batches are within the top K closest neighbours of each other.
+## Batch Removal with MNN
+The Mutual Nearest Neighbours (MNN) algorithm works by determining if pairs of cells from two different batches are within the top K closest neighbours of each other.
 
 ```{r InitializeSce}
 #Initialize sce element with batch removal

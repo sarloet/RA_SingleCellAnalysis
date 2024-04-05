@@ -142,6 +142,9 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
       dplyr::select(-one_of("Comments")) %>% #select all except
       DataFrame(row.names=colnames(sce))
 
+#Set Sample names
+names(colData(sce))[which(names(colData(sce))=="Sample")]="Orig.ident"
+names(colData(sce))[which(names(colData(sce))=="sample")]="Sample"
 
 #make row and col names unique
 colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)

@@ -24,7 +24,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Feature selection and dimensionality reduction
+# Feature Selection and Dimensionality Reduction
 
 ## Setup
 
@@ -48,7 +48,7 @@ library(scater)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -210,13 +210,13 @@ plotReducedDim(sce, dimred = "PCA_reduced", ncomponents = 3, colour_by = "Sample
 
 ```{r PlotFacetPCA1}
 #Plot PCA per sample
-plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Sample)
+plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 ##### PCA per Joint
 
 ```{r PlotFacetPCA2}
-plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Joint.Location)
+plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 
@@ -264,14 +264,14 @@ plotReducedDim(sce, dimred="UMAP", colour_by="Joint.Location")
 
 ```{r PlotFacetUMAP1}
 #Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Sample)
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 ##### Facet by Joint
 
 ```{r PlotFacetUMAP2}
 #Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Joint.Location)
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 #### Plot UMAP with QC metrics {.tabset}

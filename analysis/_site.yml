@@ -18,6 +18,8 @@ navbar:
       href: 01_Preprocessing.html
     - text: Dimensionality Reduction
       href: 02_DimensionalityReduction.html
+    - text: Integration
+      href: 03_Integration_Batchelor.html
   - text: License
     href: license.html
 

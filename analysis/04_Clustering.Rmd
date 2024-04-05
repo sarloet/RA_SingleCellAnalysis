@@ -137,7 +137,7 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 
 ```
 
-### Walktrap method
+### Walktrap Clustering
 
 ```{r}
 #Setup Hierarchical Clustering
@@ -172,26 +172,33 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 
 ```
 
+
 ## Clustering Plots
+
 ```{r}
 methods <- c("lovain","leiden","walktrap")
 ```
 
 ### PCA Plots   {.tabset}
+
 ```{r}
 for (i in methods){
   cat(paste0("###  ",i, "\n"))
   plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i ) + ggtitle(paste0("PCA with ",i," clusters"))
   }
 ```
+
 ### UMAP Plots   {.tabset}
+
 ```{r}
 for (i in methods){
   cat(paste0("###  ", i, "\n"))
   plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
   }
 ```
+
 ### Silhouette Plots   {.tabset}
+
 ```{r}
 for (i in methods){
   cat(paste0("###  ", i, "\n"))
@@ -207,7 +214,9 @@ for (i in methods){
     
   }
 ```
+
 ### Barplots Plots Absolute Cell Counts   {.tabset}
+
 ```{r}
 for (i in methods){
   cat(paste0("###  ", i, "\n"))
@@ -221,7 +230,9 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=i)) +
   labs(title=paste0("Absolute comparison nr Cells in ",i," Cluster"),subtitle="Per Sample",x="",y="Number of cells")
   }
 ```
+
 ### Barplots Plots Relative Cell Counts   {.tabset}
+
 ```{r}
 for (i in methods){
   cat(paste0("###  ", i, "\n"))

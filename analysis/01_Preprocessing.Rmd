@@ -284,7 +284,8 @@ colData(sce) %>%
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = detected, colour = discard)) +
       geom_point() +
-      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+      ggtitle("Total number of detected genes plotted against total number of UMIs") +   
+      theme(strip.background=element_rect(fill="white"))
 ```
 
 ##### Mitochondrial percentage vs total number of UMIs
@@ -296,7 +297,8 @@ colData(sce) %>%
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = subsets_Mito_percent, colour = discard)) +
       geom_point()+ 
-      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") 
+      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") + 
+      theme(strip.background=element_rect(fill="white"))
 
 ```
 
@@ -328,7 +330,8 @@ colData(sce) %>%
     ggplot(aes(x = sum, y = detected)) +
       geom_point(aes(colour = discard)) + 
       facet_wrap(vars(Sample))+ 
-      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+      ggtitle("Total number of detected genes plotted against total number of UMIs") + 
+      theme(strip.background=element_rect(fill="white"))
 
 ```
 
@@ -341,7 +344,8 @@ colData(sce) %>%
     ggplot(aes(x = sum, y = subsets_Mito_percent)) +
       geom_point(aes(colour = discard)) + 
       facet_wrap(vars(Sample))+ 
-      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") 
+      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") + 
+      theme(strip.background=element_rect(fill="white"))
 
 
 ```
