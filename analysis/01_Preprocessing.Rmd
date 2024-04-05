@@ -459,7 +459,7 @@ sce.filtered <- sce.filtered[detected_genes > 10,]
 dim_after_filtering <- dim(sce.filtered)
 
 cat(
-    "\nNR of Genes Before Filtering ", dim_before_filtering[1],
+    "NR of Genes Before Filtering ", dim_before_filtering[1],
     "\nNR of Genes After Filtering ", dim_after_filtering[1],
     "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
     )
@@ -526,7 +526,7 @@ ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) 
 ```
 
 
-### Normalization by deconvolution
+### Normalization by Deconvolution
 
 Deconvolution aims to normalize expression values based on summed values from pools of cells which reduces composition biases that are present when any unbalanced differential expression exists between samples. Pooling counts from many cells to increase the size of the counts for accurate size factor estimation. Pool-based size factors are then “deconvolved” into cell-based factors for normalization of each cell’s expression profile. 
 
@@ -550,28 +550,28 @@ print("Deconvolution size factors")
 summary(sizeFactors(sce.deconv))
 ```
 
-### Plot Deconvolution against Dibrary Size Factors {.tabset}
+#### Plot Deconvolution against Dibrary Size Factors {.tabset}
 
 Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors.
 
-#### Color by Individual Cluster
+##### Color by Individual Cluster
 
-```{r PlotSizeFactors}
+```{r PlotSizeFactors1}
 #Color by individual cluster
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(clust.filtered)), main="Deconvolution factors for individual cluster")
 abline(a=0, b=1, col="red")
 ```
 
-#### Color by Sample
+##### Color by Sample
 
-```{r PlotSizeFactors}
+```{r PlotSizeFactors2}
 #Color by sample
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",ylab="Deconvolution size factor", log='xy', pch=16,col=as.integer(factor(sce.filtered$Sample)), main="Deconvolution factors for individual Sample")
 abline(a=0, b=1, col="red")
 ```
 
 
-### Normalization with variance stabilising transformation
+### Normalization by VST
 
 Variance stabilising transformation models the expression of each gene as a negative binomial random variable with a mean that depends on other variables. Here the other variables can be used to model the differences in sequencing depth between cells and are used as independent variables in a regression model. The model is fit for each gene, then combined data across genes is used to fit parameters and convert UMI counts to residuals akin to the number of standard deviations away from the expected mean.
 
