@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SarahL." />
+
+
+<title>QC and Preprocessing</title>
+
+<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+    <li>
+      <a href="01_Preprocessing.html">Preprocessing</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">QC and Preprocessing</h1>
+<h3 class="subtitle">01_Preprocessing</h3>
+<h4 class="author">SarahL.</h4>
+<h4 class="date">Apr 5 2024 09:19:13</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-04-05
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240328code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240328)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240328code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240328)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb6843be012135e93e378e1d5781cce93bee6c43targetblankdb6843ba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db6843be012135e93e378e1d5781cce93bee6c43" target="_blank">db6843b</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb6843be012135e93e378e1d5781cce93bee6c43targetblankdb6843ba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db6843be012135e93e378e1d5781cce93bee6c43" target="_blank">db6843b</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/cellbender_data_h5/
+    Ignored:    output/00_sce_DataPreparation.rds
+    Ignored:    output/01_sce_Preprocessing.rds
+    Ignored:    output/02_sce_DimensionalityReduction.rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/01_Preprocessing.Rmd</code>) and
+HTML (<code>docs/01_Preprocessing.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/db6843be012135e93e378e1d5781cce93bee6c43/analysis/01_Preprocessing.Rmd" target="_blank">db6843b</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+Add Prepocessing
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ebe797119a093120ca931f92c0e083eb1cc1739f/analysis/01_Preprocessing.Rmd" target="_blank">ebe7971</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-04
+</td>
+<td>
+Merge branch ‘master’ of <a
+href="https://github.com/sarloet/RA_SingleCellAnalysis"
+class="uri">https://github.com/sarloet/RA_SingleCellAnalysis</a>
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/193eff23766156b5adc31fb8f3a2448e566226c5/analysis/01_Preprocessing.Rmd" target="_blank">193eff2</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-04
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5c258f5ea91fb6bc51334e5313ba34d95b176c6b/analysis/01_Preprocessing.Rmd" target="_blank">5c258f5</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-04
+</td>
+<td>
+Update 01_Preprocessing.Rmd
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/1def092c2e943110f4462475cd9ed4820bc26df5/analysis/01_Preprocessing.Rmd" target="_blank">1def092</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-04
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d41ba14cbbe2548ca8cb01d65cff4e65afc2513c/analysis/01_Preprocessing.Rmd" target="_blank">d41ba14</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/817f6bb48bf686131cac6c39c1934008227b862c/analysis/01_Preprocessing.Rmd" target="_blank">817f6bb</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+Update 01_Preprocessing.Rmd
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/960ebd0f1a3c851ece23d398134b1c23e4d18df6/analysis/01_Preprocessing.Rmd" target="_blank">960ebd0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/eb121be190fc98152c6c951d8831f91ccdc20a99/analysis/01_Preprocessing.Rmd" target="_blank">eb121be</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/998977b04b6730963354ec7e28a81e35f5730f83/analysis/01_Preprocessing.Rmd" target="_blank">998977b</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/78c7f8bb519c0b88102f7e87e4a4ea24b5c4fe93/analysis/01_Preprocessing.Rmd" target="_blank">78c7f8b</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/analysis/01_Preprocessing.Rmd" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="quality-control-and-preprocessing" class="section level1">
+<h1>Quality Control and Preprocessing</h1>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="load-packages" class="section level3">
+<h3>Load Packages</h3>
+<pre class="r"><code>#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2) 
+library(dplyr)
+library(scater)
+library(scran)
+library(DropletUtils)
+library(scDblFinder)
+library(sctransform)
+})</code></pre>
+</div>
+<div id="set-parameter" class="section level3">
+<h3>Set Parameter</h3>
+<pre class="r"><code>set.seed(100)
+bpp &lt;- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+path &lt;- here::here()</code></pre>
+</div>
+</div>
+<div id="load-data" class="section level2">
+<h2>Load Data</h2>
+<pre class="r"><code>## Load the RA DATASET
+sce &lt;- readRDS(file = paste0(path,&#39;/output/00_sce_DataPreparation.rds&#39;))</code></pre>
+<div id="explore-dataset-dimensions" class="section level3">
+<h3>Explore Dataset Dimensions</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce)</code></pre>
+<pre><code>[1]  36601 119652</code></pre>
+</div>
+<div id="histogramm-with-number-of-cells" class="section level3 tabset">
+<h3 class="tabset">Histogramm with number of cells</h3>
+<p>Show the number of cells detected in each sample or joint location
+before filtering</p>
+<div id="per-sample" class="section level4">
+<h4>Per Sample</h4>
+<pre class="r"><code>#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerSample-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data.frame(as.list(table(colData(sce)$Sample)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SynBio028_10000"],"name":[1],"type":["int"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["int"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["int"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["int"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["int"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["int"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["int"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["int"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["int"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["int"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["int"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["int"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["int"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["int"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["int"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["int"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["int"],"align":["right"]}],"data":[{"1":"4388","2":"766","3":"6503","4":"4879","5":"3415","6":"9323","7":"9790","8":"7550","9":"12550","10":"6214","11":"4280","12":"7505","13":"8919","14":"7890","15":"11514","16":"5154","17":"9012"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="per-joint-location" class="section level4">
+<h4>Per Joint Location</h4>
+<pre class="r"><code>#Histogramm with number of cells per sample
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotCellsJoint-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data.frame(as.list(table(colData(sce)$Joint.Location)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Knee"],"name":[1],"type":["int"],"align":["right"]},{"label":["MCP"],"name":[2],"type":["int"],"align":["right"]},{"label":["Wrist"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"38791","2":"29411","3":"51450"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</div>
+<div id="initial-filtering" class="section level2">
+<h2>Initial Filtering</h2>
+<p>Initial filtering to remove unexpressed genes and cells with very low
+number of counts. The input to scDblFinder should not include empty
+droplets, and it might be necessary to remove cells with a very low
+coverage (e.g. &lt;200 reads) to avoid errors. Further quality filtering
+should be performed downstream of doublet detection.</p>
+<pre class="r"><code>#Initial filtering before droplet removal
+dim_before_filtering &lt;- dim(sce)
+
+#Get only the detected Genes
+detected_genes &lt;- rowSums(counts(sce)&gt; 0)
+detected_cells &lt;- colSums(counts(sce)&gt; 0)
+
+#Remove Cells with very low expression of less than 200 genes expressed and genes not expressed
+sce &lt;- sce[detected_genes &gt; 0, detected_cells &gt; 200]
+
+
+dim_after_filtering &lt;- dim(sce)
+
+cat(&quot;NR of Cells Before Initial Filtering &quot;, dim_before_filtering[2],
+    &quot;\nNR of Cells After Initial Filtering &quot;, dim_after_filtering[2],
+    &quot;\nNR of Cells Filtered out &quot;, dim_before_filtering[2] - dim_after_filtering[2],
+    
+    &quot;\n\nNR of Genes Before Initial Filtering &quot;, dim_before_filtering[1],
+    &quot;\nNR of Genes After Initial Filtering &quot;, dim_after_filtering[1],
+    &quot;\nNR of Genes Filtered out &quot;, dim_before_filtering[1] - dim_after_filtering[1]
+    )</code></pre>
+<pre><code>NR of Cells Before Initial Filtering  119652 
+NR of Cells After Initial Filtering  91083 
+NR of Cells Filtered out  28569 
+
+NR of Genes Before Initial Filtering  36601 
+NR of Genes After Initial Filtering  34594 
+NR of Genes Filtered out  2007</code></pre>
+</div>
+<div id="doublet-detection" class="section level2">
+<h2>Doublet Detection</h2>
+<p>Doublets are defined as two cells that are sequenced under the same
+cellular barcode, which happens if they were captured in the same
+droplet. The scDblFinder method combines the strengths of various
+doublet detection approaches, training an iterative classifier on the
+neighborhood of real cells and artificial doublets.</p>
+<div id="detection" class="section level3">
+<h3>Detection</h3>
+<pre class="r"><code>#Detection
+sce &lt;- scDblFinder::scDblFinder(sce, samples=&quot;Sample&quot;, BPPARAM = bpp) 
+
+table(sce$scDblFinder.class)</code></pre>
+<pre><code>
+singlet doublet 
+  82745    8338 </code></pre>
+<pre class="r"><code>as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["singlet"],"name":[1],"type":["int"],"align":["right"]},{"label":["doublet"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"3914","2":"355","_rn_":"SynBio028_10000"},{"1":"667","2":"25","_rn_":"SynBio049"},{"1":"4942","2":"372","_rn_":"SynBio050"},{"1":"4078","2":"310","_rn_":"SynBio074"},{"1":"2491","2":"131","_rn_":"SynBio076"},{"1":"6234","2":"796","_rn_":"SynBio077a"},{"1":"6101","2":"710","_rn_":"SynBio077b"},{"1":"6385","2":"618","_rn_":"SynBio081"},{"1":"5104","2":"501","_rn_":"SynBio083"},{"1":"4803","2":"465","_rn_":"SynBio084"},{"1":"3363","2":"218","_rn_":"SynBio087"},{"1":"5742","2":"656","_rn_":"SynBio093"},{"1":"6721","2":"621","_rn_":"SynBio096"},{"1":"5198","2":"488","_rn_":"SynBio098a"},{"1":"6081","2":"715","_rn_":"SynBio098b"},{"1":"3825","2":"316","_rn_":"SynBio127"},{"1":"7096","2":"1041","_rn_":"SynBio130"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="doublet-detection-plots" class="section level3">
+<h3>Doublet Detection Plots</h3>
+<div id="singletdoublet-histogramm" class="section level4 tabset">
+<h4 class="tabset">Singlet/Doublet Histogramm</h4>
+<div id="absolute-comparison" class="section level5">
+<h5>Absolute comparison</h5>
+<pre class="r"><code>#Plot singlet/doublet histogramm Absolute comparison / by sample
+as.data.frame(colData(sce)) %&gt;%
+  dplyr::group_by(Sample, scDblFinder.class) %&gt;%
+  dplyr::summarise(counts=n()) %&gt;%
+  ggplot(aes(x=Sample, y=counts, fill=scDblFinder.class)) + 
+    geom_bar(stat=&quot;identity&quot;) +
+    labs(title=&quot;Doublet detection results&quot;,
+    subtitle=&quot;By sample&quot;) +
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlotsAbs-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+##### Relative comparison</p>
+<pre class="r"><code># Plot singlet/doublet histogramm Relative comparison / by sample
+as.data.frame(colData(sce)) %&gt;%
+  dplyr::group_by(Sample, scDblFinder.class) %&gt;%
+  dplyr::summarise(Freq=n()) %&gt;% 
+  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
+    geom_bar(stat=&quot;identity&quot;, position=&quot;fill&quot;) +
+    labs(title=&quot;Doublet detection results&quot;,
+       subtitle=&quot;By sample&quot;,
+       x=&quot;Sample&quot;,
+       y=&quot;Number of cells&quot;) + 
+    geom_text(size=2.5, position = position_fill(vjust=0.5)) +
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlotsRel-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="singletdoublet-scatter" class="section level4">
+<h4>Singlet/Doublet Scatter</h4>
+<pre class="r"><code>sce &lt;- addPerCellQC(sce)
+
+#Plot singlet/doublet qcplots
+colData(sce) %&gt;% 
+    as.data.frame() %&gt;% 
+    arrange(scDblFinder.class) %&gt;% 
+    ggplot(aes(x = sce$sum, y = sce$detected )) +
+      geom_point(aes(colour = scDblFinder.class)) + 
+      facet_wrap(vars(Sample))+ 
+      labs(title=&quot;Total number of detected genes plotted against total number of UMIs&quot;,
+       x=&quot;Total counts&quot;,
+       y=&quot;Detected genes&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlots-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="apply-doublet-removal" class="section level3">
+<h3>Apply Doublet Removal</h3>
+<pre class="r"><code>#Apply Doublet Removal
+print(paste0(&quot;NR of Cells Before Doublet Removal &quot;, dim(sce)[2]))</code></pre>
+<pre><code>[1] &quot;NR of Cells Before Doublet Removal 91083&quot;</code></pre>
+<pre class="r"><code>sce &lt;- sce[ ,sce$scDblFinder.class == &quot;singlet&quot;]
+print(paste0(&quot;NR of Cells Before Doublet Removal &quot;, dim(sce)[2]))</code></pre>
+<pre><code>[1] &quot;NR of Cells Before Doublet Removal 82745&quot;</code></pre>
+</div>
+</div>
+<div id="filter-cells" class="section level2">
+<h2>Filter Cells</h2>
+<p>The main goal of quality control is to remove low-quality reads from
+the dataset. When a cell has a low number of detected genes, a low count
+depth and a high fraction of mitochondrial counts it might have a broken
+membrane which can indicate a dying cell.</p>
+<p>We filter for: - Low number of counts per barcode (count depth) - Low
+number number of genes per barcode - High fraction of counts from
+mitochondrial genes per barcode</p>
+<pre class="r"><code># Indentify mitochondrial genes
+is_mito&lt;- grepl(&quot;(^MT-)|(^mt-)&quot;, rowData(sce)$Symbol)
+rowData(sce)$Symbol[is_mito] #Show the MT genes</code></pre>
+<pre><code> [1] &quot;MT-ND1&quot;  &quot;MT-ND2&quot;  &quot;MT-CO1&quot;  &quot;MT-CO2&quot;  &quot;MT-ATP8&quot; &quot;MT-ATP6&quot; &quot;MT-CO3&quot; 
+ [8] &quot;MT-ND3&quot;  &quot;MT-ND4L&quot; &quot;MT-ND4&quot;  &quot;MT-ND5&quot;  &quot;MT-ND6&quot;  &quot;MT-CYB&quot; </code></pre>
+<pre class="r"><code># calculate per-cell quality control (QC) metrics using scater
+sce &lt;- addPerCellQC(sce, subsets=list(Mito=is_mito))</code></pre>
+<div id="fixed-filtering-thresholds" class="section level3">
+<h3>Fixed Filtering Thresholds</h3>
+<pre class="r"><code>#Some Fixed thresholds
+colData(sce)$qc.count_manual &lt;- sce$sum &lt; 1000 # Cells have at least a count of 750
+colData(sce)$qc.genexp_manual &lt;- sce$detected &lt; 500 # Cells have at least 500 genes expressed
+colData(sce)$qc.mito_manual &lt;- sce$subsets_Mito_percent &gt; 15 #Mitochondrial contamination has to be lower than 15%</code></pre>
+</div>
+<div id="adaptive-filtering-thresholds" class="section level3">
+<h3>Adaptive Filtering Thresholds</h3>
+<pre class="r"><code>#With Adaptive thresholds (for each batch/sample)
+
+colData(sce)$qc.count &lt;- isOutlier(sce$sum,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample )
+data.frame(attr(colData(sce)$qc.count, &quot;thresholds&quot;)) # Cells with very low number of counts</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1969.077","2":"425.0753","3":"264.8265","4":"506.4693","5":"441.7026","6":"1139.052","7":"1795.327","8":"826.351","9":"1403.64","10":"1062.357","11":"384.1484","12":"686.5704","13":"343.7727","14":"397.2902","15":"18.51099","16":"531.8757","17":"24.61961","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>colData(sce)$qc.genexp &lt;- isOutlier(sce$detected,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample)
+data.frame(attr(colData(sce)$qc.genexp, &quot;thresholds&quot;)) # Cells with very low number of genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1159.475","2":"516.1209","3":"306.1083","4":"479.2748","5":"446.6109","6":"925.5139","7":"1263.418","8":"818.6731","9":"1004.854","10":"905.1128","11":"317.7288","12":"646.5913","13":"417.9809","14":"359.7305","15":"42.10319","16":"442.0227","17":"31.54986","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>colData(sce)$qc.mito &lt;- isOutlier(sce$subsets_Mito_percent,nmads=3, type=&quot;higher&quot;,batch =sce$Sample)
+data.frame(attr(colData(sce)$qc.mito, &quot;thresholds&quot;)) # Cells with high mitochondrial content</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"-Inf","2":"-Inf","3":"-Inf","4":"-Inf","5":"-Inf","6":"-Inf","7":"-Inf","8":"-Inf","9":"-Inf","10":"-Inf","11":"-Inf","12":"-Inf","13":"-Inf","14":"-Inf","15":"-Inf","16":"-Inf","17":"-Inf","_rn_":"lower"},{"1":"12.5103","2":"11.44131","3":"16.64008","4":"15.31105","5":"13.63237","6":"15.60838","7":"14.62225","8":"10.85912","9":"9.463488","10":"12.54623","11":"9.18084","12":"15.92172","13":"14.2231","14":"16.44631","15":"15.04995","16":"16.5058","17":"8.687394","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>colData(sce)$discard &lt;- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual</code></pre>
+<pre class="r"><code># Summary of all discarted cells
+data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
+           `Genes_detected` = sum(sce$qc.genexp| sce$qc.genexp_manual),
+           `Mitochondrial_percentage` = sum(sce$qc.mito| sce$qc.mito_manual),
+           Total_discarded = sum(sce$discard))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Library_size"],"name":[1],"type":["int"],"align":["right"]},{"label":["Genes_detected"],"name":[2],"type":["int"],"align":["right"]},{"label":["Mitochondrial_percentage"],"name":[3],"type":["int"],"align":["right"]},{"label":["Total_discarded"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"8031","2":"9262","3":"7920","4":"15420"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="qc-filtering-plots" class="section level3">
+<h3>QC Filtering Plots</h3>
+<p>The aim by plotting the proportion of mitochondrial counts against
+some of the other QC metrics is to confirm that there are no cells with
+both large total counts and large mitochondrial counts, to ensure that
+we are not inadvertently removing high-quality cells that happen to be
+highly metabolically active (e.g., hepatocytes).</p>
+<pre class="r"><code># QCplots after filtering whole dataset
+
+colData(sce) %&gt;% 
+    as.data.frame() %&gt;% 
+    arrange(discard) %&gt;% 
+    ggplot(aes(x = sum, y = detected, colour = discard)) +
+      geom_point() +
+      ggtitle(&quot;Total number of detected genes plotted against total number of UMIs&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>colData(sce) %&gt;% 
+    as.data.frame() %&gt;%
+    arrange(discard) %&gt;% 
+    ggplot(aes(x = sum, y = subsets_Mito_percent, colour = discard)) +
+      geom_point()+ 
+      ggtitle(&quot;Percentage of mitochondrial UMIs plotted against total number of UMIs&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Plot Total count
+plotColData(sce, y=&quot;sum&quot;,colour_by = &quot;discard&quot;) + scale_y_log10() + ggtitle(&quot;Total count&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Plot Detected Feaututes
+plotColData(sce, y=&quot;detected&quot;,colour_by = &quot;discard&quot;) + scale_y_log10() + ggtitle(&quot;Detected features&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Plot Mito percent
+plotColData(sce, y=&quot;subsets_Mito_percent&quot;,colour_by = &quot;discard&quot;) + ggtitle(&quot;Mito percent&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<div id="scatter-plots-per-sample" class="section level4 tabset">
+<h4 class="tabset">Scatter Plots Per Sample</h4>
+<div id="detected-genes-vs-total-number-of-umis" class="section level5">
+<h5>Detected genes vs total number of UMIs</h5>
+<pre class="r"><code>colData(sce) %&gt;% 
+    as.data.frame() %&gt;% 
+    arrange(discard) %&gt;% 
+    ggplot(aes(x = sum, y = detected)) +
+      geom_point(aes(colour = discard)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle(&quot;Total number of detected genes plotted against total number of UMIs&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots1-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+##### Mitochondrial percentage vs total number of UMIs</p>
+<pre class="r"><code>colData(sce) %&gt;% 
+    as.data.frame() %&gt;% 
+    arrange(discard) %&gt;% 
+    ggplot(aes(x = sum, y = subsets_Mito_percent)) +
+      geom_point(aes(colour = discard)) + 
+      facet_wrap(vars(Sample))+ 
+      ggtitle(&quot;Percentage of mitochondrial UMIs plotted against total number of UMIs&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="violin-plots-per-sample" class="section level4 tabset">
+<h4 class="tabset">Violin Plots Per Sample</h4>
+<div id="total-counts" class="section level5">
+<h5>Total counts</h5>
+<pre class="r"><code>#Plot Total count
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;sum&quot;,other_fields=&quot;Sample&quot;,colour_by = &quot;discard&quot;) + 
+    facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) + 
+    scale_y_log10() + 
+    ggtitle(&quot;Total count&quot;)+
+    guides(colour=guide_legend(title=&quot;Discarded&quot;))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots3-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+##### Genes detected</p>
+<pre class="r"><code>#Plot Detected Genes
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;detected&quot;, other_fields=&quot;Sample&quot;,colour_by = &quot;discard&quot;) + 
+    facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) + 
+    scale_y_log10() + 
+    ggtitle(&quot;Detected features&quot;)+
+    guides(colour=guide_legend(title=&quot;Discarded&quot;))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots4-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+##### Mitochondrial percentage</p>
+<pre class="r"><code>#Plot Mito percent
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;subsets_Mito_percent&quot;, other_fields=&quot;Sample&quot;,colour_by = &quot;discard&quot;) + 
+    facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) +
+    ggtitle(&quot;Mito percent&quot;)+
+    guides(colour=guide_legend(title=&quot;Discarded&quot;))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cells-to-be-removed-histogramm" class="section level4 tabset">
+<h4 class="tabset">Cells to be Removed Histogramm</h4>
+<div id="absolute-comparison-1" class="section level5">
+<h5>Absolute comparison</h5>
+<pre class="r"><code>#Cells marked to be dropped per samples
+# Absolute comparison / by sample
+as.data.frame(colData(sce)) %&gt;%
+  group_by(Sample, discard) %&gt;%
+  summarise(Freq=n()) %&gt;% 
+  ggplot(aes(x=Sample, y=Freq, fill=discard, label=Freq)) +
+    geom_bar(stat=&quot;identity&quot;, position=&quot;stack&quot;) +
+    labs(title=&quot;Cells to be dropped&quot;,
+       subtitle=&quot;Labels represent absolute number of cells&quot;,
+       x=&quot;&quot;,
+       y=&quot;Number of cells&quot;) + 
+    geom_text(size=3, position = position_stack(vjust=0.5))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots6-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
+##### Relative comparison</p>
+<pre class="r"><code>#Cells marked to be dropped per samples
+# Relative comparison / by sample
+as.data.frame(colData(sce)) %&gt;%
+  group_by(Sample, discard) %&gt;%
+  summarise(Freq=n()) %&gt;% 
+  ggplot(aes(x=Sample, y=Freq, fill=discard, label=Freq)) +
+    geom_bar(stat=&quot;identity&quot;, position=&quot;fill&quot;) +
+    labs(title=&quot;Cells to be dropped&quot;,
+       subtitle=&quot;Labels represent absolute number of cells&quot;,
+       x=&quot;&quot;,
+       y=&quot;Number of cells&quot;) + 
+    geom_text(size=3, position = position_fill(vjust=0.5))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots7-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="apply-filtering" class="section level3">
+<h3>Apply filtering</h3>
+<pre class="r"><code># Create the filtered sce element
+sce.filtered &lt;- sce[, !colData(sce)$discard]</code></pre>
+</div>
+</div>
+<div id="filter-genes" class="section level2">
+<h2>Filter Genes</h2>
+<p>Additionally, perform some filtering by prevalence. If a gene is only
+expressed in a handful of cells, it is not particularly meaningful as it
+still brings down the averages for all other cells it is not expressed
+in. For this dataset we choose to keep only genes which are expressed in
+10 or more cells. This should be performed after filtering out for low
+quality cells.</p>
+<pre class="r"><code>#Filter out genes 
+dim_before_filtering &lt;- dim(sce.filtered)
+
+#Get only the detected Genes
+detected_genes &lt;- rowSums(counts(sce.filtered)&gt; 0)
+
+#Remove Genes not expressed in at least 10 Cells 
+sce.filtered &lt;- sce.filtered[detected_genes &gt; 10,]
+
+
+dim_after_filtering &lt;- dim(sce.filtered)
+
+cat(
+    &quot;\nNR of Genes Before Filtering &quot;, dim_before_filtering[1],
+    &quot;\nNR of Genes After Filtering &quot;, dim_after_filtering[1],
+    &quot;\nNR of Genes Filtered out &quot;, dim_before_filtering[1] - dim_after_filtering[1]
+    )</code></pre>
+<pre><code>
+NR of Genes Before Filtering  34594 
+NR of Genes After Filtering  30572 
+NR of Genes Filtered out  4022</code></pre>
+</div>
+<div id="plots-after-filtering" class="section level2">
+<h2>Plots after Filtering</h2>
+<div id="histogramm-with-number-of-cells-1"
+class="section level3 tabset">
+<h3 class="tabset">Histogramm with number of cells</h3>
+<p>Show the number of cells detected in each sample or joint location
+after filtering</p>
+<div id="per-sample-1" class="section level4">
+<h4>Per Sample</h4>
+<pre class="r"><code>#Histogramm with number of cells per sample after filtering
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Sample)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SynBio028_10000"],"name":[1],"type":["int"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["int"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["int"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["int"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["int"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["int"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["int"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["int"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["int"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["int"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["int"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["int"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["int"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["int"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["int"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["int"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["int"],"align":["right"]}],"data":[{"1":"3449","2":"555","3":"4132","4":"3411","5":"2030","6":"5411","7":"5340","8":"5560","9":"4315","10":"4092","11":"2809","12":"4845","13":"5806","14":"4102","15":"4215","16":"3117","17":"4136"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="per-joint-location-1" class="section level4">
+<h4>Per Joint Location</h4>
+<pre class="r"><code>#Histogramm with number of cells per sample after filtering
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle(&quot;Number of cells per Joint&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Knee"],"name":[1],"type":["int"],"align":["right"]},{"label":["MCP"],"name":[2],"type":["int"],"align":["right"]},{"label":["Wrist"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"23281","2":"18539","3":"25505"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="plot-top-25-genes-in-the-dataset" class="section level3">
+<h3>Plot top 25 genes in the dataset</h3>
+<p>The most strongly and commonly expressed genes expected among all
+cells should not be mitochondrial anymore.</p>
+<pre class="r"><code>#Check top 20 expressed genes after filtering
+
+rel_expression &lt;- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
+rownames(rel_expression) &lt;- rowData(sce.filtered)$Symbol
+most_expressed &lt;- sort(rowSums( rel_expression ),T)[20:1]
+plot_data &lt;- as.matrix(t(rel_expression[names(most_expressed),]))
+
+boxplot(plot_data, cex=0.1, las=1, xlab=&quot;% total count per cell&quot;, horizontal=TRUE, main=&quot;Distribution of counts for the top 20 genes before filtering&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="normalization" class="section level2">
+<h2>Normalization</h2>
+<p>The preprocessing step of normalization aims to adjust the raw counts
+in the dataset for variable sampling effects by scaling the observable
+variance to a specified range. Several normalization techniques are used
+in practice varying in complexity.</p>
+<div id="normalization-by-library-size" class="section level3">
+<h3>Normalization by Library size</h3>
+<p>Library size normalization is the simplest strategy for performing
+scaling normalization. The library size is defined as the total sum of
+counts across all genes for each cell, the expected value of which is
+assumed to scale with any cell-specific biases. The “library size
+factor” for each cell is then directly proportional to its library size
+where the proportionality constant is defined such that the mean size
+factor across all cells is equal to 1.</p>
+<pre class="r"><code># Library size normalization
+sce.lib &lt;- computeLibraryFactors(sce.filtered)
+
+
+ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +
+  xlab(&quot;Log10 Library size factor&quot;) +
+  geom_histogram(bins=50)+
+  ggtitle(&quot;Distribution of Library size factors&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="normalization-by-deconvolution" class="section level3">
+<h3>Normalization by deconvolution</h3>
+<p>Deconvolution aims to normalize expression values based on summed
+values from pools of cells which reduces composition biases that are
+present when any unbalanced differential expression exists between
+samples. Pooling counts from many cells to increase the size of the
+counts for accurate size factor estimation. Pool-based size factors are
+then “deconvolved” into cell-based factors for normalization of each
+cell’s expression profile.</p>
+<pre class="r"><code># Normalization by deconvolution
+clust.filtered &lt;- quickCluster(sce.filtered,BPPARAM =bpp) #block=factor(sce.filtered$Protocol)
+
+sce.deconv &lt;- computeSumFactors(sce.filtered,clusters=clust.filtered,BPPARAM =bpp)
+
+ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(sce.deconv))), aes(x=log10libSf)) +
+  xlab(&quot;Log10 Library size factor&quot;) +
+  geom_histogram(bins=50)+
+  ggtitle(&quot;Distribution of Deconvolution size factors&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>print(&quot;Library size factors&quot;)</code></pre>
+<pre><code>[1] &quot;Library size factors&quot;</code></pre>
+<pre class="r"><code>summary(sizeFactors(sce.lib))</code></pre>
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+ 0.06629  0.42430  0.76694  1.00000  1.32846 18.02557 </code></pre>
+<pre class="r"><code>print(&quot;Deconvolution size factors&quot;)</code></pre>
+<pre><code>[1] &quot;Deconvolution size factors&quot;</code></pre>
+<pre class="r"><code>summary(sizeFactors(sce.deconv))</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+ 0.008463  0.428482  0.774032  1.000000  1.317548 19.930443 </code></pre>
+<pre class="r"><code>#Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors. 
+plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab=&quot;Library size factor&quot;,ylab=&quot;Deconvolution size factor&quot;, log=&#39;xy&#39;, pch=16,col=as.integer(factor(clust.filtered)), main=&quot;Deconvolution factors for individual cluster&quot;)
+abline(a=0, b=1, col=&quot;red&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotSizeFactors-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Color by sample
+plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab=&quot;Library size factor&quot;,ylab=&quot;Deconvolution size factor&quot;, log=&#39;xy&#39;, pch=16,col=as.integer(factor(sce.filtered$Sample)), main=&quot;Deconvolution factors for individual Sample&quot;)
+abline(a=0, b=1, col=&quot;red&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotSizeFactors-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="normalization-with-variance-stabilising-transformation"
+class="section level3">
+<h3>Normalization with variance stabilising transformation</h3>
+<p>Variance stabilising transformation models the expression of each
+gene as a negative binomial random variable with a mean that depends on
+other variables. Here the other variables can be used to model the
+differences in sequencing depth between cells and are used as
+independent variables in a regression model. The model is fit for each
+gene, then combined data across genes is used to fit parameters and
+convert UMI counts to residuals akin to the number of standard
+deviations away from the expected mean.</p>
+<pre class="r"><code># Normalization with variance stabilising transformation
+counts &lt;- counts(sce.filtered)
+vst_out &lt;- vst(umi = counts,latent_var = &#39;log_umi&#39;,return_gene_attr = TRUE,return_cell_attr = TRUE)</code></pre>
+<pre class="r"><code>#Make Parameter plot
+plot_model_pars(vst_out)
+
+#Check that the model used is the one we want (regressing out the effect of library size).
+print(vst_out$model_str)
+
+#The distribution of residual mean should be centered around 0
+ggplot(vst_out$gene_attr, aes(residual_mean)) +
+  geom_histogram(binwidth=0.01)
+
+#The distribution of residual variance should be centered around 1
+ggplot(vst_out$gene_attr, aes(residual_variance)) +
+  geom_histogram(binwidth=0.1) +
+  geom_vline(xintercept=1, color=&#39;red&#39;) +
+  xlim(0, 10)
+
+#Finally, check that the relationship between variance and mean has been removed
+ggplot(vst_out$gene_attr,aes(log10(gmean), residual_variance)) +
+  geom_point(alpha=0.3, shape=16)</code></pre>
+<pre class="r"><code># Apply Normalisation
+sce.VST &lt;- sce.filtered
+vstMat &lt;- as(vst_out$y[rownames(sce.VST),], &quot;dgCMatrix&quot;)
+assay(sce.VST, &quot;sctrans_norm&quot;, withDimnames=FALSE) &lt;- vstMat</code></pre>
+</div>
+<div id="apply-normalization" class="section level3">
+<h3>Apply Normalization</h3>
+<p>Apply the chosen normalization method</p>
+<pre class="r"><code># Apply Normalisation
+sce.filtered &lt;- logNormCounts(sce.deconv)
+summary(sizeFactors(sce.filtered))</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+ 0.008463  0.428482  0.774032  1.000000  1.317548 19.930443 </code></pre>
+<pre class="r"><code>assayNames(sce.filtered)</code></pre>
+<pre><code>[1] &quot;counts&quot;    &quot;logcounts&quot;</code></pre>
+<pre class="r"><code>rm(sce.lib, sce.deconv, sce.VST)</code></pre>
+</div>
+</div>
+<div id="variable-level-metrics" class="section level2">
+<h2>Variable-Level Metrics</h2>
+<p>Variable-level metrics are computed by the getVarianceExplained()
+function. This calculates the percentage of variance of each gene’s
+expression that is explained by each variable in the colData of the
+SingleCellExperiment object. We can then use this to determine which
+experimental factors are contributing most to the variance in
+expression. This is useful for diagnosing batch effects or to quickly
+verify that a treatment has an effect.</p>
+<pre class="r"><code>vars &lt;- getVarianceExplained(sce.filtered,assay.type=&quot;logcounts&quot;,
+    variables=c(&quot;Sample&quot;, &quot;Joint.Location&quot;, &quot;Pathotype&quot;,&quot;Seropositivity&quot;,&quot;GCTreatment&quot;,&quot;protocol&quot;,&quot;sex&quot;, &quot;Age&quot;))
+head(vars)</code></pre>
+<pre><code>                               Sample Joint.Location   Pathotype Seropositivity
+ENSG00000238009.AL627309.1 0.30944822    0.002814696 0.019143445    0.001050143
+ENSG00000239945.AL627309.3 0.04869722    0.005694678 0.003231528    0.008530302
+ENSG00000241860.AL627309.5 0.60724906    0.032821910 0.076706918    0.037956060
+ENSG00000241599.AL627309.4 0.10870297    0.017668445 0.036787520    0.002263189
+ENSG00000229905.AL669831.2 0.01554915    0.007159065 0.002244727    0.002443720
+ENSG00000237491.LINC01409  1.00669164    0.177005372 0.128737294    0.054560290
+                            GCTreatment     protocol          sex          Age
+ENSG00000238009.AL627309.1 0.0025491740 7.795320e-04 0.0275141990 0.0010199863
+ENSG00000239945.AL627309.3 0.0024296694 3.445616e-03 0.0003007630 0.0036075432
+ENSG00000241860.AL627309.5 0.0233186444 3.284776e-03 0.0582380877 0.0319097968
+ENSG00000241599.AL627309.4 0.0072990943 8.672456e-06 0.0011716910 0.0020047793
+ENSG00000229905.AL669831.2 0.0004757774 7.714547e-06 0.0001449732 0.0001888954
+ENSG00000237491.LINC01409  0.3644420501 5.614184e-02 0.0005764506 0.3497616561</code></pre>
+<pre class="r"><code>plotExplanatoryVariables(vars)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/VariableMetrics-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="save-dataset" class="section level2">
+<h2>Save Dataset</h2>
+<pre class="r"><code>saveRDS(sce.filtered, file =paste0(path,&#39;/output/01_sce_Preprocessing.rds&#39;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.3 (2024-02-29)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Warsaw
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] sctransform_0.4.1           scDblFinder_1.16.0         
+ [3] DropletUtils_1.22.0         scran_1.30.2               
+ [5] scater_1.30.1               scuttle_1.12.0             
+ [7] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
+ [9] Biobase_2.62.0              GenomicRanges_1.54.1       
+[11] GenomeInfoDb_1.38.8         IRanges_2.36.0             
+[13] S4Vectors_0.40.2            BiocGenerics_0.48.1        
+[15] MatrixGenerics_1.14.0       matrixStats_1.2.0          
+[17] dplyr_1.1.4                 ggplot2_3.5.0              
+[19] BiocParallel_1.36.0         workflowr_1.7.1            
+
+loaded via a namespace (and not attached):
+  [1] rstudioapi_0.16.0         jsonlite_1.8.8           
+  [3] magrittr_2.0.3            ggbeeswarm_0.7.2         
+  [5] farver_2.1.1              rmarkdown_2.26           
+  [7] fs_1.6.3                  BiocIO_1.12.0            
+  [9] zlibbioc_1.48.2           vctrs_0.6.5              
+ [11] Rsamtools_2.18.0          DelayedMatrixStats_1.24.0
+ [13] RCurl_1.98-1.14           htmltools_0.5.8          
+ [15] S4Arrays_1.2.1            BiocNeighbors_1.20.2     
+ [17] xgboost_1.7.7.1           Rhdf5lib_1.24.2          
+ [19] SparseArray_1.2.4         rhdf5_2.46.1             
+ [21] parallelly_1.37.1         sass_0.4.9               
+ [23] bslib_0.6.2               plyr_1.8.9               
+ [25] cachem_1.0.8              GenomicAlignments_1.38.2 
+ [27] whisker_0.4.1             igraph_2.0.3             
+ [29] lifecycle_1.0.4           pkgconfig_2.0.3          
+ [31] rsvd_1.0.5                Matrix_1.6-5             
+ [33] R6_2.5.1                  fastmap_1.1.1            
+ [35] future_1.33.2             GenomeInfoDbData_1.2.11  
+ [37] digest_0.6.35             colorspace_2.1-0         
+ [39] ps_1.7.6                  rprojroot_2.0.4          
+ [41] dqrng_0.3.2               irlba_2.3.5.1            
+ [43] beachmat_2.18.1           labeling_0.4.3           
+ [45] fansi_1.0.6               httr_1.4.7               
+ [47] abind_1.4-5               compiler_4.3.3           
+ [49] here_1.0.1                withr_3.0.0              
+ [51] viridis_0.6.5             highr_0.10               
+ [53] HDF5Array_1.30.1          R.utils_2.12.3           
+ [55] MASS_7.3-60.0.1           DelayedArray_0.28.0      
+ [57] rjson_0.2.21              bluster_1.12.0           
+ [59] tools_4.3.3               vipor_0.4.7              
+ [61] beeswarm_0.4.0            httpuv_1.6.15            
+ [63] future.apply_1.11.1       R.oo_1.26.0              
+ [65] glue_1.7.0                restfulr_0.0.15          
+ [67] callr_3.7.6               rhdf5filters_1.14.1      
+ [69] promises_1.2.1            grid_4.3.3               
+ [71] getPass_0.2-4             reshape2_1.4.4           
+ [73] cluster_2.1.6             generics_0.1.3           
+ [75] gtable_0.3.4              R.methodsS3_1.8.2        
+ [77] data.table_1.15.2         BiocSingular_1.18.0      
+ [79] ScaledMatrix_1.10.0       metapod_1.10.1           
+ [81] utf8_1.2.4                XVector_0.42.0           
+ [83] ggrepel_0.9.5             pillar_1.9.0             
+ [85] stringr_1.5.1             limma_3.58.1             
+ [87] later_1.3.2               lattice_0.22-5           
+ [89] rtracklayer_1.62.0        tidyselect_1.2.1         
+ [91] locfit_1.5-9.9            Biostrings_2.70.3        
+ [93] knitr_1.45                git2r_0.33.0             
+ [95] gridExtra_2.3             edgeR_4.0.16             
+ [97] xfun_0.43                 statmod_1.5.0            
+ [99] stringi_1.8.3             yaml_2.3.8               
+[101] evaluate_0.23             codetools_0.2-19         
+[103] tibble_3.2.1              cli_3.6.2                
+[105] munsell_0.5.0             processx_3.8.4           
+[107] jquerylib_0.1.4           Rcpp_1.0.12              
+[109] globals_0.16.3            XML_3.99-0.16.1          
+[111] parallel_4.3.3            sparseMatrixStats_1.14.0 
+[113] bitops_1.0-7              listenv_0.9.1            
+[115] viridisLite_0.4.2         scales_1.3.0             
+[117] crayon_1.5.2              rlang_1.1.3              
+[119] cowplot_1.1.3            </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
