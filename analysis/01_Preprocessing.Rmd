@@ -140,9 +140,10 @@ as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))
 
 ### Doublet Detection Plots
 
-#### Singlet/Doublet Histogramm  {.tabset}
+#### Singlet/Doublet Histogramm {.tabset}
 
 ##### Absolute comparison
+
 ```{r DoubletDetectionPlotsAbs}
 
 #Plot singlet/doublet histogramm Absolute comparison / by sample
@@ -156,7 +157,9 @@ as.data.frame(colData(sce)) %>%
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 
 ```
+
 ##### Relative comparison
+
 ```{r DoubletDetectionPlotsRel}
 # Plot singlet/doublet histogramm Relative comparison / by sample
 as.data.frame(colData(sce)) %>%
@@ -172,7 +175,9 @@ as.data.frame(colData(sce)) %>%
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
 
+
 #### Singlet/Doublet Scatter
+
 ```{r DoubletDetectionPlots}
 sce <- addPerCellQC(sce)
 
@@ -231,22 +236,24 @@ colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial cont
 
 ```
 
-### Adaptive Filtering Thresholds
+### Adaptive Filtering Thresholds (for each batch/sample)
 
 ```{r AdaptiveThresholds}
-#With Adaptive thresholds (for each batch/sample)
 
+# Detect cells with very low number of counts
 colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="lower",batch =sce$Sample )
-data.frame(attr(colData(sce)$qc.count, "thresholds")) # Cells with very low number of counts
+data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
+# Detect cells with very low number of genes
 colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.genexp, "thresholds")) # Cells with very low number of genes
+data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
+# Detect cells with high mitochondrial content
 colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.mito, "thresholds")) # Cells with high mitochondrial content
+data.frame(attr(colData(sce)$qc.mito, "thresholds")) 
 
 
-
+# Mark Cells to be Discarted
 colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual
 
 ```
@@ -266,9 +273,24 @@ data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
 
 The aim by plotting the proportion of mitochondrial counts against some of the other QC metrics is to confirm that there are no cells with both large total counts and large mitochondrial counts, to ensure that we are not inadvertently removing high-quality cells that happen to be highly metabolically active (e.g., hepatocytes).
 
+#### Qc Plots whole dataset {.tabset}
+
+##### Detected genes vs total number of UMIs
+
 ```{r QcPlotsWhole1}
 # QCplots after filtering whole dataset
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(discard) %>% 
+    ggplot(aes(x = sum, y = detected, colour = discard)) +
+      geom_point() +
+      ggtitle("Total number of detected genes plotted against total number of UMIs") 
+```
 
+##### Mitochondrial percentage vs total number of UMIs
+
+```{r QcPlotsWhole1}
+# QCplots after filtering whole dataset
 colData(sce) %>% 
     as.data.frame() %>% 
     arrange(discard) %>% 
@@ -285,7 +307,12 @@ colData(sce) %>%
 
 ```
 
+##### Violin Plots
+
 ```{r QcPlotsWhole2}
+# QCplots after filtering whole dataset
+par(mfrow = c(1, 3))
+
 #Plot Total count
 plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Total count") +guides(colour=guide_legend(title="Discarded"))
 
@@ -300,6 +327,7 @@ plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("Mito
 #### Scatter Plots Per Sample {.tabset}
 
 ##### Detected genes vs total number of UMIs
+
 ```{r QcPlots1}
 colData(sce) %>% 
     as.data.frame() %>% 
@@ -310,7 +338,9 @@ colData(sce) %>%
       ggtitle("Total number of detected genes plotted against total number of UMIs") 
 
 ```
+
 ##### Mitochondrial percentage vs total number of UMIs
+
 ```{r QcPlots2}
 colData(sce) %>% 
     as.data.frame() %>% 
@@ -327,6 +357,7 @@ colData(sce) %>%
 #### Violin Plots Per Sample {.tabset}
 
 ##### Total counts
+
 ```{r QcPlots3}
 #Plot Total count
 plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard") + 
@@ -336,7 +367,9 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard"
     guides(colour=guide_legend(title="Discarded"))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
+
 ##### Genes detected
+
 ```{r QcPlots4}
 #Plot Detected Genes
 plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
@@ -346,7 +379,9 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "di
     guides(colour=guide_legend(title="Discarded"))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 ```
+
 ##### Mitochondrial percentage
+
 ```{r QcPlots5}
 #Plot Mito percent
 plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
@@ -360,6 +395,7 @@ plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",col
 #### Cells to be Removed Histogramm {.tabset}
 
 ##### Absolute comparison
+
 ```{r QcPlots6}
 #Cells marked to be dropped per samples
 # Absolute comparison / by sample
@@ -376,7 +412,9 @@ as.data.frame(colData(sce)) %>%
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) 
 
 ```
+
 ##### Relative comparison
+
 ```{r QcPlots7}
 #Cells marked to be dropped per samples
 # Relative comparison / by sample
@@ -441,7 +479,9 @@ Show the number of cells detected in each sample or joint location after filteri
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
 data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```
+
 #### Per Joint Location
+
 ```{r PlotCellsPerJointAfterFiltering2}
 #Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
@@ -451,7 +491,7 @@ data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 
 ### Plot top 25 genes in the dataset
 
-The most strongly and commonly expressed genes expected among all cells should not be mitochondrial anymore.
+The most strongly and commonly expressed genes expected among all cells  are ribosomal and mitochondrial.
 
 ```{r PlotTop25GenesAfterFiltering}
 #Check top 20 expressed genes after filtering
