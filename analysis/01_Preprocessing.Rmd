@@ -237,13 +237,13 @@ colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial cont
 #With Adaptive thresholds (for each batch/sample)
 
 colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="lower",batch =sce$Sample )
-attr(colData(sce)$qc.count, "thresholds") # Cells with very low number of counts
+data.frame(attr(colData(sce)$qc.count, "thresholds")) # Cells with very low number of counts
 
 colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
-attr(colData(sce)$qc.genexp, "thresholds") # Cells with very low number of genes
+data.frame(attr(colData(sce)$qc.genexp, "thresholds")) # Cells with very low number of genes
 
 colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
-attr(colData(sce)$qc.mito, "thresholds") # Cells with high mitochondrial content
+data.frame(attr(colData(sce)$qc.mito, "thresholds")) # Cells with high mitochondrial content
 
 
 
@@ -453,7 +453,7 @@ data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 
 The most strongly and commonly expressed genes expected among all cells should not be mitochondrial anymore.
 
-```{r PlotTop25GenesAfterFiltering, eval=FALSE}
+```{r PlotTop25GenesAfterFiltering}
 #Check top 20 expressed genes after filtering
 
 rel_expression <- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
@@ -492,9 +492,9 @@ Deconvolution aims to normalize expression values based on summed values from po
 
 ```{r DeconvolutionNorm}
 # Normalization by deconvolution
-clust.filtered <- quickCluster(sce.filtered) #block=factor(sce.filtered$Protocol)
+clust.filtered <- quickCluster(sce.filtered,BPPARAM =bpp) #block=factor(sce.filtered$Protocol)
 
-sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered)
+sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered,BPPARAM =bpp)
 
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.deconv))), aes(x=log10libSf)) +
   xlab("Log10 Library size factor") +
