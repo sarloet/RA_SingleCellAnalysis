@@ -400,7 +400,7 @@ div.tocify {
 <h1 class="title toc-ignore">QC and Preprocessing</h1>
 <h3 class="subtitle">01_Preprocessing</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 5 2024 09:19:13</h4>
+<h4 class="date">Apr 5 2024 10:43:10</h4>
 
 </div>
 
@@ -560,15 +560,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb6843be012135e93e378e1d5781cce93bee6c43targetblankdb6843ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeff33a797be4917ca3a2d5dd462495ae110679dc0targetblankff33a79a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db6843be012135e93e378e1d5781cce93bee6c43" target="_blank">db6843b</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/ff33a797be4917ca3a2d5dd462495ae110679dc0" target="_blank">ff33a79</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb6843be012135e93e378e1d5781cce93bee6c43targetblankdb6843ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeff33a797be4917ca3a2d5dd462495ae110679dc0targetblankff33a79a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -578,7 +578,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db6843be012135e93e378e1d5781cce93bee6c43" target="_blank">db6843b</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/ff33a797be4917ca3a2d5dd462495ae110679dc0" target="_blank">ff33a79</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -644,6 +644,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ff33a797be4917ca3a2d5dd462495ae110679dc0/analysis/01_Preprocessing.Rmd" target="_blank">ff33a79</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+Add Prepocessing
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/1aac44e7c1656151029dec9d0ff6845bd66abdc7/analysis/01_Preprocessing.Rmd" target="_blank">1aac44e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+Update 01_Preprocessing.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/01_Preprocessing.html" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -902,6 +953,43 @@ before filtering</p>
 <pre class="r"><code>#Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerSample-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCellsPerSample-1">
+Past versions of PlotCellsPerSample-1.png
+</button>
+</p>
+<div id="fig-PlotCellsPerSample-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSample-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.frame(as.list(table(colData(sce)$Sample)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -914,6 +1002,43 @@ ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Numb
 <pre class="r"><code>#Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotCellsJoint-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCellsJoint-1">
+Past versions of PlotCellsJoint-1.png
+</button>
+</p>
+<div id="fig-PlotCellsJoint-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotCellsJoint-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.frame(as.list(table(colData(sce)$Joint.Location)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -997,8 +1122,47 @@ as.data.frame(colData(sce)) %&gt;%
     labs(title=&quot;Doublet detection results&quot;,
     subtitle=&quot;By sample&quot;) +
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlotsAbs-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
-##### Relative comparison</p>
+<p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlotsAbs-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-DoubletDetectionPlotsAbs-1">
+Past versions of DoubletDetectionPlotsAbs-1.png
+</button>
+</p>
+<div id="fig-DoubletDetectionPlotsAbs-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/DoubletDetectionPlotsAbs-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="relative-comparison" class="section level5">
+<h5>Relative comparison</h5>
 <pre class="r"><code># Plot singlet/doublet histogramm Relative comparison / by sample
 as.data.frame(colData(sce)) %&gt;%
   dplyr::group_by(Sample, scDblFinder.class) %&gt;%
@@ -1012,6 +1176,43 @@ as.data.frame(colData(sce)) %&gt;%
     geom_text(size=2.5, position = position_fill(vjust=0.5)) +
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlotsRel-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-DoubletDetectionPlotsRel-1">
+Past versions of DoubletDetectionPlotsRel-1.png
+</button>
+</p>
+<div id="fig-DoubletDetectionPlotsRel-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/DoubletDetectionPlotsRel-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="singletdoublet-scatter" class="section level4">
@@ -1029,6 +1230,43 @@ colData(sce) %&gt;%
        x=&quot;Total counts&quot;,
        y=&quot;Detected genes&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/DoubletDetectionPlots-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-DoubletDetectionPlots-1">
+Past versions of DoubletDetectionPlots-1.png
+</button>
+</p>
+<div id="fig-DoubletDetectionPlots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/DoubletDetectionPlots-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="apply-doublet-removal" class="section level3">
@@ -1064,32 +1302,35 @@ colData(sce)$qc.count_manual &lt;- sce$sum &lt; 1000 # Cells have at least a cou
 colData(sce)$qc.genexp_manual &lt;- sce$detected &lt; 500 # Cells have at least 500 genes expressed
 colData(sce)$qc.mito_manual &lt;- sce$subsets_Mito_percent &gt; 15 #Mitochondrial contamination has to be lower than 15%</code></pre>
 </div>
-<div id="adaptive-filtering-thresholds" class="section level3">
-<h3>Adaptive Filtering Thresholds</h3>
-<pre class="r"><code>#With Adaptive thresholds (for each batch/sample)
-
+<div id="adaptive-filtering-thresholds-for-each-batchsample"
+class="section level3">
+<h3>Adaptive Filtering Thresholds (for each batch/sample)</h3>
+<pre class="r"><code># Detect cells with very low number of counts
 colData(sce)$qc.count &lt;- isOutlier(sce$sum,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample )
-data.frame(attr(colData(sce)$qc.count, &quot;thresholds&quot;)) # Cells with very low number of counts</code></pre>
+data.frame(attr(colData(sce)$qc.count, &quot;thresholds&quot;)) </code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1969.077","2":"425.0753","3":"264.8265","4":"506.4693","5":"441.7026","6":"1139.052","7":"1795.327","8":"826.351","9":"1403.64","10":"1062.357","11":"384.1484","12":"686.5704","13":"343.7727","14":"397.2902","15":"18.51099","16":"531.8757","17":"24.61961","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>colData(sce)$qc.genexp &lt;- isOutlier(sce$detected,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.genexp, &quot;thresholds&quot;)) # Cells with very low number of genes</code></pre>
+<pre class="r"><code># Detect cells with very low number of genes
+colData(sce)$qc.genexp &lt;- isOutlier(sce$detected,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample)
+data.frame(attr(colData(sce)$qc.genexp, &quot;thresholds&quot;))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1159.475","2":"516.1209","3":"306.1083","4":"479.2748","5":"446.6109","6":"925.5139","7":"1263.418","8":"818.6731","9":"1004.854","10":"905.1128","11":"317.7288","12":"646.5913","13":"417.9809","14":"359.7305","15":"42.10319","16":"442.0227","17":"31.54986","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>colData(sce)$qc.mito &lt;- isOutlier(sce$subsets_Mito_percent,nmads=3, type=&quot;higher&quot;,batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.mito, &quot;thresholds&quot;)) # Cells with high mitochondrial content</code></pre>
+<pre class="r"><code># Detect cells with high mitochondrial content
+colData(sce)$qc.mito &lt;- isOutlier(sce$subsets_Mito_percent,nmads=3, type=&quot;higher&quot;,batch =sce$Sample)
+data.frame(attr(colData(sce)$qc.mito, &quot;thresholds&quot;)) </code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"-Inf","2":"-Inf","3":"-Inf","4":"-Inf","5":"-Inf","6":"-Inf","7":"-Inf","8":"-Inf","9":"-Inf","10":"-Inf","11":"-Inf","12":"-Inf","13":"-Inf","14":"-Inf","15":"-Inf","16":"-Inf","17":"-Inf","_rn_":"lower"},{"1":"12.5103","2":"11.44131","3":"16.64008","4":"15.31105","5":"13.63237","6":"15.60838","7":"14.62225","8":"10.85912","9":"9.463488","10":"12.54623","11":"9.18084","12":"15.92172","13":"14.2231","14":"16.44631","15":"15.04995","16":"16.5058","17":"8.687394","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>colData(sce)$discard &lt;- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual</code></pre>
+<pre class="r"><code># Mark Cells to be Discarted
+colData(sce)$discard &lt;- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual</code></pre>
 <pre class="r"><code># Summary of all discarted cells
 data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
            `Genes_detected` = sum(sce$qc.genexp| sce$qc.genexp_manual),
@@ -1108,8 +1349,11 @@ some of the other QC metrics is to confirm that there are no cells with
 both large total counts and large mitochondrial counts, to ensure that
 we are not inadvertently removing high-quality cells that happen to be
 highly metabolically active (e.g., hepatocytes).</p>
+<div id="qc-plots-whole-dataset" class="section level4 tabset">
+<h4 class="tabset">Qc Plots whole dataset</h4>
+<div id="detected-genes-vs-total-number-of-umis" class="section level5">
+<h5>Detected genes vs total number of UMIs</h5>
 <pre class="r"><code># QCplots after filtering whole dataset
-
 colData(sce) %&gt;% 
     as.data.frame() %&gt;% 
     arrange(discard) %&gt;% 
@@ -1117,25 +1361,157 @@ colData(sce) %&gt;%
       geom_point() +
       ggtitle(&quot;Total number of detected genes plotted against total number of UMIs&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlotsWhole1-1">
+Past versions of QcPlotsWhole1-1.png
+</button>
+</p>
+<div id="fig-QcPlotsWhole1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlotsWhole1-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="mitochondrial-percentage-vs-total-number-of-umis"
+class="section level5">
+<h5>Mitochondrial percentage vs total number of UMIs</h5>
+<pre class="r"><code># QCplots after filtering whole dataset
+colData(sce) %&gt;% 
+    as.data.frame() %&gt;% 
+    arrange(discard) %&gt;% 
+    ggplot(aes(x = sum, y = detected, colour = discard)) +
+      geom_point() +
+      ggtitle(&quot;Total number of detected genes plotted against total number of UMIs&quot;) </code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlotsWhole2-1">
+Past versions of QcPlotsWhole2-1.png
+</button>
+</p>
+<div id="fig-QcPlotsWhole2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlotsWhole2-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>colData(sce) %&gt;% 
     as.data.frame() %&gt;%
     arrange(discard) %&gt;% 
     ggplot(aes(x = sum, y = subsets_Mito_percent, colour = discard)) +
       geom_point()+ 
       ggtitle(&quot;Percentage of mitochondrial UMIs plotted against total number of UMIs&quot;) </code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#Plot Total count
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlotsWhole2-2">
+Past versions of QcPlotsWhole2-2.png
+</button>
+</p>
+<div id="fig-QcPlotsWhole2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlotsWhole2-2.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="violin-plots" class="section level5">
+<h5>Violin Plots</h5>
+<pre class="r"><code># QCplots after filtering whole dataset
+par(mfrow = c(1, 3))
+
+#Plot Total count
 plotColData(sce, y=&quot;sum&quot;,colour_by = &quot;discard&quot;) + scale_y_log10() + ggtitle(&quot;Total count&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#Plot Detected Feaututes
 plotColData(sce, y=&quot;detected&quot;,colour_by = &quot;discard&quot;) + scale_y_log10() + ggtitle(&quot;Detected features&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole3-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#Plot Mito percent
 plotColData(sce, y=&quot;subsets_Mito_percent&quot;,colour_by = &quot;discard&quot;) + ggtitle(&quot;Mito percent&quot;) +guides(colour=guide_legend(title=&quot;Discarded&quot;))</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlotsWhole3-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
 <div id="scatter-plots-per-sample" class="section level4 tabset">
 <h4 class="tabset">Scatter Plots Per Sample</h4>
-<div id="detected-genes-vs-total-number-of-umis" class="section level5">
+<div id="detected-genes-vs-total-number-of-umis-1"
+class="section level5">
 <h5>Detected genes vs total number of UMIs</h5>
 <pre class="r"><code>colData(sce) %&gt;% 
     as.data.frame() %&gt;% 
@@ -1144,8 +1520,48 @@ plotColData(sce, y=&quot;subsets_Mito_percent&quot;,colour_by = &quot;discard&qu
       geom_point(aes(colour = discard)) + 
       facet_wrap(vars(Sample))+ 
       ggtitle(&quot;Total number of detected genes plotted against total number of UMIs&quot;) </code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlots1-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
-##### Mitochondrial percentage vs total number of UMIs</p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots1-1">
+Past versions of QcPlots1-1.png
+</button>
+</p>
+<div id="fig-QcPlots1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots1-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="mitochondrial-percentage-vs-total-number-of-umis-1"
+class="section level5">
+<h5>Mitochondrial percentage vs total number of UMIs</h5>
 <pre class="r"><code>colData(sce) %&gt;% 
     as.data.frame() %&gt;% 
     arrange(discard) %&gt;% 
@@ -1154,6 +1570,43 @@ plotColData(sce, y=&quot;subsets_Mito_percent&quot;,colour_by = &quot;discard&qu
       facet_wrap(vars(Sample))+ 
       ggtitle(&quot;Percentage of mitochondrial UMIs plotted against total number of UMIs&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/QcPlots2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots2-1">
+Past versions of QcPlots2-1.png
+</button>
+</p>
+<div id="fig-QcPlots2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots2-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="violin-plots-per-sample" class="section level4 tabset">
@@ -1167,8 +1620,47 @@ plotColData(sce, x=&quot;Sample&quot;, y=&quot;sum&quot;,other_fields=&quot;Samp
     ggtitle(&quot;Total count&quot;)+
     guides(colour=guide_legend(title=&quot;Discarded&quot;))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlots3-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
-##### Genes detected</p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots3-1">
+Past versions of QcPlots3-1.png
+</button>
+</p>
+<div id="fig-QcPlots3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots3-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="genes-detected" class="section level5">
+<h5>Genes detected</h5>
 <pre class="r"><code>#Plot Detected Genes
 plotColData(sce, x=&quot;Sample&quot;, y=&quot;detected&quot;, other_fields=&quot;Sample&quot;,colour_by = &quot;discard&quot;) + 
     facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) + 
@@ -1176,8 +1668,47 @@ plotColData(sce, x=&quot;Sample&quot;, y=&quot;detected&quot;, other_fields=&quo
     ggtitle(&quot;Detected features&quot;)+
     guides(colour=guide_legend(title=&quot;Discarded&quot;))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlots4-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
-##### Mitochondrial percentage</p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots4-1">
+Past versions of QcPlots4-1.png
+</button>
+</p>
+<div id="fig-QcPlots4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots4-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="mitochondrial-percentage" class="section level5">
+<h5>Mitochondrial percentage</h5>
 <pre class="r"><code>#Plot Mito percent
 plotColData(sce, x=&quot;Sample&quot;, y=&quot;subsets_Mito_percent&quot;, other_fields=&quot;Sample&quot;,colour_by = &quot;discard&quot;) + 
     facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) +
@@ -1185,6 +1716,43 @@ plotColData(sce, x=&quot;Sample&quot;, y=&quot;subsets_Mito_percent&quot;, other
     guides(colour=guide_legend(title=&quot;Discarded&quot;))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/QcPlots5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots5-1">
+Past versions of QcPlots5-1.png
+</button>
+</p>
+<div id="fig-QcPlots5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots5-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="cells-to-be-removed-histogramm" class="section level4 tabset">
@@ -1204,8 +1772,47 @@ as.data.frame(colData(sce)) %&gt;%
        y=&quot;Number of cells&quot;) + 
     geom_text(size=3, position = position_stack(vjust=0.5))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) </code></pre>
-<p><img src="figure/01_Preprocessing.Rmd/QcPlots6-1.png" width="100%" height="100%" style="display: block; margin: auto;" />
-##### Relative comparison</p>
+<p><img src="figure/01_Preprocessing.Rmd/QcPlots6-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots6-1">
+Past versions of QcPlots6-1.png
+</button>
+</p>
+<div id="fig-QcPlots6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots6-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="relative-comparison-1" class="section level5">
+<h5>Relative comparison</h5>
 <pre class="r"><code>#Cells marked to be dropped per samples
 # Relative comparison / by sample
 as.data.frame(colData(sce)) %&gt;%
@@ -1220,6 +1827,43 @@ as.data.frame(colData(sce)) %&gt;%
     geom_text(size=3, position = position_fill(vjust=0.5))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank()) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/QcPlots7-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-QcPlots7-1">
+Past versions of QcPlots7-1.png
+</button>
+</p>
+<div id="fig-QcPlots7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/QcPlots7-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1271,6 +1915,43 @@ after filtering</p>
 <pre class="r"><code>#Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle(&quot;Number of cells per sample&quot;) </code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCellsPerSampleAfterFiltering1-1">
+Past versions of PlotCellsPerSampleAfterFiltering1-1.png
+</button>
+</p>
+<div id="fig-PlotCellsPerSampleAfterFiltering1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Sample)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -1283,6 +1964,43 @@ ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_fl
 <pre class="r"><code>#Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle(&quot;Number of cells per Joint&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCellsPerJointAfterFiltering2-1">
+Past versions of PlotCellsPerJointAfterFiltering2-1.png
+</button>
+</p>
+<div id="fig-PlotCellsPerJointAfterFiltering2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -1294,7 +2012,7 @@ ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ 
 <div id="plot-top-25-genes-in-the-dataset" class="section level3">
 <h3>Plot top 25 genes in the dataset</h3>
 <p>The most strongly and commonly expressed genes expected among all
-cells should not be mitochondrial anymore.</p>
+cells are ribosomal and mitochondrial.</p>
 <pre class="r"><code>#Check top 20 expressed genes after filtering
 
 rel_expression &lt;- t( t(counts(sce.filtered)) / colSums(counts(sce.filtered))) * 100
@@ -1304,6 +2022,43 @@ plot_data &lt;- as.matrix(t(rel_expression[names(most_expressed),]))
 
 boxplot(plot_data, cex=0.1, las=1, xlab=&quot;% total count per cell&quot;, horizontal=TRUE, main=&quot;Distribution of counts for the top 20 genes before filtering&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotTop25GenesAfterFiltering-1">
+Past versions of PlotTop25GenesAfterFiltering-1.png
+</button>
+</p>
+<div id="fig-PlotTop25GenesAfterFiltering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="normalization" class="section level2">
@@ -1330,6 +2085,43 @@ ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(sce.lib))), aes(x=log
   geom_histogram(bins=50)+
   ggtitle(&quot;Distribution of Library size factors&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibrarySizeNorm-1">
+Past versions of LibrarySizeNorm-1.png
+</button>
+</p>
+<div id="fig-LibrarySizeNorm-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="normalization-by-deconvolution" class="section level3">
 <h3>Normalization by deconvolution</h3>
@@ -1350,6 +2142,43 @@ ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(sce.deconv))), aes(x=
   geom_histogram(bins=50)+
   ggtitle(&quot;Distribution of Deconvolution size factors&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-DeconvolutionNorm-1">
+Past versions of DeconvolutionNorm-1.png
+</button>
+</p>
+<div id="fig-DeconvolutionNorm-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(&quot;Library size factors&quot;)</code></pre>
 <pre><code>[1] &quot;Library size factors&quot;</code></pre>
 <pre class="r"><code>summary(sizeFactors(sce.lib))</code></pre>
@@ -1364,10 +2193,84 @@ ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(sce.deconv))), aes(x=
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab=&quot;Library size factor&quot;,ylab=&quot;Deconvolution size factor&quot;, log=&#39;xy&#39;, pch=16,col=as.integer(factor(clust.filtered)), main=&quot;Deconvolution factors for individual cluster&quot;)
 abline(a=0, b=1, col=&quot;red&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotSizeFactors-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotSizeFactors-1">
+Past versions of PlotSizeFactors-1.png
+</button>
+</p>
+<div id="fig-PlotSizeFactors-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Color by sample
 plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab=&quot;Library size factor&quot;,ylab=&quot;Deconvolution size factor&quot;, log=&#39;xy&#39;, pch=16,col=as.integer(factor(sce.filtered$Sample)), main=&quot;Deconvolution factors for individual Sample&quot;)
 abline(a=0, b=1, col=&quot;red&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/PlotSizeFactors-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotSizeFactors-2">
+Past versions of PlotSizeFactors-2.png
+</button>
+</p>
+<div id="fig-PlotSizeFactors-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors-2.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="normalization-with-variance-stabilising-transformation"
 class="section level3">
@@ -1448,6 +2351,43 @@ ENSG00000229905.AL669831.2 0.0004757774 7.714547e-06 0.0001449732 0.0001888954
 ENSG00000237491.LINC01409  0.3644420501 5.614184e-02 0.0005764506 0.3497616561</code></pre>
 <pre class="r"><code>plotExplanatoryVariables(vars)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/VariableMetrics-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-VariableMetrics-1">
+Past versions of VariableMetrics-1.png
+</button>
+</p>
+<div id="fig-VariableMetrics-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d57d5fc6eb990e63a223ddaf9792b2589eff9bc4/docs/figure/01_Preprocessing.Rmd/VariableMetrics-1.png" target="_blank">d57d5fc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="save-dataset" class="section level2">
 <h2>Save Dataset</h2>
