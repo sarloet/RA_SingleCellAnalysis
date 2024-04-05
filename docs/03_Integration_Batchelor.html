@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SarahL." />
+
+
+<title>Batch correction and data set integration</title>
+
+<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+    <li>
+      <a href="01_Preprocessing.html">Preprocessing</a>
+    </li>
+    <li>
+      <a href="02_DimensionalityReduction.html">Dimensionality Reduction</a>
+    </li>
+    <li>
+      <a href="03_Integration_Batchelor.html">Integration</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Batch correction and data set
+integration</h1>
+<h3 class="subtitle">03_Integration_Batchelor</h3>
+<h4 class="author">SarahL.</h4>
+<h4 class="date">Apr 5 2024 15:08:19</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-04-05
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240328code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240328)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240328code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240328)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree13ed2ab1ea4b7eb041bda865b61f4425766f238btargetblank13ed2aba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/13ed2ab1ea4b7eb041bda865b61f4425766f238b" target="_blank">13ed2ab</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree13ed2ab1ea4b7eb041bda865b61f4425766f238btargetblank13ed2aba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/13ed2ab1ea4b7eb041bda865b61f4425766f238b" target="_blank">13ed2ab</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/cellbender_data_h5/
+    Ignored:    output/00_sce_DataPreparation.rds
+    Ignored:    output/01_sce_Preprocessing.rds
+    Ignored:    output/02_sce_DimensionalityReduction.rds
+    Ignored:    output/03_sce_Integrated_Batchelor.rds
+
+Unstaged changes:
+    Modified:   analysis/01_Preprocessing.Rmd
+    Modified:   analysis/02_DimensionalityReduction.Rmd
+    Modified:   analysis/04_Clustering.Rmd
+    Modified:   analysis/_site.yml
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/03_Integration_Batchelor.Rmd</code>) and HTML
+(<code>docs/03_Integration_Batchelor.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/13ed2ab1ea4b7eb041bda865b61f4425766f238b/analysis/03_Integration_Batchelor.Rmd" target="_blank">13ed2ab</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+Add Integration
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ccc483f94d6ff61a0900ec6750f8674c9a9c9b3b/analysis/03_Integration_Batchelor.Rmd" target="_blank">ccc483f</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-05
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/1def092c2e943110f4462475cd9ed4820bc26df5/analysis/03_Integration_Batchelor.Rmd" target="_blank">1def092</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-04
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d41ba14cbbe2548ca8cb01d65cff4e65afc2513c/analysis/03_Integration_Batchelor.Rmd" target="_blank">d41ba14</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/eb121be190fc98152c6c951d8831f91ccdc20a99/analysis/03_Integration_Batchelor.Rmd" target="_blank">eb121be</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-03
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/998977b04b6730963354ec7e28a81e35f5730f83/analysis/03_Integration_Batchelor.Rmd" target="_blank">998977b</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d291fd3d613887958acc4824a320465eb9cb974d/analysis/03_Integration_Batchelor.Rmd" target="_blank">d291fd3</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-02
+</td>
+<td>
+initial commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="batch-correction-and-data-set-integration"
+class="section level1">
+<h1>Batch correction and data set integration</h1>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="load-packages" class="section level3">
+<h3>Load Packages</h3>
+<pre class="r"><code>#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2)
+library(dplyr)
+library(scater)
+library(scran)
+library(batchelor)
+library(reticulate)
+library(bluster)
+})</code></pre>
+</div>
+<div id="set-parameter" class="section level3">
+<h3>Set Parameter</h3>
+<pre class="r"><code>set.seed(100)
+bpp &lt;- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path &lt;- here::here()</code></pre>
+</div>
+</div>
+<div id="load-data" class="section level2">
+<h2>Load Data</h2>
+<pre class="r"><code>## RA DATASET
+sce &lt;- readRDS(file = paste0(path,&#39;/output/02_sce_DimensionalityReduction.rds&#39;))</code></pre>
+<div id="explore-dataset" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce)</code></pre>
+<pre><code>[1] 30570 67394</code></pre>
+</div>
+</div>
+<div id="pre-batch-correction-plots" class="section level2 tabset">
+<h2 class="tabset">Pre-Batch Correction Plots</h2>
+<div id="pca" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>#Plot UMAP before data integration
+plotReducedDim(sce, dimred=&quot;PCA&quot;, colour_by=&quot;Sample&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="umap" class="section level3">
+<h3>UMAP</h3>
+<pre class="r"><code>#Plot UMAP before data integration
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="batch-removal-with-mutual-nearest-neighbour"
+class="section level2">
+<h2>Batch Removal with Mutual Nearest Neighbour</h2>
+<p>The Mutual Nearest Neighbours algorithm works by determining if pairs
+of cells from two different batches are within the top K closest
+neighbours of each other.</p>
+<pre class="r"><code>#Initialize sce element with batch removal
+sce.BatchR &lt;- sce </code></pre>
+<div id="run-batchelor" class="section level3">
+<h3>Run Batchelor</h3>
+<pre class="r"><code>#Perform scaling normalization within each batch
+sce.Batchelor &lt;-batchelor::multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[[&quot;is_hvg&quot;]]], normalize.all=TRUE, BPPARAM = bpp)
+summary(sizeFactors(sce.BatchR))</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+ 0.005538  0.425836  0.771908  1.000000  1.314861 20.061364 </code></pre>
+<p>Batches are merged in a pairwise manner (first two batches are merged
+to create a new cohort, then the next batch is merged with this new
+cohort, and so on until all batches have been integrated). Batch
+correction will work more effectively between batches with large number
+of cells and between batches that have many cells of the same cell type.
+As a result it is often beneficial to specify the order in which batches
+should be combined.</p>
+<pre class="r"><code>#Set manual merge_order
+merge_order &lt;- list(
+          list(&quot;SynBio028_1000&quot;,&quot;SynBio050&quot;, &quot;SynBio074&quot;,&quot;SynBio077a&quot;, &quot;SynBio077b&quot;), #seronegative
+          list(&quot;SynBio076&quot;, &quot;SynBio081&quot;, &quot;SynBio083&quot;,&quot;SynBio084&quot;,&quot;SynBio087&quot;,&quot;SynBio093&quot;, &quot;SynBio096&quot;,&quot;SynBio098a&quot;, &quot;SynBio098b&quot;, &quot;SynBio127&quot;, &quot;SynBio130&quot;, &quot;SynBio049&quot;))#seropositive</code></pre>
+<pre class="r"><code>#Perform fastMNN
+bpstart(bpp)
+sce.Batchelor &lt;- batchelor::fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[[&quot;is_hvg&quot;]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
+bpstop(bpp)
+
+
+#Save to BatchR sce object
+assay(sce.BatchR, &quot;reconstructed&quot;) &lt;- assay(sce.Batchelor, &quot;reconstructed&quot;)
+reducedDim(sce.BatchR, &#39;MNN&#39;) &lt;- reducedDim(sce.Batchelor, &#39;corrected&#39;)</code></pre>
+</div>
+<div id="qc-plots-batchelor" class="section level3">
+<h3>QC Plots Batchelor</h3>
+<p>We use the percentage of variance lost as a diagnostic measure. Large
+proportions of lost variance (&gt;10%) suggest that correction is
+removing genuine biological heterogeneity.</p>
+<pre class="r"><code>#Percentage Variance lost
+data.frame(metadata(sce.Batchelor)$merge.info$lost.var)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SynBio028_10000"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.010214875","2":"0.012601217","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.004872241","2":"0.007331583","3":"0.033738641","4":"0.000000000","5":"0.000000000","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.013604969","2":"0.026175484","3":"0.034751091","4":"0.047340189","5":"0.000000000","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.008763785","2":"0.008899557","3":"0.012550947","4":"0.011979424","5":"0.115999762","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.004011779","2":"0.007920248","3":"0.010826174","4":"0.009204161","5":"0.019313222","6":"0.083407115","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.003494974","2":"0.002320298","3":"0.002418546","4":"0.002727373","5":"0.003930234","6":"0.002989161","7":"0.078638302","8":"0.000000000","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.002904912","2":"0.003523405","3":"0.003980306","4":"0.003656469","5":"0.003253180","6":"0.003755579","7":"0.003490414","8":"0.071175370","9":"0.000000000","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.004391108","2":"0.008162657","3":"0.010419849","4":"0.010142868","5":"0.006261446","6":"0.008568650","7":"0.007918052","8":"0.009875386","9":"0.099817835","10":"0.000000000","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.000795388","2":"0.001502644","3":"0.001666931","4":"0.001544876","5":"0.002641515","6":"0.001744224","7":"0.001637052","8":"0.001538567","9":"0.002156137","10":"0.100957339","11":"0.000000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.002488859","2":"0.004248930","3":"0.004793329","4":"0.004670801","5":"0.010383694","6":"0.004478198","7":"0.004020622","8":"0.003883772","9":"0.004597673","10":"0.004088684","11":"0.112592984","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.002315937","2":"0.002059701","3":"0.002204021","4":"0.002974475","5":"0.002725284","6":"0.003115177","7":"0.002650262","8":"0.002382986","9":"0.002188568","10":"0.003004734","11":"0.002571870","12":"0.111116881","13":"0.000000000","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.002080236","2":"0.001802072","3":"0.001458035","4":"0.001656693","5":"0.002457805","6":"0.001592358","7":"0.001499228","8":"0.001537843","9":"0.001282615","10":"0.001469842","11":"0.002085603","12":"0.002392531","13":"0.089936396","14":"0.000000000","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.003046470","2":"0.002717525","3":"0.003906062","4":"0.004178905","5":"0.004407619","6":"0.005564548","7":"0.004420136","8":"0.003296379","9":"0.004651130","10":"0.004872822","11":"0.003084937","12":"0.003762044","13":"0.002745389","14":"0.140545645","15":"0.000000000","16":"0.00000000","17":"0.0000000"},{"1":"0.004009298","2":"0.002620708","3":"0.002237393","4":"0.002533778","5":"0.004947744","6":"0.002880580","7":"0.002783296","8":"0.003533010","9":"0.002476584","10":"0.002527631","11":"0.003001924","12":"0.002545684","13":"0.003000278","14":"0.002196074","15":"0.106093079","16":"0.00000000","17":"0.0000000"},{"1":"0.003809021","2":"0.002892127","3":"0.003163647","4":"0.002902623","5":"0.006341769","6":"0.003919028","7":"0.003168724","8":"0.002717785","9":"0.002845405","10":"0.003359420","11":"0.003197363","12":"0.002921878","13":"0.002518199","14":"0.003004042","15":"0.004203537","16":"0.12356980","17":"0.0000000"},{"1":"0.006791258","2":"0.012137034","3":"0.019933474","4":"0.007813150","5":"0.024742038","6":"0.010036954","7":"0.006921499","8":"0.005743966","9":"0.011966202","10":"0.010723161","11":"0.009800859","12":"0.009506562","13":"0.010361678","14":"0.021442657","15":"0.015025386","16":"0.01169922","17":"0.1191378"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="pca-plots-after-integration" class="section level2 tabset">
+<h2 class="tabset">PCA Plots after Integration</h2>
+<div id="colored-by-sample" class="section level3">
+<h3>Colored by Sample</h3>
+<pre class="r"><code>#Plot PCA after data integration
+plotReducedDim(sce.BatchR, dimred=&quot;MNN&quot;, colour_by=&quot;Sample&quot;) + ggtitle(&quot;PCA after data integration with fastMNN&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-joint" class="section level3">
+<h3>Colored by Joint</h3>
+<pre class="r"><code>#Plot PCA after data integration
+plotReducedDim(sce.BatchR, dimred=&quot;MNN&quot;, colour_by=&quot;Joint.Location&quot;) + ggtitle(&quot;PCA after data integration with fastMNN&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="facet-by-sample" class="section level3">
+<h3>Facet by Sample</h3>
+<pre class="r"><code>#Plot PCA after data integration per sample
+plotReducedDim(sce.BatchR, dimred=&quot;MNN&quot;, colour_by=&quot;Sample&quot;) + ggtitle(&quot;PCA after data integration with fastMNN&quot;)+ facet_wrap(~sce.BatchR$Sample)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="facet-by-joint" class="section level3">
+<h3>Facet by Joint</h3>
+<pre class="r"><code>#Plot PCA before data integration per joint
+plotReducedDim(sce.BatchR, dimred=&quot;MNN&quot;, colour_by=&quot;Joint.Location&quot;) + ggtitle(&quot;PCA after data integration with fastMNN&quot;)+ facet_wrap(~sce.BatchR$Joint.Location)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="umap-plots-after-integration" class="section level2 tabset">
+<h2 class="tabset">UMAP Plots after Integration</h2>
+<pre class="r"><code>#Run UMAP
+sce.BatchR &lt;- runUMAP(sce.BatchR ,name = &quot;MNN_UMAP&quot;, dimred = &quot;MNN&quot;)</code></pre>
+<div id="colored-by-sample-1" class="section level3">
+<h3>Colored by Sample</h3>
+<pre class="r"><code>#Plot UMAP after data integration
+plotReducedDim(sce.BatchR, dimred=&quot;MNN_UMAP&quot;, colour_by=&quot;Sample&quot;) + ggtitle(&quot;UMAP after data integration with fastMNN&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-joint-1" class="section level3">
+<h3>Colored by Joint</h3>
+<pre class="r"><code>#Plot UMAP after data integration
+plotReducedDim(sce.BatchR, dimred=&quot;MNN_UMAP&quot;, colour_by=&quot;Joint.Location&quot;) + ggtitle(&quot;UMAP after data integration with fastMNN&quot;)</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="facet-by-sample-1" class="section level3">
+<h3>Facet by Sample</h3>
+<pre class="r"><code>#Plot UMAP before data integration per sample
+plotReducedDim(sce.BatchR, dimred=&quot;MNN_UMAP&quot;, colour_by=&quot;Sample&quot;) + ggtitle(&quot;UMAP after data integration with fastMNN&quot;)+ facet_wrap(~sce.BatchR$Sample)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="facet-by-joint-1" class="section level3">
+<h3>Facet by Joint</h3>
+<pre class="r"><code>#Plot UMAP before data integration per joint
+plotReducedDim(sce.BatchR, dimred=&quot;MNN_UMAP&quot;, colour_by=&quot;Joint.Location&quot;) + ggtitle(&quot;UMAP after data integration with fastMNN&quot;)+ facet_wrap(~sce.BatchR$Joint.Location)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<p><img src="figure/03_Integration_Batchelor.Rmd/PlotUMAPAB5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-dataset" class="section level2">
+<h2>Save the dataset</h2>
+<pre class="r"><code>saveRDS(sce.BatchR, file =paste0(path,&#39;/output/03_sce_Integrated_Batchelor.rds&#39;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.3 (2024-02-29)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Warsaw
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] bluster_1.12.0              reticulate_1.35.0          
+ [3] batchelor_1.18.1            scran_1.30.2               
+ [5] scater_1.30.1               scuttle_1.12.0             
+ [7] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
+ [9] Biobase_2.62.0              GenomicRanges_1.54.1       
+[11] GenomeInfoDb_1.38.8         IRanges_2.36.0             
+[13] S4Vectors_0.40.2            BiocGenerics_0.48.1        
+[15] MatrixGenerics_1.14.0       matrixStats_1.2.0          
+[17] dplyr_1.1.4                 ggplot2_3.5.0              
+[19] BiocParallel_1.36.0         workflowr_1.7.1            
+
+loaded via a namespace (and not attached):
+ [1] bitops_1.0-7              gridExtra_2.3            
+ [3] rlang_1.1.3               magrittr_2.0.3           
+ [5] git2r_0.33.0              RcppAnnoy_0.0.22         
+ [7] compiler_4.3.3            getPass_0.2-4            
+ [9] DelayedMatrixStats_1.24.0 png_0.1-8                
+[11] callr_3.7.6               vctrs_0.6.5              
+[13] stringr_1.5.1             pkgconfig_2.0.3          
+[15] crayon_1.5.2              fastmap_1.1.1            
+[17] XVector_0.42.0            labeling_0.4.3           
+[19] utf8_1.2.4                promises_1.2.1           
+[21] rmarkdown_2.26            ps_1.7.6                 
+[23] ggbeeswarm_0.7.2          xfun_0.43                
+[25] zlibbioc_1.48.2           cachem_1.0.8             
+[27] beachmat_2.18.1           jsonlite_1.8.8           
+[29] highr_0.10                later_1.3.2              
+[31] DelayedArray_0.28.0       irlba_2.3.5.1            
+[33] parallel_4.3.3            cluster_2.1.6            
+[35] R6_2.5.1                  bslib_0.6.2              
+[37] stringi_1.8.3             limma_3.58.1             
+[39] jquerylib_0.1.4           Rcpp_1.0.12              
+[41] knitr_1.45                httpuv_1.6.15            
+[43] Matrix_1.6-5              igraph_2.0.3             
+[45] tidyselect_1.2.1          rstudioapi_0.16.0        
+[47] abind_1.4-5               yaml_2.3.8               
+[49] viridis_0.6.5             codetools_0.2-19         
+[51] processx_3.8.4            lattice_0.22-5           
+[53] tibble_3.2.1              withr_3.0.0              
+[55] evaluate_0.23             pillar_1.9.0             
+[57] whisker_0.4.1             generics_0.1.3           
+[59] rprojroot_2.0.4           RCurl_1.98-1.14          
+[61] sparseMatrixStats_1.14.0  munsell_0.5.0            
+[63] scales_1.3.0              glue_1.7.0               
+[65] metapod_1.10.1            tools_4.3.3              
+[67] BiocNeighbors_1.20.2      ScaledMatrix_1.10.0      
+[69] locfit_1.5-9.9            fs_1.6.3                 
+[71] cowplot_1.1.3             grid_4.3.3               
+[73] edgeR_4.0.16              colorspace_2.1-0         
+[75] GenomeInfoDbData_1.2.11   beeswarm_0.4.0           
+[77] BiocSingular_1.18.0       vipor_0.4.7              
+[79] cli_3.6.2                 rsvd_1.0.5               
+[81] fansi_1.0.6               S4Arrays_1.2.1           
+[83] viridisLite_0.4.2         uwot_0.1.16              
+[85] ResidualMatrix_1.12.0     gtable_0.3.4             
+[87] sass_0.4.9                digest_0.6.35            
+[89] SparseArray_1.2.4         ggrepel_0.9.5            
+[91] dqrng_0.3.2               farver_2.1.1             
+[93] htmltools_0.5.8           lifecycle_1.0.4          
+[95] here_1.0.1                httr_1.4.7               
+[97] statmod_1.5.0            </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
