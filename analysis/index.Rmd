@@ -12,3 +12,5 @@ Welcome to my Project.
 
 
 - [Data Preparation](00_DataPreparation.html)
+- [Preprocessing](01_Preprocessing.html)
+- [Dimensionality Reduction](02_DimensionalityReduction.html)
