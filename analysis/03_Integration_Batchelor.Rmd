@@ -66,12 +66,16 @@ dim(sce)
 ```
 
 ## Pre-Batch Correction Plots {.tabset}
+
 ### PCA
+
 ```{r}
 #Plot UMAP before data integration
 plotReducedDim(sce, dimred="PCA", colour_by="Sample")
 ```
+
 ### UMAP
+
 ```{r}
 #Plot UMAP before data integration
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
@@ -132,22 +136,30 @@ metadata(sce.Batchelor)$merge.info$lost.var
 ```
 
 ## PCA Plots after Integration {.tabset}
+
 ### Colored by Sample
+
 ```{r}
 #Plot PCA after data integration
 plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
 ```
+
 ### Colored by Joint
+
 ```{r}
 #Plot PCA after data integration
 plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")
 ```
+
 ### Facet by Sample
+
 ```{r}
 #Plot PCA after data integration per sample
 plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
 ```
+
 ### Facet by Joint
+
 ```{r}
 #Plot PCA before data integration per joint
 plotReducedDim(sce.BatchR, dimred="MNN", colour_by="JointLocation") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
@@ -163,25 +175,33 @@ sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")
 ```
 
 ### Colored by Sample
+
 ```{r}
 #Plot UMAP after data integration
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
 ```
+
 ### Colored by Joint
+
 ```{r}
 #Plot UMAP after data integration
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")#+ facet_wrap(~sce.filtered$Sample)
 ```
+
 ### Facet by Sample
+
 ```{r}
 #Plot UMAP before data integration per sample
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)
 ```
+
 ### Facet by Joint
+
 ```{r}
 #Plot UMAP before data integration per joint
 plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce.BatchR$JointLocation)
 ```
+
 
 ## Save the dataset
 

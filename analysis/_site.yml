@@ -16,6 +16,8 @@ navbar:
       href: 00_DataPreparation.html
     - text: Preprocessing
       href: 01_Preprocessing.html
+    - text: Dimensionality Reduction
+      href: 02_DimensionalityReduction.html
   - text: License
     href: license.html
 
