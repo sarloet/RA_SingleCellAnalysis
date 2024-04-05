@@ -292,13 +292,6 @@ colData(sce) %>%
 ```{r QcPlotsWhole2}
 # QCplots after filtering whole dataset
 colData(sce) %>% 
-    as.data.frame() %>% 
-    arrange(discard) %>% 
-    ggplot(aes(x = sum, y = detected, colour = discard)) +
-      geom_point() +
-      ggtitle("Total number of detected genes plotted against total number of UMIs") 
-
-colData(sce) %>% 
     as.data.frame() %>%
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = subsets_Mito_percent, colour = discard)) +
