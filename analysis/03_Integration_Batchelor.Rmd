@@ -211,5 +211,5 @@ plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Joint.Location") + ggti
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.BatchR, file =paste0(path,'/output/03_sce_Integrated_Batchelor.rds'))
+saveRDS(sce.BatchR, file =paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 ```

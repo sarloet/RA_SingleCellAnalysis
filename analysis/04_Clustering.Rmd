@@ -74,7 +74,7 @@ dim(sce)
 #Setup Hierarchical Clustering -use the bluster package
 
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
-colData(sce)$louvain <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain"))
+colData(sce)$louvain <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp))
 
 table(colData(sce)$louvain)
 
@@ -109,7 +109,7 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 #use the bluster package
 
 #colData(sce.BatchR)$leiden <- clusterRows(reducedDim(sce.BatchR, "MNN"),TwoStepParam(KmeansParam(centers=100), NNGraphParam(k=5,cluster.fun="leiden")))
-colData(sce)$leiden <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=40,cluster.fun="leiden"))
+colData(sce)$leiden <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=40,cluster.fun="leiden",BPPARAM =bpp))
 
 
 table(colData(sce)$leiden)
@@ -176,7 +176,8 @@ ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quas
 ## Clustering Plots
 
 ```{r}
-methods <- c("lovain","leiden","walktrap")
+methods <- c("louvain","leiden","walktrap")
+methods <- c("louvain","leiden")
 ```
 
 ### PCA Plots   {.tabset}
@@ -184,7 +185,7 @@ methods <- c("lovain","leiden","walktrap")
 ```{r}
 for (i in methods){
   cat(paste0("###  ",i, "\n"))
-  plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i ) + ggtitle(paste0("PCA with ",i," clusters"))
+  plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
   }
 ```
 
@@ -204,14 +205,14 @@ for (i in methods){
   cat(paste0("###  ", i, "\n"))
   
   ## Silhouette plot
-  sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)$i)
+  sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)[,i])
   
   sil.data <- as.data.frame(sil.approx)
-  sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)$i, sil.data$other))
-  sil.data$cluster <- colData(sce)$i
+  sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)[,i], sil.data$other))
+  sil.data$cluster <- colData(sce)[,i]
   
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle(paste0("Silhouette plot ",i," Clustering"))+theme_bw()
-    
+  
   }
 ```
 
@@ -222,12 +223,14 @@ for (i in methods){
   cat(paste0("###  ", i, "\n"))
   
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(i, Sample) %>%
+  group_by_at(c(i, "Sample")) %>%
   summarise(cells = n(),.groups = 'drop') 
 
-ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=i)) +
+
+ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
   geom_bar(stat="identity", position="stack") +
-  labs(title=paste0("Absolute comparison nr Cells in ",i," Cluster"),subtitle="Per Sample",x="",y="Number of cells")
+  labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+
   }
 ```
 
@@ -238,12 +241,14 @@ for (i in methods){
   cat(paste0("###  ", i, "\n"))
   
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(i, Sample) %>%
+  group_by_at(c(i, "Sample")) %>%
   summarise(cells = n(),.groups = 'drop') 
 
-ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=i)) +
+ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
   geom_bar(stat="identity", position="fill") +
-  labs(title=paste0("Relative comparison nr Cells in ",i," Cluster"),subtitle="Per Sample",x="",y="Number of cells")
+  labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+
+
   }
 ```
 
