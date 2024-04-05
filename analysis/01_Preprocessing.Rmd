@@ -289,7 +289,7 @@ colData(sce) %>%
 
 ##### Mitochondrial percentage vs total number of UMIs
 
-```{r QcPlotsWhole1}
+```{r QcPlotsWhole2}
 # QCplots after filtering whole dataset
 colData(sce) %>% 
     as.data.frame() %>% 
@@ -309,7 +309,7 @@ colData(sce) %>%
 
 ##### Violin Plots
 
-```{r QcPlotsWhole2}
+```{r QcPlotsWhole3}
 # QCplots after filtering whole dataset
 par(mfrow = c(1, 3))
 
