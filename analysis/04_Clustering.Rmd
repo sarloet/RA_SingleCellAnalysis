@@ -123,7 +123,7 @@ methods <- c("louvain","leiden","walktrap")
 
 ```{r PCAPlots}
 for (i in methods){
-  cat(paste0("### ",i, "\n"))
+  cat(paste0("#### ",i, "\n"))
   print(
   plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
   )
@@ -135,7 +135,7 @@ for (i in methods){
 
 ```{r UMAPPlots }
 for (i in methods){
-  cat(paste0("### ", i, "\n"))
+  cat(paste0("#### ", i, "\n"))
   print(
   plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
   )
@@ -149,7 +149,7 @@ The silhouette width (so named after the look of the traditional graph for plott
 
 ```{r SilhouettePlots}
 for (i in methods){
-  cat(paste0("### ", i, "\n"))
+  cat(paste0("#### ", i, "\n"))
   
   ## Silhouette plot
   sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)[,i])
@@ -174,7 +174,7 @@ Frequencies of cells in clusters per Sample
 
 ```{r BarplotAbsolute}
 for (i in methods){
-  cat(paste0("### ", i, "\n"))
+  cat(paste0("#### ", i, "\n"))
   
   ClusterInfo <- as.data.frame(colData(sce)) %>% 
     group_by_at(c(i, "Sample")) %>%
@@ -183,7 +183,8 @@ for (i in methods){
   print(
   ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="stack") +
-    labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+    labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
   )
   cat(' \n \n')
   }
@@ -195,7 +196,7 @@ Frequencies of cells in clusters per Sample
 
 ```{r BarplotRelative}
 for (i in methods){
-  cat(paste0("### ", i, "\n"))
+  cat(paste0("#### ", i, "\n"))
   
   ClusterInfo <- as.data.frame(colData(sce)) %>% 
     group_by_at(c(i, "Sample")) %>%
@@ -204,7 +205,8 @@ for (i in methods){
   print(
   ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="fill") +
-    labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+    labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
   )
   cat(' \n \n')
   }
