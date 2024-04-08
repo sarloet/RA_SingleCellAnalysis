@@ -60,7 +60,7 @@ path <- here::here()
 ```{r LoadDataset}
 ## RA DATASET
 sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
-
+sce.cluster <- sce
 ```
 
 
@@ -68,7 +68,7 @@ sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 
 ```{r ShowDim}
 #Dimensions of count matrix
-dim(sce)
+dim(sce.cluster)
 ```
 
 ## Clustering
@@ -79,9 +79,9 @@ dim(sce)
 #Setup Hierarchical Clustering -use the bluster package
 
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
-colData(sce)$louvain <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
 
-data.frame(table(colData(sce)$louvain))
+data.frame(table(colData(sce.cluster)$louvain))
 
 ```
 
@@ -93,10 +93,10 @@ data.frame(table(colData(sce)$louvain))
 #use the bluster package
 
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce)$leiden <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
 
 
-data.frame(table(colData(sce)$leiden))
+data.frame(table(colData(sce.cluster)$leiden))
 
 
 ```
@@ -108,11 +108,11 @@ data.frame(table(colData(sce)$leiden))
 #Setup Hierarchical Clustering
 #use the bluster package
 
-colData(sce)$walktrap <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap", BPPARAM=bpp)))
+colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap", BPPARAM=bpp)))
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
-data.frame(table(colData(sce)$walktrap))
+data.frame(table(colData(sce.cluster)$walktrap))
 
 
 ```
@@ -130,7 +130,7 @@ methods <- c("louvain","leiden","walktrap")
 for (i in methods){
   cat(paste0("#### ",i, "\n"))
   print(
-  plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
   )
   cat(' \n \n')
   }
@@ -142,7 +142,7 @@ for (i in methods){
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   print(
-  plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
   )
   cat(' \n \n')
   }
@@ -157,11 +157,11 @@ for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
   ## Silhouette plot
-  sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)[,i])
+  sil.approx <- approxSilhouette(reducedDim(sce.cluster, "MNN"), clusters=colData(sce.cluster)[,i])
   
   sil.data <- as.data.frame(sil.approx)
-  sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)[,i], sil.data$other))
-  sil.data$cluster <- colData(sce)[,i]
+  sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce.cluster)[,i], sil.data$other))
+  sil.data$cluster <- colData(sce.cluster)[,i]
   
   print(
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
@@ -181,7 +181,7 @@ Frequencies of cells in clusters per Sample
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
-  ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  ClusterInfo <- as.data.frame(colData(sce.cluster)) %>% 
     group_by_at(c(i, "Sample")) %>%
     summarise(cells = n(),.groups = 'drop') 
 
@@ -203,7 +203,7 @@ Frequencies of cells in clusters per Sample
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
-  ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  ClusterInfo <- as.data.frame(colData(sce.cluster)) %>% 
     group_by_at(c(i, "Sample")) %>%
     summarise(cells = n(),.groups = 'drop') 
   
@@ -223,7 +223,8 @@ for (i in methods){
 ## Set main clustering for downstream use also as colLabels
 ##leiden or louvain or walktrap
 
-colData(sce)$cluster<- colData(sce)$leiden
+colData(sce)$cluster<- colData(sce.cluster)$leiden
+#Set as collabel
 colLabels(sce)<- colData(sce)$cluster
 
 ```
@@ -243,12 +244,15 @@ plotReducedDim(sce, dimred="MNN", colour_by="cluster",text_by="cluster") + ggtit
 
 ## Frequencies of cells in clusters per Sample {.tabset}
 
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
 ### Absolute comparison
 
 ```{r PlotAbsoluteClustering}
-ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(cluster, Sample) %>%
-  summarise(cells = n(),.groups = 'drop') 
 
 ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=cluster)) +
   geom_bar(stat="identity", position="stack") +
@@ -260,9 +264,6 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=cluster)) +
 ### Relative comparison
 
 ```{r PlotRelativeClustering}
-ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(cluster, Sample) %>%
-  summarise(cells = n(),.groups = 'drop') 
 
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
   geom_bar(stat="identity", position="fill") +
