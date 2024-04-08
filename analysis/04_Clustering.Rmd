@@ -70,7 +70,7 @@ dim(sce)
 
 ### Louvain Clustering
 
-```{r}
+```{r Louvain}
 #Setup Hierarchical Clustering -use the bluster package
 
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
@@ -84,7 +84,7 @@ table(colData(sce)$louvain)
 
 ### Leiden Clustering
 
-```{r}
+```{r Leiden}
 #Setup Hierarchical Clustering
 #use the bluster package
 
@@ -100,7 +100,7 @@ table(colData(sce)$leiden)
 
 ### Walktrap Clustering
 
-```{r}
+```{r Walktrap}
 #Setup Hierarchical Clustering
 #use the bluster package
 
@@ -116,35 +116,39 @@ table(colData(sce)$walktrap)
 
 ## Clustering Plots
 
-```{r}
+```{r ClusteringPlots}
 methods <- c("louvain","leiden","walktrap")
 ```
 
 ### PCA Plots   {.tabset}
 
-```{r}
+```{r PCAPlots}
 for (i in methods){
-  cat(paste0("###  ",i, "\n"))
+  cat(paste0("### ",i, "\n"))
   plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
+  
+  cat("\n\n")
   }
 ```
 
-### UMAP Plots   {.tabset}
+### UMAP Plots {.tabset}
 
-```{r}
+```{r UMAPPlots }
 for (i in methods){
-  cat(paste0("###  ", i, "\n"))
+  cat(paste0("### ", i, "\n"))
   plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
+  
+  cat("\n\n")
   }
 ```
 
-### Silhouette Plots   {.tabset}
+### Silhouette Plots {.tabset}
 
 The silhouette width (so named after the look of the traditional graph for plotting the results) is a measure of how closely related cells within cluster are to one another versus how closely related cells in the cluster are to cells in other clusters. This allows us to assess cluster separation.
 
-```{r}
+```{r SilhouettePlots}
 for (i in methods){
-  cat(paste0("###  ", i, "\n"))
+  cat(paste0("### ", i, "\n"))
   
   ## Silhouette plot
   sil.approx <- approxSilhouette(reducedDim(sce, "MNN"), clusters=colData(sce)[,i])
@@ -153,54 +157,59 @@ for (i in methods){
   sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)[,i], sil.data$other))
   sil.data$cluster <- colData(sce)[,i]
   
-  ggplot(sil.data, aes(x=cluster, y=width, colour=closest)) +ggbeeswarm::geom_quasirandom(method="smiley")+ggtitle(paste0("Silhouette plot ",i," Clustering"))+theme_bw()
+  ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
+    ggbeeswarm::geom_quasirandom(method="smiley")+
+    ggtitle(paste0("Silhouette plot ",i," Clustering"))+
+    theme_bw()
+  
+  cat("\n\n")
   
   }
 ```
 
-### Barplots Plots Absolute Cell Counts   {.tabset}
+### Barplots Plots Absolute Cell Counts {.tabset}
 
 Frequencies of cells in clusters per Sample
 
-```{r}
+```{r BarplotAbsolute}
 for (i in methods){
-  cat(paste0("###  ", i, "\n"))
+  cat(paste0("### ", i, "\n"))
   
-ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by_at(c(i, "Sample")) %>%
-  summarise(cells = n(),.groups = 'drop') 
+  ClusterInfo <- as.data.frame(colData(sce)) %>% 
+    group_by_at(c(i, "Sample")) %>%
+    summarise(cells = n(),.groups = 'drop') 
 
 
-ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
-  geom_bar(stat="identity", position="stack") +
-  labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+  ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
+    geom_bar(stat="identity", position="stack") +
+    labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
 
   }
 ```
 
-### Barplots Plots Relative Cell Counts   {.tabset}
+### Barplots Plots Relative Cell Counts {.tabset}
 
 Frequencies of cells in clusters per Sample
 
-```{r}
+```{r BarplotRelative}
 for (i in methods){
-  cat(paste0("###  ", i, "\n"))
+  cat(paste0("### ", i, "\n"))
   
-ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by_at(c(i, "Sample")) %>%
-  summarise(cells = n(),.groups = 'drop') 
+  ClusterInfo <- as.data.frame(colData(sce)) %>% 
+    group_by_at(c(i, "Sample")) %>%
+    summarise(cells = n(),.groups = 'drop') 
 
-ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
-  geom_bar(stat="identity", position="fill") +
-  labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
+  ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
+    geom_bar(stat="identity", position="fill") +
+    labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
 
 
   }
 ```
 
-## Set clustering to use downstream
+## Set clustering to use downstream {.tabset}
 
-```{r}
+```{r SetClustering}
 ## Set main clustering for downstream use also as colLabels
 ##leiden or louvain or walktrap
 
@@ -209,15 +218,23 @@ colLabels(sce)<- colData(sce)$cluster
 
 ```
 
+### PCA
 
-```{r}
+```{r PCAClustering}
 plotReducedDim(sce, dimred="MNN", colour_by="cluster",text_by="cluster") + ggtitle("PCA with assigned clusters")
+```
+
+### UMAP
+
+```{r UMAPClustering}
 plotReducedDim(sce, dimred="MNN_UMAP", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
 ```
 
-## Frequencies of cells in clusters per Sample
+## Frequencies of cells in clusters per Sample {.tabset}
 
-```{r}
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(cluster, Sample) %>%
   summarise(cells = n(),.groups = 'drop') 
@@ -227,7 +244,14 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=cluster)) +
   labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
 
+```
 
+### Relative comparison
+
+```{r PlotRelativeClustering}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(cluster, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
 
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
   geom_bar(stat="identity", position="fill") +
