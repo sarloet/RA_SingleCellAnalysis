@@ -409,7 +409,7 @@ div.tocify {
 <h1 class="title toc-ignore">Clustering</h1>
 <h3 class="subtitle">04_Clustering</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 8 2024 10:40:00</h4>
+<h4 class="date">Apr 8 2024 11:03:01</h4>
 
 </div>
 
@@ -569,15 +569,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeb393f86082168bed21721c46a101e0fa8549c7fftargetblankb393f86a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree82aeca87216aab32f39440fb7d010562e83a2f2etargetblank82aeca8a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/b393f86082168bed21721c46a101e0fa8549c7ff" target="_blank">b393f86</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/82aeca87216aab32f39440fb7d010562e83a2f2e" target="_blank">82aeca8</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeb393f86082168bed21721c46a101e0fa8549c7fftargetblankb393f86a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree82aeca87216aab32f39440fb7d010562e83a2f2etargetblank82aeca8a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -587,7 +587,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/b393f86082168bed21721c46a101e0fa8549c7ff" target="_blank">b393f86</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/82aeca87216aab32f39440fb7d010562e83a2f2e" target="_blank">82aeca8</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -612,6 +612,7 @@ Ignored files:
     Ignored:    output/04_sce_Clustering.rds
 
 Unstaged changes:
+    Modified:   analysis/05_CelltypeAnnotation.Rmd
     Modified:   analysis/_site.yml
     Modified:   analysis/index.Rmd
 
@@ -659,6 +660,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/82aeca87216aab32f39440fb7d010562e83a2f2e/analysis/04_Clustering.Rmd" target="_blank">82aeca8</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+<td>
+Add Clustering
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/04_Clustering.html" target="_blank">73ba8d9</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -899,10 +934,12 @@ dim(sce)</code></pre>
 #colData(sce.)$louvain &lt;- clusterRows(reducedDim(sce, &quot;MNN&quot;),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun=&quot;louvain&quot;)))
 colData(sce)$louvain &lt;- clusterCells(sce, use.dimred = &quot;MNN&quot;, BLUSPARAM = SNNGraphParam(k=15,cluster.fun=&quot;louvain&quot;,BPPARAM =bpp, cluster.args=list(resolution=0.5)))
 
-table(colData(sce)$louvain)</code></pre>
-<pre><code>
-    1     2     3     4     5     6     7     8     9    10    11    12    13 
- 7524 11913  3104 12356   728 10332  7724  9766   906   274  1407   184  1176 </code></pre>
+data.frame(table(colData(sce)$louvain))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"7524"},{"1":"2","2":"11913"},{"1":"3","2":"3104"},{"1":"4","2":"12356"},{"1":"5","2":"728"},{"1":"6","2":"10332"},{"1":"7","2":"7724"},{"1":"8","2":"9766"},{"1":"9","2":"906"},{"1":"10","2":"274"},{"1":"11","2":"1407"},{"1":"12","2":"184"},{"1":"13","2":"1176"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 <div id="leiden-clustering" class="section level3">
 <h3>Leiden Clustering</h3>
@@ -913,12 +950,12 @@ table(colData(sce)$louvain)</code></pre>
 colData(sce)$leiden &lt;- clusterCells(sce, use.dimred = &quot;MNN&quot;, BLUSPARAM = SNNGraphParam(k=50,cluster.fun=&quot;leiden&quot;,BPPARAM =bpp,cluster.args=list(resolution=0.5)))
 
 
-table(colData(sce)$leiden)</code></pre>
-<pre><code>
-    1     2     3     4     5     6     7     8     9    10    11    12    13 
-  486 11484  3536 12399   734  6844   965  8991  4671  9418  2564   556   142 
-   14    15    16    17    18    19    20    21 
-  840   484   142  1408   275   156  1173   126 </code></pre>
+data.frame(table(colData(sce)$leiden))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"486"},{"1":"2","2":"11484"},{"1":"3","2":"3536"},{"1":"4","2":"12399"},{"1":"5","2":"734"},{"1":"6","2":"6844"},{"1":"7","2":"965"},{"1":"8","2":"8991"},{"1":"9","2":"4671"},{"1":"10","2":"9418"},{"1":"11","2":"2564"},{"1":"12","2":"556"},{"1":"13","2":"142"},{"1":"14","2":"840"},{"1":"15","2":"484"},{"1":"16","2":"142"},{"1":"17","2":"1408"},{"1":"18","2":"275"},{"1":"19","2":"156"},{"1":"20","2":"1173"},{"1":"21","2":"126"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 <div id="walktrap-clustering" class="section level3">
 <h3>Walktrap Clustering</h3>
@@ -929,12 +966,12 @@ colData(sce)$walktrap &lt;- clusterRows(reducedDim(sce, &quot;MNN&quot;),TwoStep
 #colData(sce)$walktrap &lt;- clusterCells(sce, use.dimred = &quot;MNN&quot;, BLUSPARAM = SNNGraphParam(k=20,cluster.fun=&quot;walktrap&quot;, BPPARAM=bpp))
 
 
-table(colData(sce)$walktrap)</code></pre>
-<pre><code>
-    1     2     3     4     5     6     7     8     9    10    11    12    13 
- 9059  1154  1409 11794  9057  3189 12513  1083   488  2891  1421   983  5559 
-   14    15    16    17    18    19    20    21 
-  486  4586   165   190   734   372   140   121 </code></pre>
+data.frame(table(colData(sce)$walktrap))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"9059"},{"1":"2","2":"1154"},{"1":"3","2":"1409"},{"1":"4","2":"11794"},{"1":"5","2":"9057"},{"1":"6","2":"3189"},{"1":"7","2":"12513"},{"1":"8","2":"1083"},{"1":"9","2":"488"},{"1":"10","2":"2891"},{"1":"11","2":"1421"},{"1":"12","2":"983"},{"1":"13","2":"5559"},{"1":"14","2":"486"},{"1":"15","2":"4586"},{"1":"16","2":"165"},{"1":"17","2":"190"},{"1":"18","2":"734"},{"1":"19","2":"372"},{"1":"20","2":"140"},{"1":"21","2":"121"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 </div>
 <div id="clustering-plots" class="section level2">
@@ -944,33 +981,41 @@ table(colData(sce)$walktrap)</code></pre>
 <h3 class="tabset">PCA Plots</h3>
 <pre class="r"><code>for (i in methods){
   cat(paste0(&quot;### &quot;,i, &quot;\n&quot;))
+  print(
   plotReducedDim(sce, dimred=&quot;MNN&quot;, colour_by=i ,text_by=i) + ggtitle(paste0(&quot;PCA with &quot;,i,&quot; clusters&quot;))
-  
-  cat(&quot;\n\n&quot;)
+  )
+  cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain
-
-
-### leiden
-
-
+<pre><code>### louvain</code></pre>
+<p><img src="figure/04_Clustering.Rmd/PCAPlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
+### leiden</code></pre>
+<p><img src="figure/04_Clustering.Rmd/PCAPlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
 ### walktrap</code></pre>
+<p><img src="figure/04_Clustering.Rmd/PCAPlots-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="umap-plots" class="section level3 tabset">
 <h3 class="tabset">UMAP Plots</h3>
 <pre class="r"><code>for (i in methods){
   cat(paste0(&quot;### &quot;, i, &quot;\n&quot;))
+  print(
   plotReducedDim(sce, dimred=&quot;MNN_UMAP&quot;, colour_by=i,text_by=i) + ggtitle(paste0(&quot;UMAP with &quot;,i,&quot; clusters&quot;))
-  
-  cat(&quot;\n\n&quot;)
+  )
+  cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain
-
-
-### leiden
-
-
+<pre><code>### louvain</code></pre>
+<p><img src="figure/04_Clustering.Rmd/UMAPPlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
+### leiden</code></pre>
+<p><img src="figure/04_Clustering.Rmd/UMAPPlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
 ### walktrap</code></pre>
+<p><img src="figure/04_Clustering.Rmd/UMAPPlots-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="silhouette-plots" class="section level3 tabset">
 <h3 class="tabset">Silhouette Plots</h3>
@@ -989,21 +1034,24 @@ cluster separation.</p>
   sil.data$closest &lt;- factor(ifelse(sil.data$width &gt; 0, colData(sce)[,i], sil.data$other))
   sil.data$cluster &lt;- colData(sce)[,i]
   
+  print(
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
     ggbeeswarm::geom_quasirandom(method=&quot;smiley&quot;)+
     ggtitle(paste0(&quot;Silhouette plot &quot;,i,&quot; Clustering&quot;))+
     theme_bw()
-  
-  cat(&quot;\n\n&quot;)
-  
+  )
+  cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain
-
-
-### leiden
-
-
+<pre><code>### louvain</code></pre>
+<p><img src="figure/04_Clustering.Rmd/SilhouettePlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
+### leiden</code></pre>
+<p><img src="figure/04_Clustering.Rmd/SilhouettePlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
 ### walktrap</code></pre>
+<p><img src="figure/04_Clustering.Rmd/SilhouettePlots-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="barplots-plots-absolute-cell-counts"
 class="section level3 tabset">
@@ -1016,11 +1064,12 @@ class="section level3 tabset">
     group_by_at(c(i, &quot;Sample&quot;)) %&gt;%
     summarise(cells = n(),.groups = &#39;drop&#39;) 
 
-
+  print(
   ggplot(data=ClusterInfo, aes_string(x=&quot;Sample&quot;,y=&quot;cells&quot;, fill=i)) +
     geom_bar(stat=&quot;identity&quot;, position=&quot;stack&quot;) +
     labs(title=&quot;Absolute comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)
-
+  )
+  cat(&#39; \n \n&#39;)
   }</code></pre>
 <pre><code>### louvain</code></pre>
 <pre><code>Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
@@ -1029,8 +1078,15 @@ class="section level3 tabset">
 This warning is displayed once every 8 hours.
 Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 generated.</code></pre>
-<pre><code>### leiden
+<p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
+### leiden</code></pre>
+<p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
 ### walktrap</code></pre>
+<p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="barplots-plots-relative-cell-counts"
 class="section level3 tabset">
@@ -1042,16 +1098,24 @@ class="section level3 tabset">
   ClusterInfo &lt;- as.data.frame(colData(sce)) %&gt;% 
     group_by_at(c(i, &quot;Sample&quot;)) %&gt;%
     summarise(cells = n(),.groups = &#39;drop&#39;) 
-
+  
+  print(
   ggplot(data=ClusterInfo,aes_string(x=&quot;Sample&quot;,y=&quot;cells&quot;, fill=i)) +
     geom_bar(stat=&quot;identity&quot;, position=&quot;fill&quot;) +
     labs(title=&quot;Relative comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)
-
-
+  )
+  cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain
-### leiden
+<pre><code>### louvain</code></pre>
+<p><img src="figure/04_Clustering.Rmd/BarplotRelative-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
+### leiden</code></pre>
+<p><img src="figure/04_Clustering.Rmd/BarplotRelative-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code> 
+ 
 ### walktrap</code></pre>
+<p><img src="figure/04_Clustering.Rmd/BarplotRelative-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="set-clustering-to-use-downstream"
@@ -1066,11 +1130,85 @@ colLabels(sce)&lt;- colData(sce)$cluster</code></pre>
 <h3>PCA</h3>
 <pre class="r"><code>plotReducedDim(sce, dimred=&quot;MNN&quot;, colour_by=&quot;cluster&quot;,text_by=&quot;cluster&quot;) + ggtitle(&quot;PCA with assigned clusters&quot;)</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PCAClustering-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCAClustering-1">
+Past versions of PCAClustering-1.png
+</button>
+</p>
+<div id="fig-PCAClustering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/PCAClustering-1.png" target="_blank">73ba8d9</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="umap" class="section level3">
 <h3>UMAP</h3>
 <pre class="r"><code>plotReducedDim(sce, dimred=&quot;MNN_UMAP&quot;, colour_by=&quot;cluster&quot;,text_by=&quot;cluster&quot;) + ggtitle(&quot;UMAP with assigned clusters&quot;)</code></pre>
 <p><img src="figure/04_Clustering.Rmd/UMAPClustering-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-UMAPClustering-1">
+Past versions of UMAPClustering-1.png
+</button>
+</p>
+<div id="fig-UMAPClustering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/UMAPClustering-1.png" target="_blank">73ba8d9</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="frequencies-of-cells-in-clusters-per-sample"
@@ -1087,6 +1225,43 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=cluster)) +
   labs(title=&quot;Absolute comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PlotAbsoluteClustering-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotAbsoluteClustering-1">
+Past versions of PlotAbsoluteClustering-1.png
+</button>
+</p>
+<div id="fig-PlotAbsoluteClustering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/PlotAbsoluteClustering-1.png" target="_blank">73ba8d9</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="relative-comparison" class="section level3">
 <h3>Relative comparison</h3>
@@ -1099,6 +1274,43 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
   labs(title=&quot;Relative comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PlotRelativeClustering-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotRelativeClustering-1">
+Past versions of PlotRelativeClustering-1.png
+</button>
+</p>
+<div id="fig-PlotRelativeClustering-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/PlotRelativeClustering-1.png" target="_blank">73ba8d9</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="save-the-dataset" class="section level2">
