@@ -16,6 +16,11 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
@@ -121,7 +126,7 @@ methods <- c("louvain","leiden","walktrap")
 
 ### PCA Plots   {.tabset}
 
-```{r PCAPlots}
+```{r PCAPlots ,results = 'asis'}
 for (i in methods){
   cat(paste0("#### ",i, "\n"))
   print(
@@ -133,7 +138,7 @@ for (i in methods){
 
 ### UMAP Plots {.tabset}
 
-```{r UMAPPlots }
+```{r UMAPPlots ,results = 'asis'}
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   print(
@@ -147,7 +152,7 @@ for (i in methods){
 
 The silhouette width (so named after the look of the traditional graph for plotting the results) is a measure of how closely related cells within cluster are to one another versus how closely related cells in the cluster are to cells in other clusters. This allows us to assess cluster separation.
 
-```{r SilhouettePlots}
+```{r SilhouettePlots ,results = 'asis'}
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
@@ -172,7 +177,7 @@ for (i in methods){
 
 Frequencies of cells in clusters per Sample
 
-```{r BarplotAbsolute}
+```{r BarplotAbsolute ,results = 'asis'}
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
@@ -194,7 +199,7 @@ for (i in methods){
 
 Frequencies of cells in clusters per Sample
 
-```{r BarplotRelative}
+```{r BarplotRelative ,results = 'asis'}
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
@@ -223,17 +228,18 @@ colLabels(sce)<- colData(sce)$cluster
 
 ```
 
+### UMAP
+
+```{r UMAPClustering}
+plotReducedDim(sce, dimred="MNN_UMAP", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
+```
+
 ### PCA
 
 ```{r PCAClustering}
 plotReducedDim(sce, dimred="MNN", colour_by="cluster",text_by="cluster") + ggtitle("PCA with assigned clusters")
 ```
 
-### UMAP
-
-```{r UMAPClustering}
-plotReducedDim(sce, dimred="MNN_UMAP", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
-```
 
 ## Frequencies of cells in clusters per Sample {.tabset}
 
