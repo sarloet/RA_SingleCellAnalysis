@@ -409,7 +409,7 @@ div.tocify {
 <h1 class="title toc-ignore">Clustering</h1>
 <h3 class="subtitle">04_Clustering</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 8 2024 11:03:01</h4>
+<h4 class="date">Apr 8 2024 11:24:05</h4>
 
 </div>
 
@@ -569,15 +569,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree82aeca87216aab32f39440fb7d010562e83a2f2etargetblank82aeca8a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreea207e4da8ff721df9a82c3b96f09b2fcb5f41b84targetblanka207e4da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/82aeca87216aab32f39440fb7d010562e83a2f2e" target="_blank">82aeca8</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/a207e4da8ff721df9a82c3b96f09b2fcb5f41b84" target="_blank">a207e4d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree82aeca87216aab32f39440fb7d010562e83a2f2etargetblank82aeca8a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreea207e4da8ff721df9a82c3b96f09b2fcb5f41b84targetblanka207e4da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -587,7 +587,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/82aeca87216aab32f39440fb7d010562e83a2f2e" target="_blank">82aeca8</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/a207e4da8ff721df9a82c3b96f09b2fcb5f41b84" target="_blank">a207e4d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -614,7 +614,6 @@ Ignored files:
 Unstaged changes:
     Modified:   analysis/05_CelltypeAnnotation.Rmd
     Modified:   analysis/_site.yml
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -660,6 +659,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a207e4da8ff721df9a82c3b96f09b2fcb5f41b84/analysis/04_Clustering.Rmd" target="_blank">a207e4d</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+<td>
+Fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/04_Clustering.html" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -980,42 +1013,264 @@ data.frame(table(colData(sce)$walktrap))</code></pre>
 <div id="pca-plots" class="section level3 tabset">
 <h3 class="tabset">PCA Plots</h3>
 <pre class="r"><code>for (i in methods){
-  cat(paste0(&quot;### &quot;,i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;,i, &quot;\n&quot;))
   print(
   plotReducedDim(sce, dimred=&quot;MNN&quot;, colour_by=i ,text_by=i) + ggtitle(paste0(&quot;PCA with &quot;,i,&quot; clusters&quot;))
   )
   cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain</code></pre>
+<pre><code>#### louvain</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PCAPlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCAPlots-1">
+Past versions of PCAPlots-1.png
+</button>
+</p>
+<div id="fig-PCAPlots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/PCAPlots-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### leiden</code></pre>
+#### leiden</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PCAPlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCAPlots-2">
+Past versions of PCAPlots-2.png
+</button>
+</p>
+<div id="fig-PCAPlots-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/PCAPlots-2.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### walktrap</code></pre>
+#### walktrap</code></pre>
 <p><img src="figure/04_Clustering.Rmd/PCAPlots-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCAPlots-3">
+Past versions of PCAPlots-3.png
+</button>
+</p>
+<div id="fig-PCAPlots-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/PCAPlots-3.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="umap-plots" class="section level3 tabset">
 <h3 class="tabset">UMAP Plots</h3>
 <pre class="r"><code>for (i in methods){
-  cat(paste0(&quot;### &quot;, i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   print(
   plotReducedDim(sce, dimred=&quot;MNN_UMAP&quot;, colour_by=i,text_by=i) + ggtitle(paste0(&quot;UMAP with &quot;,i,&quot; clusters&quot;))
   )
   cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain</code></pre>
+<pre><code>#### louvain</code></pre>
 <p><img src="figure/04_Clustering.Rmd/UMAPPlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-UMAPPlots-1">
+Past versions of UMAPPlots-1.png
+</button>
+</p>
+<div id="fig-UMAPPlots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/UMAPPlots-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### leiden</code></pre>
+#### leiden</code></pre>
 <p><img src="figure/04_Clustering.Rmd/UMAPPlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-UMAPPlots-2">
+Past versions of UMAPPlots-2.png
+</button>
+</p>
+<div id="fig-UMAPPlots-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/UMAPPlots-2.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### walktrap</code></pre>
+#### walktrap</code></pre>
 <p><img src="figure/04_Clustering.Rmd/UMAPPlots-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-UMAPPlots-3">
+Past versions of UMAPPlots-3.png
+</button>
+</p>
+<div id="fig-UMAPPlots-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/UMAPPlots-3.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="silhouette-plots" class="section level3 tabset">
 <h3 class="tabset">Silhouette Plots</h3>
@@ -1025,7 +1280,7 @@ cells within cluster are to one another versus how closely related cells
 in the cluster are to cells in other clusters. This allows us to assess
 cluster separation.</p>
 <pre class="r"><code>for (i in methods){
-  cat(paste0(&quot;### &quot;, i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
   ## Silhouette plot
   sil.approx &lt;- approxSilhouette(reducedDim(sce, &quot;MNN&quot;), clusters=colData(sce)[,i])
@@ -1042,23 +1297,134 @@ cluster separation.</p>
   )
   cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain</code></pre>
+<pre><code>#### louvain</code></pre>
 <p><img src="figure/04_Clustering.Rmd/SilhouettePlots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SilhouettePlots-1">
+Past versions of SilhouettePlots-1.png
+</button>
+</p>
+<div id="fig-SilhouettePlots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/SilhouettePlots-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### leiden</code></pre>
+#### leiden</code></pre>
 <p><img src="figure/04_Clustering.Rmd/SilhouettePlots-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SilhouettePlots-2">
+Past versions of SilhouettePlots-2.png
+</button>
+</p>
+<div id="fig-SilhouettePlots-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/SilhouettePlots-2.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### walktrap</code></pre>
+#### walktrap</code></pre>
 <p><img src="figure/04_Clustering.Rmd/SilhouettePlots-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SilhouettePlots-3">
+Past versions of SilhouettePlots-3.png
+</button>
+</p>
+<div id="fig-SilhouettePlots-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/SilhouettePlots-3.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="barplots-plots-absolute-cell-counts"
 class="section level3 tabset">
 <h3 class="tabset">Barplots Plots Absolute Cell Counts</h3>
 <p>Frequencies of cells in clusters per Sample</p>
 <pre class="r"><code>for (i in methods){
-  cat(paste0(&quot;### &quot;, i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
   ClusterInfo &lt;- as.data.frame(colData(sce)) %&gt;% 
     group_by_at(c(i, &quot;Sample&quot;)) %&gt;%
@@ -1067,11 +1433,12 @@ class="section level3 tabset">
   print(
   ggplot(data=ClusterInfo, aes_string(x=&quot;Sample&quot;,y=&quot;cells&quot;, fill=i)) +
     geom_bar(stat=&quot;identity&quot;, position=&quot;stack&quot;) +
-    labs(title=&quot;Absolute comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)
+    labs(title=&quot;Absolute comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
   )
   cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain</code></pre>
+<pre><code>#### louvain</code></pre>
 <pre><code>Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
 ℹ Please use tidy evaluation idioms with `aes()`.
 ℹ See also `vignette(&quot;ggplot2-in-packages&quot;)` for more information.
@@ -1079,21 +1446,132 @@ This warning is displayed once every 8 hours.
 Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 generated.</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotAbsolute-1">
+Past versions of BarplotAbsolute-1.png
+</button>
+</p>
+<div id="fig-BarplotAbsolute-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotAbsolute-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### leiden</code></pre>
+#### leiden</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotAbsolute-2">
+Past versions of BarplotAbsolute-2.png
+</button>
+</p>
+<div id="fig-BarplotAbsolute-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotAbsolute-2.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### walktrap</code></pre>
+#### walktrap</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotAbsolute-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotAbsolute-3">
+Past versions of BarplotAbsolute-3.png
+</button>
+</p>
+<div id="fig-BarplotAbsolute-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotAbsolute-3.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="barplots-plots-relative-cell-counts"
 class="section level3 tabset">
 <h3 class="tabset">Barplots Plots Relative Cell Counts</h3>
 <p>Frequencies of cells in clusters per Sample</p>
 <pre class="r"><code>for (i in methods){
-  cat(paste0(&quot;### &quot;, i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
   ClusterInfo &lt;- as.data.frame(colData(sce)) %&gt;% 
     group_by_at(c(i, &quot;Sample&quot;)) %&gt;%
@@ -1102,20 +1580,132 @@ class="section level3 tabset">
   print(
   ggplot(data=ClusterInfo,aes_string(x=&quot;Sample&quot;,y=&quot;cells&quot;, fill=i)) +
     geom_bar(stat=&quot;identity&quot;, position=&quot;fill&quot;) +
-    labs(title=&quot;Relative comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)
+    labs(title=&quot;Relative comparison nr Cells in Cluster&quot;,subtitle=&quot;Per Sample&quot;,x=&quot;&quot;,y=&quot;Number of cells&quot;)+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
   )
   cat(&#39; \n \n&#39;)
   }</code></pre>
-<pre><code>### louvain</code></pre>
+<pre><code>#### louvain</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotRelative-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotRelative-1">
+Past versions of BarplotRelative-1.png
+</button>
+</p>
+<div id="fig-BarplotRelative-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotRelative-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### leiden</code></pre>
+#### leiden</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotRelative-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotRelative-2">
+Past versions of BarplotRelative-2.png
+</button>
+</p>
+<div id="fig-BarplotRelative-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotRelative-2.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code> 
  
-### walktrap</code></pre>
+#### walktrap</code></pre>
 <p><img src="figure/04_Clustering.Rmd/BarplotRelative-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BarplotRelative-3">
+Past versions of BarplotRelative-3.png
+</button>
+</p>
+<div id="fig-BarplotRelative-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/BarplotRelative-3.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="set-clustering-to-use-downstream"
@@ -1152,6 +1742,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/PCAClustering-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/PCAClustering-1.png" target="_blank">73ba8d9</a>
@@ -1194,6 +1795,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4a6d7cdbd246cb47ebf31a20b4bff4b994a36d26/docs/figure/04_Clustering.Rmd/UMAPClustering-1.png" target="_blank">4a6d7cd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-08
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/73ba8d9ef4c1bdeec11c1276d01ebb2e29ff322a/docs/figure/04_Clustering.Rmd/UMAPClustering-1.png" target="_blank">73ba8d9</a>
