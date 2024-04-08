@@ -76,8 +76,7 @@ dim(sce)
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
 colData(sce)$louvain <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
 
-table(colData(sce)$louvain)
-
+data.frame(table(colData(sce)$louvain))
 
 ```
 
@@ -92,7 +91,7 @@ table(colData(sce)$louvain)
 colData(sce)$leiden <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
 
 
-table(colData(sce)$leiden)
+data.frame(table(colData(sce)$leiden))
 
 
 ```
@@ -108,7 +107,7 @@ colData(sce)$walktrap <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansP
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
-table(colData(sce)$walktrap)
+data.frame(table(colData(sce)$walktrap))
 
 
 ```
@@ -125,9 +124,10 @@ methods <- c("louvain","leiden","walktrap")
 ```{r PCAPlots}
 for (i in methods){
   cat(paste0("### ",i, "\n"))
+  print(
   plotReducedDim(sce, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
-  
-  cat("\n\n")
+  )
+  cat(' \n \n')
   }
 ```
 
@@ -136,9 +136,10 @@ for (i in methods){
 ```{r UMAPPlots }
 for (i in methods){
   cat(paste0("### ", i, "\n"))
+  print(
   plotReducedDim(sce, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
-  
-  cat("\n\n")
+  )
+  cat(' \n \n')
   }
 ```
 
@@ -157,13 +158,13 @@ for (i in methods){
   sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce)[,i], sil.data$other))
   sil.data$cluster <- colData(sce)[,i]
   
+  print(
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
     ggbeeswarm::geom_quasirandom(method="smiley")+
     ggtitle(paste0("Silhouette plot ",i," Clustering"))+
     theme_bw()
-  
-  cat("\n\n")
-  
+  )
+  cat(' \n \n')
   }
 ```
 
@@ -179,11 +180,12 @@ for (i in methods){
     group_by_at(c(i, "Sample")) %>%
     summarise(cells = n(),.groups = 'drop') 
 
-
+  print(
   ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="stack") +
     labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
-
+  )
+  cat(' \n \n')
   }
 ```
 
@@ -198,12 +200,13 @@ for (i in methods){
   ClusterInfo <- as.data.frame(colData(sce)) %>% 
     group_by_at(c(i, "Sample")) %>%
     summarise(cells = n(),.groups = 'drop') 
-
+  
+  print(
   ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="fill") +
     labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")
-
-
+  )
+  cat(' \n \n')
   }
 ```
 
