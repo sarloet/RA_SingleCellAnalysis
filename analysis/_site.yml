@@ -20,6 +20,8 @@ navbar:
       href: 02_DimensionalityReduction.html
     - text: Integration
       href: 03_Integration_Batchelor.html
+    - text: Clustering
+      href: 04_Clustering.html
   - text: License
     href: license.html
 
