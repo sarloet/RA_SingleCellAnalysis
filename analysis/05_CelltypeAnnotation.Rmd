@@ -109,19 +109,22 @@ rm(p1, p2, p3)
 ```
 
 
-## Identify marker genes
+## Identify Marker Genes
 
 ### Wilcoxon rank-sum test
 
 ```{r IdentifyMarker}
+#Select the hvg
+sce.marker <- sce[rowData(sce)$is_hvg==TRUE,]
+rownames(sce.marker) <- rowData(sce.marker)$Symbol
+
 #Wilcoxon rank-sum test
-markers_wilcox_up <- findMarkers(sce, groups = sce$leiden, block = sce$Sample, direction = "up")
+markers_wilcox_up <- findMarkers(sce.marker, groups = sce$leiden, block = sce$Sample, direction = "up")
 
 ```
 
-
 ```{r SaveTopMarker}
-#Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
+#Dataset for heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
 top5DEgenes <-do.call("rbind",lapply(markers_wilcox_up, function(x) { x[ order(x$Top, decreasing = FALSE),][1:5,1:4]}))
 
 #Create Excel file with top 50 for each cluster
@@ -134,37 +137,44 @@ for (i in 1:length(markers_wilcox_up)){
 saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 #Show top 5 DE Genes of each cluster
-top5DEgenes
+data.frame(top5DEgenes)
 
 ```
 
+### Wilcoxon heatmap
 
 ```{r PlotHeatmap}
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
 
-#plotHeatmap(sce,breaks = seq(0, 1, length.out = 21),color = viridis::cividis(21), cluster_rows = FALSE)
+#Get most meaningful markers
+top_genes_wilcox <- lapply(markers_wilcox_up, function(marker_set){
+  marker_set %>%
+  as.data.frame() %>%
+  filter(Top <= 1) %>%
+  arrange(p.value)%>%
+  dplyr::slice(1:2)%>%
+  rownames()
+}) %>% 
+  unlist(use.names=F) %>% 
+  unique()
 
-#plotGroupedHeatmap(sce, cluster_rows = FALSE,features = unique(topDEgenes),group = "label",scale = TRUE,center = TRUE,zlim = c(-3, 3),order_columns_by = c("label"))
 
-#plotHeatmap(sce, features = unique(top5DEgenes),order_columns_by = c("label"),scale = TRUE,center = TRUE,cluster_rows=FALSE,zlim = c(-3, 3))
+# To avoid a too big plot we only keep every 10th cell
+sce.plot <- sce.marker[top_genes_wilcox, seq(1, dim(sce.marker)[2], 20)]
+# We sort by cluster
+sce.plot <- sce.plot[,order(sce.plot$label)]
+# Anotations
+column_annotations <- data.frame("Cluster"=factor(sce.plot$label), row.names=colnames(sce.plot))
+# clip heatmap values to ensure that colour contrast is high
+sce.plot <- assay(sce.plot, "logcounts")
+sce.plot[sce.plot >=3] = 3
 
-#Dotplot of top marker genes by Wilcoxon rank-sum 
+pheatmap(sce.plot, annotation_col=column_annotations,
+         show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
 
-#dittoDotPlot(sce, vars = unique(top5DEgenes), group.by = "label",min.color="white", max.color="red", scaled.to.max = TRUE,)
-        #+ scale_colour_gradient2(low="steelblue", mid="lightgrey", high="red")
+dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red")
 
-dittoHeatmap(sce, unique(rownames(top5DEgenes)),annot.by = "label",cluster_rows=FALSE)
-
-#dittoHeatmap(sce, unique(top5DEgenes),annot.by = "label",cluster_rows=FALSE,scaled.to.max=TRUE,heatmap.colors.max.scaled = colorRampPalette(c("lightgreen", "purple"))(25))
-
-#for (t in tests) {
-  #cat('### Markers via', t, 'test\n')
-  #top_dt  = top_fms[[t]]
-  #suppressWarnings(print(plot_dotplot(pb_fine, props_fine, top_dt, labels_dt, 
-    #row_split = 'broad_marker')))
-  #cat('\n\n')
-#}
-
+rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 
 ```
 
@@ -248,13 +258,6 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 
 ## Manual Celltype annotation
 
-```{r InitialisationLabeling}
-#Initialisation of labeling
-sce$ManualAnno <- as.integer(sce$cluster)
-unique(sce$ManualAnno)
-```
-
-
 ```{r VizGenExFunction}
 #Function to visuaise gene Expression for vector of genes
 VizGenEx <- function(markr){
@@ -263,11 +266,15 @@ VizGenEx <- function(markr){
   
   cat(paste0("##### ", i, "\n"))
   
-  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
-  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i )+ scale_colour_gradient(name = i,low = "lightgrey", high = "red")) 
+  #print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"), nrow=3))
+ 
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"))
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"))
+  print(plotExpression(sce, features = i, x = "cluster"))
+    cat(' \n \n')
   
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+  }
+
      
 }
 
@@ -278,7 +285,7 @@ VizGenEx <- function(markr){
 
 Identify major cell types for a Rough Annotation on high hierarchical level
 
-#### Lymphocyte  {.tabset}
+#### Lymphocyte {.tabset}
 
 ```{r LymphocyteL0}
 
@@ -286,7 +293,7 @@ VizGenEx(c("PTPRC","CORO1A","RAC2"))
 
 ```
 
-#### Myeloid  {.tabset}
+#### Myeloid {.tabset}
 
 ```{r MyeloidL0}
 
@@ -294,7 +301,7 @@ VizGenEx(c("CSF3R","MS4A6A","MS4A7"))
 
 ```
 
-#### Fibroblast  {.tabset}
+#### Fibroblast {.tabset}
 
 ```{r FibroblastL0}
 
@@ -302,7 +309,7 @@ VizGenEx(c("PDGFRB","DCN","PCOLCE","ACTA2"))
 
 ```
 
-#### Endothelial  {.tabset}
+#### Endothelial {.tabset}
 
 ```{r EndothelialL0}
 
@@ -322,7 +329,7 @@ sce$ManualAnno_L0[sce$cluster %in% c(1,6,19)] <- "Endothelial"
 
 ```
 
-### Finer Grained cell type Annotation - Level1
+### Finer cell type Annotation - Level1
 
 Identify cell types for a finer grained Annotation on lower hierarchical level
 
@@ -466,7 +473,7 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
 ```
 
-## Set the Final Celllabels to L1
+## Set the Final Celllabels
 
 ```{r}
 ## Set Celltypes to use downstream as colLabels
@@ -479,7 +486,7 @@ sce$celltype <- colData(sce)$ManualAnno_L1
 
 ```
 
-# Plot the assigned Cell labels
+## Plot the assigned Cell labels
 
 ```{r}
 plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by= "celltype")+ ggtitle("UMAP Celllabel")

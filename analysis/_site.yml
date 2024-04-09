@@ -22,6 +22,8 @@ navbar:
       href: 03_Integration_Batchelor.html
     - text: Clustering
       href: 04_Clustering.html
+    - text: Annotation
+      href: 05_CelltypeAnnotation.html
   - text: License
     href: license.html
 

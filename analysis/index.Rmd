@@ -16,3 +16,4 @@ Welcome to my Project.
 - [Dimensionality Reduction](02_DimensionalityReduction.html)
 - [Integration](03_Integration_Batchelor.html)
 - [Clustering](04_Clustering.html)
+- [Annotation](05_CelltypeAnnotation.html)
