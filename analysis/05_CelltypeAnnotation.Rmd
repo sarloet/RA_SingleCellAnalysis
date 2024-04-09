@@ -105,6 +105,7 @@ p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") +
 p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
 p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
 grid.arrange(p1, p2, p3, nrow = 1)
+rm(p1, p2, p3)
 ```
 
 
@@ -121,26 +122,19 @@ markers_wilcox_up <- findMarkers(sce, groups = sce$leiden, block = sce$Sample, d
 
 ```{r SaveTopMarker}
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
-top50DEgenes <-c()
-top5DEgenes <-c()
+top5DEgenes <-do.call("rbind",lapply(markers_wilcox_up, function(x) { x[ order(x$Top, decreasing = FALSE),][1:5,1:4]}))
 
+#Create Excel file with top 50 for each cluster
 wb = createWorkbook()
-  
 for (i in 1:length(markers_wilcox_up)){
   tmp<-markers_wilcox_up[[i]]
-  
-  top50DEgenes <- c(top5DEgenes, row.names(tmp[order(tmp$summary.logFC, decreasing = TRUE),][1:50,]))
-  top5DEgenes <- c(topDEgenes, row.names(tmp[order(tmp$summary.logFC, decreasing = TRUE),][1:5,]))
-
-  
   #Save in Exelsheet
-  addDataFrame(row.names(tmp[order(tmp$summary.logFC, decreasing = TRUE),][1:50,]), sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE)
-  
+  addDataFrame(tmp[order(tmp$Top , decreasing = FALSE),][1:50,1:4], sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
 }
-
 saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
-top50DEgenes
+#Show top 5 DE Genes of each cluster
+top5DEgenes
 
 ```
 
@@ -152,17 +146,16 @@ top50DEgenes
 
 #plotGroupedHeatmap(sce, cluster_rows = FALSE,features = unique(topDEgenes),group = "label",scale = TRUE,center = TRUE,zlim = c(-3, 3),order_columns_by = c("label"))
 
-plotHeatmap(sce, features = unique(top5DEgenes),order_columns_by = c("label"),scale = TRUE,center = TRUE,cluster_rows=FALSE,zlim = c(-3, 3))
+#plotHeatmap(sce, features = unique(top5DEgenes),order_columns_by = c("label"),scale = TRUE,center = TRUE,cluster_rows=FALSE,zlim = c(-3, 3))
 
 #Dotplot of top marker genes by Wilcoxon rank-sum 
 
-dittoDotPlot(sce, vars = unique(top5DEgenes), group.by = "label",min.color="white", max.color="red", scaled.to.max = TRUE,)
+#dittoDotPlot(sce, vars = unique(top5DEgenes), group.by = "label",min.color="white", max.color="red", scaled.to.max = TRUE,)
         #+ scale_colour_gradient2(low="steelblue", mid="lightgrey", high="red")
-dittoHeatmap(sce, unique(top5DEgenes),
-    annot.by = "label",
-    scaled.to.max = TRUE)
 
-plotDots(sce, features = unique(top5DEgenes),group = "label", block = "Sample",scale = TRUE, center = TRUE, zlim = c(-3, 3))
+dittoHeatmap(sce, unique(rownames(top5DEgenes)),annot.by = "label",cluster_rows=FALSE)
+
+#dittoHeatmap(sce, unique(top5DEgenes),annot.by = "label",cluster_rows=FALSE,scaled.to.max=TRUE,heatmap.colors.max.scaled = colorRampPalette(c("lightgreen", "purple"))(25))
 
 #for (t in tests) {
   #cat('### Markers via', t, 'test\n')
@@ -230,7 +223,7 @@ all.sets = GeneSetCollection(c(Macrophage.geneset, Fibroblast.geneset, BCell.gen
 
 ```
 
-```{r RunAUCell}
+```{r RunAUCell, eval=FALSE}
 # Annotate genesets using AUCell
 library(AUCell)
 rankings <- AUCell_buildRankings(counts(sce),
@@ -243,7 +236,7 @@ head(results)
 cells_assignment<-AUCell_exploreThresholds(cell.aucs, plotHist=FALSE, assign=TRUE) 
 ```
 
-```{r PlotAUCellAnno}
+```{r PlotAUCellAnno, eval=FALSE}
 dataauc <- getAUC(cell.aucs)
 AUCannotations = apply(dataauc, 2, function(x){names(which.max(x))})
 
@@ -261,6 +254,26 @@ sce$ManualAnno <- as.integer(sce$cluster)
 unique(sce$ManualAnno)
 ```
 
+
+```{r VizGenExFunction}
+#Function to visuaise gene Expression for vector of genes
+VizGenEx <- function(markr){
+ 
+  for(i in markr){
+  
+  cat(paste0("##### ", i, "\n"))
+  
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i )+ scale_colour_gradient(name = i,low = "lightgrey", high = "red")) 
+  
+  print(plotExpression(sce, features = i, x = "cluster"))}
+  cat(' \n \n')
+     
+}
+
+```
+
+
 ### Major cell type Annotation - Level0
 
 Identify major cell types for a Rough Annotation on high hierarchical level
@@ -268,55 +281,32 @@ Identify major cell types for a Rough Annotation on high hierarchical level
 #### Lymphocyte  {.tabset}
 
 ```{r LymphocyteL0}
-markr <- c("PTPRC","CORO1A","RAC2")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PTPRC","CORO1A","RAC2"))  
 
 ```
+
 #### Myeloid  {.tabset}
 
 ```{r MyeloidL0}
-markr <- c("CSF3R","MS4A6A","MS4A7")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("CSF3R","MS4A6A","MS4A7"))  
 
 ```
 
 #### Fibroblast  {.tabset}
 
 ```{r FibroblastL0}
-markr <- c("PDGFRB","DCN","PCOLCE","ACTA2")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster",order_by=i))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PDGFRB","DCN","PCOLCE","ACTA2")) 
 
 ```
 
 #### Endothelial  {.tabset}
 
 ```{r EndothelialL0}
-markr <- c("CDH5","ECSCR","CCL14")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("CDH5","ECSCR","CCL14")) 
 
 ```
 
@@ -339,14 +329,8 @@ Identify cell types for a finer grained Annotation on lower hierarchical level
 #### Macrophage {.tabset}
 
 ```{r MacrophageL1}
-markr <- c("LYZ","MSR1","MARCO")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("MARCO","LYZ","MSR1")) 
 
 ```
 
@@ -354,154 +338,88 @@ for(i in markr){
 #### Fibroblast {.tabset}
 
 ```{r FibroblastL1}
-markr <- c("PDGFRB","DCN","COL1A1")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PDGFRB","DCN","COL1A1")) 
 
 ```
 
 #### Lining Fibroblast {.tabset}
 
 ```{r LiningFibroblastL1}
-markr <- c("PRG4","CRTAC1", "CLU")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PRG4","CRTAC1", "CLU")) 
 
 ```
 
 #### Endothelial {.tabset}
 
 ```{r EndothelialL1}
-markr <- c("CDH5","VWF", "PECAM1","CCL14")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("CDH5","VWF", "PECAM1","CCL14"))
 
 ```
 
 #### Lymphatic Endothelial {.tabset}
 
 ```{r LymphaticEndothelialL1}
-markr <- c("PROX1","LYVE1", "CCL21")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PROX1","LYVE1", "CCL21"))
 
 ```
 
 #### BCell {.tabset}
 
 ```{r BCellL1}
-markr <- c("CD19","MS4A1", "TNFRSF13C")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("CD19","MS4A1", "TNFRSF13C"))
 
 ```
 
 #### Plasma {.tabset}
 
 ```{r PlasmaL1}
-markr <- c("JSRP1","DERL3", "JCHAIN")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("JSRP1","DERL3", "JCHAIN"))
 
 ```
 
 #### Tcell {.tabset}
 
 ```{r TcellL1} 
-markr <- c("CD3E","CD3D", "CD3G","TRAC")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+ 
+VizGenEx(c("CD3E","CD3D", "CD3G","TRAC"))
 
 ```
 
 #### Smooth muscle cell {.tabset}
 
 ```{r SMCL1}
-markr <- c("ACTA2","MYL9", "DES", "MYH11")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 
 ```
 
 #### Mastcell {.tabset}
 
 ```{r MastcellL1}
-markr <- c("TPSAB1","CPA3","HPGDS","VWA5A")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("TPSAB1","CPA3","HPGDS","VWA5A"))
 
 ```
 
 #### Neutrophil {.tabset}
 
 ```{r NeutrophilL1}
-markr <- c("CSF3R","S100A8","TREM1")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
 
+VizGenEx(c("CSF3R","S100A8","TREM1"))
+  
 ```
 
 #### Plasmacytoid dendritic cell {.tabset}
 
 ```{r pDCL1}
-markr <- c("PTPRC","CLEC4C","LILRA4","LRRC26")
-for(i in markr){
-  
-  cat(paste0("##### ", i, "\n"))
-  
-  print(plotReducedDim(sce, dimred = "MNN_UMAP",colour_by = i, text_by = "cluster"))
-  print(plotExpression(sce, features = i, x = "cluster"))}
-  cat(' \n \n')
+
+VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
 
 ```
 
@@ -512,17 +430,16 @@ for(i in markr){
 sce$ManualAnno_L1 <- as.integer(sce$cluster)
 unique(sce$ManualAnno_L1)
 
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Fibroblast"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Lining fibroblast"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Smooth muscle cell"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Edothelial cell"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Tcell"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Bcell"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Neutrophil"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Mast cell"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Macrophage"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "Plasma"
-sce$ManualAnno_L1[sce$cluster %in% c()] <- "plasmacytoid dendritic cell"
+sce$ManualAnno_L1[sce$cluster %in% c(2,3,12)] <- "Fibroblast"
+sce$ManualAnno_L1[sce$cluster %in% c(15)] <- "Smooth muscle cell"
+sce$ManualAnno_L1[sce$cluster %in% c(1,6,19)] <- "Edothelial cell"
+sce$ManualAnno_L1[sce$cluster %in% c(9,10,11,14)] <- "Tcell"
+sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "Bcell"
+sce$ManualAnno_L1[sce$cluster %in% c(20)] <- "Neutrophil"
+sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
+sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,18,21)] <- "Macrophage"
+sce$ManualAnno_L1[sce$cluster %in% c(5)] <- "Plasma"
+sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "plasmacytoid dendritic cell"
 ```
 
 ```{r AssignementCheck}
@@ -531,16 +448,25 @@ unique(sce$ManualAnno_L0)
 unique(sce$ManualAnno_L1)
 ```
 
-```{r Plot}
+#### Plot Assigned Celltypes {.tabset}
+
+##### UMAP L0
+
+```{r PlotL0}
 #Plot manual Annotation
 plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L2")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
 ```
 
-## Set the final Cell labels
+##### UMAP L1
+
+```{r PlotL1}
+#Plot manual Annotation
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+```
+
+## Set the Final Celllabels to L1
 
 ```{r}
 ## Set Celltypes to use downstream as colLabels
@@ -594,5 +520,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0(path,'/output/05_CelltypeAnnotation'))
+saveRDS(sce, file =paste0(path,'/output/05_CelltypeAnnotation'))
 ```
