@@ -260,14 +260,18 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 
 ```{r VizGenExFunction}
 #Function to visuaise gene Expression for vector of genes
+
 VizGenEx <- function(markr){
  
   for(i in markr){
   
     cat(paste0("#### ", i, "\n"))
   
-    print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster")),layout_matrix = matrix(c(1, 3, 2, 3), nrow=2))
-    cat(' \n \n')
+    print(gridExtra::grid.arrange(
+      arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"), 
+                  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
+      plotExpression(sce, features = i, x = "cluster"),nrow = 2))
+    cat(' \n')
   
   }
 
@@ -290,7 +294,7 @@ for(i in markr){
   
   cat(paste0("#### ", i, "\n"))
   print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
-  cat(' \n \n')
+  cat(' \n')
   
   }
 ```
