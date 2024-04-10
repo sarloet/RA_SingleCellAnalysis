@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">Marker Genes and Celltype Annotation</h1>
 <h3 class="subtitle">05_CelltypeAnnotation</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 10 2024 11:55:45</h4>
+<h4 class="date">Apr 10 2024 13:29:27</h4>
 
 </div>
 
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree828a59e23c685448181e01328ca6a75b3ab10481targetblank828a59ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree4095cbd6da5dbe40ef69e9810320ed2b60bcf86ctargetblank4095cbda">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/828a59e23c685448181e01328ca6a75b3ab10481" target="_blank">828a59e</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/4095cbd6da5dbe40ef69e9810320ed2b60bcf86c" target="_blank">4095cbd</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree828a59e23c685448181e01328ca6a75b3ab10481targetblank828a59ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree4095cbd6da5dbe40ef69e9810320ed2b60bcf86ctargetblank4095cbda"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/828a59e23c685448181e01328ca6a75b3ab10481" target="_blank">828a59e</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/4095cbd6da5dbe40ef69e9810320ed2b60bcf86c" target="_blank">4095cbd</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -667,6 +667,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4095cbd6da5dbe40ef69e9810320ed2b60bcf86c/analysis/05_CelltypeAnnotation.Rmd" target="_blank">4095cbd</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+Fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/613a9480c1694310827a8b3da42eeb273854bf8c/docs/05_CelltypeAnnotation.html" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1522,14 +1556,18 @@ plotReducedDim(sce, dimred=&quot;MNN_UMAP&quot;, by_exprs_values = &quot;logcoun
 <div id="manual-celltype-annotation" class="section level2">
 <h2>Manual Celltype annotation</h2>
 <pre class="r"><code>#Function to visuaise gene Expression for vector of genes
+
 VizGenEx &lt;- function(markr){
  
   for(i in markr){
   
     cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
-    print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;),plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;),plotExpression(sce, features = i, x = &quot;cluster&quot;)),layout_matrix = matrix(c(1, 3, 2, 3), nrow=2))
-    cat(&#39; \n \n&#39;)
+    print(gridExtra::grid.arrange(
+      arrangeGrob(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;), 
+                  plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;), ncol = 2), 
+      plotExpression(sce, features = i, x = &quot;cluster&quot;),nrow = 2))
+    cat(&#39; \n&#39;)
   
   }
 
@@ -1548,7 +1586,7 @@ for(i in markr){
   
   cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   print(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;))
-  cat(&#39; \n \n&#39;)
+  cat(&#39; \n&#39;)
   
   }</code></pre>
 <pre><code>#### PTPRC</code></pre>
@@ -1624,7 +1662,6 @@ sarloet
 </div>
 </div>
 <pre><code> 
- 
 #### CORO1A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
@@ -1649,6 +1686,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" target="_blank">c55a428</a>
@@ -1698,7 +1746,6 @@ sarloet
 </div>
 </div>
 <pre><code> 
- 
 #### RAC2</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
@@ -1723,6 +1770,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" target="_blank">c55a428</a>
@@ -1790,6 +1848,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" target="_blank">c55a428</a>
 </td>
 <td>
@@ -1836,12 +1905,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MS4A6A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -1867,6 +1934,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" target="_blank">c55a428</a>
@@ -1915,12 +1993,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MS4A7</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -1946,6 +2022,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" target="_blank">c55a428</a>
@@ -1983,12 +2070,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 <div id="fibroblast" class="section level4 tabset">
 <h4 class="tabset">Fibroblast</h4>
@@ -2017,6 +2102,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" target="_blank">c55a428</a>
@@ -2065,12 +2161,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### DCN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2096,6 +2190,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" target="_blank">c55a428</a>
@@ -2144,12 +2249,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### PCOLCE</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2175,6 +2278,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" target="_blank">c55a428</a>
@@ -2212,12 +2326,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### ACTA2</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2243,6 +2355,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" target="_blank">c55a428</a>
@@ -2280,12 +2403,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="endothelial" class="section level4 tabset">
@@ -2315,6 +2436,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" target="_blank">c55a428</a>
@@ -2363,12 +2495,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### ECSCR</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2394,6 +2524,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" target="_blank">c55a428</a>
@@ -2442,12 +2583,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CCL14</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2473,6 +2612,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" target="_blank">c55a428</a>
@@ -2510,12 +2660,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 <pre class="r"><code>#Manual Annotation
 sce$ManualAnno_L0 &lt;- as.integer(sce$cluster)
@@ -2558,6 +2706,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" target="_blank">c55a428</a>
@@ -2606,12 +2765,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### LYZ</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2637,6 +2794,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" target="_blank">c55a428</a>
@@ -2685,12 +2853,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MSR1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2716,6 +2882,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" target="_blank">c55a428</a>
@@ -2753,12 +2930,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="fibroblast-1" class="section level4 tabset">
@@ -2788,6 +2963,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" target="_blank">c55a428</a>
@@ -2836,12 +3022,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### DCN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2867,6 +3051,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" target="_blank">c55a428</a>
@@ -2915,12 +3110,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### COL1A1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -2946,6 +3139,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" target="_blank">c55a428</a>
@@ -2983,12 +3187,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="lining-fibroblast" class="section level4 tabset">
@@ -3018,6 +3220,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" target="_blank">c55a428</a>
@@ -3066,12 +3279,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CRTAC1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3097,6 +3308,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" target="_blank">c55a428</a>
@@ -3145,12 +3367,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CLU</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3176,6 +3396,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" target="_blank">c55a428</a>
@@ -3213,12 +3444,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="endothelial-1" class="section level4 tabset">
@@ -3248,6 +3477,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" target="_blank">c55a428</a>
@@ -3296,12 +3536,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### VWF</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3327,6 +3565,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" target="_blank">c55a428</a>
@@ -3375,12 +3624,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### PECAM1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3406,6 +3653,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" target="_blank">c55a428</a>
@@ -3443,12 +3701,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CCL14</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3474,6 +3730,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" target="_blank">c55a428</a>
@@ -3522,12 +3789,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="lymphatic-endothelial" class="section level4 tabset">
@@ -3557,6 +3822,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" target="_blank">c55a428</a>
@@ -3605,12 +3881,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### LYVE1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3636,6 +3910,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" target="_blank">c55a428</a>
@@ -3684,12 +3969,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CCL21</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3715,6 +3998,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" target="_blank">c55a428</a>
@@ -3752,12 +4046,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="bcell" class="section level4 tabset">
@@ -3787,6 +4079,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" target="_blank">c55a428</a>
@@ -3835,12 +4138,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MS4A1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3866,6 +4167,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" target="_blank">c55a428</a>
@@ -3914,12 +4226,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### TNFRSF13C</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -3945,6 +4255,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" target="_blank">c55a428</a>
@@ -3982,12 +4303,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="plasma" class="section level4 tabset">
@@ -4017,6 +4336,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" target="_blank">c55a428</a>
@@ -4065,12 +4395,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### DERL3</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4096,6 +4424,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" target="_blank">c55a428</a>
@@ -4144,12 +4483,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### JCHAIN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4175,6 +4512,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" target="_blank">c55a428</a>
@@ -4212,12 +4560,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="tcell" class="section level4 tabset">
@@ -4247,6 +4593,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" target="_blank">c55a428</a>
@@ -4295,12 +4652,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CD3D</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4326,6 +4681,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" target="_blank">c55a428</a>
@@ -4374,12 +4740,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CD3G</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4405,6 +4769,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" target="_blank">c55a428</a>
@@ -4442,12 +4817,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### TRAC</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4473,6 +4846,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" target="_blank">c55a428</a>
@@ -4521,12 +4905,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="smooth-muscle-cell" class="section level4 tabset">
@@ -4556,6 +4938,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" target="_blank">c55a428</a>
@@ -4604,12 +4997,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MYL9</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4635,6 +5026,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" target="_blank">c55a428</a>
@@ -4683,12 +5085,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### DES</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4714,6 +5114,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" target="_blank">c55a428</a>
@@ -4751,12 +5162,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### MYH11</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4782,6 +5191,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" target="_blank">c55a428</a>
@@ -4830,12 +5250,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="mastcell" class="section level4 tabset">
@@ -4865,6 +5283,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" target="_blank">c55a428</a>
@@ -4913,12 +5342,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CPA3</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -4944,6 +5371,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" target="_blank">c55a428</a>
@@ -4992,12 +5430,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### HPGDS</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5023,6 +5459,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" target="_blank">c55a428</a>
@@ -5060,12 +5507,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### VWA5A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5091,6 +5536,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" target="_blank">c55a428</a>
@@ -5139,12 +5595,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="neutrophil" class="section level4 tabset">
@@ -5174,6 +5628,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" target="_blank">c55a428</a>
@@ -5222,12 +5687,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### S100A8</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5253,6 +5716,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" target="_blank">c55a428</a>
@@ -5301,12 +5775,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### TREM1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5332,6 +5804,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" target="_blank">c55a428</a>
@@ -5369,12 +5852,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 </div>
 <div id="plasmacytoid-dendritic-cell" class="section level4 tabset">
@@ -5404,6 +5885,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" target="_blank">c55a428</a>
@@ -5452,12 +5944,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### CLEC4C</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5483,6 +5973,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" target="_blank">c55a428</a>
@@ -5531,12 +6032,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### LILRA4</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5562,6 +6061,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" target="_blank">c55a428</a>
@@ -5599,12 +6109,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  
 #### LRRC26</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -5630,6 +6138,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/613a9480c1694310827a8b3da42eeb273854bf8c/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" target="_blank">613a948</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" target="_blank">c55a428</a>
@@ -5678,12 +6197,10 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (3 x 1) &quot;arrange&quot;: 3 grobs
-  z     cells    name           grob
-1 1 (1-1,1-1) arrange gtable[layout]
-2 2 (2-2,1-1) arrange gtable[layout]
-3 3 (3-3,1-1) arrange gtable[layout]
- 
+<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
+  z     cells    name            grob
+1 1 (1-1,1-1) arrange gtable[arrange]
+2 2 (2-2,1-1) arrange  gtable[layout]
  </code></pre>
 <pre class="r"><code>#Manual Annotation
 
