@@ -172,7 +172,7 @@ sce.plot[sce.plot >=3] = 3
 pheatmap(sce.plot, annotation_col=column_annotations,
          show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
 
-dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red")
+dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red",adjustment="z-score",size=5)
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 
@@ -278,6 +278,7 @@ VizGenEx <- function(markr){
      
 }
 
+markr<-c("PTPRC","CORO1A","RAC2")
 ```
 
 
@@ -289,12 +290,14 @@ Identify major cell types for a Rough Annotation on high hierarchical level
 
 ```{r LymphocyteL0}
 #VizGenEx(c("PTPRC","CORO1A","RAC2"))  
-markr<-c("PTPRC","CORO1A","RAC2")
+
 for(i in markr){
   
   cat(paste0("#### ", i, "\n"))
-  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
-  cat(' \n')
+  print(
+  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster")
+  )
+  cat('\n\n')
   
   }
 ```
@@ -533,5 +536,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/05_CelltypeAnnotation'))
+saveRDS(sce, file =paste0(path,'/output/05_CelltypeAnnotation.rds'))
 ```
