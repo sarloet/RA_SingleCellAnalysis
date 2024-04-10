@@ -266,8 +266,6 @@ VizGenEx <- function(markr){
   
   cat(paste0("##### ", i, "\n"))
   
-  #print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"), nrow=3))
- 
   print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"))
   print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"))
   print(plotExpression(sce, features = i, x = "cluster"))
