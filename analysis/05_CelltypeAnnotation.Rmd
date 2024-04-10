@@ -172,7 +172,7 @@ sce.plot[sce.plot >=3] = 3
 pheatmap(sce.plot, annotation_col=column_annotations,
          show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
 
-dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red",adjustment="z-score",size=5)
+dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red",adjustment="z-score")
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 
@@ -267,10 +267,10 @@ VizGenEx <- function(markr){
   
     cat(paste0("#### ", i, "\n"))
   
-    print(gridExtra::grid.arrange(
+    gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"), 
                   plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
-      plotExpression(sce, features = i, x = "cluster"),nrow = 2))
+      plotExpression(sce, features = i, x = "cluster"),nrow = 2)
     cat(' \n')
   
   }
@@ -282,7 +282,7 @@ markr<-c("PTPRC","CORO1A","RAC2")
 ```
 
 
-### Major cell type Annotation - Level0
+## Major cell type Annotation - Level0
 
 Identify major cell types for a Rough Annotation on high hierarchical level
 
@@ -293,7 +293,7 @@ Identify major cell types for a Rough Annotation on high hierarchical level
 
 for(i in markr){
   
-  cat(paste0("#### ", i, "\n"))
+  cat(paste0("\n#### ", i, "\n"))
   print(
   plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster")
   )
@@ -486,11 +486,7 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 
 ```{r}
 ## Set Celltypes to use downstream as colLabels
-
-colLabels(sce) <- colData(sce)$AUCellanno
-colLabels(sce) <- colData(sce)$ManualAnno
 colLabels(sce) <- colData(sce)$ManualAnno_L1
-
 sce$celltype <- colData(sce)$ManualAnno_L1
 
 ```
@@ -536,5 +532,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/05_CelltypeAnnotation.rds'))
+saveRDS(sce, file =paste0(path,'/output/05_sce_CelltypeAnnotation.rdss'))
 ```

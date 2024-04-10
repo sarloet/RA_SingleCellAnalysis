@@ -1,5 +1,5 @@
 ---
-title: "SubClustering"
+title: "Subclustering"
 subtitle: "06_SubClustering"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# SubClustering
+# Subclustering
 
 ## Setup
 
@@ -40,6 +40,8 @@ library(dplyr)
 library(scran)
 library(scater)
 library(bluster)
+library(dittoSeq)
+library(gridExtra)
 })
 
 ```
@@ -53,11 +55,11 @@ path <- here::here()
 ```
 
 
-## Load Data
+### Load Data
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
 ```
 
@@ -71,10 +73,19 @@ dim(sce)
 
 https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UMAPs coloured by cluster or cell type
 
-```{r}
+### Plot Clustering and Annotation {.tabset}
+
+### Clusters
+
+```{r UMAPCluster}
 #cluster
 plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
 
+```
+
+### Annotation
+
+```{r UMAPAnnotation}
 #cell type
 plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
 
@@ -82,7 +93,7 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(
 
 ## Subclustering
 
-```{r}
+```{r SubclusteringFunction}
 # Create Subclustering function
 
 SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
@@ -100,7 +111,7 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
     
     #Batch correction on subcluster
     sce.Batchelor <-batchelor::multiBatchNorm(sce.subset, batch=sce.subset$Sample, subset.row = rownames(sce.subset)[rowData(sce.subset)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
-    #merge_order <- list(list("SynBio124", "SynBio110", "SynBio079"),list("SynBio121"),list("SynBio023"))
+    
     bpstart(bpp)
     sce.Batchelor <- batchelor::fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
     bpstop(bpp)
@@ -119,7 +130,6 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
     umap_for_cell_type <- reducedDim(sce.subset, "UMAP")
     column_name <- paste0("SC_UMAP_", name)
   
-  
     # Add dimension reduction for only selected subcluster cells
     reducedDim(sce.sc, column_name) <- reducedDim(sce.sc, "MNN_UMAP")
     reducedDim(sce.sc, column_name)[,c(1,2)] <- NA
@@ -127,23 +137,23 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
     attr(reducedDim(sce.sc, column_name), "scaled:center") <- attr(umap_for_cell_type, "scaled:center")
     reducedDim(sce.sc, column_name)[rownames(umap_for_cell_type),] <- umap_for_cell_type
   }
-    
   
   # transform to factor values
   sce.sc$subcluster_complete <- factor(paste0(sce.sc$celltype, "_", sce.sc$subcluster))
   sce.sc$subcluster <- factor(sce.sc$subcluster)
+  
   # Add column for each of the cell type in ColData
   for (name in SC_celltypes){
     colData(sce.sc)[,name] <- colData(sce.sc)[,"subcluster"]
     colData(sce.sc)[sce.sc$celltype != name, name] <- NA
     colData(sce.sc)[, name] <- factor(as.numeric(colData(sce.sc)[, name]))
   }
-
+  
   return(sce.sc)
 }
 ```
 
-```{r, warning=FALSE}
+```{r RunSubcluster, warning=FALSE}
 
 #Set Celltypes to be subclustered
 SC_celltypes <-c("Fibroblast")
@@ -160,38 +170,38 @@ sce.sc<-SUBCLUSTER(sce, SC_celltypes, clust_param="leiden", k_param=40)
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r}
+```{r UMAPSubcluster}
 # plot UMAP of the subclusters
 
 for (name in SC_celltypes){
-  cat(paste0("###  ", SC_celltypes, " {.tabset} \n"))
+  cat(paste0("#### ", SC_celltypes, " {.tabset} \n"))
   
-  cat(paste0("####  Colored by Clustering\n"))
+  cat(paste0("##### Colored by Clustering\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], "MNN_UMAP",colour_by = "subcluster", text_by="subcluster") +
           labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering"))
     
-  cat(paste0("####  Colored by Sample\n"))
+  cat(paste0("##### Colored by Sample\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], "MNN_UMAP",colour_by = "Sample") +
           labs(title=paste0("SubCluster ", name),subtitle="Colored by Sample"))
 }
 
 ```
 
-## Plot Recalculated UMAP of Subclusters  {.tabset}
+### Plot Recalculated UMAP of Subclusters  {.tabset}
 
-```{r}
+```{r UMAPSubclusterRecalc}
 # plot the Recalculated UMAP of the subcluster
 
 for (name in SC_celltypes){
-  cat(paste0("###  ", SC_celltypes, " {.tabset} \n"))  
+  cat(paste0("#### ", SC_celltypes, " {.tabset} \n"))  
   
   column_name <- paste0("SC_UMAP_", name)
   
-  cat(paste0("####  Colored by Clustering\n"))
+  cat(paste0("##### Colored by Clustering\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "subcluster",text_by="subcluster") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by clustering"))
 
-  cat(paste0("####  Colored by Sample\n"))
+  cat(paste0("##### Colored by Sample\n"))
   print(plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "Sample") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Sample"))
 }
@@ -199,8 +209,120 @@ for (name in SC_celltypes){
 ```
 
 
+## Annotate Subclusters 
+
+```{r SetupAssignement}
+#Manual Annotation setup
+sce.sc$ManualAnno_L2 <- as.integer(sce.sc$celltype)
+```
+
+```{r VizGenExFunction}
+#Function to visuaise gene Expression for vector of genes
+
+VizGenEx <- function(markr,Ctype){
+  for(i in markr){
+    
+    cat(paste0("#### ", i, "\n"))
+    gridExtra::grid.arrange(
+      arrangeGrob(plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, text_by = "subcluster"), 
+                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
+      plotExpression(sce.sc[,sce.sc$celltype == Ctype], features = i, x = "subcluster"),nrow = 2)
+    cat(' \n')
+  
+  }
+}
+
+```
+
+### Fibroblasts
+
+```{r FibroblastsUMAP}
+#Plot the UMAp
+plotReducedDim(sce.sc[,sce.sc$celltype == "Fibroblast"], "SC_UMAP_Fibroblast" ,colour_by = "subcluster",text_by="subcluster") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", "Fibroblast"),subtitle="Colored by clustering")
+```
+
+#### Identify Marker Genes Wilcoxon rank-sum test
+
+```{r IdentifyMarker}
+markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
+data.table(markers_wilcox)
+```
+
+```{r PlotMarker}
+tmp <-top_markers(markers_wilcox, n = 4)
+
+tail(unlist(unname(as.list(tmp))),-4)
+
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+```
+
+
+#### Subcluster cell type Annotation - Level2
+
+```{r AssignementL2}
+#Lining Fibroblst
+VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")  
+
+
+```
+
+```{r AssignementL2}
+#Lining Fibroblst
+VizGenEx(c("COL4A1","GAPDH", "POSTN"),"Fibroblast")  
+
+
+```
+
+
+```{r AssignementL2}
+#Manual Annotation
+
+sce$ManualAnno_L2 <- as.integer(sce$subcluster)
+unique(sce$ManualAnno_L2)
+
+sce$ManualAnno_L2[sce$subcluster %in% c(2,3,12)] <- "Fibroblast"
+
+```
+
+#### UMAP Assigned Celltypes Tcell
+
+```{r UMAPAssigned}
+plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+```
+
+
+### Tcells
+
+
+
+### Macrophages
+
+
+
+### Endothelial
+
+
+
+```{r AssignementCheck}
+#Check if all clusters assigned
+unique(sce$ManualAnno_L2)
+```
+
+### Plot Assigned Celltypes {.tabset}
+
+##### UMAP All Subcluster
+
+```{r PlotL0}
+#Plot manual Annotation
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L2")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L2", text_by="ManualAnno_L2")+ ggtitle("UMAP Celllabel")
+```
+
+
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0(path,'/output/06_sce_SubClustering.rds'))
+saveRDS(sce, file =paste0(path,'/output/06_sce_SubClustering.rds'))
 ```
