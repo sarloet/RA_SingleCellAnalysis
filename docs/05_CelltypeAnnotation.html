@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">Marker Genes and Celltype Annotation</h1>
 <h3 class="subtitle">05_CelltypeAnnotation</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 10 2024 10:22:33</h4>
+<h4 class="date">Apr 10 2024 11:00:35</h4>
 
 </div>
 
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5eaf6be22057a4df68cf17919c417c46ec286351targetblank5eaf6bea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreec37ad07a9d67f6acafe76af6effe921e7bd176b7targetblankc37ad07a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5eaf6be22057a4df68cf17919c417c46ec286351" target="_blank">5eaf6be</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/c37ad07a9d67f6acafe76af6effe921e7bd176b7" target="_blank">c37ad07</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5eaf6be22057a4df68cf17919c417c46ec286351targetblank5eaf6bea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreec37ad07a9d67f6acafe76af6effe921e7bd176b7targetblankc37ad07a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5eaf6be22057a4df68cf17919c417c46ec286351" target="_blank">5eaf6be</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/c37ad07a9d67f6acafe76af6effe921e7bd176b7" target="_blank">c37ad07</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -616,6 +616,9 @@ Ignored files:
     Ignored:    output/04_sce_Clustering.rds
     Ignored:    output/05_CelltypeAnnotation
     Ignored:    output/Cluster_Marker_Genes.xlsx
+
+Untracked files:
+    Untracked:  analysis/07_DifferentialExpression.Rmd
 
 Unstaged changes:
     Modified:   analysis/06_SubClustering.Rmd
@@ -664,6 +667,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c37ad07a9d67f6acafe76af6effe921e7bd176b7/analysis/05_CelltypeAnnotation.Rmd" target="_blank">c37ad07</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+Fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/05_CelltypeAnnotation.html" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1455,7 +1492,7 @@ VizGenEx &lt;- function(markr){
  
   for(i in markr){
   
-    cat(paste0(&quot;##### &quot;, i, &quot;\n&quot;))
+    cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
     print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;),plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;),plotExpression(sce, features = i, x = &quot;cluster&quot;),  ncol = 2,nrow=2),layout_matrix = cbind(c(1,2), c(3,3)))
     cat(&#39; \n \n&#39;)
@@ -1468,13 +1505,14 @@ VizGenEx &lt;- function(markr){
 <h3>Major cell type Annotation - Level0</h3>
 <p>Identify major cell types for a Rough Annotation on high hierarchical
 level</p>
-<div id="lymphocyte" class="section level4 tabset">
-<h4 class="tabset">Lymphocyte</h4>
+</div>
+<div id="lymphocyte" class="section level3 tabset">
+<h3 class="tabset">Lymphocyte</h3>
 <pre class="r"><code>#VizGenEx(c(&quot;PTPRC&quot;,&quot;CORO1A&quot;,&quot;RAC2&quot;))  
 markr&lt;-c(&quot;PTPRC&quot;,&quot;CORO1A&quot;,&quot;RAC2&quot;)
 for(i in markr){
   
-  cat(paste0(&quot;##### &quot;, i, &quot;\n&quot;))
+  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
   
   print(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;))
   print(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;))
@@ -1482,7 +1520,7 @@ for(i in markr){
   cat(&#39; \n \n&#39;)
   
   }</code></pre>
-<pre><code>##### PTPRC</code></pre>
+<pre><code>#### PTPRC</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-1">
@@ -1506,6 +1544,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-1.png" target="_blank">2d30bf5</a>
@@ -1568,6 +1617,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1628,6 +1688,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1654,7 +1725,7 @@ sarloet
 </div>
 <pre><code> 
  
-##### CORO1A</code></pre>
+#### CORO1A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-4">
@@ -1678,6 +1749,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-4.png" target="_blank">2d30bf5</a>
@@ -1740,6 +1822,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-5.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-5.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1800,6 +1893,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-6.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-6.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1826,7 +1930,7 @@ sarloet
 </div>
 <pre><code> 
  
-##### RAC2</code></pre>
+#### RAC2</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-7.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-7">
@@ -1850,6 +1954,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-7.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-7.png" target="_blank">2d30bf5</a>
@@ -1912,6 +2027,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-8.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-8.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1972,6 +2098,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-9.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-9.png" target="_blank">2d30bf5</a>
 </td>
 <td>
@@ -1997,10 +2134,10 @@ sarloet
 </div>
 </div>
 </div>
-<div id="myeloid" class="section level4 tabset">
-<h4 class="tabset">Myeloid</h4>
+<div id="myeloid" class="section level3 tabset">
+<h3 class="tabset">Myeloid</h3>
 <pre class="r"><code>VizGenEx(c(&quot;CSF3R&quot;,&quot;MS4A6A&quot;,&quot;MS4A7&quot;))  </code></pre>
-<pre><code>##### CSF3R</code></pre>
+<pre><code>#### CSF3R</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-1">
@@ -2024,6 +2161,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" target="_blank">2d30bf5</a>
@@ -2068,7 +2216,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MS4A6A</code></pre>
+#### MS4A6A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-2">
@@ -2092,6 +2240,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" target="_blank">2d30bf5</a>
@@ -2136,7 +2295,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MS4A7</code></pre>
+#### MS4A7</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-3">
@@ -2160,6 +2319,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" target="_blank">2d30bf5</a>
@@ -2193,11 +2363,10 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  </code></pre>
-</div>
 <div id="fibroblast" class="section level4 tabset">
 <h4 class="tabset">Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PDGFRB&quot;,&quot;DCN&quot;,&quot;PCOLCE&quot;,&quot;ACTA2&quot;)) </code></pre>
-<pre><code>##### PDGFRB</code></pre>
+<pre><code>#### PDGFRB</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-1">
@@ -2221,6 +2390,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" target="_blank">2d30bf5</a>
@@ -2265,7 +2445,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### DCN</code></pre>
+#### DCN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-2">
@@ -2289,6 +2469,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" target="_blank">2d30bf5</a>
@@ -2333,7 +2524,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### PCOLCE</code></pre>
+#### PCOLCE</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-3">
@@ -2357,6 +2548,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" target="_blank">2d30bf5</a>
@@ -2390,7 +2592,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### ACTA2</code></pre>
+#### ACTA2</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-4">
@@ -2414,6 +2616,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" target="_blank">2d30bf5</a>
@@ -2451,7 +2664,7 @@ sarloet
 <div id="endothelial" class="section level4 tabset">
 <h4 class="tabset">Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CDH5&quot;,&quot;ECSCR&quot;,&quot;CCL14&quot;)) </code></pre>
-<pre><code>##### CDH5</code></pre>
+<pre><code>#### CDH5</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-1">
@@ -2475,6 +2688,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" target="_blank">2d30bf5</a>
@@ -2519,7 +2743,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### ECSCR</code></pre>
+#### ECSCR</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-2">
@@ -2543,6 +2767,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" target="_blank">2d30bf5</a>
@@ -2587,7 +2822,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CCL14</code></pre>
+#### CCL14</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-3">
@@ -2611,6 +2846,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" target="_blank">2d30bf5</a>
@@ -2661,7 +2907,7 @@ hierarchical level</p>
 <div id="macrophage" class="section level4 tabset">
 <h4 class="tabset">Macrophage</h4>
 <pre class="r"><code>VizGenEx(c(&quot;MARCO&quot;,&quot;LYZ&quot;,&quot;MSR1&quot;)) </code></pre>
-<pre><code>##### MARCO</code></pre>
+<pre><code>#### MARCO</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-1">
@@ -2685,6 +2931,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" target="_blank">2d30bf5</a>
@@ -2729,7 +2986,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### LYZ</code></pre>
+#### LYZ</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-2">
@@ -2753,6 +3010,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" target="_blank">2d30bf5</a>
@@ -2797,7 +3065,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MSR1</code></pre>
+#### MSR1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-3">
@@ -2821,6 +3089,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" target="_blank">2d30bf5</a>
@@ -2858,7 +3137,7 @@ sarloet
 <div id="fibroblast-1" class="section level4 tabset">
 <h4 class="tabset">Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PDGFRB&quot;,&quot;DCN&quot;,&quot;COL1A1&quot;)) </code></pre>
-<pre><code>##### PDGFRB</code></pre>
+<pre><code>#### PDGFRB</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-1">
@@ -2882,6 +3161,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" target="_blank">2d30bf5</a>
@@ -2926,7 +3216,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### DCN</code></pre>
+#### DCN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-2">
@@ -2950,6 +3240,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" target="_blank">2d30bf5</a>
@@ -2994,7 +3295,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### COL1A1</code></pre>
+#### COL1A1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-3">
@@ -3018,6 +3319,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" target="_blank">2d30bf5</a>
@@ -3055,7 +3367,7 @@ sarloet
 <div id="lining-fibroblast" class="section level4 tabset">
 <h4 class="tabset">Lining Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PRG4&quot;,&quot;CRTAC1&quot;, &quot;CLU&quot;)) </code></pre>
-<pre><code>##### PRG4</code></pre>
+<pre><code>#### PRG4</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-1">
@@ -3079,6 +3391,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" target="_blank">2d30bf5</a>
@@ -3123,7 +3446,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CRTAC1</code></pre>
+#### CRTAC1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-2">
@@ -3147,6 +3470,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" target="_blank">2d30bf5</a>
@@ -3191,7 +3525,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CLU</code></pre>
+#### CLU</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-3">
@@ -3215,6 +3549,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" target="_blank">2d30bf5</a>
@@ -3252,7 +3597,7 @@ sarloet
 <div id="endothelial-1" class="section level4 tabset">
 <h4 class="tabset">Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CDH5&quot;,&quot;VWF&quot;, &quot;PECAM1&quot;,&quot;CCL14&quot;))</code></pre>
-<pre><code>##### CDH5</code></pre>
+<pre><code>#### CDH5</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-1">
@@ -3276,6 +3621,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" target="_blank">2d30bf5</a>
@@ -3320,7 +3676,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### VWF</code></pre>
+#### VWF</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-2">
@@ -3344,6 +3700,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" target="_blank">2d30bf5</a>
@@ -3388,7 +3755,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### PECAM1</code></pre>
+#### PECAM1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-3">
@@ -3412,6 +3779,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" target="_blank">2d30bf5</a>
@@ -3445,7 +3823,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CCL14</code></pre>
+#### CCL14</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-4">
@@ -3469,6 +3847,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" target="_blank">2d30bf5</a>
@@ -3517,7 +3906,7 @@ sarloet
 <div id="lymphatic-endothelial" class="section level4 tabset">
 <h4 class="tabset">Lymphatic Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PROX1&quot;,&quot;LYVE1&quot;, &quot;CCL21&quot;))</code></pre>
-<pre><code>##### PROX1</code></pre>
+<pre><code>#### PROX1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-1">
@@ -3541,6 +3930,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" target="_blank">2d30bf5</a>
@@ -3585,7 +3985,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### LYVE1</code></pre>
+#### LYVE1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-2">
@@ -3609,6 +4009,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" target="_blank">2d30bf5</a>
@@ -3653,7 +4064,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CCL21</code></pre>
+#### CCL21</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-3">
@@ -3677,6 +4088,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" target="_blank">2d30bf5</a>
@@ -3714,7 +4136,7 @@ sarloet
 <div id="bcell" class="section level4 tabset">
 <h4 class="tabset">BCell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CD19&quot;,&quot;MS4A1&quot;, &quot;TNFRSF13C&quot;))</code></pre>
-<pre><code>##### CD19</code></pre>
+<pre><code>#### CD19</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-1">
@@ -3738,6 +4160,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" target="_blank">2d30bf5</a>
@@ -3782,7 +4215,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MS4A1</code></pre>
+#### MS4A1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-2">
@@ -3806,6 +4239,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" target="_blank">2d30bf5</a>
@@ -3850,7 +4294,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### TNFRSF13C</code></pre>
+#### TNFRSF13C</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-3">
@@ -3874,6 +4318,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" target="_blank">2d30bf5</a>
@@ -3911,7 +4366,7 @@ sarloet
 <div id="plasma" class="section level4 tabset">
 <h4 class="tabset">Plasma</h4>
 <pre class="r"><code>VizGenEx(c(&quot;JSRP1&quot;,&quot;DERL3&quot;, &quot;JCHAIN&quot;))</code></pre>
-<pre><code>##### JSRP1</code></pre>
+<pre><code>#### JSRP1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-1">
@@ -3935,6 +4390,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" target="_blank">2d30bf5</a>
@@ -3979,7 +4445,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### DERL3</code></pre>
+#### DERL3</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-2">
@@ -4003,6 +4469,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" target="_blank">2d30bf5</a>
@@ -4047,7 +4524,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### JCHAIN</code></pre>
+#### JCHAIN</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-3">
@@ -4071,6 +4548,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" target="_blank">2d30bf5</a>
@@ -4108,7 +4596,7 @@ sarloet
 <div id="tcell" class="section level4 tabset">
 <h4 class="tabset">Tcell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CD3E&quot;,&quot;CD3D&quot;, &quot;CD3G&quot;,&quot;TRAC&quot;))</code></pre>
-<pre><code>##### CD3E</code></pre>
+<pre><code>#### CD3E</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-1">
@@ -4132,6 +4620,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" target="_blank">2d30bf5</a>
@@ -4176,7 +4675,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CD3D</code></pre>
+#### CD3D</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-2">
@@ -4200,6 +4699,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" target="_blank">2d30bf5</a>
@@ -4244,7 +4754,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CD3G</code></pre>
+#### CD3G</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-3">
@@ -4268,6 +4778,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" target="_blank">2d30bf5</a>
@@ -4301,7 +4822,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### TRAC</code></pre>
+#### TRAC</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-4">
@@ -4325,6 +4846,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" target="_blank">2d30bf5</a>
@@ -4373,7 +4905,7 @@ sarloet
 <div id="smooth-muscle-cell" class="section level4 tabset">
 <h4 class="tabset">Smooth muscle cell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;ACTA2&quot;,&quot;MYL9&quot;, &quot;DES&quot;, &quot;MYH11&quot;))</code></pre>
-<pre><code>##### ACTA2</code></pre>
+<pre><code>#### ACTA2</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-1">
@@ -4397,6 +4929,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" target="_blank">2d30bf5</a>
@@ -4441,7 +4984,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MYL9</code></pre>
+#### MYL9</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-2">
@@ -4465,6 +5008,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" target="_blank">2d30bf5</a>
@@ -4509,7 +5063,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### DES</code></pre>
+#### DES</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-3">
@@ -4533,6 +5087,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" target="_blank">2d30bf5</a>
@@ -4566,7 +5131,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### MYH11</code></pre>
+#### MYH11</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-4">
@@ -4590,6 +5155,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" target="_blank">2d30bf5</a>
@@ -4638,7 +5214,7 @@ sarloet
 <div id="mastcell" class="section level4 tabset">
 <h4 class="tabset">Mastcell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;TPSAB1&quot;,&quot;CPA3&quot;,&quot;HPGDS&quot;,&quot;VWA5A&quot;))</code></pre>
-<pre><code>##### TPSAB1</code></pre>
+<pre><code>#### TPSAB1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-1">
@@ -4662,6 +5238,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" target="_blank">2d30bf5</a>
@@ -4706,7 +5293,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CPA3</code></pre>
+#### CPA3</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-2">
@@ -4730,6 +5317,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" target="_blank">2d30bf5</a>
@@ -4774,7 +5372,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### HPGDS</code></pre>
+#### HPGDS</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-3">
@@ -4798,6 +5396,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" target="_blank">2d30bf5</a>
@@ -4831,7 +5440,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### VWA5A</code></pre>
+#### VWA5A</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-4">
@@ -4855,6 +5464,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" target="_blank">2d30bf5</a>
@@ -4903,7 +5523,7 @@ sarloet
 <div id="neutrophil" class="section level4 tabset">
 <h4 class="tabset">Neutrophil</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CSF3R&quot;,&quot;S100A8&quot;,&quot;TREM1&quot;))</code></pre>
-<pre><code>##### CSF3R</code></pre>
+<pre><code>#### CSF3R</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-1">
@@ -4927,6 +5547,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" target="_blank">2d30bf5</a>
@@ -4971,7 +5602,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### S100A8</code></pre>
+#### S100A8</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-2">
@@ -4995,6 +5626,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" target="_blank">2d30bf5</a>
@@ -5039,7 +5681,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### TREM1</code></pre>
+#### TREM1</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-3">
@@ -5063,6 +5705,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" target="_blank">2d30bf5</a>
@@ -5100,7 +5753,7 @@ sarloet
 <div id="plasmacytoid-dendritic-cell" class="section level4 tabset">
 <h4 class="tabset">Plasmacytoid dendritic cell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PTPRC&quot;,&quot;CLEC4C&quot;,&quot;LILRA4&quot;,&quot;LRRC26&quot;))</code></pre>
-<pre><code>##### PTPRC</code></pre>
+<pre><code>#### PTPRC</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-1">
@@ -5124,6 +5777,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" target="_blank">2d30bf5</a>
@@ -5168,7 +5832,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### CLEC4C</code></pre>
+#### CLEC4C</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-2">
@@ -5192,6 +5856,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" target="_blank">2d30bf5</a>
@@ -5236,7 +5911,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### LILRA4</code></pre>
+#### LILRA4</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-3">
@@ -5260,6 +5935,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" target="_blank">2d30bf5</a>
@@ -5293,7 +5979,7 @@ sarloet
 3 3 (2-2,1-1) arrange gtable[layout]
  
  
-##### LRRC26</code></pre>
+#### LRRC26</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-4">
@@ -5317,6 +6003,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c55a4287a8d9a0a1704117845c98719287ddd94d/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" target="_blank">c55a428</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2d30bf5062bd343a7134834e4dab4c48d366c1d5/docs/figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" target="_blank">2d30bf5</a>
