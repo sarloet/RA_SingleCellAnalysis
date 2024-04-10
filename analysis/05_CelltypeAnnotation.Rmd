@@ -119,7 +119,7 @@ sce.marker <- sce[rowData(sce)$is_hvg==TRUE,]
 rownames(sce.marker) <- rowData(sce.marker)$Symbol
 
 #Wilcoxon rank-sum test
-markers_wilcox_up <- findMarkers(sce.marker, groups = sce$leiden, block = sce$Sample, direction = "up")
+markers_wilcox_up <- findMarkers(sce.marker, groups = sce$cluster, block = sce$Sample, direction = "up")
 
 ```
 
@@ -264,9 +264,9 @@ VizGenEx <- function(markr){
  
   for(i in markr){
   
-  cat(paste0("##### ", i, "\n"))
+    cat(paste0("##### ", i, "\n"))
   
-  print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"), nrow=3))
+    print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"),  ncol = 2,nrow=2),layout_matrix = cbind(c(1,2), c(3,3)))
     cat(' \n \n')
   
   }
@@ -291,8 +291,10 @@ for(i in markr){
   
   cat(paste0("##### ", i, "\n"))
   
-  print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = "DCN", order_by="DCN" ) +scale_colour_gradient(name = "DCN",low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"), nrow=3))
-    cat(' \n \n')
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
+  print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"))
+  print(plotExpression(sce, features = i, x = "cluster"))
+  cat(' \n \n')
   
   }
 ```
