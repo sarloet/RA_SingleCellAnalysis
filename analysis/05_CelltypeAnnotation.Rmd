@@ -264,7 +264,7 @@ VizGenEx <- function(markr){
  
   for(i in markr){
   
-    cat(paste0("##### ", i, "\n"))
+    cat(paste0("#### ", i, "\n"))
   
     print(gridExtra::grid.arrange(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"),plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"),plotExpression(sce, features = i, x = "cluster"),  ncol = 2,nrow=2),layout_matrix = cbind(c(1,2), c(3,3)))
     cat(' \n \n')
@@ -281,15 +281,14 @@ VizGenEx <- function(markr){
 
 Identify major cell types for a Rough Annotation on high hierarchical level
 
-#### Lymphocyte {.tabset}
+### Lymphocyte {.tabset}
 
 ```{r LymphocyteL0}
-
 #VizGenEx(c("PTPRC","CORO1A","RAC2"))  
 markr<-c("PTPRC","CORO1A","RAC2")
 for(i in markr){
   
-  cat(paste0("##### ", i, "\n"))
+  cat(paste0("#### ", i, "\n"))
   
   print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"))
   print(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"))
@@ -299,7 +298,7 @@ for(i in markr){
   }
 ```
 
-#### Myeloid {.tabset}
+### Myeloid {.tabset}
 
 ```{r MyeloidL0}
 
