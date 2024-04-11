@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">Marker Genes and Celltype Annotation</h1>
 <h3 class="subtitle">05_CelltypeAnnotation</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 10 2024 15:21:41</h4>
+<h4 class="date">Apr 11 2024 09:20:37</h4>
 
 </div>
 
@@ -441,7 +441,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-04-10
+<strong>Last updated:</strong> 2024-04-11
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeb3363520d76474ae96a36cbc3a49c383bbb063bdtargetblankb336352a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree6890a060225179ddc86a439e4e78db4c49edaa6ctargetblank6890a06a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/b3363520d76474ae96a36cbc3a49c383bbb063bd" target="_blank">b336352</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/6890a060225179ddc86a439e4e78db4c49edaa6c" target="_blank">6890a06</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeb3363520d76474ae96a36cbc3a49c383bbb063bdtargetblankb336352a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree6890a060225179ddc86a439e4e78db4c49edaa6ctargetblank6890a06a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/b3363520d76474ae96a36cbc3a49c383bbb063bd" target="_blank">b336352</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/6890a060225179ddc86a439e4e78db4c49edaa6c" target="_blank">6890a06</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -607,6 +607,7 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    data/cellbender_data_h5/
     Ignored:    output/._Cluster_Marker_Genes.xlsx
     Ignored:    output/00_sce_DataPreparation.rds
@@ -614,10 +615,8 @@ Ignored files:
     Ignored:    output/02_sce_DimensionalityReduction.rds
     Ignored:    output/03_sce_Integration_Batchelor.rds
     Ignored:    output/04_sce_Clustering.rds
+    Ignored:    output/05_sce_CelltypeAnnotation.rds
     Ignored:    output/Cluster_Marker_Genes.xlsx
-
-Untracked files:
-    Untracked:  analysis/07_DifferentialExpression.Rmd
 
 Unstaged changes:
     Modified:   analysis/06_SubClustering.Rmd
@@ -666,6 +665,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/6890a060225179ddc86a439e4e78db4c49edaa6c/analysis/05_CelltypeAnnotation.Rmd" target="_blank">6890a06</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-11
+</td>
+<td>
+Fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/2345dd45d3d81c3286d0b2efa20908ead48b6db9/analysis/05_CelltypeAnnotation.Rmd" target="_blank">2345dd4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/005a7cfbc0ffe9533649ebc0c5320061e5584fc0/docs/05_CelltypeAnnotation.html" target="_blank">005a7cf</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1379,7 +1429,7 @@ sarloet
 </table>
 </div>
 </div>
-<pre class="r"><code>dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = &quot;label&quot;,min.color=&quot;white&quot;, max.color=&quot;red&quot;,adjustment=&quot;z-score&quot;,size=5)</code></pre>
+<pre class="r"><code>dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = &quot;label&quot;,min.color=&quot;white&quot;, max.color=&quot;red&quot;,adjustment=&quot;z-score&quot;)</code></pre>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlotHeatmap-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotHeatmap-2">
@@ -1403,6 +1453,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/005a7cfbc0ffe9533649ebc0c5320061e5584fc0/docs/figure/05_CelltypeAnnotation.Rmd/PlotHeatmap-2.png" target="_blank">005a7cf</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-10
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c7ad93616926399930b4bd73687d4812bcc44301/docs/figure/05_CelltypeAnnotation.Rmd/PlotHeatmap-2.png" target="_blank">c7ad936</a>
@@ -1594,39 +1655,26 @@ VizGenEx &lt;- function(markr){
  
   for(i in markr){
   
-    cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
+    cat(paste0(&quot;\n##### &quot;, i, &quot;\n&quot;))
   
-    print(gridExtra::grid.arrange(
+    gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;), 
                   plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;), ncol = 2), 
-      plotExpression(sce, features = i, x = &quot;cluster&quot;),nrow = 2))
+      plotExpression(sce, features = i, x = &quot;cluster&quot;),nrow = 2)
     cat(&#39; \n&#39;)
   
   }
-
      
-}
-
-markr&lt;-c(&quot;PTPRC&quot;,&quot;CORO1A&quot;,&quot;RAC2&quot;)</code></pre>
+}</code></pre>
 <div id="major-cell-type-annotation---level0" class="section level3">
 <h3>Major cell type Annotation - Level0</h3>
 <p>Identify major cell types for a Rough Annotation on high hierarchical
 level</p>
-</div>
-<div id="lymphocyte" class="section level3 tabset">
-<h3 class="tabset">Lymphocyte</h3>
-<pre class="r"><code>#VizGenEx(c(&quot;PTPRC&quot;,&quot;CORO1A&quot;,&quot;RAC2&quot;))  
-
-for(i in markr){
-  
-  cat(paste0(&quot;#### &quot;, i, &quot;\n&quot;))
-  print(
-  plotReducedDim(sce, dimred = &quot;MNN_UMAP&quot;, colour_by = i, text_by = &quot;cluster&quot;)
-  )
-  cat(&#39;\n\n&#39;)
-  
-  }</code></pre>
-<pre><code>#### PTPRC</code></pre>
+<div id="lymphocyte" class="section level4 tabset">
+<h4 class="tabset">Lymphocyte</h4>
+<pre class="r"><code>VizGenEx(c(&quot;PTPRC&quot;,&quot;CORO1A&quot;,&quot;RAC2&quot;))  </code></pre>
+<div id="ptprc" class="section level5">
+<h5>PTPRC</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-1">
@@ -1698,9 +1746,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>
-
-#### CORO1A</code></pre>
+</div>
+<div id="coro1a" class="section level5">
+<h5>CORO1A</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-2">
@@ -1783,9 +1831,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>
-
-#### RAC2</code></pre>
+</div>
+<div id="rac2" class="section level5">
+<h5>RAC2</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphocyteL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphocyteL0-3">
@@ -1858,10 +1906,12 @@ sarloet
 </div>
 </div>
 </div>
-<div id="myeloid" class="section level3 tabset">
-<h3 class="tabset">Myeloid</h3>
+</div>
+<div id="myeloid" class="section level4 tabset">
+<h4 class="tabset">Myeloid</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CSF3R&quot;,&quot;MS4A6A&quot;,&quot;MS4A7&quot;))  </code></pre>
-<pre><code>#### CSF3R</code></pre>
+<div id="csf3r" class="section level5">
+<h5>CSF3R</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-1">
@@ -1955,12 +2005,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MS4A6A</code></pre>
+</div>
+<div id="ms4a6a" class="section level5">
+<h5>MS4A6A</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-2">
@@ -2054,12 +2101,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MS4A7</code></pre>
+</div>
+<div id="ms4a7" class="section level5">
+<h5>MS4A7</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MyeloidL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MyeloidL0-3">
@@ -2142,15 +2186,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
+</div>
 <div id="fibroblast" class="section level4 tabset">
 <h4 class="tabset">Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PDGFRB&quot;,&quot;DCN&quot;,&quot;PCOLCE&quot;,&quot;ACTA2&quot;)) </code></pre>
-<pre><code>#### PDGFRB</code></pre>
+<div id="pdgfrb" class="section level5">
+<h5>PDGFRB</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-1">
@@ -2244,12 +2286,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### DCN</code></pre>
+</div>
+<div id="dcn" class="section level5">
+<h5>DCN</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-2">
@@ -2343,12 +2382,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### PCOLCE</code></pre>
+</div>
+<div id="pcolce" class="section level5">
+<h5>PCOLCE</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-3">
@@ -2431,12 +2467,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### ACTA2</code></pre>
+</div>
+<div id="acta2" class="section level5">
+<h5>ACTA2</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL0-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL0-4">
@@ -2519,16 +2552,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="endothelial" class="section level4 tabset">
 <h4 class="tabset">Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CDH5&quot;,&quot;ECSCR&quot;,&quot;CCL14&quot;)) </code></pre>
-<pre><code>#### CDH5</code></pre>
+<div id="cdh5" class="section level5">
+<h5>CDH5</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-1">
@@ -2622,12 +2652,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### ECSCR</code></pre>
+</div>
+<div id="ecscr" class="section level5">
+<h5>ECSCR</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-2">
@@ -2721,12 +2748,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CCL14</code></pre>
+</div>
+<div id="ccl14" class="section level5">
+<h5>CCL14</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL0-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL0-3">
@@ -2809,11 +2833,6 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
 <pre class="r"><code>#Manual Annotation
 sce$ManualAnno_L0 &lt;- as.integer(sce$cluster)
 unique(sce$ManualAnno_L0)</code></pre>
@@ -2824,6 +2843,7 @@ sce$ManualAnno_L0[sce$cluster %in% c(2,3,12,15)] &lt;- &quot;Stromal&quot;
 sce$ManualAnno_L0[sce$cluster %in% c(1,6,19)] &lt;- &quot;Endothelial&quot;</code></pre>
 </div>
 </div>
+</div>
 <div id="finer-cell-type-annotation---level1" class="section level3">
 <h3>Finer cell type Annotation - Level1</h3>
 <p>Identify cell types for a finer grained Annotation on lower
@@ -2831,7 +2851,8 @@ hierarchical level</p>
 <div id="macrophage" class="section level4 tabset">
 <h4 class="tabset">Macrophage</h4>
 <pre class="r"><code>VizGenEx(c(&quot;MARCO&quot;,&quot;LYZ&quot;,&quot;MSR1&quot;)) </code></pre>
-<pre><code>#### MARCO</code></pre>
+<div id="marco" class="section level5">
+<h5>MARCO</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-1">
@@ -2925,12 +2946,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### LYZ</code></pre>
+</div>
+<div id="lyz" class="section level5">
+<h5>LYZ</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-2">
@@ -3024,12 +3042,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MSR1</code></pre>
+</div>
+<div id="msr1" class="section level5">
+<h5>MSR1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MacrophageL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MacrophageL1-3">
@@ -3112,16 +3127,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="fibroblast-1" class="section level4 tabset">
 <h4 class="tabset">Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PDGFRB&quot;,&quot;DCN&quot;,&quot;COL1A1&quot;)) </code></pre>
-<pre><code>#### PDGFRB</code></pre>
+<div id="pdgfrb-1" class="section level5">
+<h5>PDGFRB</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-1">
@@ -3215,12 +3227,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### DCN</code></pre>
+</div>
+<div id="dcn-1" class="section level5">
+<h5>DCN</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-2">
@@ -3314,12 +3323,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### COL1A1</code></pre>
+</div>
+<div id="col1a1" class="section level5">
+<h5>COL1A1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/FibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FibroblastL1-3">
@@ -3402,16 +3408,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="lining-fibroblast" class="section level4 tabset">
 <h4 class="tabset">Lining Fibroblast</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PRG4&quot;,&quot;CRTAC1&quot;, &quot;CLU&quot;)) </code></pre>
-<pre><code>#### PRG4</code></pre>
+<div id="prg4" class="section level5">
+<h5>PRG4</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-1">
@@ -3505,12 +3508,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CRTAC1</code></pre>
+</div>
+<div id="crtac1" class="section level5">
+<h5>CRTAC1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-2">
@@ -3604,12 +3604,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CLU</code></pre>
+</div>
+<div id="clu" class="section level5">
+<h5>CLU</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LiningFibroblastL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LiningFibroblastL1-3">
@@ -3692,16 +3689,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="endothelial-1" class="section level4 tabset">
 <h4 class="tabset">Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CDH5&quot;,&quot;VWF&quot;, &quot;PECAM1&quot;,&quot;CCL14&quot;))</code></pre>
-<pre><code>#### CDH5</code></pre>
+<div id="cdh5-1" class="section level5">
+<h5>CDH5</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-1">
@@ -3795,12 +3789,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### VWF</code></pre>
+</div>
+<div id="vwf" class="section level5">
+<h5>VWF</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-2">
@@ -3894,12 +3885,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### PECAM1</code></pre>
+</div>
+<div id="pecam1" class="section level5">
+<h5>PECAM1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-3">
@@ -3982,12 +3970,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CCL14</code></pre>
+</div>
+<div id="ccl14-1" class="section level5">
+<h5>CCL14</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/EndothelialL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-EndothelialL1-4">
@@ -4081,16 +4066,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="lymphatic-endothelial" class="section level4 tabset">
 <h4 class="tabset">Lymphatic Endothelial</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PROX1&quot;,&quot;LYVE1&quot;, &quot;CCL21&quot;))</code></pre>
-<pre><code>#### PROX1</code></pre>
+<div id="prox1" class="section level5">
+<h5>PROX1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-1">
@@ -4184,12 +4166,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### LYVE1</code></pre>
+</div>
+<div id="lyve1" class="section level5">
+<h5>LYVE1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-2">
@@ -4283,12 +4262,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CCL21</code></pre>
+</div>
+<div id="ccl21" class="section level5">
+<h5>CCL21</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/LymphaticEndothelialL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LymphaticEndothelialL1-3">
@@ -4371,16 +4347,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="bcell" class="section level4 tabset">
 <h4 class="tabset">BCell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CD19&quot;,&quot;MS4A1&quot;, &quot;TNFRSF13C&quot;))</code></pre>
-<pre><code>#### CD19</code></pre>
+<div id="cd19" class="section level5">
+<h5>CD19</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-1">
@@ -4474,12 +4447,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MS4A1</code></pre>
+</div>
+<div id="ms4a1" class="section level5">
+<h5>MS4A1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-2">
@@ -4573,12 +4543,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### TNFRSF13C</code></pre>
+</div>
+<div id="tnfrsf13c" class="section level5">
+<h5>TNFRSF13C</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/BCellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-BCellL1-3">
@@ -4661,16 +4628,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="plasma" class="section level4 tabset">
 <h4 class="tabset">Plasma</h4>
 <pre class="r"><code>VizGenEx(c(&quot;JSRP1&quot;,&quot;DERL3&quot;, &quot;JCHAIN&quot;))</code></pre>
-<pre><code>#### JSRP1</code></pre>
+<div id="jsrp1" class="section level5">
+<h5>JSRP1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-1">
@@ -4764,12 +4728,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### DERL3</code></pre>
+</div>
+<div id="derl3" class="section level5">
+<h5>DERL3</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-2">
@@ -4863,12 +4824,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### JCHAIN</code></pre>
+</div>
+<div id="jchain" class="section level5">
+<h5>JCHAIN</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/PlasmaL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlasmaL1-3">
@@ -4951,16 +4909,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="tcell" class="section level4 tabset">
 <h4 class="tabset">Tcell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CD3E&quot;,&quot;CD3D&quot;, &quot;CD3G&quot;,&quot;TRAC&quot;))</code></pre>
-<pre><code>#### CD3E</code></pre>
+<div id="cd3e" class="section level5">
+<h5>CD3E</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-1">
@@ -5054,12 +5009,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CD3D</code></pre>
+</div>
+<div id="cd3d" class="section level5">
+<h5>CD3D</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-2">
@@ -5153,12 +5105,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CD3G</code></pre>
+</div>
+<div id="cd3g" class="section level5">
+<h5>CD3G</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-3">
@@ -5241,12 +5190,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### TRAC</code></pre>
+</div>
+<div id="trac" class="section level5">
+<h5>TRAC</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/TcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TcellL1-4">
@@ -5340,16 +5286,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="smooth-muscle-cell" class="section level4 tabset">
 <h4 class="tabset">Smooth muscle cell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;ACTA2&quot;,&quot;MYL9&quot;, &quot;DES&quot;, &quot;MYH11&quot;))</code></pre>
-<pre><code>#### ACTA2</code></pre>
+<div id="acta2-1" class="section level5">
+<h5>ACTA2</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-1">
@@ -5443,12 +5386,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MYL9</code></pre>
+</div>
+<div id="myl9" class="section level5">
+<h5>MYL9</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-2">
@@ -5542,12 +5482,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### DES</code></pre>
+</div>
+<div id="des" class="section level5">
+<h5>DES</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-3">
@@ -5630,12 +5567,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### MYH11</code></pre>
+</div>
+<div id="myh11" class="section level5">
+<h5>MYH11</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/SMCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SMCL1-4">
@@ -5729,16 +5663,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="mastcell" class="section level4 tabset">
 <h4 class="tabset">Mastcell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;TPSAB1&quot;,&quot;CPA3&quot;,&quot;HPGDS&quot;,&quot;VWA5A&quot;))</code></pre>
-<pre><code>#### TPSAB1</code></pre>
+<div id="tpsab1" class="section level5">
+<h5>TPSAB1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-1">
@@ -5832,12 +5763,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CPA3</code></pre>
+</div>
+<div id="cpa3" class="section level5">
+<h5>CPA3</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-2">
@@ -5931,12 +5859,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### HPGDS</code></pre>
+</div>
+<div id="hpgds" class="section level5">
+<h5>HPGDS</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-3">
@@ -6019,12 +5944,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### VWA5A</code></pre>
+</div>
+<div id="vwa5a" class="section level5">
+<h5>VWA5A</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/MastcellL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MastcellL1-4">
@@ -6118,16 +6040,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="neutrophil" class="section level4 tabset">
 <h4 class="tabset">Neutrophil</h4>
 <pre class="r"><code>VizGenEx(c(&quot;CSF3R&quot;,&quot;S100A8&quot;,&quot;TREM1&quot;))</code></pre>
-<pre><code>#### CSF3R</code></pre>
+<div id="csf3r-1" class="section level5">
+<h5>CSF3R</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-1">
@@ -6221,12 +6140,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### S100A8</code></pre>
+</div>
+<div id="s100a8" class="section level5">
+<h5>S100A8</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-2">
@@ -6320,12 +6236,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### TREM1</code></pre>
+</div>
+<div id="trem1" class="section level5">
+<h5>TREM1</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/NeutrophilL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-NeutrophilL1-3">
@@ -6408,16 +6321,13 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
+</div>
 </div>
 <div id="plasmacytoid-dendritic-cell" class="section level4 tabset">
 <h4 class="tabset">Plasmacytoid dendritic cell</h4>
 <pre class="r"><code>VizGenEx(c(&quot;PTPRC&quot;,&quot;CLEC4C&quot;,&quot;LILRA4&quot;,&quot;LRRC26&quot;))</code></pre>
-<pre><code>#### PTPRC</code></pre>
+<div id="ptprc-1" class="section level5">
+<h5>PTPRC</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-1">
@@ -6511,12 +6421,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### CLEC4C</code></pre>
+</div>
+<div id="clec4c" class="section level5">
+<h5>CLEC4C</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-2">
@@ -6610,12 +6517,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### LILRA4</code></pre>
+</div>
+<div id="lilra4" class="section level5">
+<h5>LILRA4</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-3">
@@ -6698,12 +6602,9 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- 
-#### LRRC26</code></pre>
+</div>
+<div id="lrrc26" class="section level5">
+<h5>LRRC26</h5>
 <p><img src="figure/05_CelltypeAnnotation.Rmd/pDCL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-pDCL1-4">
@@ -6797,11 +6698,6 @@ sarloet
 </table>
 </div>
 </div>
-<pre><code>TableGrob (2 x 1) &quot;arrange&quot;: 2 grobs
-  z     cells    name            grob
-1 1 (1-1,1-1) arrange gtable[arrange]
-2 2 (2-2,1-1) arrange  gtable[layout]
- </code></pre>
 <pre class="r"><code>#Manual Annotation
 
 sce$ManualAnno_L1 &lt;- as.integer(sce$cluster)
@@ -6826,6 +6722,7 @@ unique(sce$ManualAnno_L0)</code></pre>
  [5] &quot;Tcell&quot;                       &quot;plasmacytoid dendritic cell&quot;
  [7] &quot;Smooth muscle cell&quot;          &quot;Mast cell&quot;                  
  [9] &quot;Bcell&quot;                       &quot;Neutrophil&quot;                 </code></pre>
+</div>
 </div>
 <div id="plot-assigned-celltypes" class="section level4 tabset">
 <h4 class="tabset">Plot Assigned Celltypes</h4>
@@ -6999,11 +6896,7 @@ sarloet
 <div id="set-the-final-celllabels" class="section level2">
 <h2>Set the Final Celllabels</h2>
 <pre class="r"><code>## Set Celltypes to use downstream as colLabels
-
-colLabels(sce) &lt;- colData(sce)$AUCellanno
-colLabels(sce) &lt;- colData(sce)$ManualAnno
 colLabels(sce) &lt;- colData(sce)$ManualAnno_L1
-
 sce$celltype &lt;- colData(sce)$ManualAnno_L1</code></pre>
 </div>
 <div id="plot-the-assigned-cell-labels" class="section level2">
@@ -7147,7 +7040,7 @@ sarloet
 </div>
 <div id="save-the-dataset" class="section level2">
 <h2>Save the dataset</h2>
-<pre class="r"><code>saveRDS(sce, file =paste0(path,&#39;/output/05_CelltypeAnnotation.rds&#39;))</code></pre>
+<pre class="r"><code>saveRDS(sce, file =paste0(path,&#39;/output/05_sce_CelltypeAnnotation.rdss&#39;))</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
