@@ -72,7 +72,7 @@ sce <- readRDS(file = paste0(path,'/output/04_sce_Clustering.rds'))
 #Change to genesymbol whenever possible
 rowData(sce)$UniqID <-rownames(sce)
 rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
-rowData(sce)
+data.frame(rowData(sce))
 ```
 
 
@@ -172,7 +172,7 @@ sce.plot[sce.plot >=3] = 3
 pheatmap(sce.plot, annotation_col=column_annotations,
          show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
 
-dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red",adjustment="z-score")
+dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red")
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 

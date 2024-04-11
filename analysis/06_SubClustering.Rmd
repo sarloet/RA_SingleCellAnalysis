@@ -254,26 +254,25 @@ tmp <-top_markers(markers_wilcox, n = 4)
 
 tail(unlist(unname(as.list(tmp))),-4)
 
-dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red",scale = FALSE)
 ```
 
 
 #### Subcluster cell type Annotation - Level2
 
-```{r AssignementL2}
+```{r AssignementL2, results='asis'}
 #Lining Fibroblst
 VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")  
 
 
 ```
 
-```{r AssignementL2}
+```{r AssignementL2, results='asis'}
 #Lining Fibroblst
 VizGenEx(c("COL4A1","GAPDH", "POSTN"),"Fibroblast")  
 
 
 ```
-
 
 ```{r AssignementL2}
 #Manual Annotation
