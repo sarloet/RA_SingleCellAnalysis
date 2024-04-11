@@ -209,7 +209,7 @@ pheatmap(log2(tab+10), color=colorRampPalette(c("white", "blue"))(101))
 ### Anno with AUCell using marker gene signatures from expected celltypes in literature and panglaoDB
 
 
-```{r CreateGenesets}
+```{r CreateGenesets, eval=FALSE}
 # Manually Create Possible Genesets for expected cells in synovium 
 
 Macrophage.geneset = GeneSet(c("LYZ", "AIF1", "IFI30", "MARCO"), setName="Macrophage")
@@ -265,7 +265,7 @@ VizGenEx <- function(markr){
  
   for(i in markr){
   
-    cat(paste0("#### ", i, "\n"))
+    cat(paste0("\n##### ", i, "\n"))
   
     gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"), 
@@ -274,37 +274,26 @@ VizGenEx <- function(markr){
     cat(' \n')
   
   }
-
      
 }
 
-markr<-c("PTPRC","CORO1A","RAC2")
 ```
 
 
-## Major cell type Annotation - Level0
+### Major cell type Annotation - Level0
 
 Identify major cell types for a Rough Annotation on high hierarchical level
 
-### Lymphocyte {.tabset}
+#### Lymphocyte {.tabset}
 
-```{r LymphocyteL0}
-#VizGenEx(c("PTPRC","CORO1A","RAC2"))  
-
-for(i in markr){
+```{r LymphocyteL0, results='asis'}
   
-  cat(paste0("\n#### ", i, "\n"))
-  print(
-  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster")
-  )
-  cat('\n\n')
-  
-  }
+VizGenEx(c("PTPRC","CORO1A","RAC2"))  
 ```
 
-### Myeloid {.tabset}
+#### Myeloid {.tabset}
 
-```{r MyeloidL0}
+```{r MyeloidL0, results='asis'}
 
 VizGenEx(c("CSF3R","MS4A6A","MS4A7"))  
 
@@ -312,7 +301,7 @@ VizGenEx(c("CSF3R","MS4A6A","MS4A7"))
 
 #### Fibroblast {.tabset}
 
-```{r FibroblastL0}
+```{r FibroblastL0, results='asis'}
 
 VizGenEx(c("PDGFRB","DCN","PCOLCE","ACTA2")) 
 
@@ -320,7 +309,7 @@ VizGenEx(c("PDGFRB","DCN","PCOLCE","ACTA2"))
 
 #### Endothelial {.tabset}
 
-```{r EndothelialL0}
+```{r EndothelialL0, results='asis'}
 
 VizGenEx(c("CDH5","ECSCR","CCL14")) 
 
@@ -344,7 +333,7 @@ Identify cell types for a finer grained Annotation on lower hierarchical level
 
 #### Macrophage {.tabset}
 
-```{r MacrophageL1}
+```{r MacrophageL1, results='asis'}
 
 VizGenEx(c("MARCO","LYZ","MSR1")) 
 
@@ -353,7 +342,7 @@ VizGenEx(c("MARCO","LYZ","MSR1"))
 
 #### Fibroblast {.tabset}
 
-```{r FibroblastL1}
+```{r FibroblastL1, results='asis'}
 
 VizGenEx(c("PDGFRB","DCN","COL1A1")) 
 
@@ -361,7 +350,7 @@ VizGenEx(c("PDGFRB","DCN","COL1A1"))
 
 #### Lining Fibroblast {.tabset}
 
-```{r LiningFibroblastL1}
+```{r LiningFibroblastL1, results='asis'}
 
 VizGenEx(c("PRG4","CRTAC1", "CLU")) 
 
@@ -369,7 +358,7 @@ VizGenEx(c("PRG4","CRTAC1", "CLU"))
 
 #### Endothelial {.tabset}
 
-```{r EndothelialL1}
+```{r EndothelialL1, results='asis'}
 
 VizGenEx(c("CDH5","VWF", "PECAM1","CCL14"))
 
@@ -377,7 +366,7 @@ VizGenEx(c("CDH5","VWF", "PECAM1","CCL14"))
 
 #### Lymphatic Endothelial {.tabset}
 
-```{r LymphaticEndothelialL1}
+```{r LymphaticEndothelialL1, results='asis'}
 
 VizGenEx(c("PROX1","LYVE1", "CCL21"))
 
@@ -385,7 +374,7 @@ VizGenEx(c("PROX1","LYVE1", "CCL21"))
 
 #### BCell {.tabset}
 
-```{r BCellL1}
+```{r BCellL1, results='asis'}
 
 VizGenEx(c("CD19","MS4A1", "TNFRSF13C"))
 
@@ -393,7 +382,7 @@ VizGenEx(c("CD19","MS4A1", "TNFRSF13C"))
 
 #### Plasma {.tabset}
 
-```{r PlasmaL1}
+```{r PlasmaL1, results='asis'}
 
 VizGenEx(c("JSRP1","DERL3", "JCHAIN"))
 
@@ -401,7 +390,7 @@ VizGenEx(c("JSRP1","DERL3", "JCHAIN"))
 
 #### Tcell {.tabset}
 
-```{r TcellL1} 
+```{r TcellL1, results='asis'} 
  
 VizGenEx(c("CD3E","CD3D", "CD3G","TRAC"))
 
@@ -409,7 +398,7 @@ VizGenEx(c("CD3E","CD3D", "CD3G","TRAC"))
 
 #### Smooth muscle cell {.tabset}
 
-```{r SMCL1}
+```{r SMCL1, results='asis'}
 
 VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 
@@ -417,7 +406,7 @@ VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 
 #### Mastcell {.tabset}
 
-```{r MastcellL1}
+```{r MastcellL1, results='asis'}
 
 VizGenEx(c("TPSAB1","CPA3","HPGDS","VWA5A"))
 
@@ -425,7 +414,7 @@ VizGenEx(c("TPSAB1","CPA3","HPGDS","VWA5A"))
 
 #### Neutrophil {.tabset}
 
-```{r NeutrophilL1}
+```{r NeutrophilL1, results='asis'}
 
 VizGenEx(c("CSF3R","S100A8","TREM1"))
   
@@ -433,7 +422,7 @@ VizGenEx(c("CSF3R","S100A8","TREM1"))
 
 #### Plasmacytoid dendritic cell {.tabset}
 
-```{r pDCL1}
+```{r pDCL1, results='asis'}
 
 VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
 
