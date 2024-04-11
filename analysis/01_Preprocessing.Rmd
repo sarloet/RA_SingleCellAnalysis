@@ -230,11 +230,25 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 1000 # Cells have at least a count of 750
+colData(sce)$qc.count_manual <- sce$sum < 1000 # Cells have at least a count of 1000
 colData(sce)$qc.genexp_manual <- sce$detected < 500 # Cells have at least 500 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
+
+```{r SumHisto}
+#Some Fixed thresholds
+hist(sce$total,breaks = 100,main ="UMI distribution",xlab ="UMI")
+abline(v = 1000, col = "red")
+
+```
+
+```{r DetectedHisto}
+#Some Fixed thresholds
+hist(sce$detected,breaks = 100, main ="Detected gene distribution",xlab ="Detected")
+abline(v = 500, col = "red")
+```
+
 
 ### Adaptive Filtering Thresholds (for each batch/sample)
 
@@ -575,7 +589,7 @@ Variance stabilising transformation models the expression of each gene as a nega
 ```{r VSTNorm, eval=FALSE}
 # Normalization with variance stabilising transformation
 counts <- counts(sce.filtered)
-vst_out <- vst(umi = counts,latent_var = 'log_umi',return_gene_attr = TRUE,return_cell_attr = TRUE)
+vst_out <- vst(umi = counts,latent_var = 'log_umi',residual_type = "pearson",return_gene_attr = TRUE,return_cell_attr = TRUE)
 
 ```
 

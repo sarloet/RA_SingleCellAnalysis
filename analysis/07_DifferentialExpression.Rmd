@@ -46,7 +46,7 @@ library(scran)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100
 path <- here::here()
 ```
 

@@ -48,7 +48,7 @@ library(scater)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -153,14 +153,21 @@ rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
 
 ```
 
-## Explore dataset
-
-Dimensions of the count matrix
+### Exclude Samples
 
 ```{r ShowDim}
 #Dimensions of count matrix
 dim(sce)
 
+```
+
+## Explore dataset
+
+Dimensions of the count matrix
+
+```{r ShowDim}
+#Exclude sample SynBio130 due to low sequencing depth
+sce <- sce[,sce$Sample!="SynBio130"]
 ```
 
 ```{r ShowColData}

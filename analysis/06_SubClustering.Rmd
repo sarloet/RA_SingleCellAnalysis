@@ -30,7 +30,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ### Load Packages
 
-```{r LoadPackages, warning=FALSE}
+```{r LoadPackages, warning=FALSE,eval=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
@@ -39,10 +39,19 @@ library(ggplot2)
 library(dplyr)
 library(scran)
 library(scater)
+library(batchelor)
 library(bluster)
+library(presto)
 library(dittoSeq)
 library(gridExtra)
 })
+
+```
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+library(here)
+source(here("code", "standard_libraries.R"))
 
 ```
 
@@ -50,7 +59,7 @@ library(gridExtra)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -73,21 +82,21 @@ dim(sce)
 
 https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UMAPs coloured by cluster or cell type
 
-### Plot Clustering and Annotation {.tabset}
+### Plot Annotation {.tabset}
 
-### Clusters
+### Annotation L1
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP", colour_by="ManualAnno_L1", text_by="ManualAnno_L1") +labs(title="UMAP colored by clusters",subtitle = "UMAP of integrated dataset")
 
 ```
 
-### Annotation
+### Annotation L0
 
 ```{r UMAPAnnotation}
 #cell type
-plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP", colour_by="ManualAnno_L0", text_by="ManualAnno_L0") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of integrated dataset")
 
 ```
 
@@ -104,23 +113,30 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
     sce.subset <- sce.sc[,sce.sc$celltype == name]
     
     #Get top HVG for subcluster
-    dec <- modelGeneVar(sce.subset, block=sce.subset$Sample, density.weights=FALSE)
+    dec <- modelGeneVar(sce.subset, block=sce.subset$Sample, density.weights=FALSE,BPPARAM=bpp)
     top.hvgs <- getTopHVGs(dec, n=3000)
     rowData(sce.subset)$is_hvg <- rownames(sce.subset) %in% top.hvgs
   
     
     #Batch correction on subcluster
-    sce.Batchelor <-batchelor::multiBatchNorm(sce.subset, batch=sce.subset$Sample, subset.row = rownames(sce.subset)[rowData(sce.subset)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
+    sce.Batchelor <-multiBatchNorm(sce.subset, 
+                                   batch=sce.subset$Sample, 
+                                   subset.row = rownames(sce.subset)[rowData(sce.subset)[["is_hvg"]]], 
+                                   normalize.all=TRUE, BPPARAM = bpp)
     
     bpstart(bpp)
-    sce.Batchelor <- batchelor::fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
+    sce.Batchelor <- fastMNN(sce.Batchelor, 
+                             batch=sce.Batchelor$Sample, 
+                             prop.k=0.05,  
+                             subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], 
+                             correct.all=TRUE, BPPARAM = bpp)#merge.order = merge_order,
     bpstop(bpp)
     
     assay(sce.subset, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
     reducedDim(sce.subset, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
     
     #Recluster the cells 
-    clusters <- clusterCells(sce.subset, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param))
+    clusters <- clusterCells(sce.subset, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param, BPPARAM =bpp))
     
     #Add Subcluster label to sce
     colData(sce.sc)[sce.sc$celltype == name, "subcluster"] <- clusters
@@ -156,7 +172,7 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50){
 ```{r RunSubcluster, warning=FALSE}
 
 #Set Celltypes to be subclustered
-SC_celltypes <-c("Fibroblast")
+SC_celltypes <-c("Fibroblast","Tcell")
 #SC_celltypes <-unique(sce$celltype) #All celltypes
 
 sce$celltype <- colData(sce)$ManualAnno_L1
@@ -225,14 +241,17 @@ VizGenEx <- function(markr,Ctype){
     cat(paste0("#### ", i, "\n"))
     gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, text_by = "subcluster"), 
-                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
-      plotExpression(sce.sc[,sce.sc$celltype == Ctype], features = i, x = "subcluster"),nrow = 2)
+                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, order_by=i ) 
+                    +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
+                  plotExpression(sce.sc[,sce.sc$celltype == Ctype], features = i, x = "subcluster"),nrow = 2)
     cat(' \n')
   
   }
 }
 
 ```
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### Fibroblasts
 
@@ -244,37 +263,31 @@ plotReducedDim(sce.sc[,sce.sc$celltype == "Fibroblast"], "SC_UMAP_Fibroblast" ,c
 
 #### Identify Marker Genes Wilcoxon rank-sum test
 
-```{r IdentifyMarker}
+```{r FibroblastsIdentifyMarker}
 markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
-data.table(markers_wilcox)
+data.frame(markers_wilcox)
 ```
 
-```{r PlotMarker}
+```{r FibroblastsPlotMarker}
 tmp <-top_markers(markers_wilcox, n = 4)
 
 tail(unlist(unname(as.list(tmp))),-4)
 
-dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red",scale = FALSE)
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
 ```
 
 
-#### Subcluster cell type Annotation - Level2
+#### Test Fibroblast marker {.tabset}
 
-```{r AssignementL2, results='asis'}
+```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
 VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")  
 
 
 ```
 
-```{r AssignementL2, results='asis'}
-#Lining Fibroblst
-VizGenEx(c("COL4A1","GAPDH", "POSTN"),"Fibroblast")  
 
-
-```
-
-```{r AssignementL2}
+```{r FibroblastsAssignementL2}
 #Manual Annotation
 
 sce$ManualAnno_L2 <- as.integer(sce$subcluster)
@@ -284,23 +297,148 @@ sce$ManualAnno_L2[sce$subcluster %in% c(2,3,12)] <- "Fibroblast"
 
 ```
 
-#### UMAP Assigned Celltypes Tcell
+#### UMAP Assigned Celltypes 
 
-```{r UMAPAssigned}
+```{r FibroblastsUMAPAssigned}
+plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+```
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Tcells
+
+
+```{r TcellUMAP}
+#Plot the UMAp
+plotReducedDim(sce.sc[,sce.sc$celltype == "Tcell"], "SC_UMAP_Tcell" ,colour_by = "subcluster",text_by="subcluster") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", "Tcell"),subtitle="Colored by clustering")
+```
+
+#### Identify Marker Genes Wilcoxon rank-sum test
+
+```{r TcellIdentifyMarker}
+markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Tcell"], 'subcluster', assay = 'logcounts')
+data.frame(markers_wilcox)
+```
+
+```{r TcellPlotMarker}
+tmp <-top_markers(markers_wilcox, n = 4)
+
+tail(unlist(unname(as.list(tmp))),-4)
+
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+```
+
+#### Test Tcells marker {.tabset}
+
+```{r TcellL2, results='asis'}
+#CD8Tcell
+VizGenEx(c("CD4","TRAT1", "CD40LG", "TNFRSF4"),"Tcell")  
+
+
+```
+
+```{r TcellL2, results='asis'}
+#CD4Tcell
+VizGenEx(c("CD8A","CD8B"),"Tcell")  
+
+
+```
+
+```{r TcellL2, results='asis'}
+#NKcell
+VizGenEx(c("NKG7","GNLY","NCAM1"),"Tcell")  
+
+
+```
+```{r TcellL2, results='asis'}
+#ProlifTcell
+VizGenEx(c("MKI67","PCNA","STMN1"),"Tcell")  
+
+
+```
+
+```{r TcellAssignementL2}
+#Manual Annotation
+
+sce$ManualAnno_L2 <- as.integer(sce$subcluster)
+unique(sce$ManualAnno_L2)
+
+sce$ManualAnno_L2[sce$subcluster %in% c(4)] <- "NKcell"
+sce$ManualAnno_L2[sce$subcluster %in% c(6)] <- "CD4Tcell"
+sce$ManualAnno_L2[sce$subcluster %in% c(5)] <- "CD8Tcell"
+sce$ManualAnno_L2[sce$subcluster %in% c(1)] <- "ProlifTcell"
+```
+
+#### UMAP Assigned Celltypes 
+
+```{r TcellUMAPAssigned}
 plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
 ```
 
 
-### Tcells
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Myeloid
 
 
+```{r TcellL2, results='asis'}
+#Macrophage
+VizGenEx(c("CD14","IL1B","LYZ","CD163","ITGAX","CD68","CSF1R","FCGR3A"),"Myeloid")  
 
-### Macrophages
+
+```
 
 
+```{r TcellL2, results='asis'}
+#monocyte
+VizGenEx(c("CST3","CSF1R","ITGAM","CD14","FCGR3A","FCGR3B"),"Myeloid")  
+
+
+```
+
+```{r TcellL2, results='asis'}
+#cDC
+VizGenEx(c("FLT3","UPK3A","CLEC9A","CCL22","ZNF366","CD1C"),"Myeloid")  
+
+```
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### Endothelial
+
+
+```{r TcellL2, results='asis'}
+#Capillary
+VizGenEx(c("SPARC"),"Endothelial")  
+
+```
+
+
+```{r TcellL2, results='asis'}
+#Venular
+VizGenEx(c("LIFR","ICAM"),"Endothelial")  
+
+```
+
+
+```{r TcellL2, results='asis'}
+#Arteriolar
+VizGenEx(c("NOTCH","GAJ5","B2MX"),"Endothelial")  
+
+```
+
+
+```{r TcellL2, results='asis'}
+#lymphatic
+VizGenEx(c("PROX1","LYVE1", "CCL21"),"Endothelial")  
+
+```
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -308,6 +446,7 @@ plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "Manual
 #Check if all clusters assigned
 unique(sce$ManualAnno_L2)
 ```
+
 
 ### Plot Assigned Celltypes {.tabset}
 

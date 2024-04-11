@@ -53,7 +53,7 @@ library(gridExtra)
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -104,7 +104,7 @@ plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="cluster") + g
 p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
 p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
 p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
-grid.arrange(p1, p2, p3, nrow = 1)
+grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
 rm(p1, p2, p3)
 ```
 
@@ -137,7 +137,7 @@ for (i in 1:length(markers_wilcox_up)){
 saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 #Show top 5 DE Genes of each cluster
-data.frame(top5DEgenes)
+datatable(top5DEgenes)
 
 ```
 
@@ -189,7 +189,7 @@ ref
 
 library(SingleR)
 pred <- SingleR(test=sce, ref=ref, labels=ref$label.main)
-table(pred$labels)
+data.frame(as.list(table(pred$labels)))
 
 ```
 
@@ -269,8 +269,9 @@ VizGenEx <- function(markr){
   
     gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"), 
-                  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
-      plotExpression(sce, features = i, x = "cluster"),nrow = 2)
+                  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) 
+                    +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
+                  plotExpression(sce, features = i, x = "cluster"),nrow = 2)
     cat(' \n')
   
   }
@@ -331,7 +332,7 @@ sce$ManualAnno_L0[sce$cluster %in% c(1,6,19)] <- "Endothelial"
 
 Identify cell types for a finer grained Annotation on lower hierarchical level
 
-#### Macrophage {.tabset}
+#### Myeloid / Macrophage {.tabset}
 
 ```{r MacrophageL1, results='asis'}
 
@@ -442,7 +443,7 @@ sce$ManualAnno_L1[sce$cluster %in% c(9,10,11,14)] <- "Tcell"
 sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "Bcell"
 sce$ManualAnno_L1[sce$cluster %in% c(20)] <- "Neutrophil"
 sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
-sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,18,21)] <- "Macrophage"
+sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,18,21)] <- "Myeloid"
 sce$ManualAnno_L1[sce$cluster %in% c(5)] <- "Plasma"
 sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "plasmacytoid dendritic cell"
 ```
@@ -455,6 +456,14 @@ unique(sce$ManualAnno_L1)
 
 #### Plot Assigned Celltypes {.tabset}
 
+##### UMAP L1
+
+```{r PlotL1}
+#Plot manual Annotation
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+```
+
 ##### UMAP L0
 
 ```{r PlotL0}
@@ -463,13 +472,6 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
 ```
 
-##### UMAP L1
-
-```{r PlotL1}
-#Plot manual Annotation
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-```
 
 ## Set the Final Celllabels
 
