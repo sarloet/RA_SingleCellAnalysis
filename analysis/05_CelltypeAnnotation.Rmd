@@ -137,7 +137,7 @@ for (i in 1:length(markers_wilcox_up)){
 saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 #Show top 5 DE Genes of each cluster
-datatable(top5DEgenes)
+data.frame(top5DEgenes)
 
 ```
 
