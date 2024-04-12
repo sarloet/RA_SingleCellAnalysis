@@ -16,8 +16,12 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
-
 
 # Batch correction and data set integration
 
@@ -41,11 +45,12 @@ library(bluster)
 
 ```
 
+
 ### Set Parameter
 
 ```{r Setup}
 set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
@@ -54,10 +59,8 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.filtered <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
-
+sce <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
 ```
-
 
 ### Explore Dataset
 
@@ -67,27 +70,29 @@ dim(sce)
 ```
 
 ## Pre-Batch Correction Plots {.tabset}
+
 ### PCA
-```{r}
-#Plot PCA before data integration
-plotReducedDim(sce, dimred="PCA", colour_by="Sample")+ ggtitle("PCA before data integration")
-```
-### UMAP
-```{r}
+
+```{r PlotPCABB}
 #Plot UMAP before data integration
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample")+ ggtitle("UMAP before data integration")
+plotReducedDim(sce, dimred="PCA", colour_by="Sample")
 ```
 
+### UMAP
 
-## Batch Removal
+```{r PlotUMAPBB}
+#Plot UMAP before data integration
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
+```
 
-```{r}
+## Batch Removal with Harmony
+
+```{r InitializeSce}
 #Initialize sce element with batch removal
 sce.BatchR <- sce 
-
 ```
 
-### Batch Removal with Harmony 
+### Run Harmony 
 
 ```{r}
 #Perform scaling normalization within each batch
@@ -122,7 +127,7 @@ plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Sample") + ggtitle("PCA 
 ### Colored by Joint
 ```{r}
 #Plot PCA after data integration
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="JointLocation") + ggtitle("PCA after data integration with harmony")
+plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")
 ```
 ### Facet by Sample
 ```{r}
@@ -132,7 +137,7 @@ plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Sample") + ggtitle("PCA 
 ### Facet by Joint
 ```{r}
 #Plot PCA after data integration per joint
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="JointLocation") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$JointLocation)
+plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
 
 ```
 
@@ -146,7 +151,7 @@ plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Sample") + ggtitle(
 ### Colored by Joint
 ```{r}
 #Plot UMAP before data integration
-plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with harmony")
+plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")
 ```
 ### Facet by Sample
 ```{r}
@@ -157,12 +162,12 @@ plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Sample") + ggtitle(
 ### Facet by Joint
 ```{r}
 #Plot UMAP after data integration per joint
-plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="JointLocation") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$JointLocation)
+plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
 ```
 
 
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0(path,'/output/03_sce_Integrated_Harmony.rds'))
+saveRDS(sce.BatchR, file =paste0(path,'/output/03_sce_Integration_Harmony.rds'))
 ```
