@@ -1,0 +1,170 @@
+---
+title: "Differential Abundance Analysis"
+subtitle: "08_DifferentialAbundance_miloR"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Differential Expression Analysis
+
+## Setup
+
+### Load Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(BiocParallel)
+library(ggplot2)
+library(dplyr)
+library(scran)
+library(miloR)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+
+```
+
+
+### Explore Dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UMAPs coloured by cluster or cell type
+
+### Plot Clustering and Annotation {.tabset}
+
+#### Annotation
+
+```{r UMAPAnnotation}
+#cell type
+plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Annotation ",subtitle = "UMAP of all integrated datasets")
+
+```
+
+#### Joint Location
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, "MNN_UMAP", colour_by="Joint.Location") +labs(title="UMAP colored by Joint Location",subtitle = "UMAP of all integrated datasets")
+
+```
+
+### Frequencies of celltypes in clusters per Joint Location {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+#### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Joint",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+```
+
+#### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Joint",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+
+```
+
+
+
+## Differential Abundance
+
+
+### Sample preparation
+
+```{r DE}
+#Create milo object
+
+sce.milo <- Milo(sce[,sce$Joint.Location!="MCP"])
+
+```
+
+
+### Construct KNN graph
+
+```{r DE}
+#construct KNN graph
+
+sce.milo <- buildGraph(sce.milo, k = 20, d = 12, reduced.dim = "MNN")
+
+```
+
+
+```{r DE}
+#construct KNN graph
+
+sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 20, d = 12, refined = TRUE, reduced_dims = "MNN")
+
+# To evaluate whether the value of k used for graph building was appropriate. We can check this out using the plotNhoodSizeHist function. As a rule of thumb we want to have an average neighbourhood size over 5 x N_samples. If the mean is lower, or if the distribution is
+
+plotNhoodSizeHist(sce.milo)
+
+```
+
+
+```{r DE}
+
+```
+
+
+## Save the dataset
+
+```{r SaveData}
+#resDS(sce, res, bind = "row", frq = TRUE)
+
+saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
+```

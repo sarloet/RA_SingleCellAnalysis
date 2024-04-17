@@ -39,6 +39,7 @@ library(ggplot2)
 library(dplyr)
 library(scran)
 library(muscat)
+library(limma)
 library(EnhancedVolcano)
 })
 
@@ -73,7 +74,7 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ### Plot Clustering and Annotation {.tabset}
 
-### Annotation
+#### Annotation
 
 ```{r UMAPAnnotation}
 #cell type
@@ -81,7 +82,7 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(
 
 ```
 
-### Clusters
+#### Clusters
 
 ```{r UMAPCluster}
 #cluster
@@ -111,9 +112,9 @@ sce$id <- paste0(sce$Joint.Location, sce$Sample)
     drop = TRUE))  # drop all other colData columns
 ```
 
-```{r DE}
+```{r DE, rows.print=20}
 # nb. of cells per cluster-sample
-t(table(sce$cluster_id, sce$sample_id))
+as.data.frame.matrix(t(table(sce$cluster_id, sce$sample_id)))
 ```
 
 
@@ -135,7 +136,6 @@ t(head(assay(pb)))
 pbMDS(pb)
 ```
 
-
 ```{r DE}
 # construct design & contrast matrix
 ei <- metadata(sce)$experiment_info
@@ -144,12 +144,18 @@ dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
 x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
 contrast <- makeContrasts(contrasts=x, levels = mm)
 
-# run DS analysis
-res<-pbDS(pb, design = mm, contrast = contrast)
-
 ```
 
-## View results for first comparison (Knee-Wrist)
+### Run DS analysis
+
+```{r DE}
+# run DS analysis
+res<-pbDS(pb, design = mm, contrast = contrast, method = c("edgeR"))
+
+```
+## Results for Differential Expression
+
+### View results for first comparison (Knee-Wrist)
 
 ```{r DE}
 # View results for first comparison (Knee-Wrist)
@@ -176,22 +182,63 @@ data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
 
 
 ```{r DE}
-# view top 2 hits in each cluster
-top2 <- bind_rows(lapply(tbl_fil, top_n, 4, p_adj.loc))
-format(top2[, -ncol(top2)], digits = 2)
+# view top hits in each cluster
+topn <- bind_rows(lapply(tbl_fil, top_n, -40, p_adj.loc))
+format(topn[, -ncol(topn)], digits = 2)
 ```
-
 
 ```{r DE}
-kFibroblast <- tbl[["Fibroblast"]]
-head(format(k1[, -ncol(kFibroblast)], digits = 2))
+# top-5 DS genes per cluster
+pbHeatmap(sce, tbl_fil, top_n = 5,sort_by="logFC")
+```
+
+#### View results for individual celltypes
+
+
+```{r DE, fig.height=10, results='asis'}
+for (Ctype in names(n_de[n_de!=0])){
+  
+  cat(paste0("#### ", Ctype, "\n"))
+  
+  TableCtype <- tbl[[Ctype]]
+  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
+  
+  
+  print(
+  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
+                x = 'logFC', y = 'p_adj.loc', 
+                pCutoff = 0.05, FCcutoff = 1,
+                title = paste("Differential expression", " Knee ", "vs", " Wrist ", sep=' '),
+                subtitle = paste0(Ctype," cluster (pseudobulk)"),
+                pointSize = 2.0, colAlpha = 1,
+                legendPosition = 'right')
+  )
+  
+  
+  cat(' \n')
+  
+  
+  
+}
+
+
+
+```
+
+```{r DE }
+
+plotExpression(sce[, sce$cluster_id == "Fibroblast"],
+  features = tbl_fil$`Fibroblast`$gene[seq_len(6)],
+  x = "sample_id", colour_by = "group_id", ncol = 3) +
+  guides(fill = guide_legend(override.aes = list(size = 5, alpha = 1))) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+pbHeatmap(sce, res, k = "Fibroblast",sort_by = "logFC")
 
 ```
 
 
-
-
-## View results for second comparison (Knee-MCP)
+### View results for second comparison (Knee-MCP)
 
 ```{r DE}
 # View results for first comparison (Knee-Wrist)
@@ -217,22 +264,49 @@ data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
 ```
 
 
-```{r DE}
+```{r DE,rows.print=25}
 # view top hits in each cluster
-top2 <- bind_rows(lapply(tbl_fil, top_n, 25, p_adj.loc))
-format(top2[, -ncol(top2)], digits = 2)
+topn <- bind_rows(lapply(tbl_fil, top_n, 200, -p_adj.loc))
+format(topn[, -ncol(topn)], digits = 2)
 ```
 
 
 ```{r DE}
-kFibroblast <- tbl[["Fibroblast"]]
-head(format(k1[, -ncol(kFibroblast)], digits = 2))
+# top-5 DS genes per cluster
+pbHeatmap(sce, tbl_fil, top_n = 25,sort_by="logFC")
+```
+
+
+#### View results for individual celltypes
+
+```{r DE, fig.height=10, results='asis'}
+for (Ctype in names(n_de[n_de!=0])){
+  
+  cat(paste0("#### ", Ctype, "\n"))
+  
+  TableCtype <- tbl[[Ctype]]
+  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
+  
+  
+  print(
+  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
+                x = 'logFC', y = 'p_adj.loc', 
+                pCutoff = 0.05, FCcutoff = 1,
+                title = paste("Differential expression", " Knee ", "vs", " MCP ", sep=' '),
+                subtitle = paste0(Ctype," cluster (pseudobulk)"),
+                pointSize = 2.0, colAlpha = 1,
+                legendPosition = 'right')
+  )
+  cat(' \n')
+  
+}
+
 
 ```
 
 
 
-## View results for third comparison (Wrist-MCP)
+### View results for third comparison (Wrist-MCP)
 
 ```{r DE}
 # View results for first comparison (Wrist-MCP)
@@ -260,14 +334,41 @@ data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
 
 ```{r DE}
 # view top hits in each cluster
-top2 <- bind_rows(lapply(tbl_fil, top_n, 25, p_adj.loc))
-format(top2[, -ncol(top2)], digits = 2)
+topn <- bind_rows(lapply(tbl_fil, top_n, -200, p_adj.loc))
+format(topn[, -ncol(topn)], digits = 2)
 ```
 
 
 ```{r DE}
-kFibroblast <- tbl[["Fibroblast"]]
-head(format(k1[, -ncol(kFibroblast)], digits = 2))
+# top-5 DS genes per cluster
+pbHeatmap(sce, tbl_fil, top_n = 5,sort_by="logFC")
+```
+
+#### View results for individual celltypes
+
+```{r DE, fig.height=10, results='asis'}
+for (Ctype in names(n_de[n_de!=0])){
+  
+  cat(paste0("#### ", Ctype, "\n"))
+  
+  TableCtype <- tbl[[Ctype]]
+  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
+  
+  
+  print(
+  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
+                x = 'logFC', y = 'p_adj.loc', 
+                pCutoff = 0.05, FCcutoff = 1,
+                title = paste("Differential expression", " Wrist ", "vs", " MCP ", sep=' '),
+                subtitle = paste0(Ctype," cluster (pseudobulk)"),
+                pointSize = 2.0, colAlpha = 1,
+                legendPosition = 'right')
+  )
+  cat(' \n')
+  
+}
+
+
 
 ```
 
@@ -277,5 +378,7 @@ head(format(k1[, -ncol(kFibroblast)], digits = 2))
 ## Save the dataset
 
 ```{r SaveData}
+#resDS(sce, res, bind = "row", frq = TRUE)
+
 saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
 ```

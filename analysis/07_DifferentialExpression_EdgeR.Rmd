@@ -159,28 +159,30 @@ plotMDS(cpm(y, log=TRUE), col=colors[factor(y$samples$Joint.Location)])
 
 ```{r DE}
 # set up the design matrix
-
-design <- model.matrix(~factor(Joint.Location), y$sample)
-design
+ei <- metadata(sce)$experiment_info
+mm <- model.matrix(~ 0 + ei$group_id)
+dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
+x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
+contrast <- makeContrasts(contrasts=x, levels = mm)
 
 ```
 
 ```{r DE}
 # set up the design matrix
 
-y <- estimateDisp(y, design)
+y <- estimateDisp(y, mm)
 summary(y$trended.dispersion)
 plotBCV(y)
 ```
 
 ```{r DE}
-fit <- glmQLFit(y, design, robust=TRUE)
+fit <- glmQLFit(y, mm, robust=TRUE)
 summary(fit$var.prior)
 summary(fit$df.prior)
 plotQLDisp(fit)
 ```
 ```{r DE}
-res <- glmQLFTest(fit, coef=ncol(design)-1)
+res <- glmQLFTest(fit, contrast = contrast )
 summary(decideTests(res))
 topTags(res)
 ```
@@ -198,17 +200,25 @@ topTags(res)
 ```{r DE}
 # Pre-processing for DE Knee <-> Wrist
 
-sce.summ.filt <- sce.summ[,sce.summ$Joint.Location!= "MCP"]
+#sce.summ.filt <- sce.summ[,sce.summ$Joint.Location!= "MCP"]
 sce.summ.filt <- sce.summ.filt[,sce.summ.filt$ncells >= 10]
 
 #sce.summ.filt$Joint.Location<-factor(sce.summ.filt$Joint.Location)
 
+ei <- metadata(sce.summ.filt)$experiment_info
+mm <- model.matrix(~ 0 + ei$group_id)
+dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
+x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
+contrast <- makeContrasts(contrasts=x, levels = mm)
+
+
+
 de.results <- pseudoBulkDGE(sce.summ.filt, 
-    sample=sce.summ.filt$Sample,
-    label=sce.summ.filt$label,
-    design=~Joint.Location,
-    coef="Joint.LocationWrist",
-    condition=sce.summ.filt$Joint.Location 
+    sample = sce.summ.filt$Sample,
+    label = sce.summ.filt$label,
+    design = mm,
+    contrast = contrast,
+    condition = sce.summ.filt$Joint.Location 
 )
 
 ```
