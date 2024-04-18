@@ -143,6 +143,7 @@ mm <- model.matrix(~ 0 + ei$group_id)
 dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
 x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
 contrast <- makeContrasts(contrasts=x, levels = mm)
+contrast
 
 ```
 
@@ -150,7 +151,7 @@ contrast <- makeContrasts(contrasts=x, levels = mm)
 
 ```{r DE}
 # run DS analysis
-res<-pbDS(pb, design = mm, contrast = contrast, method = c("edgeR"))
+res<-pbDS(pb, design = mm, contrast = contrast, method = c("DESeq2"))
 
 ```
 ## Results for Differential Expression

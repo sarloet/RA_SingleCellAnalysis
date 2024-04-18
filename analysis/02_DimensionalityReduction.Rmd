@@ -160,7 +160,7 @@ pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentV
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
 #PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
-intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=20)
+intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)
 
 ```
 

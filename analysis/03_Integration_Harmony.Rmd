@@ -103,14 +103,9 @@ meta_data <- colData(sce.BatchR) %>%
 sce.BatchR <- harmony::RunHarmony(sce.BatchR,group.by.vars=c("Sample"),reduction.save="harmony",verbose=FALSE) #  Add covariates zb protocol
 ```
 
-```{r}
-#Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, name="harmony_UMAP_extra")
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", name="harmony_UMAP")
-
-```
 
 ### QC Plots Harmony
+
 We use the percentage of variance lost as a diagnostic measure.Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity.
 ```{r}
 # Percentage of variance lost 
@@ -118,31 +113,70 @@ metadata(sce.BatchR)$merge.info$lost.var
 
 ```
 
+### Chosing the number of PCs
+
+The advantage of using PCA is that the total amount of variance explained by the first few PCs is usually enough to capture most of the signal in the data. Therefore, we can exclude the remaining PCs without much loss of information. 
+
+```{r ShowPC}
+# extract variance explained
+pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "harmony"), "percentVar"))
+pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
+
+#PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
+intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "harmony")), k=10)
+
+```
+
+```{r PCvsVariance}
+# Elbow Plot (PC vs variance)
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 12,color="red")
+
+```
+
+```{r SelectPC}
+#PCA select nr of PC
+reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"harmony")[,seq_len(12)]
+reducedDimNames(sce)
+
+ncol(reducedDim(sce,"harmony"))
+ncol(reducedDim(sce,"harmony_reduced"))
+
+```
+
+
 ## PCA Plots after Integration {.tabset}
 ### Colored by Sample
 ```{r}
 #Plot PCA after data integration
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Sample") + ggtitle("PCA after data integration with harmony")
+plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Sample") + ggtitle("PCA after data integration with harmony")
 ```
 ### Colored by Joint
 ```{r}
 #Plot PCA after data integration
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")
+plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")
 ```
 ### Facet by Sample
 ```{r}
 #Plot PCA after data integration per sample
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Sample") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$Sample)
+plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Sample") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$Sample)
 ```
 ### Facet by Joint
 ```{r}
 #Plot PCA after data integration per joint
-plotReducedDim(sce.BatchR, dimred="harmony", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
+plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
 
 ```
 
 
 ## UMAP Plots after Integration {.tabset}
+
+```{r}
+#Run UMAP
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, name="harmony_UMAP_extra")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", name="harmony_UMAP")
+
+```
+
 ### Colored by Sample
 ```{r}
 #Plot UMAP before data integration

@@ -38,6 +38,7 @@ library(BiocParallel)
 library(ggplot2)
 library(dplyr)
 library(scran)
+library(scater)
 library(miloR)
 })
 
@@ -121,33 +122,45 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
 
 
 
-## Differential Abundance
+## Differential Abundance with miloR
 
 
 ### Sample preparation
 
-```{r DE}
+```{r }
 #Create milo object
 
-sce.milo <- Milo(sce[,sce$Joint.Location!="MCP"])
+sce.milo <- Milo(sce)
+
+```
+
+```{r }
+#Decide on d parameter
+
+elbow <- ceiling(as.numeric(intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)))
+
+# Extract variance explained
+pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentVar"))
+pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
+
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow, color="red")
 
 ```
 
 
 ### Construct KNN graph
 
-```{r DE}
-#construct KNN graph
 
-sce.milo <- buildGraph(sce.milo, k = 20, d = 12, reduced.dim = "MNN")
+```{r }
+#construct KNN graph
+sce.milo <- buildGraph(sce.milo, k = 40, d = elbow, reduced.dim = "MNN")
 
 ```
 
 
-```{r DE}
-#construct KNN graph
-
-sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 20, d = 12, refined = TRUE, reduced_dims = "MNN")
+```{r }
+#Defining representative neighbourhoods on the KNN graph
+sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 40, d = elbow, refined = TRUE, reduced_dims = "MNN",refinement_scheme="graph")
 
 # To evaluate whether the value of k used for graph building was appropriate. We can check this out using the plotNhoodSizeHist function. As a rule of thumb we want to have an average neighbourhood size over 5 x N_samples. If the mean is lower, or if the distribution is
 
@@ -156,10 +169,102 @@ plotNhoodSizeHist(sce.milo)
 ```
 
 
-```{r DE}
+```{r }
+# Counting cells in neighbourhoods
+
+sce.milo <- countCells(sce.milo, meta.data = data.frame(colData(sce.milo)), sample="Sample")
+head(nhoodCounts(sce.milo))
 
 ```
 
+### Defining experimental design
+
+```{r }
+# Defining experimental design
+design <- data.frame(colData(sce.milo))[,c("Sample", "Joint.Location")]
+
+## Convert batch info from integer to factor
+design$Joint.Location <- as.factor(design$Joint.Location) 
+design <- distinct(design)
+rownames(design) <- design$Sample
+
+## Reorder rownames to match columns of nhoodCounts(milo)
+design <- design[colnames(nhoodCounts(sce.milo)), , drop=FALSE]
+
+design
+```
+
+```{r }
+# Set model matrix
+mm <- model.matrix(~ 0 + Joint.Location, data=design)
+#dimnames(mm)[2] <- list(levels(design$Joint.Location))
+mm
+# Set contrasts
+x <- c("Joint.LocationKnee-Joint.LocationWrist","Joint.LocationKnee-Joint.LocationMCP","Joint.LocationWrist-Joint.LocationMCP")
+constrast <- makeContrasts(contrasts=x, levels=mm)
+constrast
+```
+
+
+### Computing neighbourhood connectivity & testing
+
+```{r }
+# Computing neighbourhood connectivity
+sce.milo <- calcNhoodDistance(sce.milo, d=elbow, reduced.dim = "MNN")
+
+```
+
+```{r }
+# Testing
+res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Knee-Wrist", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+
+```
+
+
+### Inspecting DA results
+
+
+```{r }
+res %>%
+  arrange(SpatialFDR) %>%
+  head()
+
+table(res$SpatialFDR < 0.1)
+```
+
+#### Distribution of uncorrected P values
+
+We expect a peak to very low extreme and a tail towards 1
+
+```{r }
+ggplot(res, aes(PValue)) + geom_histogram(bins=50)
+```
+
+#### Volcano plot of neighbourhoods
+
+Check to see whether neighborhoods were there is a significant difference where detected in cell abundances between sample groups.
+
+```{r }
+ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercept = 1, color="red") 
+```
+
+#### Abstracted graph of neighbourhoods
+
+```{r }
+sce.milo <- buildNhoodGraph(sce.milo)
+
+## Plot single-cell UMAP
+umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP", colour_by="label", text_by = "label", 
+                          text_size = 3, point_size=0.5) +
+  guides(fill="none")
+
+## Plot neighbourhood graph
+nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP",alpha=0.1) 
+  
+umap_pl + nh_graph_pl +
+  plot_layout(guides="collect")
+
+```
 
 ## Save the dataset
 

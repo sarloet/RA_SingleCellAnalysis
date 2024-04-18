@@ -130,7 +130,6 @@ reducedDim(sce.BatchR, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
 ```
 
 
-
 ### QC Plots Batchelor
 
 We use the percentage of variance lost as a diagnostic measure. Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity.
@@ -140,34 +139,66 @@ data.frame(metadata(sce.Batchelor)$merge.info$lost.var)
 
 ```
 
+
+### Chosing the number of PCs
+
+The advantage of using PCA is that the total amount of variance explained by the first few PCs is usually enough to capture most of the signal in the data. Therefore, we can exclude the remaining PCs without much loss of information. 
+
+```{r ShowPC}
+# extract variance explained
+pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "MNN"), "percentVar"))
+pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
+
+#PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
+intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)
+
+```
+
+```{r PCvsVariance}
+# Elbow Plot (PC vs variance)
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 12,color="red")
+
+```
+
+```{r SelectPC}
+#PCA select nr of PC
+reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(12)]
+reducedDimNames(sce)
+
+ncol(reducedDim(sce,"MNN"))
+ncol(reducedDim(sce,"MNN_reduced"))
+
+```
+
+
 ## PCA Plots after Integration {.tabset}
 
 ### Colored by Sample
 
 ```{r PlotPCAAB1}
 #Plot PCA after data integration
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
 ```
 
 ### Colored by Joint
 
 ```{r PlotPCAAB2}
 #Plot PCA after data integration
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")
 ```
 
 ### Facet by Sample
 
 ```{r PlotPCAAB3}
 #Plot PCA after data integration per sample
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)+ theme(strip.background=element_rect(fill="white"))
+plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Sample)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 ### Facet by Joint
 
 ```{r PlotPCAAB4}
 #Plot PCA before data integration per joint
-plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce.BatchR$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 
@@ -175,7 +206,7 @@ plotReducedDim(sce.BatchR, dimred="MNN", colour_by="Joint.Location") + ggtitle("
 
 ```{r PlotUMAPAB1}
 #Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN_reduced")
 
 ```
 
