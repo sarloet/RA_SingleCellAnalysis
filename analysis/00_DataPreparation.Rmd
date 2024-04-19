@@ -165,9 +165,9 @@ dim(sce)
 
 Dimensions of the count matrix
 
-```{r ShowDim}
+```{r ExcludeSampl}
 #Exclude sample SynBio130 due to low sequencing depth
-sce <- sce[,sce$Sample!="SynBio130"]
+#sce <- sce[,sce$Sample!="SynBio130"]
 ```
 
 ```{r ShowColData}
@@ -228,25 +228,6 @@ plot(rowSums(tmpCounts),
      xlab="total number of UMIs",
      ylab="proportion of cells expressing the gene",
      main="Total UMI for a gene vs times detected")
-
-```
-### Plot top 25 genes in the dataset
-
-The most strongly and commonly expressed genes expected among all cells  are ribosomal and mitochondrial.
-
-```{r PlotTop25Genes,eval=FALSE}
-#Distribution of counts for the top 20 genes across cells
-
-#rel_expression <- t( t(tmpCounts) / colSums(tmpCounts)) * 100
-#rownames(rel_expression) <- rowData(sce)$Symbol
-#most_expressed <- sort(rowSums( rel_expression ), decreasing = T)[20:1] ##
-#plot_data <- as.matrix(t(rel_expression[names(most_expressed),]))
-
-#boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRUE, main="Distribution of counts for the top 20 genes before filtering")
-
-#rm(tmpCounts)
-
-plotHighestExprs(sce,n = 25)
 
 ```
 
