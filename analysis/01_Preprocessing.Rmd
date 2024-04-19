@@ -563,7 +563,7 @@ summary(sizeFactors(sce.deconv))
 
 #### Plot Deconvolution against Dibrary Size Factors {.tabset}
 
-Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors.
+Deconvolution size factor for each cell in the dataset, compared to the equivalent size factor derived from the library size. The red line corresponds to identity between the two size factors. Check that the estimated library sizes are not too far from the library size factors, estimated from the total number of counts.
 
 ##### Color by Individual Cluster
 

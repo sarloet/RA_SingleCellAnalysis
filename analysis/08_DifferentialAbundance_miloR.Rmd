@@ -40,6 +40,7 @@ library(dplyr)
 library(scran)
 library(scater)
 library(miloR)
+library(patchwork)
 })
 
 ```
@@ -216,7 +217,7 @@ sce.milo <- calcNhoodDistance(sce.milo, d=elbow, reduced.dim = "MNN")
 
 ```{r }
 # Testing
-res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Knee-Wrist", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationWrist", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
 
 ```
 
@@ -254,7 +255,7 @@ ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercep
 sce.milo <- buildNhoodGraph(sce.milo)
 
 ## Plot single-cell UMAP
-umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP", colour_by="label", text_by = "label", 
+umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP", colour_by="label", 
                           text_size = 3, point_size=0.5) +
   guides(fill="none")
 
@@ -262,8 +263,31 @@ umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP", colour_by="label", text
 nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP",alpha=0.1) 
   
 umap_pl + nh_graph_pl +
-  plot_layout(guides="collect")
+  plot_layout(guides="auto")
 
+```
+#### Assign cell labels to each neighbourhood 
+
+```{r }
+res <- annotateNhoods(sce.milo, res, coldata_col = "label")
+res
+```
+
+Plot to see what the distribution of neighbourhoods is like within our labels. We could take this as a measure of how similar our clustering is with the KNN neighborhood as defined by Milo
+
+```{r }
+ggplot(res, aes(label_fraction)) + geom_histogram(bins=50)
+```
+
+
+```{r }
+# Define a threshold for label_fraction to exclude neighbourhoods that are a mix of cell types
+res$label <- ifelse(res$label_fraction < 0.8, "Mixed", res$label)
+```
+
+```{r }
+# Visualise the distribution of DA Fold Changes in different labels.
+plotDAbeeswarm(res, group.by = "label")
 ```
 
 ## Save the dataset
