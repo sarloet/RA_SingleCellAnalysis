@@ -15,10 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE, cache=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -29,17 +26,18 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
 
 ```{r LoadPackages, warning=FALSE}
-#Load Packages
+library(here)
+source(here("code", "standard_libraries.R"))
+```
 
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2) 
-library(dplyr)
 library(DropletUtils)
-library(scater)
 })
 
 ```
@@ -104,9 +102,8 @@ View the CellBender html report output for each sample
 Load in the filtered feature barcode matrices from Cellbender of each sample and save them as sce object.
 
 ```{r LoadDataset}
-## RA DATASET
+#Load Dataset
 rawdata_folder <- paste0(path,"/data/cellbender_data_h5/")
-
 
 #Get file names
 filenames <- list.files(rawdata_folder ,recursive = F, full.names = F,pattern = "\\_filtered.h5$")
@@ -115,7 +112,7 @@ filepaths <- paste(rawdata_folder,filenames,sep = "")
 #Load data as sce object
 sce<-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,type="HDF5")
 
-
+#Edit Filenames 
 colData(sce)$Sample = sub("\\_w_introns.*", "", sub("cellbender_output_", "", as.character(colData(sce)$Sample)))
 
 

@@ -15,33 +15,33 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
-
 # Batch correction and data set integration
 
 ## Setup
 
-### Load Packages
+### Standard packages
 
 ```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scater)
-library(scran)
 library(batchelor)
 library(reticulate)
 library(bluster)
+library(intrinsicDimension)
 })
 
 ```
@@ -126,7 +126,6 @@ bpstop(bpp)
 #Save to BatchR sce object
 assay(sce.BatchR, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
 reducedDim(sce.BatchR, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
-
 ```
 
 
@@ -136,37 +135,22 @@ We use the percentage of variance lost as a diagnostic measure. Large proportion
 ```{r VarianceLost}
 #Percentage Variance lost
 data.frame(metadata(sce.Batchelor)$merge.info$lost.var)
-
+rm(sce.Batchelor)
 ```
 
 
-### Chosing the number of PCs
-
-The advantage of using PCA is that the total amount of variance explained by the first few PCs is usually enough to capture most of the signal in the data. Therefore, we can exclude the remaining PCs without much loss of information. 
-
-```{r ShowPC}
-# extract variance explained
-pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "MNN"), "percentVar"))
-pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
-
-#PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
-intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)
-
-```
-
-```{r PCvsVariance}
-# Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 12,color="red")
-
-```
+### Chosing the number of PCs after correction
 
 ```{r SelectPC}
-#PCA select nr of PC
-reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(12)]
-reducedDimNames(sce)
+#PCA dim elbow estimate using 
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "MNN")), k=10)))
 
-ncol(reducedDim(sce,"MNN"))
-ncol(reducedDim(sce,"MNN_reduced"))
+#PCA select nr of PC
+reducedDim(sce.BatchR,"MNN_reduced") <- reducedDim(sce.BatchR,"MNN")[,seq_len(elbow)]
+reducedDimNames(sce.BatchR)
+
+ncol(reducedDim(sce.BatchR,"MNN"))
+ncol(reducedDim(sce.BatchR,"MNN_reduced"))
 
 ```
 
@@ -206,8 +190,9 @@ plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Joint.Location") + g
 
 ```{r PlotUMAPAB1}
 #Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN_reduced")
-
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")#subset.row = rownames(sce.BatchR)[rowData(sce.BatchR)[["is_hvg"]]]
+sce.BatchR.r <- runUMAP(sce.BatchR ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced")
+sce.BatchR.r.h <- runUMAP(sce.BatchR ,name = "MNN_UMA_reduced_hvg", dimred = "MNN_reduced", subset.row = rowData(sce.BatchR)$is_hvg)
 ```
 
 ### Colored by Sample

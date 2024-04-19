@@ -15,9 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -28,18 +26,20 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
 
 ```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
-library(BiocSingular)
-library(scater)
+library(intrinsicDimension)
 })
 
 ```
@@ -127,7 +127,7 @@ par(mfrow=c(3, 2))
 for (i in seq_along(per.block)) {
     decX <- per.block[[i]]
     plot(decX$mean, decX$total, xlab="Mean log-expression", 
-        ylab="Variance", main=names(per.block)[i])#col=rowData(sce)$is_hvg
+        ylab="Variance", main=names(per.block)[i])
     curve(metadata(decX)$trend(x), col="blue", add=TRUE)
 }
 ```
