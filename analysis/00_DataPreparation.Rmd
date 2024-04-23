@@ -133,7 +133,7 @@ metadata_df
 #Add metadata to sce
 colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
                                    metadata_df, 
-                                   by= c("Sample" = "orig.ident"),
+                                   by= c("Sample" = "Sample"),
                                    suffix=c(".x",".y")) %>% 
       #dplyr::select(Sample, Barcode, Diagnosis, sex, Age, Joint.Location, protocol, Pathotype,Krenn total score,) %>% 
       dplyr::select(-one_of("Comments")) %>% #select all except
@@ -141,7 +141,7 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
 
 #Set Sample names
 names(colData(sce))[which(names(colData(sce))=="Sample")]="Orig.Identifier"
-names(colData(sce))[which(names(colData(sce))=="sample")]="Sample"
+names(colData(sce))[which(names(colData(sce))=="ID")]="Sample"
 
 #make row and col names unique
 colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
@@ -187,7 +187,7 @@ Show the number of cells detected in each sample or joint location before filter
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + theme_bw()
 data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
@@ -195,7 +195,7 @@ data.frame(as.list(table(colData(sce)$Sample)))
 
 ```{r PlotCellsJoint}
 #Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + theme_bw()
 data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```
 
