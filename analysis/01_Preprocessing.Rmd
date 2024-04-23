@@ -81,7 +81,10 @@ Show the number of cells detected in each sample or joint location before filter
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+ggplot(colData(sce), aes(x=Sample)) +
+  geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))
+
 data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
@@ -90,7 +93,10 @@ data.frame(as.list(table(colData(sce)$Sample)))
 
 ```{r PlotCellsJoint}
 #Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+ggplot(colData(sce), aes(x=Joint.Location))+
+  geom_bar(stat = "count")+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_bw() +stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))
+
 data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```
 
@@ -130,7 +136,7 @@ Doublets are defined as two cells that are sequenced under the same cellular bar
 
 ### Detection
 
-```{r DoubletDetection,  warning=FALSE}
+```{r DoubletDetection, rows.print=17, warning=FALSE}
 #Detection
 sce <- scDblFinder::scDblFinder(sce, samples="Sample", BPPARAM = bpp) 
 
@@ -150,11 +156,12 @@ as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))
 #Plot singlet/doublet histogramm Absolute comparison / by sample
 as.data.frame(colData(sce)) %>%
   dplyr::group_by(Sample, scDblFinder.class) %>%
-  dplyr::summarise(counts=n()) %>%
-  ggplot(aes(x=Sample, y=counts, fill=scDblFinder.class)) + 
+  dplyr::summarise(Freq=n()) %>%
+  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class,label=Freq)) + 
     geom_bar(stat="identity") +
     labs(title="Doublet detection results",
-    subtitle="By sample") +
+    subtitle="By sample",x="",y="Number of Cells") +
+    geom_text(size=3, position = position_stack(vjust=0.5))+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
 
 ```
@@ -191,7 +198,8 @@ colData(sce) %>%
       facet_wrap(vars(Sample))+ 
       labs(title="Total number of detected genes plotted against total number of UMIs",
        x="Total counts",
-       y="Detected genes") 
+       y="Detected genes") +
+      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
 
 
 ```
@@ -331,7 +339,7 @@ plotColData(sce, y="sum",colour_by = "discard") + scale_y_log10() + ggtitle("Tot
 plotColData(sce, y="detected",colour_by = "discard") + scale_y_log10() + ggtitle("Detected features") +guides(colour=guide_legend(title="Discarded"))
 
 #Plot Mito percent
-plotColData(sce, y="subsets_Mito_percent",colour_by = "discard") + ggtitle("Mito percent") +guides(colour=guide_legend(title="Discarded"))
+plotColData(sce, y="subsets_Mito_percent",colour_by = "discard",order_by= ) + ggtitle("Mito percent") +guides(colour=guide_legend(title="Discarded"))
 
 ```
 
@@ -490,7 +498,9 @@ Show the number of cells detected in each sample or joint location after filteri
 #### Per Sample
 ```{r PlotCellsPerSampleAfterFiltering1}
 #Histogramm with number of cells per sample after filtering
-ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") 
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))
+
 data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```
 
@@ -498,7 +508,9 @@ data.frame(as.list(table(colData(sce.filtered)$Sample)))
 
 ```{r PlotCellsPerJointAfterFiltering2}
 #Histogramm with number of cells per sample after filtering
-ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint")
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint") + 
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))
+
 data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 ```
 
@@ -535,7 +547,8 @@ sce.lib <- computeLibraryFactors(sce.filtered)
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +
   xlab("Log10 Library size factor") +
   geom_histogram(bins=50)+
-  ggtitle("Distribution of Library size factors")
+  ggtitle("Distribution of Library size factors")+
+  theme_bw()
 
 ```
 
@@ -546,14 +559,15 @@ Deconvolution aims to normalize expression values based on summed values from po
 
 ```{r DeconvolutionNorm}
 # Normalization by deconvolution
-clust.filtered <- quickCluster(sce.filtered,BPPARAM =bpp) #block=factor(sce.filtered$Protocol)
+clust.filtered <- quickCluster(sce.filtered, BPPARAM =bpp)
 
-sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered,BPPARAM =bpp)
+sce.deconv <- computeSumFactors(sce.filtered,clusters=clust.filtered, BPPARAM =bpp)
 
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.deconv))), aes(x=log10libSf)) +
   xlab("Log10 Library size factor") +
   geom_histogram(bins=50)+
-  ggtitle("Distribution of Deconvolution size factors")
+  ggtitle("Distribution of Deconvolution size factors")+
+  theme_bw()
 
 ```
 
@@ -645,7 +659,7 @@ Variable-level metrics are computed by the getVarianceExplained() function. This
 
 ```{r VariableMetrics}
 vars <- getVarianceExplained(sce.filtered,assay.type="logcounts",
-    variables=c("Sample", "Joint.Location", "Pathotype","Seropositivity","GCTreatment","protocol","sex", "Age"))
+    variables=c("Sample", "Joint.Location", "Pathotype","Seropositivity","GCTreatment","Protocol","Sex","Age"))
 head(vars)
 
 plotExplanatoryVariables(vars)
