@@ -190,16 +190,24 @@ plotReducedDim(sce.BatchR, dimred="MNN_reduced", colour_by="Joint.Location") + g
 
 ```{r PlotUMAPAB1}
 #Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN")#subset.row = rownames(sce.BatchR)[rowData(sce.BatchR)[["is_hvg"]]]
-sce.BatchR.r <- runUMAP(sce.BatchR ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced")
-sce.BatchR.r.h <- runUMAP(sce.BatchR ,name = "MNN_UMA_reduced_hvg", dimred = "MNN_reduced", subset.row = rowData(sce.BatchR)$is_hvg)
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP1", dimred = "MNN", min_dist = 0.1)
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP_reduced1", dimred = "MNN_reduced", min_dist = 0.1)
+
+
+#Run UMAP
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP", dimred = "MNN", min_dist = 0.2)
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced", min_dist = 0.2)
+
+#Run UMAP
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP3", dimred = "MNN", min_dist = 0.3)
+sce.BatchR <- runUMAP(sce.BatchR ,name = "MNN_UMAP_reduced3", dimred = "MNN_reduced", min_dist = 0.3)
 ```
 
 ### Colored by Sample
 
 ```{r PlotUMAPAB2}
 #Plot UMAP after data integration
-plotReducedDim(sce.BatchR, dimred="MNN_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce.BatchR, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
 ```
 
 ### Colored by Joint

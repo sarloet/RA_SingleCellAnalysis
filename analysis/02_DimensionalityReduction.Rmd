@@ -225,7 +225,7 @@ plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + f
 The plot below shows, for each of the PCs, the variance explained by the variables in colData(sce) that are most strongly associated with the PCs. The sample_id variable: it has a unique value for each cell, so can explain all the variation for all PCs.
 
 ```{r PCAMetrics}
-explanPc <- getExplanatoryPCs(sce,dimred = "PCA",n_dimred=12,variables = c(
+explanPc <- getExplanatoryPCs(sce,dimred = "PCA",n_dimred=25,variables = c(
       "sum","detected","subsets_Mito_percent","Sample","Joint.Location","Pathotype","GCTreatment","Seropositivity","Protocol"))
 
 plotExplanatoryPCs(explanPc) 

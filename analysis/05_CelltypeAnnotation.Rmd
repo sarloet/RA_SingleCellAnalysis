@@ -439,13 +439,13 @@ unique(sce$ManualAnno_L1)
 sce$ManualAnno_L1[sce$cluster %in% c(2,3,12)] <- "Fibroblast"
 sce$ManualAnno_L1[sce$cluster %in% c(15)] <- "Smooth muscle cell"
 sce$ManualAnno_L1[sce$cluster %in% c(1,6,19)] <- "Edothelial cell"
-sce$ManualAnno_L1[sce$cluster %in% c(9,10,11,14)] <- "Tcell"
-sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "Bcell"
+sce$ManualAnno_L1[sce$cluster %in% c(9,10,11,14)] <- "T cell"
+sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "B cell"
 sce$ManualAnno_L1[sce$cluster %in% c(20)] <- "Neutrophil"
 sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
 sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,18,21)] <- "Myeloid"
 sce$ManualAnno_L1[sce$cluster %in% c(5)] <- "Plasma"
-sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "plasmacytoid dendritic cell"
+sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "Plasmacytoid dendritic cell"
 ```
 
 ```{r AssignementCheck}
