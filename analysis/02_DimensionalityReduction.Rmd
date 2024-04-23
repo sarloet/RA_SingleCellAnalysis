@@ -102,7 +102,7 @@ In this analysis we take the top 3000 genes with largest (biological) variation.
 #top.hvgs <- getTopHVGs(dec, prop=0.1)
 
 # Get the top 2000 genes.
-top.hvgs <- getTopHVGs(dec, n=3000)
+top.hvgs <- getTopHVGs(dec, n=2000)
 
 # Get all genes with positive biological components.
 #top.hvgs <- getTopHVGs(dec, var.threshold=0)
@@ -123,7 +123,7 @@ rowData(sce)$is_hvg <- rownames(sce) %in% top.hvgs
 
 # Plot per-gene variation
 per.block <- dec$per.block
-par(mfrow=c(3, 2))
+par(mfrow=c(2, 2))
 for (i in seq_along(per.block)) {
     decX <- per.block[[i]]
     plot(decX$mean, decX$total, xlab="Mean log-expression", 
@@ -160,19 +160,19 @@ pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentV
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
 #PCA dim estimate using intrinsicDimension::maxLikGlobalDimEst
-intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)
-
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)))
+elbow
 ```
 
 ```{r PCvsVariance}
 # Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 12,color="red")
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")
 
 ```
 
 ```{r SelectPC}
 #PCA select nr of PC
-reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(12)]
+reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"PCA"))
@@ -226,7 +226,7 @@ The plot below shows, for each of the PCs, the variance explained by the variabl
 
 ```{r PCAMetrics}
 explanPc <- getExplanatoryPCs(sce,dimred = "PCA",n_dimred=12,variables = c(
-      "sum","detected","subsets_Mito_percent","Sample","Joint.Location","Pathotype","GCTreatment","Seropositivity","protocol"))
+      "sum","detected","subsets_Mito_percent","Sample","Joint.Location","Pathotype","GCTreatment","Seropositivity","Protocol"))
 
 plotExplanatoryPCs(explanPc) 
 ```
