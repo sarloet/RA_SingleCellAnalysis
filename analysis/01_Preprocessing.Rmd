@@ -237,7 +237,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 500 | sce$sum > 75000# Cells have at least a count of 1000
+colData(sce)$qc.count_manual <- sce$sum < 300 | sce$sum > 75000# Cells have at least a count of 1000
 colData(sce)$qc.genexp_manual <- sce$detected < 200 # Cells have at least 200 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
@@ -254,7 +254,7 @@ abline(v = 75000, col = "red")
 ```{r DetectedHisto}
 #Some Fixed thresholds
 hist(sce$detected,breaks = 100, main ="Detected gene distribution",xlab ="Detected")
-abline(v = 500, col = "red")
+abline(v = 300, col = "red")
 ```
 
 
@@ -340,7 +340,7 @@ colData(sce) %>%
 
 ```{r QcPlots3}
 #Plot Total count
-plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = data.frame(sce$qc.count | sce$qc.count_manual)) + 
+plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = data.frame(factor(sce$qc.count | sce$qc.count_manual,levels=c(FALSE,TRUE)))) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Total count")+
@@ -352,7 +352,7 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = data.fram
 
 ```{r QcPlots4}
 #Plot Detected Genes
-plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = data.frame(sce$qc.genexp | sce$qc.genexp_manual)) + 
+plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = data.frame(factor(sce$qc.genexp | sce$qc.genexp_manual,levels=c(FALSE,TRUE))))+ 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Detected features")+
@@ -364,7 +364,7 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = dat
 
 ```{r QcPlots5}
 #Plot Mito percent
-plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = data.frame(sce$qc.mito | sce$qc.mito_manual)) + 
+plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = data.frame(factor(sce$qc.mito | sce$qc.mito_manual,levels=c(FALSE,TRUE)))) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
     guides(colour=guide_legend(title="Discarded"))+
@@ -552,11 +552,6 @@ Deconvolution size factor for each cell in the dataset, compared to the equivale
      ggplot(aes(x=LibrarySizeFactors, y=DeconvolutionSizeFactors)) +
      geom_point(aes(col=factor(Cluster))) +
      geom_abline(slope = 1, intercept = 0) + theme_classic() + theme(legend.key.size = unit(0.5, 'cm'))
- 
-plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab="Library size factor",
-    ylab="Deconvolution size factor", log='xy', pch=16,
-    col=as.integer(factor(clust.filtered)))
-abline(a=0, b=1, col="red")
 
 ```
 
