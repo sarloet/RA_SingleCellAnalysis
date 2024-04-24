@@ -237,7 +237,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 500 # Cells have at least a count of 1000
+colData(sce)$qc.count_manual <- sce$sum < 500 | sce$sum < 75000# Cells have at least a count of 1000
 colData(sce)$qc.genexp_manual <- sce$detected < 200 # Cells have at least 200 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
@@ -246,7 +246,8 @@ colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial cont
 ```{r SumHisto}
 #Some Fixed thresholds
 hist(sce$total,breaks = 100,main ="UMI distribution",xlab ="UMI")
-abline(v = 1000, col = "red")
+abline(v = 500, col = "red")
+abline(v = 75000, col = "red")
 
 ```
 
@@ -274,7 +275,7 @@ colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher
 data.frame(attr(colData(sce)$qc.mito, "thresholds")) 
 
 
-# Mark Cells to be Discarted
+# Mark all Cells to be Discarted
 colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual
 
 
@@ -305,7 +306,10 @@ colData(sce) %>%
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = detected)) +
       geom_point(aes(colour = discard)) + 
-      facet_wrap(vars(Sample))+ 
+      facet_wrap(vars(Sample))+
+      labs(title="Total number of detected genes plotted against total number of UMIs",
+       x="Total counts",
+       y="Detected genes") +
       ggtitle("Total number of detected genes plotted against total number of UMIs") + 
       theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
 
@@ -319,8 +323,10 @@ colData(sce) %>%
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = subsets_Mito_percent)) +
       geom_point(aes(colour = discard)) + 
-      facet_wrap(vars(Sample))+ 
-      ggtitle("Percentage of mitochondrial UMIs plotted against total number of UMIs") +
+      facet_wrap(vars(Sample)) +
+      labs(title="Percentage of mitochondrial UMIs plotted against total number of UMIs",
+       x="Total counts",
+       y="Mitochondrial UMIs [%]") +
       theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
 
 
@@ -334,7 +340,7 @@ colData(sce) %>%
 
 ```{r QcPlots3}
 #Plot Total count
-plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard") + 
+plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = I(sce$qc.count | sce$qc.count_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Total count")+
@@ -346,7 +352,7 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard"
 
 ```{r QcPlots4}
 #Plot Detected Genes
-plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "discard") + 
+plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = I(sce$qc.genexp | sce$qc.genexp_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Detected features")+
@@ -358,7 +364,7 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = "di
 
 ```{r QcPlots5}
 #Plot Mito percent
-plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = "discard") + 
+plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = I(sce$qc.mito | sce$qc.mito_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
     guides(colour=guide_legend(title="Discarded"))+
