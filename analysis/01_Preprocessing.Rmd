@@ -237,7 +237,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 500 | sce$sum < 75000# Cells have at least a count of 1000
+colData(sce)$qc.count_manual <- sce$sum < 500 | sce$sum > 75000# Cells have at least a count of 1000
 colData(sce)$qc.genexp_manual <- sce$detected < 200 # Cells have at least 200 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
@@ -485,6 +485,7 @@ rownames(rel_expression) <- rowData(sce.filtered)$Symbol
 most_expressed <- sort(rowSums( rel_expression ),T)[20:1]
 plot_data <- as.matrix(t(rel_expression[names(most_expressed),]))
 
+par(cex.lab=0.75)
 boxplot(plot_data, cex=0.1, las=1, xlab="% total count per cell", horizontal=TRUE, main="Distribution of counts for the top 20 genes before filtering")
 rm(plot_data,rel_expression)
 gc()
