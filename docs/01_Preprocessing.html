@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">QC and Preprocessing</h1>
 <h3 class="subtitle">01_Preprocessing</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 24 2024 10:28:57</h4>
+<h4 class="date">Apr 24 2024 11:49:17</h4>
 
 </div>
 
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree412c8f170dec3b166cd0cedd6d1c0ebf663c9a00targetblank412c8f1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree3bbe96509f317eaa8e188f2f8275de10ccadc03ctargetblank3bbe965a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/412c8f170dec3b166cd0cedd6d1c0ebf663c9a00" target="_blank">412c8f1</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/3bbe96509f317eaa8e188f2f8275de10ccadc03c" target="_blank">3bbe965</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree412c8f170dec3b166cd0cedd6d1c0ebf663c9a00targetblank412c8f1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree3bbe96509f317eaa8e188f2f8275de10ccadc03ctargetblank3bbe965a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/412c8f170dec3b166cd0cedd6d1c0ebf663c9a00" target="_blank">412c8f1</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/3bbe96509f317eaa8e188f2f8275de10ccadc03c" target="_blank">3bbe965</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -620,6 +620,8 @@ Ignored files:
     Ignored:    output/Cluster_Marker_Genes.xlsx
 
 Unstaged changes:
+    Modified:   analysis/03_Integration_Batchelor.Rmd
+    Modified:   analysis/05_CelltypeAnnotation.Rmd
     Modified:   data/metadata/Metadata_Master.csv
 
 </code></pre>
@@ -666,6 +668,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/3bbe96509f317eaa8e188f2f8275de10ccadc03c/analysis/01_Preprocessing.Rmd" target="_blank">3bbe965</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+<td>
+Informative commit message
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/01_Preprocessing.html" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1884,6 +1920,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/QcPlots1-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/QcPlots1-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -1980,6 +2027,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/QcPlots2-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/QcPlots2-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -2044,7 +2102,7 @@ sarloet
 <div id="total-counts" class="section level5">
 <h5>Total counts</h5>
 <pre class="r"><code>#Plot Total count
-plotColData(sce, x=&quot;Sample&quot;, y=&quot;sum&quot;,other_fields=&quot;Sample&quot;,colour_by = I(sce$qc.count | sce$qc.count_manual)) + 
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;sum&quot;,other_fields=&quot;Sample&quot;,colour_by = data.frame(sce$qc.count | sce$qc.count_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) + 
     scale_y_log10() + 
     ggtitle(&quot;Total count&quot;)+
@@ -2073,6 +2131,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/QcPlots3-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/QcPlots3-1.png" target="_blank">b9c2c67</a>
@@ -2136,7 +2205,7 @@ sarloet
 <div id="genes-detected" class="section level5">
 <h5>Genes detected</h5>
 <pre class="r"><code>#Plot Detected Genes
-plotColData(sce, x=&quot;Sample&quot;, y=&quot;detected&quot;, other_fields=&quot;Sample&quot;,colour_by = I(sce$qc.genexp | sce$qc.genexp_manual)) + 
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;detected&quot;, other_fields=&quot;Sample&quot;,colour_by = data.frame(sce$qc.genexp | sce$qc.genexp_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) + 
     scale_y_log10() + 
     ggtitle(&quot;Detected features&quot;)+
@@ -2228,7 +2297,7 @@ sarloet
 <div id="mitochondrial-percentage" class="section level5">
 <h5>Mitochondrial percentage</h5>
 <pre class="r"><code>#Plot Mito percent
-plotColData(sce, x=&quot;Sample&quot;, y=&quot;subsets_Mito_percent&quot;, other_fields=&quot;Sample&quot;,colour_by = I(sce$qc.mito | sce$qc.mito_manual)) + 
+plotColData(sce, x=&quot;Sample&quot;, y=&quot;subsets_Mito_percent&quot;, other_fields=&quot;Sample&quot;,colour_by = data.frame(sce$qc.mito | sce$qc.mito_manual)) + 
     facet_wrap(~Sample, nrow=1, scales = &quot;free_x&quot;) +
     ggtitle(&quot;Mito percent&quot;)+
     guides(colour=guide_legend(title=&quot;Discarded&quot;))+
@@ -2359,6 +2428,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/QcPlots6-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/QcPlots6-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -2455,6 +2535,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/QcPlots7-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/QcPlots7-1.png" target="_blank">b9c2c67</a>
@@ -2589,6 +2680,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -2681,6 +2783,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">b9c2c67</a>
@@ -2786,6 +2899,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -2835,8 +2959,8 @@ sarloet
 <pre class="r"><code>rm(plot_data,rel_expression)
 gc()</code></pre>
 <pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells  10987664  586.9   18161888   970.0         NA   18161888   970.0
-Vcells 776492477 5924.2 1854320543 14147.4      16384 1852677880 14134.9</code></pre>
+Ncells  10987669  586.9   17697754   945.2         NA   17697754   945.2
+Vcells 776492990 5924.2 1854321056 14147.4      16384 1852678393 14134.9</code></pre>
 </div>
 </div>
 <div id="normalization" class="section level2">
@@ -2886,6 +3010,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" target="_blank">b9c2c67</a>
@@ -2988,6 +3123,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" target="_blank">b9c2c67</a>
@@ -3098,6 +3244,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors1-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors1-1.png" target="_blank">b9c2c67</a>
 </td>
 <td>
@@ -3133,6 +3290,11 @@ sarloet
 </table>
 </div>
 </div>
+<pre class="r"><code>plot(unname(sizeFactors(sce.lib)), sizeFactors(sce.deconv), xlab=&quot;Library size factor&quot;,
+    ylab=&quot;Deconvolution size factor&quot;, log=&#39;xy&#39;, pch=16,
+    col=as.integer(factor(clust.filtered)))
+abline(a=0, b=1, col=&quot;red&quot;)</code></pre>
+<p><img src="figure/01_Preprocessing.Rmd/PlotSizeFactors1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="color-by-sample" class="section level5">
 <h5>Color by Sample</h5>
@@ -3164,6 +3326,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors2-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors2-1.png" target="_blank">b9c2c67</a>
@@ -3217,8 +3390,8 @@ summary(sizeFactors(sce.filtered))</code></pre>
 <pre class="r"><code>rm(sce.lib, sce.deconv)
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells   11031689  589.2   18161888   970.0         NA   18161888   970.0
-Vcells 1011458728 7716.9 1854320543 14147.4      16384 1854310721 14147.3</code></pre>
+Ncells   11032212  589.2   17697754   945.2         NA   17697754   945.2
+Vcells 1011460432 7716.9 1854321056 14147.4      16384 1854315159 14147.4</code></pre>
 </div>
 </div>
 <div id="variable-level-metrics" class="section level2">
@@ -3262,6 +3435,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a333b15fa580204cfd62e19e000e258d7a37fc8d/docs/figure/01_Preprocessing.Rmd/VariableMetrics-1.png" target="_blank">a333b15</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/b9c2c67d8cb165ecfba58f51a0177bfde46116d7/docs/figure/01_Preprocessing.Rmd/VariableMetrics-1.png" target="_blank">b9c2c67</a>
