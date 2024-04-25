@@ -245,8 +245,8 @@ colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial cont
 ```{r SumHisto}
 #Some Fixed thresholds
 hist(sce$total,breaks = 100,main ="UMI distribution",xlab ="UMI")
-abline(v = 500, col = "red")
-abline(v = 75000, col = "red")
+abline(v = 400, col = "red")
+abline(v = 100000, col = "red")
 
 ```
 
@@ -413,9 +413,16 @@ as.data.frame(colData(sce)) %>%
 
 ### Apply filtering
 ```{r}
+
+
 # Create the filtered sce element
 sce.filtered <- sce[, !colData(sce)$discard]
 
+cat(
+    "NR of Genes Before Filtering ", dim(sce)[2],
+    "\nNR of Genes After Filtering ", dim(sce.filtered)[2],
+    "\nNR of Genes Filtered out ", dim(sce)[2] - dim(sce.filtered)[2]
+    )
 ```
 
 

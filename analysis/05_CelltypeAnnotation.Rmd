@@ -126,11 +126,11 @@ markers_wilcox <- wilcoxauc(sce, group_by='cluster', assay = 'logcounts')
 ```{r SaveTopMarker}
 # Get the top 5 markers for each cluster (for heatmap)
 # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-top5DEgenes <- top_markers(markers_wilcox, n = 5, auc_min = 0.5, pval_max = 0.05)
+top3DEgenes <- top_markers(markers_wilcox, n = 3, auc_min = 0.5, pval_max = 0.05)
 
 #Show top 5 DE Genes of each cluster
-data.frame(top5DEgenes)
-
+data.frame(top3DEgenes)
+top3DEgenes<-unlist(as.data.frame(top3DEgenes[,-1]),use.names = FALSE)
 
 # Get the top 50 markers for each cluster (save in excel file)
 # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
@@ -146,7 +146,7 @@ for (i in 1:max(as.integer(levels(sce$cluster)))){
   #Save table in Exelsheet
   addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
 }
-saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"),overwrite = TRUE)
+saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 
 
@@ -157,33 +157,14 @@ saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"),overwrite = 
 ```{r PlotHeatmap}
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
 
-#Get most meaningful markers
-top_genes_wilcox <- lapply(markers_wilcox_up, function(marker_set){
-  marker_set %>%
-  as.data.frame() %>%
-  filter(Top <= 1) %>%
-  arrange(p.value)%>%
-  dplyr::slice(1:2)%>%
-  rownames()
-}) %>% 
-  unlist(use.names=F) %>% 
-  unique()
+
+# To avoid a too big plot we only keep every 20th cell
+sce.plot <- sce[unique(top5DEgenes), seq(1, dim(sce)[2], 20)]
+dittoHeatmap(sce.plot, vars = unique(top5DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE, heatmap.colors.max.scaled = inferno(100) )
 
 
-# To avoid a too big plot we only keep every 10th cell
-sce.plot <- sce.marker[top_genes_wilcox, seq(1, dim(sce.marker)[2], 20)]
-# We sort by cluster
-sce.plot <- sce.plot[,order(sce.plot$label)]
-# Anotations
-column_annotations <- data.frame("Cluster"=factor(sce.plot$label), row.names=colnames(sce.plot))
-# clip heatmap values to ensure that colour contrast is high
-sce.plot <- assay(sce.plot, "logcounts")
-sce.plot[sce.plot >=3] = 3
-
-pheatmap(sce.plot, annotation_col=column_annotations,
-         show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
-
-dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red", size = 5)
+#Dotplot
+dittoDotPlot(sce, vars = unique(top5DEgenes) , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 gc()
@@ -283,7 +264,7 @@ VizGenEx <- function(markr){
 ```
 
 
-### Major cell type Annotation - Level0
+### Major cell type Annotation - Level0 {.tabset}
 
 Identify major cell types for a Rough Annotation on high hierarchical level
 
@@ -318,6 +299,8 @@ VizGenEx(c("CDH5","ECSCR","CCL14"))
 
 ```
 
+### Assignement - Level0 
+
 ```{r AssignementL0}
 #Manual Annotation
 sce$ManualAnno_L0 <- as.integer(sce$cluster)
@@ -330,7 +313,7 @@ sce$ManualAnno_L0[sce$cluster %in% c(1,6,19)] <- "Endothelial"
 
 ```
 
-### Finer cell type Annotation - Level1
+### Finer cell type Annotation - Level1 {.tabset}
 
 Identify cell types for a finer grained Annotation on lower hierarchical level
 
@@ -431,6 +414,7 @@ VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
 
 ```
 
+### Assignement - Level1 
 
 ```{r AssignementL1}
 #Manual Annotation

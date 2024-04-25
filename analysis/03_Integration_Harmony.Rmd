@@ -124,7 +124,7 @@ The advantage of using PCA is that the total amount of variance explained by the
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "harmony")), k=10)))
 
 #PCA select nr of PC
-reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
+reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(20)]
 reducedDimNames(sce.BatchR)
 
 ncol(reducedDim(sce.BatchR,"harmony"))
@@ -160,8 +160,14 @@ plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Joint.Location")
 
 ```{r}
 #Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, n_neighbors=25, name="harmony_UMAP")
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, n_neighbors=12, name="harmony_reduced_UMAP")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, n_neighbors=25, name="harmony_UMAP1")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, min_dist = 0.1, n_neighbors=12, name="harmony_reduced_UMAP1")
+
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, name="harmony_UMAP")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, name="harmony_reduced_UMAP")
+
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, min_dist = 0.2,  name="harmony_UMAP2")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, min_dist = 0.2, name="harmony_reduced_UMAP2")
 ```
 
 ### Colored by Sample
@@ -172,18 +178,18 @@ plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Sample") + 
 ### Colored by Joint
 ```{r}
 #Plot UMAP before data integration
-plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")
 ```
 ### Facet by Sample
 ```{r}
 #Plot UMAP after data integration per sample
-plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Sample)
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Sample") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Sample)
 
 ```
 ### Facet by Joint
 ```{r}
 #Plot UMAP after data integration per joint
-plotReducedDim(sce.BatchR, dimred="harmony_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
 ```
 
 

@@ -58,7 +58,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Harmony.rds'))
 
 ```
 
@@ -154,14 +154,15 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 
 ```{r }
 #construct KNN graph
-sce.milo <- buildGraph(sce.milo, k = 40, d = elbow, reduced.dim = "MNN")
+
+sce.milo <- buildGraph(sce.milo, k = 60, d = 20, reduced.dim = "harmony_reduced")
 
 ```
 
 
 ```{r }
 #Defining representative neighbourhoods on the KNN graph
-sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 40, d = elbow, refined = TRUE, reduced_dims = "MNN",refinement_scheme="graph")
+sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 60, d = 20, refined = TRUE, reduced_dims = "harmony_reduced",refinement_scheme="graph")
 
 # To evaluate whether the value of k used for graph building was appropriate. We can check this out using the plotNhoodSizeHist function. As a rule of thumb we want to have an average neighbourhood size over 5 x N_samples. If the mean is lower, or if the distribution is
 
@@ -211,13 +212,13 @@ constrast
 
 ```{r }
 # Computing neighbourhood connectivity
-sce.milo <- calcNhoodDistance(sce.milo, d=elbow, reduced.dim = "MNN")
+sce.milo <- calcNhoodDistance(sce.milo, d=20, reduced.dim = "harmony_reduced")
 
 ```
 
 ```{r }
 # Testing
-res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "harmony_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
 
 ```
 
@@ -255,12 +256,12 @@ ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercep
 sce.milo <- buildNhoodGraph(sce.milo)
 
 ## Plot single-cell UMAP
-umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP", colour_by="label", 
+umap_pl <- plotReducedDim(sce.milo, dimred = "harmony_reduced_UMAP", 
                           text_size = 3, point_size=0.5) +
   guides(fill="none")
 
 ## Plot neighbourhood graph
-nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP",alpha=0.1) 
+nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="harmony_reduced_UMAP",alpha=0.1) 
   
 umap_pl + nh_graph_pl +
   plot_layout(guides="auto")
