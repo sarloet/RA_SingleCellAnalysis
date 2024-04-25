@@ -15,9 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -28,23 +26,24 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
 
 ```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
-library(scater)
-library(scuttle)
+#library(scuttle)
 library(dittoSeq)
 library(pheatmap)
 library(xlsx)
-library(GSEABase)
-library(gridExtra)
+library(presto)
 })
 
 ```
@@ -100,7 +99,7 @@ plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="cluster") + g
 
 ### QC UMAPs
 
-```{r PlotClusterQCUMAP}
+```{r PlotClusterQCUMAP,fig.dim = c(8, 6)}
 p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
 p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
 p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
@@ -110,6 +109,86 @@ rm(p1, p2, p3)
 
 
 ## Identify Marker Genes
+
+
+### Wilcoxon rank-sum test
+
+```{r IdentifyMarker}
+#Select the hvg
+sce.marker <- sce[rowData(sce)$is_hvg==TRUE,]
+rownames(sce.marker) <- rowData(sce.marker)$Symbol
+
+#Wilcoxon rank-sum test
+markers_wilcox <- wilcoxauc(sce, group_by='cluster', assay = 'logcounts')
+
+```
+
+```{r SaveTopMarker}
+# Get the top 5 markers for each cluster (for heatmap)
+# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
+top5DEgenes <- top_markers(markers_wilcox, n = 5, auc_min = 0.5, pval_max = 0.05)
+
+#Show top 5 DE Genes of each cluster
+data.frame(top5DEgenes)
+
+
+# Get the top 50 markers for each cluster (save in excel file)
+# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
+top50DEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
+
+wb = createWorkbook()
+for (i in 1:max(as.integer(levels(sce$cluster)))){
+  #get genes for the cluster
+  markers<-top50DEgenes[,paste0(i), drop=TRUE]
+  #Create table
+  tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
+  
+  #Save table in Exelsheet
+  addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+}
+saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"),overwrite = TRUE)
+
+
+
+```
+
+### Wilcoxon heatmap
+
+```{r PlotHeatmap}
+#Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
+
+#Get most meaningful markers
+top_genes_wilcox <- lapply(markers_wilcox_up, function(marker_set){
+  marker_set %>%
+  as.data.frame() %>%
+  filter(Top <= 1) %>%
+  arrange(p.value)%>%
+  dplyr::slice(1:2)%>%
+  rownames()
+}) %>% 
+  unlist(use.names=F) %>% 
+  unique()
+
+
+# To avoid a too big plot we only keep every 10th cell
+sce.plot <- sce.marker[top_genes_wilcox, seq(1, dim(sce.marker)[2], 20)]
+# We sort by cluster
+sce.plot <- sce.plot[,order(sce.plot$label)]
+# Anotations
+column_annotations <- data.frame("Cluster"=factor(sce.plot$label), row.names=colnames(sce.plot))
+# clip heatmap values to ensure that colour contrast is high
+sce.plot <- assay(sce.plot, "logcounts")
+sce.plot[sce.plot >=3] = 3
+
+pheatmap(sce.plot, annotation_col=column_annotations,
+         show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
+
+dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red", size = 5)
+
+rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
+gc()
+```
+
 
 ### Wilcoxon rank-sum test
 
@@ -173,87 +252,10 @@ pheatmap(sce.plot, annotation_col=column_annotations,
          show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
 
 dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red")
+dittoDotPlot(sce, vars = marker , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE ,min = -2.5,max = 2.5)
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 
-```
-
-## Celltype Annotation Using existing references
-
-### Using existing references using SingleR and Human CellAtlas
-
-```{r CreateReference}
-library(celldex)
-ref <- HumanPrimaryCellAtlasData()
-ref
-
-library(SingleR)
-pred <- SingleR(test=sce, ref=ref, labels=ref$label.main)
-data.frame(as.list(table(pred$labels)))
-
-```
-
-```{r PlotScoreHeatmap}
-plotScoreHeatmap(pred)
-```
-
-```{r PlotTables}
-tab <- table(Assigned=pred$pruned.labels, Cluster=colLabels(sce))
-
-# Adding a pseudo-count of 10 to avoid strong color jumps with just 1 cell.
-pheatmap(log2(tab+10), color=colorRampPalette(c("white", "blue"))(101))
-```
-
-## Assigning cell labels automatically from gene sets signatures
-
-### Anno with AUCell using marker gene signatures from expected celltypes in literature and panglaoDB
-
-
-```{r CreateGenesets, eval=FALSE}
-# Manually Create Possible Genesets for expected cells in synovium 
-
-Macrophage.geneset = GeneSet(c("LYZ", "AIF1", "IFI30", "MARCO"), setName="Macrophage")
-Fibroblast.geneset = GeneSet(c("COL1A1", "DCN", "COL1A2", "COL13A1"), setName="Fibroblast")
-BCell.geneset = GeneSet(c("CD79A", "IGKC", "MS4A1", "IGHM"), setName="BCell")
-TCell.geneset = GeneSet(c("IL32", "CD3D", "TRBC2", "CD52"), setName="TCell")
-Endothelial.geneset = GeneSet(c("PECAM1", "VWF", "CCL14", "ACKR1"), setName="Endothelial")
-LiningFibroblast.geneset = GeneSet(c("PRG4", "CRTAC1", "CLU", "ITGBL1"), setName="LiningFibroblast")
-Neutrophils.geneset = GeneSet(c("G0S2", "S100A8", "FCGR3B", "CXCL8"), setName="Neutrophils")
-SmoothMuscle.geneset = GeneSet(c("ACTA2", "TAGLN", "MYL9", "TPM2"), setName="SmoothMuscle")
-PlasmaCell.geneset = GeneSet(c("IGHG1", "IGHG3", "IGKC", "MZB1"), setName="PlasmaCell")
-MastCell.geneset = GeneSet(c("TPSB2", "TBSAB1", "CPA3", "HPGD"), setName="MastCell")
-ProliferatingCell.geneset = GeneSet(c("STMN1", "MKI67", "CENPF", "HMGB2"), setName="ProliferatingCell")
-PlasmacytoidDC.geneset = GeneSet(c("GZMB", "CLEC4C", "LRRC26", "LILRA4"), setName="PlasmacytoidDC")
-PlasmacytoidDC.geneset = GeneSet(c("FLT3", "UPK3A", "CLEC9A", "CCL22"), setName="ConventionalDC")
-LymphaticEndothelial.geneset = GeneSet(c("PROX1", "LYVE1", "CCL21", "TFF3"), setName="LymphaticEndothelial")
-
-
-# Create the Collection
-all.sets = GeneSetCollection(c(Macrophage.geneset, Fibroblast.geneset, BCell.geneset, TCell.geneset, Endothelial.geneset, LiningFibroblast.geneset, Neutrophils.geneset, SmoothMuscle.geneset, PlasmaCell.geneset, MastCell.geneset, ProliferatingCell.geneset, PlasmacytoidDC.geneset, LymphaticEndothelial.geneset))
-
-```
-
-```{r RunAUCell, eval=FALSE}
-# Annotate genesets using AUCell
-library(AUCell)
-rankings <- AUCell_buildRankings(counts(sce),
-    plotStats=FALSE, verbose=FALSE,BPPARAM = bpp)
-cell.aucs <- AUCell_calcAUC(all.sets, rankings)
-results <- t(assay(cell.aucs))
-head(results)
-
-#AUCell_exploreThresholds(cell.aucs, plotHist=TRUE, assign=TRUE) 
-cells_assignment<-AUCell_exploreThresholds(cell.aucs, plotHist=FALSE, assign=TRUE) 
-```
-
-```{r PlotAUCellAnno, eval=FALSE}
-dataauc <- getAUC(cell.aucs)
-AUCannotations = apply(dataauc, 2, function(x){names(which.max(x))})
-
-colData(sce)$AUCellAnno = unname(AUCannotations)
-
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="AUCellAnno")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="AUCellAnno", text_by="AUCellAnno")+ ggtitle("UMAP Celllabel")
 ```
 
 ## Manual Celltype annotation

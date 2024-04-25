@@ -99,7 +99,7 @@ sce.BatchR <- sce
 
 ```{r RunBatchelor}
 #Perform scaling normalization within each batch
-sce.Batchelor <-batchelor::multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
+sce.Batchelor <-multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
 summary(sizeFactors(sce.BatchR))
 
 ```
@@ -119,7 +119,7 @@ merge_order <- list(
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
 bpstart(bpp)
-sce.Batchelor <- batchelor::fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
 bpstop(bpp)
 
 

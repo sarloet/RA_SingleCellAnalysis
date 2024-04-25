@@ -41,7 +41,6 @@ source(here("code", "standard_libraries.R"))
 ```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 suppressPackageStartupMessages({
-#library(DropletUtils)
 library(scDblFinder)
 library(sctransform)
 })

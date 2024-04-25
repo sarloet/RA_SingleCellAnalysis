@@ -102,7 +102,7 @@ In this analysis we take the top 3000 genes with largest (biological) variation.
 #top.hvgs <- getTopHVGs(dec, prop=0.1)
 
 # Get the top 2000 genes.
-top.hvgs <- getTopHVGs(dec, n=2000)
+top.hvgs <- getTopHVGs(dec, n=3000)
 
 # Get all genes with positive biological components.
 #top.hvgs <- getTopHVGs(dec, var.threshold=0)
@@ -172,7 +172,7 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 
 ```{r SelectPC}
 #PCA select nr of PC
-reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
+reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(20)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"PCA"))

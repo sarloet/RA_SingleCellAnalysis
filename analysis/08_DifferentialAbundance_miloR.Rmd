@@ -217,7 +217,7 @@ sce.milo <- calcNhoodDistance(sce.milo, d=elbow, reduced.dim = "MNN")
 
 ```{r }
 # Testing
-res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationWrist", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "MNN", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
 
 ```
 
@@ -295,5 +295,5 @@ plotDAbeeswarm(res, group.by = "label")
 ```{r SaveData}
 #resDS(sce, res, bind = "row", frq = TRUE)
 
-saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
+saveRDS(sce.milo, file =paste0(path,'/output/08_DifferentialAbundance_miloR.rds'))
 ```
