@@ -237,7 +237,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 ```{r FixedThresholds}
 #Some Fixed thresholds
 colData(sce)$qc.count_manual <- sce$sum < 400 # Cells have at least a count of 1000
-colData(sce)$qc.genexp_manual <- sce$detected < 300 # Cells have at least 200 genes expressed
+colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$sum > 100000 # Cells have at least 200 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
