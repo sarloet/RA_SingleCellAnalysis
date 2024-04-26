@@ -236,8 +236,8 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 400 # Cells have at least a count of 1000
-colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$sum > 100000 # Cells have at least 200 genes expressed
+colData(sce)$qc.count_manual <- sce$sum < 400 | sce$sum > 100000 # Cells have at least a count of 1000
+colData(sce)$qc.genexp_manual <- sce$detected < 300  # Cells have at least 300 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
@@ -262,11 +262,11 @@ abline(v = 300, col = "red")
 ```{r AdaptiveThresholds}
 
 # Detect cells with very low number of counts
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=4, log=TRUE, type="both",batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
 # Detect cells with very low number of genes
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=4, log=TRUE, type="lower",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
 # Detect cells with high mitochondrial content
