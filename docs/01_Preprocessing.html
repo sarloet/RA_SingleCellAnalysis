@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">QC and Preprocessing</h1>
 <h3 class="subtitle">01_Preprocessing</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 25 2024 17:16:19</h4>
+<h4 class="date">Apr 26 2024 11:48:08</h4>
 
 </div>
 
@@ -441,7 +441,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-04-25
+<strong>Last updated:</strong> 2024-04-26
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree19b7d521cb913d7c180644eef616d2172732791ftargetblank19b7d52a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreea78cd8ab75cf1b1b919010c208af758c2f113fdftargetblanka78cd8aa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/19b7d521cb913d7c180644eef616d2172732791f" target="_blank">19b7d52</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/a78cd8ab75cf1b1b919010c208af758c2f113fdf" target="_blank">a78cd8a</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree19b7d521cb913d7c180644eef616d2172732791ftargetblank19b7d52a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreea78cd8ab75cf1b1b919010c208af758c2f113fdftargetblanka78cd8aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/19b7d521cb913d7c180644eef616d2172732791f" target="_blank">19b7d52</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/a78cd8ab75cf1b1b919010c208af758c2f113fdf" target="_blank">a78cd8a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -621,9 +621,7 @@ Ignored files:
     Ignored:    output/Cluster_Marker_Genes.xlsx
 
 Unstaged changes:
-    Modified:   analysis/03_Integration_Batchelor.Rmd
-    Modified:   analysis/03_Integration_Harmony.Rmd
-    Modified:   analysis/05_CelltypeAnnotation.Rmd
+    Modified:   analysis/02_DimensionalityReduction.Rmd
     Modified:   analysis/08_DifferentialAbundance_miloR.Rmd
 
 </code></pre>
@@ -670,6 +668,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/a78cd8ab75cf1b1b919010c208af758c2f113fdf/analysis/01_Preprocessing.Rmd" target="_blank">a78cd8a</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-26
+</td>
+<td>
+Fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/72659ad3e38940484a15feb9d8f2cee4a1e1bb14/analysis/01_Preprocessing.Rmd" target="_blank">72659ad</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/01_Preprocessing.html" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1855,13 +1904,13 @@ sce &lt;- addPerCellQC(sce, subsets=list(Mito=is_mito))</code></pre>
 <div id="fixed-filtering-thresholds" class="section level3">
 <h3>Fixed Filtering Thresholds</h3>
 <pre class="r"><code>#Some Fixed thresholds
-colData(sce)$qc.count_manual &lt;- sce$sum &lt; 400 # Cells have at least a count of 1000
-colData(sce)$qc.genexp_manual &lt;- sce$detected &lt; 300 | sce$sum &gt; 100000 # Cells have at least 200 genes expressed
+colData(sce)$qc.count_manual &lt;- sce$sum &lt; 400 | sce$sum &gt; 100000 # Cells have at least a count of 1000
+colData(sce)$qc.genexp_manual &lt;- sce$detected &lt; 300  # Cells have at least 300 genes expressed
 colData(sce)$qc.mito_manual &lt;- sce$subsets_Mito_percent &gt; 15 #Mitochondrial contamination has to be lower than 15%</code></pre>
 <pre class="r"><code>#Some Fixed thresholds
 hist(sce$total,breaks = 100,main =&quot;UMI distribution&quot;,xlab =&quot;UMI&quot;)
-abline(v = 500, col = &quot;red&quot;)
-abline(v = 75000, col = &quot;red&quot;)</code></pre>
+abline(v = 400, col = &quot;red&quot;)
+abline(v = 100000, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/01_Preprocessing.Rmd/SumHisto-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SumHisto-1">
@@ -1968,19 +2017,19 @@ sarloet
 class="section level3">
 <h3>Adaptive Filtering Thresholds (for each batch/sample)</h3>
 <pre class="r"><code># Detect cells with very low number of counts
-colData(sce)$qc.count &lt;- isOutlier(sce$sum,nmads=3, log=TRUE, type=&quot;both&quot;,batch =sce$Sample )
+colData(sce)$qc.count &lt;- isOutlier(sce$sum,nmads=4, log=TRUE, type=&quot;both&quot;,batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, &quot;thresholds&quot;)) </code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1887.021","2":"430.212","3":"266.1639","4":"498.4816","5":"454.4983","6":"1143.385","7":"1772.179","8":"801.3916","9":"1393.20","10":"1050.202","11":"377.8311","12":"686.5704","13":"343.582","14":"393.2179","15":"1.804368e+01","16":"535.1555","17":"24.71567","_rn_":"lower"},{"1":"83080.882","2":"449362.311","3":"270492.0918","4":"266113.7355","5":"146467.6228","6":"111608.015","7":"157786.165","8":"275730.6330","9":"97259.01","10":"163581.295","11":"194204.0874","12":"117545.4388","13":"284453.169","14":"130921.3683","15":"1.235739e+06","16":"124590.6875","17":"76717.68478","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1004.206","2":"135.0611","3":"83.94243","4":"175.0167","5":"173.5791","6":"532.8545","7":"838.6497","8":"302.7411","9":"686.5846","10":"452.7546","11":"133.4968","12":"291.3611","13":"112.1245","14":"149.3609","15":"2.820925e+00","16":"215.764","17":"6.471206e+00","_rn_":"lower"},{"1":"156118.781","2":"1431360.3872","3":"857673.80798","4":"757943.7615","5":"383509.8590","6":"239485.4936","7":"333423.2042","8":"729891.6342","9":"197355.4953","10":"379440.5637","11":"549648.6120","12":"276986.9033","13":"871647.3884","14":"344672.5886","15":"7.904247e+06","16":"309019.948","17":"2.930102e+05","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code># Detect cells with very low number of genes
-colData(sce)$qc.genexp &lt;- isOutlier(sce$detected,nmads=3, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample)
+colData(sce)$qc.genexp &lt;- isOutlier(sce$detected,nmads=4, log=TRUE, type=&quot;lower&quot;,batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, &quot;thresholds&quot;))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"1135.603","2":"524.9958","3":"304.4307","4":"475.396","5":"479.8373","6":"925.2578","7":"1258.091","8":"799.9828","9":"1002.116","10":"903.1028","11":"317.1065","12":"646.2279","13":"422.7337","14":"358.9782","15":"41.40905","16":"442.7363","17":"32.2316","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"762.5236","2":"271.8562","3":"144.9042","4":"249.7939","5":"268.6535","6":"599.9473","7":"843.3918","8":"467.6736","9":"670.5747","10":"564.8013","11":"155.1783","12":"384.5413","13":"214.8954","14":"189.4562","15":"11.43966","16":"240.9391","17":"10.7864","_rn_":"lower"},{"1":"Inf","2":"Inf","3":"Inf","4":"Inf","5":"Inf","6":"Inf","7":"Inf","8":"Inf","9":"Inf","10":"Inf","11":"Inf","12":"Inf","13":"Inf","14":"Inf","15":"Inf","16":"Inf","17":"Inf","_rn_":"higher"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code># Detect cells with high mitochondrial content
@@ -2000,7 +2049,7 @@ data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
            Total_discarded = sum(sce$discard))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Library_size"],"name":[1],"type":["int"],"align":["right"]},{"label":["Genes_detected"],"name":[2],"type":["int"],"align":["right"]},{"label":["Mitochondrial_percentage"],"name":[3],"type":["int"],"align":["right"]},{"label":["Total_discarded"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"2460","2":"6310","3":"7932","4":"12141"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Library_size"],"name":[1],"type":["int"],"align":["right"]},{"label":["Genes_detected"],"name":[2],"type":["int"],"align":["right"]},{"label":["Mitochondrial_percentage"],"name":[3],"type":["int"],"align":["right"]},{"label":["Total_discarded"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"1327","2":"4297","3":"7932","4":"10979"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -2049,6 +2098,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/QcPlots1-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/QcPlots1-1.png" target="_blank">bbe2e30</a>
@@ -2178,6 +2238,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/QcPlots2-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/QcPlots2-1.png" target="_blank">bbe2e30</a>
@@ -2433,6 +2504,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/QcPlots4-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/QcPlots4-1.png" target="_blank">bbe2e30</a>
 </td>
 <td>
@@ -2636,6 +2718,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/QcPlots6-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/QcPlots6-1.png" target="_blank">bbe2e30</a>
 </td>
 <td>
@@ -2767,6 +2860,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/QcPlots7-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/QcPlots7-1.png" target="_blank">bbe2e30</a>
 </td>
 <td>
@@ -2863,7 +2967,16 @@ sarloet
 <div id="apply-filtering" class="section level3">
 <h3>Apply filtering</h3>
 <pre class="r"><code># Create the filtered sce element
-sce.filtered &lt;- sce[, !colData(sce)$discard]</code></pre>
+sce.filtered &lt;- sce[, !colData(sce)$discard]
+
+cat(
+    &quot;NR of Genes Before Filtering &quot;, dim(sce)[2],
+    &quot;\nNR of Genes After Filtering &quot;, dim(sce.filtered)[2],
+    &quot;\nNR of Genes Filtered out &quot;, dim(sce)[2] - dim(sce.filtered)[2]
+    )</code></pre>
+<pre><code>NR of Genes Before Filtering  82815 
+NR of Genes After Filtering  71836 
+NR of Genes Filtered out  10979</code></pre>
 </div>
 </div>
 <div id="filter-genes" class="section level2">
@@ -2892,8 +3005,8 @@ cat(
     &quot;\nNR of Genes Filtered out &quot;, dim_before_filtering[1] - dim_after_filtering[1]
     )</code></pre>
 <pre><code>NR of Genes Before Filtering  34594 
-NR of Genes After Filtering  30573 
-NR of Genes Filtered out  4021</code></pre>
+NR of Genes After Filtering  30586 
+NR of Genes Filtered out  4008</code></pre>
 </div>
 <div id="plots-after-filtering" class="section level2">
 <h2>Plots after Filtering</h2>
@@ -2930,6 +3043,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">bbe2e30</a>
@@ -3025,7 +3149,7 @@ sarloet
 <pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Sample)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["SynBio_028"],"name":[1],"type":["int"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["int"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["int"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["int"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["int"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["int"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["int"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["int"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["int"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["int"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["int"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["int"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["int"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["int"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["int"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["int"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["int"],"align":["right"]}],"data":[{"1":"3458","2":"546","3":"4289","4":"3450","5":"2093","6":"5410","7":"5372","8":"5493","9":"4298","10":"4069","11":"2864","12":"4851","13":"5911","14":"4129","15":"5277","16":"3151","17":"6013"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["SynBio_028"],"name":[1],"type":["int"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["int"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["int"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["int"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["int"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["int"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["int"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["int"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["int"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["int"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["int"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["int"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["int"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["int"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["int"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["int"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["int"],"align":["right"]}],"data":[{"1":"3505","2":"553","3":"4289","4":"3545","5":"2315","6":"5478","7":"5437","8":"5659","9":"4369","10":"4142","11":"2874","12":"4981","13":"6016","14":"4159","15":"5277","16":"3224","17":"6013"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -3057,6 +3181,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">bbe2e30</a>
@@ -3152,7 +3287,7 @@ sarloet
 <pre class="r"><code>data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Knee"],"name":[1],"type":["int"],"align":["right"]},{"label":["MCP"],"name":[2],"type":["int"],"align":["right"]},{"label":["Wrist"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"23452","2":"20467","3":"26755"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Knee"],"name":[1],"type":["int"],"align":["right"]},{"label":["MCP"],"name":[2],"type":["int"],"align":["right"]},{"label":["Wrist"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"23858","2":"20919","3":"27059"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -3193,6 +3328,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">bbe2e30</a>
@@ -3277,8 +3423,8 @@ sarloet
 <pre class="r"><code>rm(plot_data,rel_expression)
 gc()</code></pre>
 <pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells  10987681  586.9   18161920   970.0         NA   18161920   970.0
-Vcells 779945827 5950.6 2095889933 15990.4      16384 2037446521 15544.5</code></pre>
+Ncells  10987602  586.9   18161931   970.0         NA   18161931   970.0
+Vcells 781232082 5960.4 2100618504 16026.5      16384 2043117987 15587.8</code></pre>
 </div>
 </div>
 <div id="normalization" class="section level2">
@@ -3328,6 +3474,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/LibrarySizeNorm-1.png" target="_blank">bbe2e30</a>
@@ -3465,6 +3622,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/DeconvolutionNorm-1.png" target="_blank">bbe2e30</a>
 </td>
 <td>
@@ -3559,12 +3727,12 @@ sarloet
 <pre><code>[1] &quot;Library size factors&quot;</code></pre>
 <pre class="r"><code>summary(sizeFactors(sce.lib))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-0.02795 0.39470 0.76463 1.00000 1.35826 6.96956 </code></pre>
+0.02834 0.38231 0.76080 1.00000 1.36466 7.07821 </code></pre>
 <pre class="r"><code>print(&quot;Deconvolution size factors&quot;)</code></pre>
 <pre><code>[1] &quot;Deconvolution size factors&quot;</code></pre>
 <pre class="r"><code>summary(sizeFactors(sce.deconv))</code></pre>
 <pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-0.002983 0.395969 0.774749 1.000000 1.350656 8.613939 </code></pre>
+0.000563 0.383175 0.774200 1.000000 1.358817 9.370405 </code></pre>
 <div id="plot-deconvolution-against-dibrary-size-factors"
 class="section level4 tabset">
 <h4 class="tabset">Plot Deconvolution against Dibrary Size Factors</h4>
@@ -3604,6 +3772,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors1-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors1-1.png" target="_blank">bbe2e30</a>
@@ -3707,6 +3886,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors2-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/PlotSizeFactors2-1.png" target="_blank">bbe2e30</a>
 </td>
 <td>
@@ -3785,14 +3975,14 @@ sarloet
 sce.filtered &lt;- logNormCounts(sce.deconv)
 summary(sizeFactors(sce.filtered))</code></pre>
 <pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-0.002983 0.395969 0.774749 1.000000 1.350656 8.613939 </code></pre>
+0.000563 0.383175 0.774200 1.000000 1.358817 9.370405 </code></pre>
 <pre class="r"><code>assayNames(sce.filtered)</code></pre>
 <pre><code>[1] &quot;counts&quot;    &quot;logcounts&quot;</code></pre>
 <pre class="r"><code>rm(sce.lib, sce.deconv)
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells   11031960  589.2   18161920   970.0         NA   18161920   970.0
-Vcells 1023207354 7806.5 2095889933 15990.4      16384 2095888184 15990.4</code></pre>
+Ncells   11031759  589.2   18161931   970.0         NA   18161931   970.0
+Vcells 1025133054 7821.2 2100618504 16026.5      16384 2098776805 16012.4</code></pre>
 </div>
 </div>
 <div id="variable-level-metrics" class="section level2">
@@ -3809,7 +3999,7 @@ verify that a treatment has an effect.</p>
 data.frame(head(vars))</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Sample"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Joint.Location"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Pathotype"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Seropositivity"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["GCTreatment"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Protocol"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Sex"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Age"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.28795946","2":"0.003286755","3":"0.021576017","4":"0.001675408","5":"0.0029919137","6":"8.599493e-04","7":"2.336454e-02","8":"0.0028537390","_rn_":"ENSG00000238009.AL627309.1"},{"1":"0.04909619","2":"0.006047763","3":"0.002959648","4":"0.008712673","5":"0.0021938604","6":"3.165819e-03","7":"1.722210e-04","8":"0.0037095941","_rn_":"ENSG00000239945.AL627309.3"},{"1":"0.51161112","2":"0.025899004","3":"0.072809792","4":"0.031188600","5":"0.0206084807","6":"2.913165e-03","7":"4.608572e-02","8":"0.0275518862","_rn_":"ENSG00000241860.AL627309.5"},{"1":"0.11040316","2":"0.017303827","3":"0.036102936","4":"0.001673891","5":"0.0076431083","6":"3.665067e-05","7":"1.432185e-03","8":"0.0024793298","_rn_":"ENSG00000241599.AL627309.4"},{"1":"0.01581502","2":"0.007184043","3":"0.002202388","4":"0.002646207","5":"0.0005214425","6":"1.483955e-05","7":"8.153087e-05","8":"0.0002298246","_rn_":"ENSG00000229905.AL669831.2"},{"1":"1.03832994","2":"0.151842631","3":"0.142389996","4":"0.079783560","5":"0.3803525718","6":"7.028017e-02","7":"3.457226e-03","8":"0.3598477776","_rn_":"ENSG00000237491.LINC01409"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Sample"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Joint.Location"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Pathotype"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Seropositivity"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["GCTreatment"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Protocol"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Sex"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Age"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.28339305","2":"0.003317109","3":"0.021772077","4":"0.0003982502","5":"0.0056396527","6":"1.302381e-03","7":"1.937478e-02","8":"0.004623534","_rn_":"ENSG00000238009.AL627309.1"},{"1":"0.04862072","2":"0.006096540","3":"0.003089089","4":"0.0087277330","5":"0.0021835880","6":"3.095650e-03","7":"2.242918e-04","8":"0.003666251","_rn_":"ENSG00000239945.AL627309.3"},{"1":"0.46740500","2":"0.019936553","3":"0.045389269","4":"0.0155156788","5":"0.0258536084","6":"4.645736e-03","7":"2.945924e-02","8":"0.030125900","_rn_":"ENSG00000241860.AL627309.5"},{"1":"0.10883970","2":"0.017433397","3":"0.035950616","4":"0.0016735181","5":"0.0071890833","6":"2.918107e-05","7":"1.388326e-03","8":"0.002363886","_rn_":"ENSG00000241599.AL627309.4"},{"1":"0.01548313","2":"0.007149742","3":"0.002217880","4":"0.0026826069","5":"0.0005191736","6":"2.864758e-05","7":"8.370889e-05","8":"0.000245018","_rn_":"ENSG00000229905.AL669831.2"},{"1":"1.00623113","2":"0.153823381","3":"0.144207350","4":"0.0797869755","5":"0.3502190614","6":"6.912711e-02","7":"1.995198e-03","8":"0.345857903","_rn_":"ENSG00000237491.LINC01409"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code>plotExplanatoryVariables(vars)</code></pre>
@@ -3836,6 +4026,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f38147e54033d11f7a7fb0e561125ed3a1c54cd3/docs/figure/01_Preprocessing.Rmd/VariableMetrics-1.png" target="_blank">f38147e</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/bbe2e30b9423750aebe8cf501ba6908aa18d303f/docs/figure/01_Preprocessing.Rmd/VariableMetrics-1.png" target="_blank">bbe2e30</a>
