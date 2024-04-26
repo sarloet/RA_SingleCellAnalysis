@@ -111,7 +111,7 @@ rm(p1, p2, p3)
 ## Identify Marker Genes
 
 
-### Wilcoxon rank-sum test
+### Wilcoxon rank-sum test on Cluster
 
 ```{r IdentifyMarker}
 #Select the hvg
@@ -171,7 +171,7 @@ gc()
 ```
 
 
-### Wilcoxon rank-sum test
+### Wilcoxon rank-sum test 
 
 ```{r IdentifyMarker}
 #Select the hvg
@@ -194,7 +194,7 @@ for (i in 1:length(markers_wilcox_up)){
   #Save in Exelsheet
   addDataFrame(tmp[order(tmp$Top , decreasing = FALSE),][1:50,1:4], sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
 }
-saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
+saveWorkbook(wb,paste0( path , "/output/Cluster_Wilcoxon.xlsx"))
 
 #Show top 5 DE Genes of each cluster
 data.frame(top5DEgenes)
@@ -321,7 +321,7 @@ Identify cell types for a finer grained Annotation on lower hierarchical level
 
 ```{r MacrophageL1, results='asis'}
 
-VizGenEx(c("MARCO","LYZ","MSR1")) 
+VizGenEx(c("MARCO","LYZ","MSR1","CD14","FCGR3A")) 
 
 ```
 
@@ -362,7 +362,7 @@ VizGenEx(c("PROX1","LYVE1", "CCL21"))
 
 ```{r BCellL1, results='asis'}
 
-VizGenEx(c("CD19","MS4A1", "TNFRSF13C"))
+VizGenEx(c("CD19","MS4A1","CD79A","TNFRSF13C"))
 
 ```
 
@@ -370,7 +370,7 @@ VizGenEx(c("CD19","MS4A1", "TNFRSF13C"))
 
 ```{r PlasmaL1, results='asis'}
 
-VizGenEx(c("JSRP1","DERL3", "JCHAIN"))
+VizGenEx(c("JSRP1","DERL3", "JCHAIN","SDC1","MZB1"))
 
 ```
 
@@ -475,6 +475,39 @@ plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by=
 
 ```
 
+
+## Plot Selected Markergenes 
+
+```{r PlotHeatmap}
+#Heatmap of Marker Gened used for Annotation
+#Endo "PECAM1", "CDH5"
+#Myeloid "CD14","FCGR3A"
+#Bcell "CD19","MS4A1","CD79A"
+#Plasma "SDC1","MZB1"
+#Tcell "CD3E", "CD3G"
+#Mast "KIT","IL1RL1","MS4A2"
+#Fibroblast "PDGFRB","DCN","COL1A1"
+#Neutrophil "CSF3R","S100A8","TREM1"
+#pDC
+#SMC
+
+markers <- c("PDGFRB","DCN","COL1A1","PECAM1", "CDH5","CD14","FCGR3A","CD19","MS4A1","CD79A","SDC1","MZB1","CD3E", "CD3G","KIT","MS4A2","CSF3R","S100A8","TREM1")
+
+
+
+# To avoid a too big plot we only keep every 20th cell
+sce.plot <- sce[unique(top5DEgenes), seq(1, dim(sce)[2], 20)]
+dittoHeatmap(sce.plot, vars = unique(top5DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE, heatmap.colors.max.scaled = inferno(100) )
+
+
+#Dotplot
+dittoDotPlot(sce, vars = markers , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+
+rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
+gc()
+```
+
+
 ## Frequencies of celltypes in clusters per Sample {.tabset}
 
 ```{r ClusterInfo}
@@ -505,6 +538,81 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 
 
 ```
+
+## Identify Marker Genes for Annotation
+
+
+### Wilcoxon rank-sum test on Cluster
+
+```{r AnnoMarker}
+
+for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
+  #Wilcoxon rank-sum test
+  markers_wilcox <- wilcoxauc(sce, group_by=labeling, assay = 'logcounts')
+  # Get the top 50 markers for each Anno (save in excel file)
+  # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
+  topDEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
+  
+  wb = createWorkbook()
+  for (i in 1:max(as.integer(levels(sce$paste0(labeling))))){
+    #get genes for the Anno
+    markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
+    #Create table
+    tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
+    
+    #Save table in Exelsheet
+    addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+  }
+  saveWorkbook(wb,paste0( path , "/output/",paste0(labeling),"_Wilcoxon.xlsx"))  
+  
+  
+}
+
+
+
+------------------------------------
+#Wilcoxon rank-sum test
+markers_wilcox_L0 <- wilcoxauc(sce, group_by='ManualAnno_L0', assay = 'logcounts')
+# Get the top 50 markers for each cluster (save in excel file)
+# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
+topDEgenes_L0 <- top_markers(markers_wilcox_L0, n = 50, auc_min = 0.5, pval_max = 0.05)
+
+wb = createWorkbook()
+for (i in 1:max(as.integer(levels(sce$ManualAnno_L0)))){
+  #get genes for the cluster
+  markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
+  #Create table
+  tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
+  
+  #Save table in Exelsheet
+  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+}
+saveWorkbook(wb,paste0( path , "/output/Annotated_L0_Wilcoxon.xlsx"))
+
+
+
+
+markers_wilcox_L1 <- wilcoxauc(sce, group_by='ManualAnno_L1', assay = 'logcounts')
+# Get the top 50 markers for each ManualAnno_L1 (save in excel file)
+# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
+topDEgenes_L1 <- top_markers(markers_wilcox_L1, n = 50, auc_min = 0.5, pval_max = 0.05)
+
+wb = createWorkbook()
+for (i in 1:max(as.integer(levels(sce$ManualAnno_L1)))){
+  #get genes for the ManualAnno_L1
+  markers<-top50DEgenes[,paste0(i), drop=TRUE]
+  #Create table
+  tmp<-markers_wilcox_L1[markers_wilcox_L1$feature %in% markers & markers_wilcox_L1$group == i,]
+  
+  #Save table in Exelsheet
+  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+}
+saveWorkbook(wb,paste0( path , "/output/Annotated_L1_Wilcoxon.xlsx"))
+```
+
+
+
+
 
 ## Save the dataset
 

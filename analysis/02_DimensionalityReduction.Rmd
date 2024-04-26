@@ -126,9 +126,10 @@ per.block <- dec$per.block
 par(mfrow=c(2, 2))
 for (i in seq_along(per.block)) {
     decX <- per.block[[i]]
-    plot(decX$mean, decX$total, xlab="Mean log-expression", 
-        ylab="Variance", main=names(per.block)[i])
+    plot(decX$mean, decX$total, col= c("orange","black")[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
+        ylab="Variance", main=names(per.block)[i] )
     curve(metadata(decX)$trend(x), col="blue", add=TRUE)
+    legend("topright", legend=c("Not HVG", "HVG"), col = c("orange","black"),bty="n",pch=10)
 }
 ```
 
@@ -166,7 +167,7 @@ elbow
 
 ```{r PCvsVariance}
 # Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")+theme_classic()
 
 ```
 
