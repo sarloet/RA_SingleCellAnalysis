@@ -15,9 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -28,23 +26,25 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
 
 ```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scater)
-library(scran)
-library(batchelor)
 library(reticulate)
 library(bluster)
 })
 
 ```
+
 
 ### Set Parameter
 
@@ -79,7 +79,7 @@ dim(sce.cluster)
 #Setup Hierarchical Clustering -use the bluster package
 
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
-colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
 
 data.frame(as.list(table(colData(sce.cluster)$louvain)))
 
@@ -93,7 +93,7 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 #use the bluster package
 
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
 
 
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
@@ -108,7 +108,7 @@ data.frame(as.list(table(colData(sce.cluster)$leiden)))
 #Setup Hierarchical Clustering
 #use the bluster package
 
-colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap", BPPARAM=bpp)))
+colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN_reduced"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap", BPPARAM=bpp)))
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
@@ -121,7 +121,7 @@ data.frame(as.list(table(colData(sce.cluster)$walktrap)))
 ## Clustering Plots
 
 ```{r ClusteringPlots}
-methods <- c("louvain","leiden","walktrap")
+methods <- c("louvain","leiden",)#"walktrap"
 ```
 
 ### PCA Plots   {.tabset}
@@ -130,7 +130,7 @@ methods <- c("louvain","leiden","walktrap")
 for (i in methods){
   cat(paste0("#### ",i, "\n"))
   print(
-  plotReducedDim(sce.cluster, dimred="MNN", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_reduced", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
   )
   cat(' \n \n')
   }
@@ -157,7 +157,7 @@ for (i in methods){
   cat(paste0("#### ", i, "\n"))
   
   ## Silhouette plot
-  sil.approx <- approxSilhouette(reducedDim(sce.cluster, "MNN"), clusters=colData(sce.cluster)[,i])
+  sil.approx <- approxSilhouette(reducedDim(sce.cluster, "MNN_reduced"), clusters=colData(sce.cluster)[,i])
   
   sil.data <- as.data.frame(sil.approx)
   sil.data$closest <- factor(ifelse(sil.data$width > 0, colData(sce.cluster)[,i], sil.data$other))

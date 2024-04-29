@@ -144,7 +144,7 @@ for (i in 1:max(as.integer(levels(sce$cluster)))){
   tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
   
   #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+  addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=FALSE,col.names = TRUE)
 }
 saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
@@ -156,7 +156,6 @@ saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 ```{r PlotHeatmap}
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
-
 
 # To avoid a too big plot we only keep every 20th cell
 sce.plot <- sce[unique(top5DEgenes), seq(1, dim(sce)[2], 20)]
@@ -171,73 +170,7 @@ gc()
 ```
 
 
-### Wilcoxon rank-sum test 
 
-```{r IdentifyMarker}
-#Select the hvg
-sce.marker <- sce[rowData(sce)$is_hvg==TRUE,]
-rownames(sce.marker) <- rowData(sce.marker)$Symbol
-
-#Wilcoxon rank-sum test
-markers_wilcox_up <- findMarkers(sce.marker, groups = sce$cluster, block = sce$Sample, direction = "up")
-
-```
-
-```{r SaveTopMarker}
-#Dataset for heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
-top5DEgenes <-do.call("rbind",lapply(markers_wilcox_up, function(x) { x[ order(x$Top, decreasing = FALSE),][1:5,1:4]}))
-
-#Create Excel file with top 50 for each cluster
-wb = createWorkbook()
-for (i in 1:length(markers_wilcox_up)){
-  tmp<-markers_wilcox_up[[i]]
-  #Save in Exelsheet
-  addDataFrame(tmp[order(tmp$Top , decreasing = FALSE),][1:50,1:4], sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=TRUE,col.names = TRUE)
-}
-saveWorkbook(wb,paste0( path , "/output/Cluster_Wilcoxon.xlsx"))
-
-#Show top 5 DE Genes of each cluster
-data.frame(top5DEgenes)
-
-```
-
-### Wilcoxon heatmap
-
-```{r PlotHeatmap}
-#Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
-
-#Get most meaningful markers
-top_genes_wilcox <- lapply(markers_wilcox_up, function(marker_set){
-  marker_set %>%
-  as.data.frame() %>%
-  filter(Top <= 1) %>%
-  arrange(p.value)%>%
-  dplyr::slice(1:2)%>%
-  rownames()
-}) %>% 
-  unlist(use.names=F) %>% 
-  unique()
-
-
-# To avoid a too big plot we only keep every 10th cell
-sce.plot <- sce.marker[top_genes_wilcox, seq(1, dim(sce.marker)[2], 20)]
-# We sort by cluster
-sce.plot <- sce.plot[,order(sce.plot$label)]
-# Anotations
-column_annotations <- data.frame("Cluster"=factor(sce.plot$label), row.names=colnames(sce.plot))
-# clip heatmap values to ensure that colour contrast is high
-sce.plot <- assay(sce.plot, "logcounts")
-sce.plot[sce.plot >=3] = 3
-
-pheatmap(sce.plot, annotation_col=column_annotations,
-         show_rownames=TRUE,cluster_rows=FALSE, show_colnames=FALSE, cluster_cols=FALSE)
-
-dittoDotPlot(sce.marker, vars = top_genes_wilcox , group.by = "label",min.color="white", max.color="red")
-dittoDotPlot(sce, vars = marker , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE ,min = -2.5,max = 2.5)
-
-rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
-
-```
 
 ## Manual Celltype annotation
 
@@ -585,7 +518,7 @@ for (i in 1:max(as.integer(levels(sce$ManualAnno_L0)))){
   tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
   
   #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
 }
 saveWorkbook(wb,paste0( path , "/output/Annotated_L0_Wilcoxon.xlsx"))
 
@@ -605,7 +538,7 @@ for (i in 1:max(as.integer(levels(sce$ManualAnno_L1)))){
   tmp<-markers_wilcox_L1[markers_wilcox_L1$feature %in% markers & markers_wilcox_L1$group == i,]
   
   #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
 }
 saveWorkbook(wb,paste0( path , "/output/Annotated_L1_Wilcoxon.xlsx"))
 ```

@@ -393,6 +393,21 @@ VizGenEx(c("CD14","IL1B","LYZ","CD163","ITGAX","CD68","CSF1R","FCGR3A"),"Myeloid
 
 
 ```{r TcellL2, results='asis'}
+#M1 Macrophage
+VizGenEx(c("CD38","Gpr18","Fpr2"),"Myeloid")  
+
+
+```
+
+
+```{r TcellL2, results='asis'}
+#M2 Macrophage
+VizGenEx(c("Egr2","C-MYC"),"Myeloid")  
+
+
+```
+
+```{r TcellL2, results='asis'}
 #monocyte
 VizGenEx(c("CST3","CSF1R","ITGAM","CD14","FCGR3A","FCGR3B"),"Myeloid")  
 
