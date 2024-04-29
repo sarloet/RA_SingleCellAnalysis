@@ -39,7 +39,7 @@ source(here("code", "standard_libraries.R"))
 #Load Packages
 
 suppressPackageStartupMessages({
-library(PCAtools)
+library(intrinsicDimension)
 })
 
 ```
@@ -161,18 +161,20 @@ pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentV
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
 #PCA dim estimate the elbowpoint
- cat(paste0("Elbow Point: ",findElbowPoint(pca_pct_variance$variance)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)))
+cat(paste0("Elbow Point: ",elbow))
+#cat(paste0("Elbow Point: ",findElbowPoint(pca_pct_variance$variance)))
 ```
 
 ```{r PCvsVariance}
 # Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 20,color="red")+theme_classic()
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")+theme_classic()
 
 ```
 
 ```{r SelectPC}
 #PCA select nr of PC
-reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(20)]
+reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"PCA"))

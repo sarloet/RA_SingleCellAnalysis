@@ -41,6 +41,7 @@ suppressPackageStartupMessages({
 library(batchelor)
 library(reticulate)
 library(bluster)
+library(intrinsicDimension)
 })
 
 ```
@@ -136,8 +137,10 @@ rm(sce.Batchelor)
 ### Chosing the number of PCs after correction
 
 ```{r SelectPC}
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)))
+
 #PCA select nr of PC
-reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(20)]
+reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(elbow)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"MNN"))
