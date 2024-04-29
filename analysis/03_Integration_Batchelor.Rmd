@@ -41,7 +41,6 @@ suppressPackageStartupMessages({
 library(batchelor)
 library(reticulate)
 library(bluster)
-library(intrinsicDimension)
 })
 
 ```
@@ -137,9 +136,6 @@ rm(sce.Batchelor)
 ### Chosing the number of PCs after correction
 
 ```{r SelectPC}
-#PCA dim elbow estimate using 
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)))
-
 #PCA select nr of PC
 reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(20)]
 reducedDimNames(sce)
@@ -183,47 +179,38 @@ plotReducedDim(sce, dimred="MNN_reduced", colour_by="Joint.Location") + ggtitle(
 
 ## UMAP Plots after Integration {.tabset}
 
-```{r PlotUMAPAB1}
+```{r RunUMAP}
 #Run UMAP
-sce <- runUMAP(sce ,name = "MNN_UMAP1", dimred = "MNN", min_dist = 0.1)
-sce <- runUMAP(sce ,name = "MNN_UMAP_reduced1", dimred = "MNN_reduced", min_dist = 0.1)
-
-
-#Run UMAP
-sce <- runUMAP(sce ,name = "MNN_UMAP", dimred = "MNN", min_dist = 0.2)
-sce <- runUMAP(sce ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced", min_dist = 0.2)
-
-#Run UMAP
-sce <- runUMAP(sce ,name = "MNN_UMAP3", dimred = "MNN")
-sce <- runUMAP(sce ,name = "MNN_UMAP_reduced3", dimred = "MNN_reduced")
+sce <- runUMAP(sce ,name = "MNN_UMAP", dimred = "MNN")
+sce <- runUMAP(sce ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced")
 ```
 
 ### Colored by Sample
 
-```{r PlotUMAPAB2}
+```{r PlotUMAPAB1}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced3", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
 ```
 
 ### Colored by Joint
 
-```{r PlotUMAPAB3}
+```{r PlotUMAPAB2}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced3", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")
 ```
 
 ### Facet by Sample
 
-```{r PlotUMAPAB4}
+```{r PlotUMAPAB3}
 #Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="MNN_UMAP_reduced3", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 ### Facet by Joint
 
-```{r PlotUMAPAB5}
+```{r PlotUMAPAB4}
 #Plot UMAP before data integration per joint
-plotReducedDim(sce, dimred="MNN_UMAP_reduced3", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
 ```
 
 
