@@ -413,7 +413,7 @@ div.tocify {
 integration</h1>
 <h3 class="subtitle">03_Integration_Batchelor</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 29 2024 13:03:26</h4>
+<h4 class="date">Apr 29 2024 13:58:07</h4>
 
 </div>
 
@@ -573,15 +573,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreee2fa1d5dc74e46cd9e1227de96131345599a02b2targetblanke2fa1d5a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreec59bd0119205fad1bf801aa09f63566d48a97124targetblankc59bd01a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/e2fa1d5dc74e46cd9e1227de96131345599a02b2" target="_blank">e2fa1d5</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/c59bd0119205fad1bf801aa09f63566d48a97124" target="_blank">c59bd01</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreee2fa1d5dc74e46cd9e1227de96131345599a02b2targetblanke2fa1d5a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreec59bd0119205fad1bf801aa09f63566d48a97124targetblankc59bd01a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -591,7 +591,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/e2fa1d5dc74e46cd9e1227de96131345599a02b2" target="_blank">e2fa1d5</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/c59bd0119205fad1bf801aa09f63566d48a97124" target="_blank">c59bd01</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -622,8 +622,10 @@ Ignored files:
     Ignored:    output/Cluster_Marker_Genes.xlsx
 
 Unstaged changes:
+    Modified:   analysis/03_Integration_Harmony.Rmd
     Modified:   analysis/04_Clustering.Rmd
     Modified:   analysis/05_CelltypeAnnotation.Rmd
+    Modified:   analysis/06_SubClustering.Rmd
 
 </code></pre>
 <p>
@@ -670,6 +672,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/c59bd0119205fad1bf801aa09f63566d48a97124/analysis/03_Integration_Batchelor.Rmd" target="_blank">c59bd01</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+<td>
+Informative commit message
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/03_Integration_Batchelor.html" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1001,6 +1037,7 @@ suppressPackageStartupMessages({
 library(batchelor)
 library(reticulate)
 library(bluster)
+library(intrinsicDimension)
 })</code></pre>
 </div>
 <div id="set-parameter" class="section level3">
@@ -1050,6 +1087,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">ceca7c8</a>
@@ -1104,6 +1152,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">ceca7c8</a>
@@ -1182,14 +1241,16 @@ data.frame(metadata(sce)$merge.info$lost.var)</code></pre>
 <div id="chosing-the-number-of-pcs-after-correction"
 class="section level3">
 <h3>Chosing the number of PCs after correction</h3>
-<pre class="r"><code>#PCA select nr of PC
-reducedDim(sce,&quot;MNN_reduced&quot;) &lt;- reducedDim(sce,&quot;MNN&quot;)[,seq_len(20)]
+<pre class="r"><code>elbow &lt;- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, &quot;MNN&quot;)), k=10)))
+
+#PCA select nr of PC
+reducedDim(sce,&quot;MNN_reduced&quot;) &lt;- reducedDim(sce,&quot;MNN&quot;)[,seq_len(elbow)]
 reducedDimNames(sce)</code></pre>
 <pre><code>[1] &quot;PCA&quot;         &quot;PCA_reduced&quot; &quot;UMAP&quot;        &quot;MNN&quot;         &quot;MNN_reduced&quot;</code></pre>
 <pre class="r"><code>ncol(reducedDim(sce,&quot;MNN&quot;))</code></pre>
 <pre><code>[1] 50</code></pre>
 <pre class="r"><code>ncol(reducedDim(sce,&quot;MNN_reduced&quot;))</code></pre>
-<pre><code>[1] 20</code></pre>
+<pre><code>[1] 16</code></pre>
 </div>
 </div>
 <div id="pca-plots-after-integration" class="section level2 tabset">
@@ -1221,6 +1282,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">ceca7c8</a>
@@ -1277,6 +1349,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">ceca7c8</a>
 </td>
 <td>
@@ -1331,6 +1414,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">ceca7c8</a>
 </td>
 <td>
@@ -1383,6 +1477,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">ceca7c8</a>
@@ -1445,6 +1550,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">ceca7c8</a>
 </td>
 <td>
@@ -1486,6 +1602,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">ceca7c8</a>
@@ -1542,6 +1669,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">ceca7c8</a>
 </td>
 <td>
@@ -1594,6 +1732,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d39d1f7e10cd1c8d7acd15c8b91ea14189f4037a/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">d39d1f7</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-29
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ceca7c818e2d240ff75d1d8252524c122fd33f8c/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">ceca7c8</a>
@@ -1653,17 +1802,18 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] bluster_1.12.0              reticulate_1.36.0          
- [3] batchelor_1.18.1            gridExtra_2.3              
- [5] scran_1.30.2                scater_1.30.1              
- [7] scuttle_1.12.0              SingleCellExperiment_1.24.0
- [9] SummarizedExperiment_1.32.0 Biobase_2.62.0             
-[11] GenomicRanges_1.54.1        GenomeInfoDb_1.38.8        
-[13] IRanges_2.36.0              S4Vectors_0.40.2           
-[15] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
-[17] matrixStats_1.3.0           dplyr_1.1.4                
-[19] ggplot2_3.5.0               BiocParallel_1.36.0        
-[21] here_1.0.1                  workflowr_1.7.1            
+ [1] intrinsicDimension_1.2.0    yaImpute_1.0-34            
+ [3] bluster_1.12.0              reticulate_1.36.0          
+ [5] batchelor_1.18.1            gridExtra_2.3              
+ [7] scran_1.30.2                scater_1.30.1              
+ [9] scuttle_1.12.0              SingleCellExperiment_1.24.0
+[11] SummarizedExperiment_1.32.0 Biobase_2.62.0             
+[13] GenomicRanges_1.54.1        GenomeInfoDb_1.38.8        
+[15] IRanges_2.36.0              S4Vectors_0.40.2           
+[17] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
+[19] matrixStats_1.3.0           dplyr_1.1.4                
+[21] ggplot2_3.5.0               BiocParallel_1.36.0        
+[23] here_1.0.1                  workflowr_1.7.1            
 
 loaded via a namespace (and not attached):
  [1] bitops_1.0-7              rlang_1.1.3              
