@@ -103,10 +103,10 @@ Batches are merged in a pairwise manner (first two batches are merged to create 
 
 ```{r MergeOrder}
 #Set manual merge_order
-merge_order <- list(
-          list("SynBio028_1000","SynBio050", "SynBio074","SynBio077a", "SynBio077b"), #seronegative
-          list("SynBio076", "SynBio081", "SynBio083","SynBio084","SynBio087","SynBio093", "SynBio096","SynBio098a", "SynBio098b", "SynBio127", "SynBio130", "SynBio049"))#seropositive
-
+merge_order <- list( 
+          list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee
+          list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084", "SynBio_098b")),#Wrist
+          list("SynBio_028","SynBio_049", "SynBio_076","SynBio_081", "SynBio_087", "SynBio_130"))#MCP
 
 ```
 
@@ -114,7 +114,7 @@ merge_order <- list(
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
 bpstart(bpp)
-sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,prop.k=0.05
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order, correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order
 bpstop(bpp)
 
 
