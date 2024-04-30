@@ -262,11 +262,11 @@ abline(v = 300, col = "red")
 ```{r AdaptiveThresholds}
 
 # Detect cells with very low number of counts
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=4, log=TRUE, type="both",batch =sce$Sample )
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
 # Detect cells with very low number of genes
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=4, log=TRUE, type="both",batch =sce$Sample)
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
 # Detect cells with high mitochondrial content

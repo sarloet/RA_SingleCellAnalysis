@@ -78,7 +78,7 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ```{r UMAPAnnotation}
 #cell type
-plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Annotation ",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Annotation ",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -154,15 +154,15 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 
 ```{r }
 #construct KNN graph
-
-sce.milo <- buildGraph(sce.milo, k = 40, d = 20, reduced.dim = "MNN_reduced")
+dim <- ncol(reducedDim(sce,"MNN_reduced"))
+sce.milo <- buildGraph(sce.milo, k = 40, d = dim, reduced.dim = "MNN_reduced")
 
 ```
 
 
 ```{r }
 #Defining representative neighbourhoods on the KNN graph
-sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 40, d = 20, refined = TRUE, reduced_dims = "MNN_reduced",refinement_scheme="graph")
+sce.milo <- makeNhoods(sce.milo, prop = 0.05, k = 40, d = dim, refined = TRUE, reduced_dims = "MNN_reduced",refinement_scheme="graph")
 
 # To evaluate whether the value of k used for graph building was appropriate. We can check this out using the plotNhoodSizeHist function. As a rule of thumb we want to have an average neighbourhood size over 5 x N_samples. If the mean is lower, or if the distribution is
 
@@ -212,13 +212,13 @@ constrast
 
 ```{r }
 # Computing neighbourhood connectivity
-sce.milo <- calcNhoodDistance(sce.milo, d=20, reduced.dim = "MNN_reduced")
+sce.milo <- calcNhoodDistance(sce.milo, d=dim, reduced.dim = "MNN_reduced")
 
 ```
 
 ```{r }
 # Testing
-res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationWrist", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
 
 ```
 
@@ -256,12 +256,12 @@ ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercep
 sce.milo <- buildNhoodGraph(sce.milo)
 
 ## Plot single-cell UMAP
-umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP_reduced3", 
+umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP_reduced", 
                           text_size = 3, point_size=0.5) +
   guides(fill="none")
 
 ## Plot neighbourhood graph
-nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP_reduced3",alpha=0.1) 
+nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP_reduced",alpha=0.1) 
   
 umap_pl + nh_graph_pl +
   plot_layout(guides="auto")

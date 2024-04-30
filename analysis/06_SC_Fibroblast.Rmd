@@ -1,0 +1,176 @@
+---
+title: "Subcluster Fibroblast"
+subtitle: "06_SC_Fibroblast"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Subcluster Fibroblast
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+
+```{r LoadPackages, warning=FALSE,eval=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(batchelor)
+library(bluster)
+library(presto)
+library(dittoSeq)
+library(gridExtra)
+})
+
+```
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+library(here)
+source(here("code", "standard_libraries.R"))
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+
+```
+
+### Subset data for only Fibroblast
+
+```{r LoadDataset}
+## RA DATASET
+cell_type = "Fibroblast"
+sce <- sce.sc[,sce.sc$celltype == cell_type]
+
+```
+
+### Explore Dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UMAPs coloured by cluster or cell type
+
+### Plot Annotation {.tabset}
+
+#### Plot UMAP of Subclusters 
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, paste0("MNN_UMAP_reduced", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+```
+
+#### Plot Recalculated UMAP of Subclusters 
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, paste0("SC_UMAP_", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+```
+
+
+
+## Annotate Subcluster
+
+#### Identify Marker Genes Wilcoxon rank-sum test
+
+```{r FibroblastsIdentifyMarker}
+markers_wilcox <- wilcoxauc(sce, 'subcluster', assay = 'logcounts')
+data.frame(markers_wilcox)
+```
+
+```{r FibroblastsPlotMarker}
+tmp <-top_markers(markers_wilcox, n = 4)
+
+tail(unlist(unname(as.list(tmp))),-4)
+
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+```
+
+
+#### Test Fibroblast marker {.tabset}
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")  
+
+
+```
+
+
+```{r FibroblastsAssignementL2}
+#Manual Annotation
+
+sce$ManualAnno_L2 <- as.integer(sce$subcluster)
+unique(sce$ManualAnno_L2)
+
+sce$ManualAnno_L2[sce$subcluster %in% c(2,3,12)] <- "Fibroblast"
+
+```
+
+#### UMAP Assigned Celltypes 
+
+```{r FibroblastsUMAPAssigned}
+plotReducedDim(sce, column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+```
+
+
+
+## DA
+
+
+
+## DE
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+```

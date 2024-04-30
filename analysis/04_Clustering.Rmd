@@ -93,7 +93,7 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 #use the bluster package
 
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=50,cluster.fun="leiden",BPPARAM =bpp,cluster.args=list(resolution=0.5)))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=55,cluster.fun="leiden",BPPARAM =bpp))
 
 
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
@@ -121,7 +121,7 @@ data.frame(as.list(table(colData(sce.cluster)$walktrap)))
 ## Clustering Plots
 
 ```{r ClusteringPlots}
-methods <- c("louvain","leiden",)#"walktrap"
+methods <- c("louvain","leiden")#"walktrap"
 ```
 
 ### PCA Plots   {.tabset}
@@ -142,7 +142,7 @@ for (i in methods){
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   print(
-  plotReducedDim(sce.cluster, dimred="MNN_UMAP", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_UMAP_reduced", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
   )
   cat(' \n \n')
   }
