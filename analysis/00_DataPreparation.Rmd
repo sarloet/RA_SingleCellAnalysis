@@ -162,10 +162,6 @@ dim(sce)
 
 Dimensions of the count matrix
 
-```{r ExcludeSampl}
-#Exclude sample SynBio130 due to low sequencing depth
-#sce <- sce[,sce$Sample!="SynBio130"]
-```
 
 ```{r ShowColData}
 #Feautures/row data
