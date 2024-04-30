@@ -129,7 +129,7 @@ reducedDim(sce, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')
 We use the percentage of variance lost as a diagnostic measure. Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity.
 ```{r VarianceLost}
 #Percentage Variance lost
-data.frame(metadata(sce)$merge.info$lost.var)
+data.frame(metadata(sce.Batchelor)$merge.info$lost.var)
 rm(sce.Batchelor)
 ```
 
