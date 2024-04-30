@@ -413,7 +413,7 @@ div.tocify {
 integration</h1>
 <h3 class="subtitle">03_Integration_Batchelor</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Apr 30 2024 23:13:54</h4>
+<h4 class="date">May 1 2024 00:41:33</h4>
 
 </div>
 
@@ -442,7 +442,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-04-30
+<strong>Last updated:</strong> 2024-05-01
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -573,15 +573,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree68c18e0d0d4097aa6cc00cb513fe84258caf3802targetblank68c18e0a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef955b39f039007180a5cfcb6e7b1359c090ba6betargetblankf955b39a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/68c18e0d0d4097aa6cc00cb513fe84258caf3802" target="_blank">68c18e0</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f955b39f039007180a5cfcb6e7b1359c090ba6be" target="_blank">f955b39</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree68c18e0d0d4097aa6cc00cb513fe84258caf3802targetblank68c18e0a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef955b39f039007180a5cfcb6e7b1359c090ba6betargetblankf955b39a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -591,7 +591,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/68c18e0d0d4097aa6cc00cb513fe84258caf3802" target="_blank">68c18e0</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f955b39f039007180a5cfcb6e7b1359c090ba6be" target="_blank">f955b39</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -666,6 +666,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/397311337d5cced9920b0628da34e1359ce1dba4/docs/03_Integration_Batchelor.html" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1168,7 +1185,7 @@ sce &lt;- readRDS(file = paste0(path,&#39;/output/02_sce_DimensionalityReduction
 <h3>Explore Dataset</h3>
 <pre class="r"><code>#Dimensions of count matrix
 dim(sce)</code></pre>
-<pre><code>[1] 30597 70734</code></pre>
+<pre><code>[1] 30579 68117</code></pre>
 </div>
 </div>
 <div id="pre-batch-correction-plots" class="section level2 tabset">
@@ -1200,6 +1217,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">f897f6e</a>
@@ -1300,6 +1328,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">f897f6e</a>
 </td>
 <td>
@@ -1391,8 +1430,8 @@ neighbours of each other.</p>
 <pre class="r"><code>#Perform scaling normalization within each batch
 sce.Batchelor &lt;-multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[[&quot;is_hvg&quot;]]], normalize.all=TRUE, BPPARAM = bpp)
 summary(sizeFactors(sce.Batchelor))</code></pre>
-<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-  0.00054   0.89610   1.76916   3.07488   3.22428 130.24728 </code></pre>
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+ 0.01421  0.87248  1.65080  2.27048  2.90509 69.97210 </code></pre>
 <p>Batches are merged in a pairwise manner (first two batches are merged
 to create a new cohort, then the next batch is merged with this new
 cohort, and so on until all batches have been integrated). Batch
@@ -1474,6 +1513,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">f897f6e</a>
@@ -1574,6 +1624,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">f897f6e</a>
 </td>
 <td>
@@ -1672,6 +1733,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">f897f6e</a>
 </td>
 <td>
@@ -1768,6 +1840,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">f897f6e</a>
@@ -1874,6 +1957,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">f897f6e</a>
 </td>
 <td>
@@ -1970,6 +2064,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">f897f6e</a>
@@ -2081,6 +2186,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">f897f6e</a>
 </td>
 <td>
@@ -2188,6 +2304,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/397311337d5cced9920b0628da34e1359ce1dba4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">3973113</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/f897f6e76eb2d909fb4ede8a7b340ee0a8e4353d/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">f897f6e</a>
