@@ -237,7 +237,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 ```{r FixedThresholds}
 #Some Fixed thresholds
 colData(sce)$qc.count_manual <- sce$sum < 400  # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 300  # Cells have at least 300 genes expressed
+colData(sce)$qc.genexp_manual <- sce$detected < 300 |sce$detected > 11000 # Cells have at least 300 genes expressed
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
@@ -339,7 +339,7 @@ colData(sce) %>%
 
 ```{r QcPlots3}
 #Plot Total count
-plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = data.frame(factor(sce$qc.count | sce$qc.count_manual,levels=c(FALSE,TRUE)))) + 
+plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = "discard") + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Total count")+
@@ -351,7 +351,7 @@ plotColData(sce, x="Sample", y="sum",other_fields="Sample",colour_by = data.fram
 
 ```{r QcPlots4}
 #Plot Detected Genes
-plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by = data.frame(factor(sce$qc.genexp | sce$qc.genexp_manual,levels=c(FALSE,TRUE))))+ 
+plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by ="discard")+ 
     facet_wrap(~Sample, nrow=1, scales = "free_x") + 
     scale_y_log10() + 
     ggtitle("Detected features")+
