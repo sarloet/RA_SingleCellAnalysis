@@ -47,8 +47,8 @@ library(intrinsicDimension)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
@@ -126,10 +126,10 @@ per.block <- dec$per.block
 par(mfrow=c(2, 2))
 for (i in seq_along(per.block)) {
     decX <- per.block[[i]]
-    plot(decX$mean, decX$total, col= c("orange","black")[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
+    plot(decX$mean, decX$total, col= c("pink","black")[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
         ylab="Variance", main=names(per.block)[i] )
     curve(metadata(decX)$trend(x), col="blue", add=TRUE)
-    legend("topright", legend=c("Not HVG", "HVG"), col = c("orange","black"),bty="n",pch=10)
+    legend("topright", legend=c("Not HVG", "HVG"), col = c("pink","black"),bty="n",pch=10)
 }
 ```
 

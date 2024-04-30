@@ -49,8 +49,8 @@ library(intrinsicDimension)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
@@ -114,7 +114,7 @@ merge_order <- list(
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
 bpstart(bpp)
-sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, prop.k=0.05,  subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, correct.all=TRUE,BPPARAM = bpp)#merge.order = merge_order,prop.k=0.05
 bpstop(bpp)
 
 
@@ -138,6 +138,7 @@ rm(sce.Batchelor)
 
 ```{r SelectPC}
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)))
+cat(paste0("Elbow Point: ",elbow))
 
 #PCA select nr of PC
 reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(elbow)]

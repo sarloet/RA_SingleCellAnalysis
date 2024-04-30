@@ -45,8 +45,8 @@ library(DropletUtils)
 ### Set parameter
 
 ```{r Setup}
-set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
