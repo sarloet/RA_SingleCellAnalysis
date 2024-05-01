@@ -413,7 +413,7 @@ div.tocify {
 integration</h1>
 <h3 class="subtitle">03_Integration_Batchelor</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">May 1 2024 03:16:57</h4>
+<h4 class="date">May 1 2024 04:31:04</h4>
 
 </div>
 
@@ -573,15 +573,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreebcab22abb35b040d02a519de0ca2f4ddbaa07ffdtargetblankbcab22aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree53803584f3bc6223e56e13d916936bf5034ff4f3targetblank5380358a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/bcab22abb35b040d02a519de0ca2f4ddbaa07ffd" target="_blank">bcab22a</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/53803584f3bc6223e56e13d916936bf5034ff4f3" target="_blank">5380358</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreebcab22abb35b040d02a519de0ca2f4ddbaa07ffdtargetblankbcab22aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree53803584f3bc6223e56e13d916936bf5034ff4f3targetblank5380358a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -591,7 +591,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/bcab22abb35b040d02a519de0ca2f4ddbaa07ffd" target="_blank">bcab22a</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/53803584f3bc6223e56e13d916936bf5034ff4f3" target="_blank">5380358</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -666,6 +666,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/03_Integration_Batchelor.html" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1236,7 +1253,7 @@ sce &lt;- readRDS(file = paste0(path,&#39;/output/02_sce_DimensionalityReduction
 <h3>Explore Dataset</h3>
 <pre class="r"><code>#Dimensions of count matrix
 dim(sce)</code></pre>
-<pre><code>[1] 30562 71634</code></pre>
+<pre><code>[1] 30541 70449</code></pre>
 </div>
 </div>
 <div id="pre-batch-correction-plots" class="section level2 tabset">
@@ -1268,6 +1285,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">729c9a9</a>
@@ -1401,6 +1429,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">729c9a9</a>
 </td>
 <td>
@@ -1526,7 +1565,7 @@ neighbours of each other.</p>
 sce.Batchelor &lt;-multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[[&quot;is_hvg&quot;]]], normalize.all=TRUE, BPPARAM = bpp)
 summary(sizeFactors(sce.Batchelor))</code></pre>
 <pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
- 0.00053  0.79195  1.61044  2.50485  2.94983 75.39843 </code></pre>
+ 0.00391  0.89810  1.78190  2.90127  3.22984 89.17692 </code></pre>
 <p>Batches are merged in a pairwise manner (first two batches are merged
 to create a new cohort, then the next batch is merged with this new
 cohort, and so on until all batches have been integrated). Batch
@@ -1558,7 +1597,7 @@ removing genuine biological heterogeneity.</p>
 data.frame(metadata(sce.Batchelor)$merge.info$lost.var)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.008610433","2":"0.011151088","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.000000000","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.007480845","2":"0.011698615","3":"0.000000000","4":"0.000000000","5":"0.106155533","6":"0.000000000","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.003758379","2":"0.005799579","3":"0.000000000","4":"0.000000000","5":"0.008138822","6":"0.000000000","7":"0.00000000","8":"0.033115273","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.001884055","2":"0.001832931","3":"0.000000000","4":"0.000000000","5":"0.005367856","6":"0.000000000","7":"0.00000000","8":"0.003142157","9":"0.000000000","10":"0.00000000","11":"0.04505901","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.010171843","2":"0.015851863","3":"0.000000000","4":"0.000000000","5":"0.035899680","6":"0.000000000","7":"0.00000000","8":"0.008551532","9":"0.000000000","10":"0.00000000","11":"0.01455668","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.06904221"},{"1":"0.000000000","2":"0.000000000","3":"0.036933900","4":"0.034679003","5":"0.000000000","6":"0.000000000","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.003670389","4":"0.002903649","5":"0.000000000","6":"0.000000000","7":"0.02981552","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.005157150","4":"0.005787657","5":"0.000000000","6":"0.000000000","7":"0.00579265","8":"0.000000000","9":"0.032850494","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.002625992","4":"0.001516037","5":"0.000000000","6":"0.000000000","7":"0.00136533","8":"0.000000000","9":"0.002115549","10":"0.04640331","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.009891998","4":"0.016065849","5":"0.000000000","6":"0.000000000","7":"0.01063993","8":"0.000000000","9":"0.010668093","10":"0.01176133","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.08113027","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.017630991","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.015887179","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.006181577","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.006179289","13":"0.021127950","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.012730799","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.009450454","13":"0.008204222","14":"0.029279230","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.003070661","7":"0.00000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.002412370","13":"0.002045548","14":"0.002764455","15":"0.00000000","16":"0.04073246","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.042786570","4":"0.045676296","5":"0.000000000","6":"0.055961968","7":"0.04159990","8":"0.000000000","9":"0.040067015","10":"0.04486718","11":"0.00000000","12":"0.067208198","13":"0.060403195","14":"0.082217683","15":"0.03599704","16":"0.06802785","17":"0.00000000"},{"1":"0.054486044","2":"0.060314678","3":"0.040010034","4":"0.036142761","5":"0.077096358","6":"0.033816030","7":"0.02899462","8":"0.066030813","9":"0.034147470","10":"0.02902186","11":"0.07303559","12":"0.034224296","13":"0.029906762","14":"0.034188272","15":"0.03571266","16":"0.03439764","17":"0.07830344"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["SynBio_028"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["SynBio_049"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["SynBio_050"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["SynBio_074"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["SynBio_076"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["SynBio_077a"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SynBio_077b"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["SynBio_081"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["SynBio_083"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["SynBio_084"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["SynBio_087"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["SynBio_093"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["SynBio_096"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["SynBio_098a"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["SynBio_098b"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["SynBio_127"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["SynBio_130"],"name":[17],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.008665494","2":"0.009272537","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.008156741","2":"0.013041620","3":"0.000000000","4":"0.000000000","5":"0.100461377","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.003782643","2":"0.005429874","3":"0.000000000","4":"0.000000000","5":"0.009758250","6":"0.000000000","7":"0.000000000","8":"0.033420002","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.001297565","2":"0.001415495","3":"0.000000000","4":"0.000000000","5":"0.005578383","6":"0.000000000","7":"0.000000000","8":"0.002375870","9":"0.000000000","10":"0.00000000","11":"0.04789206","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.009760760","2":"0.015345983","3":"0.000000000","4":"0.000000000","5":"0.032944516","6":"0.000000000","7":"0.000000000","8":"0.007853407","9":"0.000000000","10":"0.00000000","11":"0.01490084","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.07009007"},{"1":"0.000000000","2":"0.000000000","3":"0.040421851","4":"0.035433549","5":"0.000000000","6":"0.000000000","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.003545308","4":"0.002690536","5":"0.000000000","6":"0.000000000","7":"0.030382266","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.005232358","4":"0.005777669","5":"0.000000000","6":"0.000000000","7":"0.006030381","8":"0.000000000","9":"0.032274770","10":"0.00000000","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.002409398","4":"0.001490984","5":"0.000000000","6":"0.000000000","7":"0.001322550","8":"0.000000000","9":"0.002077288","10":"0.04571421","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.011519786","4":"0.017279310","5":"0.000000000","6":"0.000000000","7":"0.011861510","8":"0.000000000","9":"0.012023759","10":"0.01278735","11":"0.00000000","12":"0.000000000","13":"0.000000000","14":"0.000000000","15":"0.08828104","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.016665854","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.014535829","13":"0.000000000","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.006669451","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.006308660","13":"0.019270171","14":"0.000000000","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.012407176","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.009454629","13":"0.007803995","14":"0.028690146","15":"0.00000000","16":"0.00000000","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.000000000","4":"0.000000000","5":"0.000000000","6":"0.003172147","7":"0.000000000","8":"0.000000000","9":"0.000000000","10":"0.00000000","11":"0.00000000","12":"0.002439001","13":"0.002005284","14":"0.002767502","15":"0.00000000","16":"0.03988902","17":"0.00000000"},{"1":"0.000000000","2":"0.000000000","3":"0.042460645","4":"0.042677470","5":"0.000000000","6":"0.057808395","7":"0.040975507","8":"0.000000000","9":"0.038840113","10":"0.04312049","11":"0.00000000","12":"0.065679132","13":"0.061718630","14":"0.088027255","15":"0.03789276","16":"0.06820251","17":"0.00000000"},{"1":"0.052951577","2":"0.058554876","3":"0.038318209","4":"0.031915580","5":"0.075612255","6":"0.031338033","7":"0.026530280","8":"0.062719261","9":"0.031882224","10":"0.02568692","11":"0.07287138","12":"0.029648669","13":"0.025293562","14":"0.031558717","15":"0.03095282","16":"0.02972750","17":"0.07898568"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code>rm(sce.Batchelor)</code></pre>
@@ -1608,6 +1647,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">729c9a9</a>
@@ -1741,6 +1791,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">729c9a9</a>
 </td>
 <td>
@@ -1872,6 +1933,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">729c9a9</a>
 </td>
 <td>
@@ -2001,6 +2073,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">729c9a9</a>
@@ -2140,6 +2223,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">729c9a9</a>
 </td>
 <td>
@@ -2269,6 +2363,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">729c9a9</a>
@@ -2413,6 +2518,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">729c9a9</a>
 </td>
 <td>
@@ -2553,6 +2669,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5f9a71413840e0374b7abc81d4ee79c264f6bb69/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">5f9a714</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/729c9a9c06bd3a52fec1820a3baf41729ce2fef4/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">729c9a9</a>
