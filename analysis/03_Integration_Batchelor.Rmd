@@ -104,9 +104,10 @@ Batches are merged in a pairwise manner (first two batches are merged to create 
 ```{r MergeOrder}
 #Set manual merge_order
 merge_order <- list( 
-          list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee
-          list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084", "SynBio_098b")),#Wrist
-          list("SynBio_028","SynBio_049", "SynBio_076","SynBio_081", "SynBio_087", "SynBio_130"))#MCP
+          list(list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"),#Wrist
+          list("SynBio_028","SynBio_049", "SynBio_076","SynBio_081", "SynBio_087", "SynBio_130")),#MCP
+          list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127")#Knee
+          )
 
 ```
 
@@ -141,7 +142,7 @@ elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN"))
 cat(paste0("Elbow Point: ",elbow))
 
 #PCA select nr of PC
-reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(elbow)]
+reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(20)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"MNN"))

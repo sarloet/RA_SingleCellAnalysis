@@ -174,7 +174,7 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 
 ```{r SelectPC}
 #PCA select nr of PC
-reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
+reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(20)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"PCA"))
