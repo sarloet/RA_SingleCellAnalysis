@@ -109,7 +109,7 @@ Initial filtering to remove unexpressed genes and cells with very low number of 
 dim_before_filtering <- dim(sce)
 
 #Get only the detected Genes
-#Remove Cells with very low expression of less than 200 genes expressed and cells with low count
+#Remove Cells with very low expression of less than 150 genes expressed and cells with low count
 sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150]
 
 

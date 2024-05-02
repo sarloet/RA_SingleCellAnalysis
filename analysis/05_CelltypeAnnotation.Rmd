@@ -159,7 +159,7 @@ saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 # To avoid a too big plot we only keep every 20th cell
 sce.plot <- sce[unique(top3DEgenes), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE )
+dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),order.by="cluster", scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE,heatmap.colors = colorRampPalette(c("dark blue", "white", "dark red"))(100),breaks = seq(-3, 3, length.out = 101 ) #assay = "scaled_asinh"
 
 
 #Dotplot

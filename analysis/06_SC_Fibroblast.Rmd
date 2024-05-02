@@ -73,15 +73,6 @@ sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
 ```
 
-### Subset data for only Fibroblast
-
-```{r LoadDataset}
-## RA DATASET
-cell_type = "Fibroblast"
-sce <- sce.sc[,sce.sc$celltype == cell_type]
-
-```
-
 ### Explore Dataset
 
 ```{r ShowDim}
@@ -111,10 +102,38 @@ plotReducedDim(sce, paste0("SC_UMAP_", cell_type),colour_by = "subcluster", text
 
 ## Annotate Subcluster
 
+
+## Annotate Subclusters 
+
+```{r SetupAssignement}
+#Manual Annotation setup
+sce.sc$ManualAnno_L2 <- as.integer(sce.sc$celltype)
+```
+
+```{r VizGenExFunction}
+#Function to visuaise gene Expression for vector of genes
+
+VizGenEx <- function(markr,Ctype){
+  for(i in markr){
+    
+    cat(paste0("#### ", i, "\n"))
+    gridExtra::grid.arrange(
+      arrangeGrob(plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, text_by = "subcluster"), 
+                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, order_by=i ) 
+                    +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
+                  plotExpression(sce.sc[,sce.sc$celltype == Ctype], features = i, x = "subcluster"),nrow = 2)
+    cat(' \n')
+  
+  }
+}
+
+```
+
+
 #### Identify Marker Genes Wilcoxon rank-sum test
 
 ```{r FibroblastsIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce, 'subcluster', assay = 'logcounts')
+markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
 data.frame(markers_wilcox)
 ```
 
@@ -123,16 +142,74 @@ tmp <-top_markers(markers_wilcox, n = 4)
 
 tail(unlist(unname(as.list(tmp))),-4)
 
-dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars = unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+#dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
 ```
 
 
 #### Test Fibroblast marker {.tabset}
 
+Lining vs Sublining
+
+
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")  
+VizGenEx(c("PRG4","THY1"),"Fibroblast")  
 
+
+```
+
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("PRG4","CRTAC1", "CLU","CLIC5"),"Fibroblast")  
+
+
+```
+
+
+
+```{r FibroblastsL2, results='asis'}
+#SMC
+VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"),"Fibroblast")  
+
+
+```
+
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("CHI3L2","SAA1", "FN1"),"Fibroblast")  
+
+
+```
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("CXCL12","CCL2","SFRP1"),"Fibroblast")  
+
+
+```
+
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("POSTN","COL1A1", "FNDC1"),"Fibroblast")  
+
+
+```
+
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("CXCL14","MFAP5"),"Fibroblast")  
+
+
+```
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(c("TRPS1","FTX","NEAT1","MALAT1"),"Fibroblast")  
 
 ```
 
@@ -140,20 +217,106 @@ VizGenEx(c("PRG4","CRTAC1", "CLU"),"Fibroblast")
 ```{r FibroblastsAssignementL2}
 #Manual Annotation
 
-sce$ManualAnno_L2 <- as.integer(sce$subcluster)
+
+sce.sc$ManualAnno_L2 <- as.integer(sce.sc$subcluster)
 unique(sce$ManualAnno_L2)
 
-sce$ManualAnno_L2[sce$subcluster %in% c(2,3,12)] <- "Fibroblast"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1,8)] <- "POSTN+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(2,7)] <- "CHI3L2+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(5)] <- "PRG4+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "CXCL12+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(4)] <- "FTX+"
 
+sce$ManualAnno_L2 <- as.integer(sce.sc$ManualAnno_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
 ```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce, column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
           labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
 ```
 
+```{r FibroblastsUMAPAssigned}
+plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+```
+
+
+
+## Frequencies of celltypes in clusters per Sample {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce.sc[,sce.sc$celltype == "Fibroblast"])) %>% 
+  group_by(ManualAnno_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=ManualAnno_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+```
+
+### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=ManualAnno_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+
+```
+
+
+## Frequencies of celltypes in clusters per Sample {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce.sc[,sce.sc$celltype == "Fibroblast"])) %>% 
+  group_by(ManualAnno_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=ManualAnno_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+```
+
+### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=ManualAnno_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+
+```
+
+```{r TestProportionsWilcoxon}
+
+ClusterInfo
+wilcox.test()
+
+
+
+
+```
 
 
 ## DA
