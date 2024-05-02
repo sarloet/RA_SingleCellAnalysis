@@ -51,8 +51,8 @@ library(presto)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
@@ -88,13 +88,13 @@ dim(sce)
 ### PCA
 
 ```{r PlotClusterPCA}
-plotReducedDim(sce, dimred="MNN", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with cluster label")
 ```
 
 ### UMAP
 
 ```{r PlotClusterUMAP}
-plotReducedDim(sce, dimred="MNN_UMAP", colour_by="leiden",text_by="cluster") + ggtitle("UMAP with cluster label")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with cluster label")
 ```
 
 ### QC UMAPs
@@ -124,11 +124,11 @@ markers_wilcox <- wilcoxauc(sce, group_by='cluster', assay = 'logcounts')
 ```
 
 ```{r SaveTopMarker}
-# Get the top 5 markers for each cluster (for heatmap)
+# Get the top 3 markers for each cluster (for heatmap)
 # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
 top3DEgenes <- top_markers(markers_wilcox, n = 3, auc_min = 0.5, pval_max = 0.05)
 
-#Show top 5 DE Genes of each cluster
+#Show top 3 DE Genes of each cluster
 data.frame(top3DEgenes)
 top3DEgenes<-unlist(as.data.frame(top3DEgenes[,-1]),use.names = FALSE)
 
@@ -158,12 +158,12 @@ saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
 
 # To avoid a too big plot we only keep every 20th cell
-sce.plot <- sce[unique(top5DEgenes), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(top5DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE, heatmap.colors.max.scaled = inferno(100) )
+sce.plot <- sce[unique(top3DEgenes), seq(1, dim(sce)[2], 20)]
+dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE )
 
 
 #Dotplot
-dittoDotPlot(sce, vars = unique(top5DEgenes) , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+dittoDotPlot(sce, vars = unique(top3DEgenes) , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 gc()
@@ -184,8 +184,8 @@ VizGenEx <- function(markr){
     cat(paste0("\n##### ", i, "\n"))
   
     gridExtra::grid.arrange(
-      arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, text_by = "cluster"), 
-                  plotReducedDim(sce, dimred = "MNN_UMAP", colour_by = i, order_by=i ) 
+      arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, text_by = "cluster"), 
+                  plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, order_by=i ) 
                     +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
                   plotExpression(sce, features = i, x = "cluster"),nrow = 2)
     cat(' \n')
@@ -239,10 +239,10 @@ VizGenEx(c("CDH5","ECSCR","CCL14"))
 sce$ManualAnno_L0 <- as.integer(sce$cluster)
 unique(sce$ManualAnno_L0)
 
-sce$ManualAnno_L0[sce$cluster %in% c(5,9,10,11,14,16,17,20)] <- "Lymphocyte"
-sce$ManualAnno_L0[sce$cluster %in% c(4,7,8,13,18,21)] <- "Myeloid"
-sce$ManualAnno_L0[sce$cluster %in% c(2,3,12,15)] <- "Stromal"
-sce$ManualAnno_L0[sce$cluster %in% c(1,6,19)] <- "Endothelial"
+sce$ManualAnno_L0[sce$cluster %in% c(5,12,13,16,17)] <- "Lymphocyte"
+sce$ManualAnno_L0[sce$cluster %in% c(4,7,8,9,15,19)] <- "Myeloid"
+sce$ManualAnno_L0[sce$cluster %in% c(2,3,6,10,11)] <- "Stromal"
+sce$ManualAnno_L0[sce$cluster %in% c(1,14,18)] <- "Endothelial"
 
 ```
 
@@ -355,16 +355,16 @@ VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
 sce$ManualAnno_L1 <- as.integer(sce$cluster)
 unique(sce$ManualAnno_L1)
 
-sce$ManualAnno_L1[sce$cluster %in% c(2,3,12)] <- "Fibroblast"
-sce$ManualAnno_L1[sce$cluster %in% c(15)] <- "Smooth muscle cell"
-sce$ManualAnno_L1[sce$cluster %in% c(1,6,19)] <- "Edothelial cell"
-sce$ManualAnno_L1[sce$cluster %in% c(9,10,11,14)] <- "T cell"
+sce$ManualAnno_L1[sce$cluster %in% c(2,3,6,10,11)] <- "Fibroblast"
+#sce$ManualAnno_L1[sce$cluster %in% c(15)] <- "Smooth muscle cell"
+sce$ManualAnno_L1[sce$cluster %in% c(1,14,18)] <- "Endothelial cell"
+sce$ManualAnno_L1[sce$cluster %in% c(12,13,16)] <- "T cell"
 sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "B cell"
-sce$ManualAnno_L1[sce$cluster %in% c(20)] <- "Neutrophil"
-sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
-sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,18,21)] <- "Myeloid"
+sce$ManualAnno_L1[sce$cluster %in% c(19)] <- "Neutrophil"
+#sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
+sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,9,15)] <- "Myeloid"
 sce$ManualAnno_L1[sce$cluster %in% c(5)] <- "Plasma"
-sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "Plasmacytoid dendritic cell"
+#sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "Plasmacytoid dendritic cell"
 ```
 
 ```{r AssignementCheck}
@@ -379,16 +379,16 @@ unique(sce$ManualAnno_L1)
 
 ```{r PlotL1}
 #Plot manual Annotation
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
 ```
 
 ##### UMAP L0
 
 ```{r PlotL0}
 #Plot manual Annotation
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
 ```
 
 
@@ -404,7 +404,7 @@ sce$celltype <- colData(sce)$ManualAnno_L1
 ## Plot the assigned Cell labels
 
 ```{r}
-plotReducedDim(sce, dimred="MNN_UMAP", by_exprs_values = "logcounts", colour_by= "celltype")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= "celltype")+ ggtitle("UMAP Celllabel")
 
 ```
 
@@ -429,8 +429,8 @@ markers <- c("PDGFRB","DCN","COL1A1","PECAM1", "CDH5","CD14","FCGR3A","CD19","MS
 
 
 # To avoid a too big plot we only keep every 20th cell
-sce.plot <- sce[unique(top5DEgenes), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(top5DEgenes), annot.by = c("cluster"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE, heatmap.colors.max.scaled = inferno(100) )
+sce.plot <- sce[unique(markers), seq(1, dim(sce)[2], 20)]
+dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("label"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE )
 
 
 #Dotplot
@@ -477,7 +477,7 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 
 ### Wilcoxon rank-sum test on Cluster
 
-```{r AnnoMarker}
+```{r AnnoMarker, eval=FALSE}
 
 for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
   #Wilcoxon rank-sum test
@@ -550,5 +550,5 @@ saveWorkbook(wb,paste0( path , "/output/Annotated_L1_Wilcoxon.xlsx"))
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/05_sce_CelltypeAnnotation.rdss'))
+saveRDS(sce, file =paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 ```

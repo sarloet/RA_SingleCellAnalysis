@@ -49,8 +49,8 @@ library(bluster)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
-bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
@@ -76,10 +76,11 @@ dim(sce.cluster)
 ### Louvain Clustering
 
 ```{r Louvain}
-#Setup Hierarchical Clustering -use the bluster package
-
+#Louvain Clustering
+set.seed(123)
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
-colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp, cluster.args=list(resolution=0.5)))
+
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=10,cluster.fun="louvain",BPPARAM =bpp))
 
 data.frame(as.list(table(colData(sce.cluster)$louvain)))
 
@@ -89,11 +90,10 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 ### Leiden Clustering
 
 ```{r Leiden}
-#Setup Hierarchical Clustering
-#use the bluster package
-
+#Leiden Clustering
+set.seed(123)
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=55,cluster.fun="leiden",BPPARAM =bpp))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=80,cluster.fun="leiden",BPPARAM =bpp))
 
 
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
@@ -105,10 +105,10 @@ data.frame(as.list(table(colData(sce.cluster)$leiden)))
 ### Walktrap Clustering
 
 ```{r Walktrap}
-#Setup Hierarchical Clustering
-#use the bluster package
+#Walktrap Clustering
 
-colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN_reduced"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap", BPPARAM=bpp)))
+set.seed(123)
+colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN_reduced"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=15,cluster.fun="walktrap", BPPARAM=bpp)))
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
@@ -121,7 +121,7 @@ data.frame(as.list(table(colData(sce.cluster)$walktrap)))
 ## Clustering Plots
 
 ```{r ClusteringPlots}
-methods <- c("louvain","leiden")#"walktrap"
+methods <- c("louvain","leiden","walktrap")
 ```
 
 ### PCA Plots   {.tabset}
@@ -232,13 +232,13 @@ colLabels(sce)<- colData(sce)$cluster
 ### UMAP
 
 ```{r UMAPClustering}
-plotReducedDim(sce, dimred="MNN_UMAP", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
 ```
 
 ### PCA
 
 ```{r PCAClustering}
-plotReducedDim(sce, dimred="MNN", colour_by="cluster",text_by="cluster") + ggtitle("PCA with assigned clusters")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster") + ggtitle("PCA with assigned clusters")
 ```
 
 
@@ -246,7 +246,7 @@ plotReducedDim(sce, dimred="MNN", colour_by="cluster",text_by="cluster") + ggtit
 
 ```{r ClusterInfo}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(celltype, Sample) %>%
+  group_by(cluster, Sample) %>%
   summarise(cells = n(),.groups = 'drop') 
 ```
 

@@ -143,41 +143,27 @@ SUBCLUSTER <- function(sce.sc, SC_celltypes, clust_param="leiden", k_param=50, m
                              correct.all=TRUE, merge.order = merge_order, BPPARAM = bpp)
     bpstop(bpp)
     
-    assay(sce.subset, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
-    reducedDim(sce.subset, 'MNN') <- reducedDim(sce.Batchelor, 'corrected')[,seq_len(20)]
+    assay(sce.subset, "reconstructed_SC") <- assay(sce.Batchelor, "reconstructed")
+    reducedDim(sce.subset, 'MNN_SC') <- reducedDim(sce.Batchelor, 'corrected')
+    reducedDim(sce.subset, 'MNN_SC_reduced') <- reducedDim(sce.Batchelor, 'corrected')[,seq_len(20)]
     
     #Recluster the cells 
     set.seed(123)
-    clusters <- clusterCells(sce.subset, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param, BPPARAM =bpp))
+    cluster <- clusterCells(sce.subset, use.dimred = "MNN_SC_reduced", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param, BPPARAM =bpp))
     
     #Add Subcluster label to sce
-    colData(sce.sc)[sce.sc$celltype == name, "subcluster"] <- clusters
-  
+    colData(sce.subset)$subcluster <- cluster
+    sce.subset$subcluster <- factor(sce.sc$subcluster)
+    
     #Get UMAP on subset
-    sce.subset <- runUMAP(sce.subset, dimred = 'MNN', subset_row=rowData(sce.subset)$is_hvg)
+    sce.subset <- runUMAP(sce.subset, dimred = 'MNN_SC_reduced', subset_row=rowData(sce.subset)$is_hvg)
     umap_for_cell_type <- reducedDim(sce.subset, "UMAP")
-    column_name <- paste0("SC_UMAP_", name)
+    column_name <- paste0("UMAP_SC")
   
-    # Add dimension reduction for only selected subcluster cells
-    reducedDim(sce.sc, column_name) <- reducedDim(sce.sc, "MNN_UMAP")
-    reducedDim(sce.sc, column_name)[,c(1,2)] <- NA
-  
-    attr(reducedDim(sce.sc, column_name), "scaled:center") <- attr(umap_for_cell_type, "scaled:center")
-    reducedDim(sce.sc, column_name)[rownames(umap_for_cell_type),] <- umap_for_cell_type
   }
   
-  # transform to factor values
-  sce.sc$subcluster_complete <- factor(paste0(sce.sc$celltype, "_", sce.sc$subcluster))
-  sce.sc$subcluster <- factor(sce.sc$subcluster)
   
-  # Add column for each of the cell type in ColData
-  for (name in SC_celltypes){
-    colData(sce.sc)[,name] <- colData(sce.sc)[,"subcluster"]
-    colData(sce.sc)[sce.sc$celltype != name, name] <- NA
-    colData(sce.sc)[, name] <- factor(as.numeric(colData(sce.sc)[, name]))
-  }
-  
-  return(sce.sc)
+  return(sce.subset)
 }
 ```
 
@@ -451,16 +437,6 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=ManualAnno_L2)) +
 
 ```
 
-```{r TestProportionsWilcoxon}
-
-ClusterInfo
-
-wilcox.test()
-
-
-
-
-```
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

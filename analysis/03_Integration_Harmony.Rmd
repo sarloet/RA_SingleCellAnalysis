@@ -160,8 +160,8 @@ plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Joint.Location")
 
 ```{r}
 #Run UMAP
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", subset_row=rowData(sce)$is_hvg, name="harmony_UMAP")
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", subset_row=rowData(sce)$is_hvg, name="harmony_reduced_UMAP")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", name="harmony_UMAP")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", name="harmony_reduced_UMAP")
 
 ```
 

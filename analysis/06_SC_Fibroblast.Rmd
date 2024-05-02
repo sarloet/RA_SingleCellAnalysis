@@ -159,6 +159,29 @@ plotReducedDim(sce, column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_
 ## DA
 
 
+```{r }
+
+
+
+
+
+
+Marker <- c("HOXD11","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
+
+
+dittoDotPlot(sce[,sce$celltype == "Fibroblast"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = FALSE )
+
+dittoDotPlot(sce[,sce$celltype == "Fibroblast"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = TRUE )
+
+
+
+dittoDotPlot(sce[,sce$celltype == "Edothelial cell"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = FALSE )
+
+dittoDotPlot(sce[,sce$celltype == "Edothelial cell"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = TRUE )
+
+
+
+```
 
 ## DE
 
