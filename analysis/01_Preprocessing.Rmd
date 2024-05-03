@@ -425,6 +425,11 @@ cat(
     )
 ```
 
+#### Save filtered Data
+```{r SaveDataFiltered}
+saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_Preprocessing_filtered.rds'))
+```
+
 
 ## Filter Genes
 

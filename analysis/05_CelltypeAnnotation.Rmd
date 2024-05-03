@@ -100,9 +100,9 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="clus
 ### QC UMAPs
 
 ```{r PlotClusterQCUMAP,fig.dim = c(8, 6)}
-p1 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
-p2 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="detected") + ggtitle("Number of detected Genes ")
-p3 <- plotReducedDim(sce, dimred="MNN_UMAP", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
+p1 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+p2 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected") + ggtitle("Number of detected Genes ")
+p3 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
 grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
 rm(p1, p2, p3)
 ```

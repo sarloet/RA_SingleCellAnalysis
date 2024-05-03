@@ -35,7 +35,6 @@ source(here("code", "standard_libraries.R"))
 
 ### Additional Packages
 
-
 ```{r LoadPackages, warning=FALSE,eval=FALSE}
 #Load Packages
 
@@ -49,12 +48,6 @@ library(gridExtra)
 
 ```
 
-```{r LoadPackages, warning=FALSE}
-#Load Packages
-library(here)
-source(here("code", "standard_libraries.R"))
-
-```
 
 ### Set Parameter
 
@@ -137,7 +130,7 @@ reducedDim(sce.subset, 'MNN_SC') <- reducedDim(sce.Batchelor, 'corrected')
 reducedDim(sce.subset, 'MNN_SC_reduced') <- reducedDim(sce.Batchelor, 'corrected')[,seq_len(20)]
     
 #Get UMAP on subset
-sce.subset <- runUMAP(sce.subset,name = "MNN_UMAP_SC_reduced", dimred = 'MNN_SC_reduced', subset_row=rowData(sce.subset)$is_hvg)
+sce.subset <- runUMAP(sce.subset,name = "MNN_UMAP_SC_reduced", dimred = 'MNN_SC_reduced')
     
 #Recluster the cells 
 set.seed(123)
