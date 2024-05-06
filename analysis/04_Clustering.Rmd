@@ -93,7 +93,7 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 #Leiden Clustering
 set.seed(123)
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=80,cluster.fun="leiden",BPPARAM =bpp))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=75,cluster.fun="leiden",BPPARAM =bpp))
 
 
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
