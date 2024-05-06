@@ -105,7 +105,7 @@ Batches are merged in a pairwise manner (first two batches are merged to create 
 #Set manual merge_order
 merge_order <- list( 
           list(list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"),#Wrist
-          list("SynBio_028","SynBio_049", "SynBio_076","SynBio_081", "SynBio_087", "SynBio_130")),#MCP
+          list("SynBio_028", "SynBio_076","SynBio_081", "SynBio_087", "SynBio_130")),#MCP,"SynBio_049"
           list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127")#Knee
           )
 
@@ -216,6 +216,39 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UM
 ```{r PlotUMAPAB4}
 #Plot UMAP before data integration per joint
 plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+```
+
+
+## Plot UMAP with QC metrics {.tabset}
+
+Check if there is any clustering caused by number of counts, genes or mitochondrial content. This might also give information about the cell type associated with a cluster.
+
+### Colored by Mitochondrial Genes
+
+```{r PlotQcUMAP1}
+#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+```
+
+### Colored by nr of Genes
+
+```{r PlotQcUMAP2}
+#Plot UMAP colored by detected
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes ")
+```
+
+### Colored by nr of Counts
+
+```{r PlotQcUMAP3}
+#Plot UMAP colored by sum
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum", order_by = "sum") + ggtitle("Sum of UMI Counts in Cell")
+```
+
+### Colored by Ubi Markergene
+
+```{r PlotQcUMAP4}
+#Plot UMAP colored by Ubi Markergene expression
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
 ```
 
 

@@ -1,6 +1,6 @@
 ---
-title: "QC and Preprocessing"
-subtitle: "01_Preprocessing"
+title: "Quality Control and Filtering"
+subtitle: "01_QualityControl"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -72,6 +72,7 @@ sce <- readRDS(file = paste0(path,'/output/00_sce_DataPreparation.rds'))
 dim(sce)
 ```
 
+
 ### Histogramm with number of cells {.tabset}
 
 Show the number of cells detected in each sample or joint location before filtering
@@ -100,118 +101,14 @@ data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```
 
 
-## Initial Filtering
+### Exclude Samples
 
-Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <200 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
-
-```{r InitialFiltering}
-#Initial filtering before droplet removal
-dim_before_filtering <- dim(sce)
-
-#Get only the detected Genes
-#Remove Cells with very low expression of less than 150 genes expressed and cells with low count
-sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150]
-
-
-dim_after_filtering <- dim(sce)
-
-cat("NR of Cells Before Initial Filtering ", dim_before_filtering[2],
-    "\nNR of Cells After Initial Filtering ", dim_after_filtering[2],
-    "\nNR of Cells Filtered out ", dim_before_filtering[2] - dim_after_filtering[2],
-    
-    "\n\nNR of Genes Before Initial Filtering ", dim_before_filtering[1],
-    "\nNR of Genes After Initial Filtering ", dim_after_filtering[1],
-    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
-    )
-
-
+```{r ExcludeSamples}
+#Dimensions of count matrix
+#sce <- sce[, !colData(sce)$discard]
+sce <- sce[,sce$Sample != "SynBio_049"]
+dim(sce)
 ```
-
-## Doublet Detection
-
-Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets.
-
-### Detection
-
-```{r DoubletDetection, rows.print=17, warning=FALSE}
-#Detection
-sce <- scDblFinder::scDblFinder(sce, samples="Sample", BPPARAM = bpp) 
-
-table(sce$scDblFinder.class)
-as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))
-
-```
-
-### Doublet Detection Plots
-
-#### Singlet/Doublet Histogramm {.tabset}
-
-##### Absolute comparison
-
-```{r DoubletDetectionPlotsAbs}
-
-#Plot singlet/doublet histogramm Absolute comparison / by sample
-as.data.frame(colData(sce)) %>%
-  dplyr::group_by(Sample, scDblFinder.class) %>%
-  dplyr::summarise(Freq=n()) %>%
-  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class,label=Freq)) + 
-    geom_bar(stat="identity") +
-    labs(title="Doublet detection results",
-    subtitle="By sample",x="",y="Number of Cells") +
-    geom_text(size=3, position = position_stack(vjust=0.5))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
-
-```
-
-##### Relative comparison
-
-```{r DoubletDetectionPlotsRel}
-# Plot singlet/doublet histogramm Relative comparison / by sample
-as.data.frame(colData(sce)) %>%
-  dplyr::group_by(Sample, scDblFinder.class) %>%
-  dplyr::summarise(Freq=n()) %>% 
-  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
-    geom_bar(stat="identity", position="fill") +
-    labs(title="Doublet detection results",
-       subtitle="By sample",
-       x="Sample",
-       y="Number of cells") + 
-    geom_text(size=2.5, position = position_fill(vjust=0.5)) +
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
-```
-
-
-#### Singlet/Doublet Scatter
-
-```{r DoubletDetectionPlots}
-sce <- addPerCellQC(sce)
-
-#Plot singlet/doublet qcplots
-colData(sce) %>% 
-    as.data.frame() %>% 
-    arrange(scDblFinder.class) %>% 
-    ggplot(aes(x = sce$sum, y = sce$detected )) +
-      geom_point(aes(colour = scDblFinder.class)) + 
-      facet_wrap(vars(Sample))+ 
-      labs(title="Total number of detected genes plotted against total number of UMIs",
-       x="Total counts",
-       y="Detected genes") +
-      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
-
-
-```
-
-
-### Apply Doublet Removal
-
-```{r DoubletRemoval}
-#Apply Doublet Removal
-print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
-sce <- sce[ ,sce$scDblFinder.class == "singlet"]
-print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
-
-```
-
 
 ## Filter Cells
 
@@ -236,8 +133,8 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 400  # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 300 |sce$detected > 10000 # Cells have at least 300 genes expressed
+colData(sce)$qc.count_manual <- sce$sum < 0 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.genexp_manual <- sce$detected < 200 | sce$detected > 10000  # Cells have at least 300 genes expressed 
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 
 ```
@@ -262,11 +159,11 @@ abline(v = 300, col = "red")
 ```{r AdaptiveThresholds}
 
 # Detect cells with very low number of counts
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=2, log=TRUE, type="both",batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
 # Detect cells with very low number of genes
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=2, log=TRUE, type="both",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
 # Detect cells with high mitochondrial content
@@ -427,7 +324,7 @@ cat(
 
 #### Save filtered Data
 ```{r SaveDataFiltered}
-saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_Preprocessing_filtered.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl_filtered.rds'))
 ```
 
 
@@ -611,5 +508,5 @@ dim(sce.filtered)
 ```
 
 ```{r SaveData}
-saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_Preprocessing.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl.rds'))
 ```

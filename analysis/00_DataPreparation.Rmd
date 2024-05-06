@@ -224,6 +224,123 @@ plot(rowSums(tmpCounts),
 
 ```
 
+## Initial Filtering
+
+Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <200 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
+
+```{r InitialFiltering}
+#Initial filtering before droplet removal
+dim_before_filtering <- dim(sce)
+
+#Get only the detected Genes
+#Remove Cells with very low counts of less than 150 and genes not expressed 
+sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 200]
+
+
+dim_after_filtering <- dim(sce)
+
+cat("NR of Cells Before Initial Filtering: ", dim_before_filtering[2],
+    "\nNR of Cells After Initial Filtering: ", dim_after_filtering[2],
+    "\nNR of Cells Filtered out: ", dim_before_filtering[2] - dim_after_filtering[2],
+    "\nCells Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100,
+    
+    "\n\nNR of Genes Before Initial Filtering: ", dim_before_filtering[1],
+    "\nNR of Genes After Initial Filtering: ", dim_after_filtering[1],
+    "\nNR of Genes Filtered out: ", dim_before_filtering[1] - dim_after_filtering[1],
+    "\nGenes Filtered out: [%]", (dim_before_filtering[1] - dim_after_filtering[1])/dim_before_filtering[1]*100
+    )
+
+
+```
+
+## Doublet Detection
+
+Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets.
+
+### Detection
+
+```{r DoubletDetection, rows.print=17, warning=FALSE}
+#Detection
+sce <- scDblFinder::scDblFinder(sce, samples=sce$Sample, BPPARAM = bpp) 
+
+table(sce$scDblFinder.class)
+as.data.frame.matrix(table(sce$Sample,sce$scDblFinder.class))
+
+```
+
+### Doublet Detection Plots
+
+#### Singlet/Doublet Histogramm {.tabset}
+
+##### Absolute comparison
+
+```{r DoubletDetectionPlotsAbs}
+
+#Plot singlet/doublet histogramm Absolute comparison / by sample
+as.data.frame(colData(sce)) %>%
+  dplyr::group_by(Sample, scDblFinder.class) %>%
+  dplyr::summarise(Freq=n()) %>%
+  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class,label=Freq)) + 
+    geom_bar(stat="identity") +
+    labs(title="Doublet detection results",
+    subtitle="By sample",x="",y="Number of Cells") +
+    geom_text(size=3, position = position_stack(vjust=0.5))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+
+```
+
+##### Relative comparison
+
+```{r DoubletDetectionPlotsRel}
+# Plot singlet/doublet histogramm Relative comparison / by sample
+as.data.frame(colData(sce)) %>%
+  dplyr::group_by(Sample, scDblFinder.class) %>%
+  dplyr::summarise(Freq=n()) %>% 
+  ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
+    geom_bar(stat="identity", position="fill") +
+    labs(title="Doublet detection results",
+       subtitle="By sample",
+       x="Sample",
+       y="Number of cells") + 
+    geom_text(size=2.5, position = position_fill(vjust=0.5)) +
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+```
+
+
+#### Singlet/Doublet Scatter
+
+```{r DoubletDetectionPlots}
+sce <- addPerCellQC(sce)
+
+#Plot singlet/doublet qcplots
+colData(sce) %>% 
+    as.data.frame() %>% 
+    arrange(scDblFinder.class) %>% 
+    ggplot(aes(x = sce$sum, y = sce$detected )) +
+      geom_point(aes(colour = scDblFinder.class)) + 
+      facet_wrap(vars(Sample))+ 
+      labs(title="Total number of detected genes plotted against total number of UMIs",
+       x="Total counts",
+       y="Detected genes") +
+      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
+
+
+```
+
+
+### Apply Doublet Removal
+
+```{r DoubletRemoval}
+
+print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
+
+#Apply Doublet Removal
+sce <- sce[ ,sce$scDblFinder.class == "singlet"]
+
+print(paste0("NR of Cells After Doublet Removal ", dim(sce)[2]))
+
+```
+
 
 ## Save the dataset
 

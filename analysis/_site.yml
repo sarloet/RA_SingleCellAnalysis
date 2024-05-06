@@ -14,8 +14,8 @@ navbar:
     menu:
     - text: Data Preparation
       href: 00_DataPreparation.html
-    - text: Preprocessing
-      href: 01_Preprocessing.html
+    - text: Quality Control
+      href: 01_QualityControl.html
     - text: Dimensionality Reduction
       href: 02_DimensionalityReduction.html
     - text: Integration

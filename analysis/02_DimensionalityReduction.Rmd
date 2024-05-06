@@ -57,7 +57,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 # RA DATASET
-sce <- readRDS(file = paste0(path,'/output/01_sce_Preprocessing.rds'))
+sce <- readRDS(file = paste0(path,'/output/01_sce_QualityControl.rds'))
 
 ```
 

@@ -168,14 +168,9 @@ wilcox.test()
 ```
 
 
-## DA
 
 
 ```{r }
-
-
-
-
 
 
 Marker <- c("HOXD11","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
@@ -197,7 +192,70 @@ dittoDotPlot(sce[,sce$celltype == "Edothelial cell"], vars = Marker , group.by =
 
 ## DE
 
+```{r }
+-filter genes sc.pp.filter_genes(adata_mono, min_cells=3)
+-Function find_de_MAST_RE takes a SingleCellExperiment object as input and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
 
+find_de_MAST_RE <- function(sce){
+    
+  # create a MAST object
+    print("Dimensions before subsetting:")
+    print(dim(sca))
+    print("")
+    # keep genes that are expressed in more than 10% of all cells
+    sca <- sca[freq(sca)>0.1,]
+    print("Dimensions after subsetting:")
+    print(dim(sca))
+    print("")
+    # add a column to the data which contains scaled number of genes that are expressed in each cell
+    cdr2 <- colSums(assay(sca)>0)
+    colData(sca)$ngeneson <- scale(cdr2)
+    # store the columns that we are interested in as factors
+    label <- factor(colData(sca)$label)
+    # set the reference level
+    label <- relevel(label,"ctrl")
+    colData(sca)$label <- label
+    celltype <- factor(colData(sca)$cell_type)
+    colData(sca)$celltype <- celltype
+    # same for donors (which we need to model random effects)
+    replicate <- factor(colData(sca)$replicate)
+    colData(sca)$replicate <- replicate
+    # create a group per condition-celltype combination
+    colData(sca)$group <- paste0(colData(adata_)$label, ".", colData(adata_)$cell_type)
+    colData(sca)$group <- factor(colData(sca)$group)
+    # define and fit the model
+    zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
+                   sca=sca, 
+                   method='glmer', 
+                   ebayes=F, 
+                   strictConvergence=F,
+                   fitArgsD=list(nAGQ = 0)) # to speed up calculations
+    
+    # perform likelihood-ratio test for the condition that we are interested in    
+    summaryCond <- summary(zlmCond, doLRT='groupstim.CD14_Monocytes')
+    # get the table with log-fold changes and p-values
+    summaryDt <- summaryCond$datatable
+    result <- merge(summaryDt[contrast=='groupstim.CD14_Monocytes' & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
+                     summaryDt[contrast=='groupstim.CD14_Monocytes' & component=='logFC', .(primerid, coef)],
+                     by='primerid') # logFC coefficients
+    # MAST uses natural logarithm so we convert the coefficients to log2 base to be comparable to edgeR
+    result[,coef:=result[,coef]/log(2)]
+    # do multiple testing correction
+    result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
+    result = result[result$FDR<0.01,, drop=F]
+
+    result <- stats::na.omit(as.data.frame(result))
+    return(result)
+}
+
+
+-find_de_MAST_RE(adata_mono)
+-find de edger()
+
+
+-plot heatmap
+-plot volcano
+```
 
 
 
