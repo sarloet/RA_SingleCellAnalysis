@@ -81,7 +81,7 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, paste0("MNN_UMAP_reduced", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
 
 #### Plot Recalculated UMAP of Subclusters 
@@ -259,7 +259,240 @@ find_de_MAST_RE <- function(sce){
 
 
 
+## Trajectory analysis
 
+### Plot UMAP of Subclusters 
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
+plotReducedDim(sce, paste0("MNN_SC_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
+```
+
+
+```{r }
+library(slingshot)
+library(ggbeeswarm)
+#sce<-sce[,sce$subcluster != 6]
+
+sce$pseudotime_PC1 <- rank(reducedDims(sce)$MNN_SC_reduced[, 1])  # rank cells by their PC1 score
+ggplot(as.data.frame(colData(sce)), aes(x = pseudotime_PC1, y = subcluster, 
+                                             colour = subcluster)) +
+    geom_quasirandom(groupOnX = FALSE) +
+     theme_classic() +
+    xlab("PC1") + ylab("Timepoint") +
+    ggtitle("Cells ordered by first principal component")
+
+
+```
+
+
+```{r }
+sce <- slingshot(sce, reducedDim = 'MNN_SC_reduced')
+
+colors <- rainbow(50, alpha = 1)
+plot(reducedDims(sce)$MNN_SC_reduced, col = colors[cut(sce$slingPseudotime_1,breaks=50)], pch=16, asp = 1)
+lines(SlingshotDataSet(sce), lwd=2)
+
+```
+
+
+```{r }
+sce <- slingshot(sce,clusterLabels=sce$subcluster, start.clus = 1, end.clus = 5,reducedDim = 'MNN_SC_reduced', approx_points = 150)
+
+colors <- rainbow(50, alpha = 1)
+plot(reducedDims(sce)$MNN_SC_reduced, col = colors[cut(sce$slingPseudotime_1,breaks=50)], pch=16, asp = 1)
+lines(SlingshotDataSet(sce), lwd=2)
+
+```
+
+
+
+```{r plotSlingshot, fig.width =  8}
+
+ggplot(as.data.frame(colData(sce.orig)), aes(x = sce$slingPseudotime_1, y = subcluster, 
+                              colour = subcluster)) +
+    geom_quasirandom(groupOnX = FALSE) +
+    theme_classic() +
+    xlab("Slingshot pseudotime") + ylab("Timepoint") +
+    ggtitle("Cells ordered by Slingshot pseudotime")
+
+
+```
+
+
+
+```{r plotSlingshot, echo = FALSE, fig.width =  8}
+
+sce <- slingshot(sce, reducedDim = 'MNN_SC_reduced')
+
+
+layout(matrix(c(1, 1, 2, 3), 2))
+par(mar = c(4.5, 4, 1, 1))
+plot(reducedDims(sce)$MNN_SC_reduced[shuffle, ], asp = 1, pch = 16, xlab = "UMAP-1", ylab = "UMAP-2",
+  col = hcl.colors(100, alpha = .5)[cut(sce$slingPseudotime_1, breaks = 100)][shuffle])
+lines(SlingshotDataSet(sce))
+
+
+library(RColorBrewer)
+# Pseudotime densities (by Joint)
+ds <- list( MCP = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1]),
+            Wrist = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1]),
+            Knee = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1])
+            )
+xlim <- range(c(ds$MCP$x, ds$Wrist$x, ds$Knee$x))
+ylim <- range(c(ds$MCP$y, ds$Wrist$y, ds$Knee$y))
+plot(xlim, ylim, col = "white", xlab = "Pseudotime", ylab = "")
+polygon(c(min(ds$MCP$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$MCP$y, 0),
+  col = alpha(brewer.pal(4, "Set1")[3], alpha = .5))
+polygon(c(min(ds$Wrist$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$Wrist$y, 0),
+        col = alpha(brewer.pal(4, "Set1")[2], alpha = .5))
+polygon(c(min(ds$Knee$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$Knee$y, 0),
+  col = alpha(brewer.pal(4, "Set1")[1], alpha = .5))
+
+legend("topleft", legend = c("MCP", "Wrist", "Knee"), 
+       fill = alpha(brewer.pal(4, "Set1")[3:1], alpha = .5), bty = "n")
+
+plot(reducedDims(sce)$MNN_SC_reduced[shuffle, ], asp = 1, pch = 16, xlab = "UMAP-1", ylab = "UMAP-2", 
+     col = alpha(c(2, 3, 4)[factor(colData(sce)$Joint.Location)][shuffle], alpha = .5))
+lines(SlingshotDataSet(sce), type = 'lineages', show.constraints = TRUE)
+legend("topright", pch = 16, col = 2:4, bty = "n", legend = levels(factor(colData(sce)$Joint.Location)))
+
+layout(1)
+par(mar = c(5, 4, 4, 2) + .1)
+
+
+
+```
+```{r plotSlingshot, echo = FALSE, fig.width =  8}
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1])
+
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1])
+
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1])
+```
+
+
+
+
+---
+
+```{r }
+
+library(slingshot)
+
+
+
+sce <- slingshot(sce, reducedDim = 'MNN_SC_reduced', clusterLabels = colData(sce)$Joint.Location,
+                 start.clus = 'inner', approx_points = 150)
+
+
+layout(matrix(c(1, 1, 2, 3), 2))
+par(mar = c(4.5, 4, 1, 1))
+plot(reducedDims(sce)$MNN_SC_reduced[shuffle, ], asp = 1, pch = 16, xlab = "PCA-1", ylab = "PCA-2",
+  col = hcl.colors(100, alpha = .5)[cut(sce$slingPseudotime_1, breaks = 100)][shuffle])
+lines(SlingshotDataSet(sce))
+
+plotExpression(sce, features="HOXD10", x = "slingPseudotime_1", show_violin = FALSE, show_smooth = TRUE, colour_by = "subcluster" )
+```
+
+
+```{r }
+sce$PC1 <- MNN_SC_reduced[, 1]
+sce$PC2 <- MNN_SC_reduced[, 2]
+
+
+ggplot(colData(sce), aes(x = sce$slingPseudotime_1, y = subcluster, 
+                              colour = subcluster)) +
+    geom_quasirandom(groupOnX = FALSE) +
+    scale_color_tableau() + theme_classic() +
+    xlab("Slingshot pseudotime") + ylab("Timepoint") +
+    ggtitle("Cells ordered by Slingshot pseudotime")
+
+```
+
+
+```{r }
+shuffle <- sample(ncol(sce))
+layout(matrix(1:2, nrow = 1))
+par(mar = c(4.5,4,1,1))
+
+plot(reducedDims(sce)$MNN_UMAP_SC_reduced[shuffle, ],
+  asp = 1, pch = 16, xlab = "UMAP-1", ylab = "UMAP-2",
+  col = alpha(c(1:3)[factor(colData(sce)$Joint.Location)][shuffle], alpha = .5))
+legend("bottomleft", pch = 16, col = 1:2, bty = "n", 
+       legend = levels(factor(colData(sce)$Joint.Location)))
+
+
+library(slingshot)
+
+
+
+sce <- slingshot(sce, reducedDim = 'MNN_SC_reduced', clusterLabels = colData(sce)$subcluster,
+                 start.clus = '1', end.clus = '5', approx_points = 150)
+```
+
+```{r plotSlingshot, echo = FALSE, fig.width =  8}
+
+layout(matrix(c(1, 1, 2, 3), 2))
+par(mar = c(4.5, 4, 1, 1))
+plot(reducedDims(sce)$MNN_UMAP_SC_reduced[shuffle, ], asp = 1, pch = 16, xlab = "UMAP-1", ylab = "UMAP-2",
+  col = hcl.colors(100, alpha = .5)[cut(sce$slingPseudotime_1, breaks = 100)][shuffle])
+lines(SlingshotDataSet(sce))
+
+
+library(RColorBrewer)
+# Pseudotime densities (by Joint)
+ds <- list( MCP = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1]),
+            Wrist = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1]),
+            Knee = density(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1])
+            )
+xlim <- range(c(ds$MCP$x, ds$Wrist$x, ds$Knee$x))
+ylim <- range(c(ds$MCP$y, ds$Wrist$y, ds$Knee$y))
+plot(xlim, ylim, col = "white", xlab = "Pseudotime", ylab = "")
+polygon(c(min(ds$MCP$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$MCP$y, 0),
+  col = alpha(brewer.pal(4, "Set1")[3], alpha = .5))
+polygon(c(min(ds$Wrist$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$Wrist$y, 0),
+        col = alpha(brewer.pal(4, "Set1")[2], alpha = .5))
+polygon(c(min(ds$Knee$x), ds$MCP$x, max(ds$MCP$x)), c(0, ds$Knee$y, 0),
+  col = alpha(brewer.pal(4, "Set1")[1], alpha = .5))
+
+legend("topleft", legend = c("MCP", "Wrist", "Knee"), 
+       fill = alpha(brewer.pal(4, "Set1")[3:1], alpha = .5), bty = "n")
+
+plot(reducedDims(sce)$MNN_UMAP_SC_reduced[shuffle, ], asp = 1, pch = 16, xlab = "UMAP-1", ylab = "UMAP-2", 
+     col = alpha(c(2, 3, 4)[factor(colData(sce)$Joint.Location)][shuffle], alpha = .5))
+lines(SlingshotDataSet(sce), type = 'lineages', show.constraints = TRUE)
+legend("topright", pch = 16, col = 2:4, bty = "n", legend = levels(factor(colData(sce)$Joint.Location)))
+
+layout(1)
+par(mar = c(5, 4, 4, 2) + .1)
+
+
+
+```
+```{r plotSlingshot, echo = FALSE, fig.width =  8}
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1])
+
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "Knee", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1])
+
+ks.test(slingPseudotime(sce)[colData(sce)$Joint.Location == "MCP", 1],
+        slingPseudotime(sce)[colData(sce)$Joint.Location == "Wrist", 1])
+```
+
+```{r plotSlingshot, echo = FALSE, fig.width =  8}
+icMat <- evaluateK(counts = as.matrix(assays(sce)$counts),
+                   pseudotime = colData(sce)$slingshot$pseudotime,
+                   cellWeights = colData(sce)$slingshot$cellWeights.V1,
+                   conditions = factor(colData(sce)$Joint.Location),
+                   nGenes = 300,
+                   k = 3:7)
+```
 
 
 
