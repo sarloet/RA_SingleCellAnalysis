@@ -224,7 +224,7 @@ find_de_MAST_RE <- function(sce){
     colData(sca)$group <- paste0(colData(adata_)$label, ".", colData(adata_)$cell_type)
     colData(sca)$group <- factor(colData(sca)$group)
     # define and fit the model
-    zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
+    zlmCond <- zlm(formula = ~ngeneson + group, 
                    sca=sca, 
                    method='glmer', 
                    ebayes=F, 
@@ -288,7 +288,11 @@ ggplot(as.data.frame(colData(sce)), aes(x = pseudotime_PC1, y = subcluster,
 
 
 ```{r }
-sce <- slingshot(sce, reducedDim = 'MNN_SC_reduced')
+sce <- slingshot(sce, clusterLabels = 'subcluster', reducedDim = 'MNN_SC_reduced',allow.breaks = FALSE, start.clus = 1, end.clus = 5)
+summary(sce$slingPseudotime_1)
+
+lnes <- getLineages(reducedDim(sce,"MNN_SC_reduced"),sce$subcluster)
+lnes@lineages
 
 colors <- rainbow(50, alpha = 1)
 plot(reducedDims(sce)$MNN_SC_reduced, col = colors[cut(sce$slingPseudotime_1,breaks=50)], pch=16, asp = 1)
@@ -310,7 +314,9 @@ lines(SlingshotDataSet(sce), lwd=2)
 
 ```{r plotSlingshot, fig.width =  8}
 
-ggplot(as.data.frame(colData(sce.orig)), aes(x = sce$slingPseudotime_1, y = subcluster, 
+slingshot_df <- data.frame(colData(sce))
+
+ggplot(slingshot_df, aes(x = slingPseudotime_1, y = subcluster, 
                               colour = subcluster)) +
     geom_quasirandom(groupOnX = FALSE) +
     theme_classic() +
@@ -320,6 +326,17 @@ ggplot(as.data.frame(colData(sce.orig)), aes(x = sce$slingPseudotime_1, y = subc
 
 ```
 
+```{r plotSlingshot, fig.width =  8}
+
+slingshot_df <- data.frame(colData(sce))
+
+ggplot(slingshot_df, aes(x = slingPseudotime_1, y = slingPseudotime_2, 
+                              colour = subcluster)) +
+    geom_quasirandom(groupOnX = FALSE) + theme_classic() +
+    xlab("First Slingshot pseudotime") + ylab("Second Slingshot pseudotime") +
+    ggtitle("Cells ordered by Slingshot pseudotime")+scale_colour_manual(values = my_color)
+
+```
 
 
 ```{r plotSlingshot, echo = FALSE, fig.width =  8}

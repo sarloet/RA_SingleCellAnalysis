@@ -80,7 +80,7 @@ dim(sce.cluster)
 set.seed(123)
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
 
-colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=10,cluster.fun="louvain",BPPARAM =bpp))
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp))
 
 data.frame(as.list(table(colData(sce.cluster)$louvain)))
 
@@ -93,7 +93,7 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 #Leiden Clustering
 set.seed(123)
 #colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
-colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=70,cluster.fun="leiden",BPPARAM =bpp))
+colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=80,cluster.fun="leiden",BPPARAM =bpp))
 
 
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
@@ -108,7 +108,7 @@ data.frame(as.list(table(colData(sce.cluster)$leiden)))
 #Walktrap Clustering
 
 set.seed(123)
-colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=15,cluster.fun="walktrap", BPPARAM=bpp)))
+colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN_reduced"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=15,cluster.fun="walktrap", BPPARAM=bpp)))
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
 
 
@@ -167,7 +167,7 @@ for (i in methods){
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
     ggbeeswarm::geom_quasirandom(method="smiley")+
     ggtitle(paste0("Silhouette plot ",i," Clustering"))+
-    theme_bw()
+    theme_bw() 
   )
   cat(' \n \n')
   }
@@ -189,7 +189,7 @@ for (i in methods){
   ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="stack") +
     labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
   )
   cat(' \n \n')
   }
@@ -211,7 +211,7 @@ for (i in methods){
   ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="fill") +
     labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
   )
   cat(' \n \n')
   }

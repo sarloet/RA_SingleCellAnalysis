@@ -41,8 +41,7 @@ source(here("code", "standard_libraries.R"))
 ```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 suppressPackageStartupMessages({
-library(scDblFinder)
-library(sctransform)
+library(grid)
 })
 
 ```
@@ -125,17 +124,22 @@ We filter for:
 is_mito<- grepl("(^MT-)|(^mt-)", rowData(sce)$Symbol)
 rowData(sce)$Symbol[is_mito] #Show the MT genes
 
+# Indentify HBB genes
+is_hbb<- grepl("(^HBB)|(^hbb)", rowData(sce)$Symbol)
+rowData(sce)$Symbol[is_hbb] #Show the HBB genes
+
 # calculate per-cell quality control (QC) metrics using scater
-sce <- addPerCellQC(sce, subsets=list(Mito=is_mito))
+sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb))
 ```
 
 ### Fixed Filtering Thresholds
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 1000 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.count_manual <- sce$sum < 750 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
 colData(sce)$qc.genexp_manual <- sce$detected < 500 | sce$detected > 10000  # Cells have at least 300 genes expressed 
-colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
+colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 10 #Mitochondrial contamination has to be lower than 15%
+colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
 
 ```
 
@@ -159,20 +163,20 @@ abline(v = 300, col = "red")
 ```{r AdaptiveThresholds}
 
 # Detect cells with very low number of counts
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=2, log=TRUE, type="both",batch =sce$Sample )
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
 # Detect cells with very low number of genes
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=2, log=TRUE, type="both",batch =sce$Sample)
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
 # Detect cells with high mitochondrial content
-colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=2, type="higher",batch =sce$Sample)
+colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.mito, "thresholds")) 
 
 
 # Mark all Cells to be Discarted
-colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual
+colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual | sce$qc.hbb_manual
 
 
 ```
@@ -183,6 +187,7 @@ colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce
 data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
            `Genes_detected` = sum(sce$qc.genexp| sce$qc.genexp_manual),
            `Mitochondrial_percentage` = sum(sce$qc.mito| sce$qc.mito_manual),
+           `HBB_expression` = sum(sce$qc.hbb_manual),
            Total_discarded = sum(sce$discard))
 
 ```
@@ -261,6 +266,17 @@ plotColData(sce, x="Sample", y="detected", other_fields="Sample",colour_by ="dis
 ```{r QcPlots5}
 #Plot Mito percent
 plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",colour_by = data.frame(factor(sce$qc.mito | sce$qc.mito_manual,levels=c(FALSE,TRUE)))) + 
+    facet_wrap(~Sample, nrow=1, scales = "free_x") +
+    ggtitle("Mito percent")+
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+```
+
+##### HBB percentage
+
+```{r QcPlotshbb}
+#Plot Mito percent
+plotColData(sce, x="Sample", y="subsets_Hbb_percent", other_fields="Sample",colour_by = data.frame(factor(sce$qc.hbb_manual,levels=c(FALSE,TRUE)))) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
     guides(colour=guide_legend(title="Discarded"))+

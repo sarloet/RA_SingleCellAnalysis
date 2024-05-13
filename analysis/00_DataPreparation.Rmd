@@ -38,6 +38,7 @@ source(here("code", "standard_libraries.R"))
 ```{r LoadAddPackages, warning=FALSE}
 suppressPackageStartupMessages({
 library(DropletUtils)
+library(scDblFinder)
 })
 
 ```

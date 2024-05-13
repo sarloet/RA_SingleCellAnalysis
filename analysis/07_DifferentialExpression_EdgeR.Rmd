@@ -15,9 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -28,16 +26,20 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
 
 ```{r LoadPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
 library(edgeR)
 library(EnhancedVolcano)
 })
@@ -113,7 +115,7 @@ sce.summ
 ```{r DE}
 # filter pseudo-bulk object
 Ctype <- "Fibroblast"
-current <- sce.summ[,Ctype==sce.summ$label]
+current <- sce.summ[,sce.summ$label==Ctype]
 
 # Creating up a DGEList object for use in edgeR:
 y <- DGEList(counts(current), samples=colData(current))
@@ -141,6 +143,15 @@ y$samples
 ```
 
 ```{r DE}
+# set up the design matrix
+mm <- model.matrix(~ 0 + Joint.Location, data = y$samples)
+x <- c("Joint.LocationKnee-Joint.LocationWrist","Joint.LocationKnee-Joint.LocationMCP","Joint.LocationWrist-Joint.LocationMCP")
+contrast <- makeContrasts(contrasts=x, levels = mm)
+
+```
+
+
+```{r DE}
 #mean-difference (MD) plot for each normalized pseudo-bulk profile 
 par(mfrow=c(2,3))
 for (i in seq_len(ncol(y))) {
@@ -157,45 +168,41 @@ plotMDS(cpm(y, log=TRUE), col=colors[factor(y$samples$Joint.Location)])
 ### Performing Differential Expression
 
 
-```{r DE}
-# set up the design matrix
-ei <- metadata(sce)$experiment_info
-mm <- model.matrix(~ 0 + ei$group_id)
-dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
-x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
-contrast <- makeContrasts(contrasts=x, levels = mm)
-
-```
 
 ```{r DE}
-# set up the design matrix
-
+# estimateDisp
 y <- estimateDisp(y, mm)
 summary(y$trended.dispersion)
 plotBCV(y)
 ```
 
 ```{r DE}
-fit <- glmQLFit(y, mm, robust=TRUE)
+fit <- glmFit(y, mm, robust=TRUE)#glmQLFit
 summary(fit$var.prior)
 summary(fit$df.prior)
-plotQLDisp(fit)
+#plotQLDisp(fit)
 ```
+
 ```{r DE}
-res <- glmQLFTest(fit, contrast = contrast )
+res <- glmLRT(fit, contrast = contrast )#glmFTest
 summary(decideTests(res))
 topTags(res)
 ```
 
 ```{r DE}
-res <- glmQLFTest(fit, coef=ncol(design))
-summary(decideTests(res))
-topTags(res)
+  res$table$FDR <- p.adjust(res$table$PValue, method="BH")
+  DEGs <- res$table[order(res$table$FDR),]
+  DEGs_up <- DEGs[DEGs$logFC > 0,]
+  DEGs_down <- DEGs[DEGs$logFC < 0,]
+  print(paste0('Number of DEGs: ', sum(DEGs$FDR < 0.1))) 
+  
 ```
+
 
 ## DE looping across labels
 
 ### DE Knee vs Wrist
+
 
 ```{r DE}
 # Pre-processing for DE Knee <-> Wrist
