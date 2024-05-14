@@ -134,13 +134,18 @@ find_de_MAST_RE <- function(sce,C_type){
     # create a group per condition-celltype combination
     colData(sca)$group <- factor(colData(sca)$label)
     # define and fit the model
-    contrasts(colData(sca)$group)='contrast.joint'
+    contrasts(colData(sca)$group)='contr.joint'
     zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
                    sca=sca, 
                    method='glmer', 
                    ebayes=F, 
                    strictConvergence=F,
                    fitArgsD=list(nAGQ = 0)) # to speed up calculations
+    
+    #test contrasts symbolically
+    lr_cond_KvM <- lrTest(zlmCond, Hypothesis('groupKnee - groupMCP'))
+    lr_anova_KvW <- lrTest(zlmCond, Hypothesis('groupKnee - groupWrist'))
+    lr_anova_MvW <- lrTest(zlmCond, Hypothesis('groupMCP - groupWrist'))
     
     # perform likelihood-ratio test for the condition that we are interested in    
     summaryCond <- MAST::summary(zlmCond, doLRT='groupKnee')
