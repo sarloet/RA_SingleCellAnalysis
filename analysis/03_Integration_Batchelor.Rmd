@@ -115,7 +115,7 @@ merge_order <- list(
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
 bpstart(bpp)
-sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order, correct.all=TRUE,BPPARAM = bpp)
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order,  correct.all=TRUE,BPPARAM = bpp)#auto.merge =TRUE
 bpstop(bpp)
 
 
@@ -234,7 +234,7 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",
 
 ```{r PlotQcUMAP2}
 #Plot UMAP colored by detected
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes ")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes")
 ```
 
 ### Colored by nr of Counts

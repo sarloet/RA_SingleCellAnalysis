@@ -1,0 +1,177 @@
+---
+title: "Differential Expression Analysis"
+subtitle: "07_DifferentialExpression_MAST"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Differential Expression Analysis
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(MAST)
+library(EnhancedVolcano)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+
+```
+
+
+### Explore Dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UMAPs coloured by cluster or cell type
+
+### Plot Clustering and Annotation {.tabset}
+
+### Annotation
+
+```{r UMAPAnnotation}
+#cell type
+plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
+
+```
+
+### Clusters
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
+
+```
+
+## Differential Expression
+
+### Set Celltype Annotation to use
+
+```{r DE}
+#sce$label <-
+# Nr of cells in celltypes per Sample
+as.data.frame.matrix(table(sce$label, sce$Sample))
+```
+
+
+```{r }
+
+-Function find_de_MAST_RE takes a SingleCellExperiment object as input and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
+
+find_de_MAST_RE <- function(sce,C_type){
+    
+    sce.subset <- sce[,sce$celltype == C_type]
+    sca <- suppressMessages(SceToSingleCellAssay(sce.subset, class = "SingleCellAssay", check_sanity = TRUE))
+  # create a MAST object
+    print("Dimensions before subsetting:")
+    print(dim(sca))
+    print("")
+    # keep genes that are expressed in more than 10% of all cells
+    sca <- sca[freq(sca)>0.1,]
+    print("Dimensions after subsetting:")
+    print(dim(sca))
+    print("")
+    # add a column to the data which contains scaled number of genes that are expressed in each cell
+    cdr2 <- colSums(assay(sca)>0)
+    colData(sca)$ngeneson <- scale(cdr2)
+    # store the columns that we are interested in as factors
+    colData(sca)$label <- factor(colData(sca)$Joint.Location)
+    # set the reference level
+    ##label <- relevel(label,"MCP")
+    ##colData(sca)$label <- label
+    #celltype <- factor(colData(sca)$cell_type)
+    #colData(sca)$celltype <- celltype
+    # same for donors (which we need to model random effects)
+    colData(sca)$replicate <- factor(colData(sca)$Sample)
+    # create a group per condition-celltype combination
+    colData(sca)$group <- factor(colData(sca)$label)
+    # define and fit the model
+    contrasts(colData(sca)$group)='contrast.joint'
+    zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
+                   sca=sca, 
+                   method='glmer', 
+                   ebayes=F, 
+                   strictConvergence=F,
+                   fitArgsD=list(nAGQ = 0)) # to speed up calculations
+    
+    # perform likelihood-ratio test for the condition that we are interested in    
+    summaryCond <- MAST::summary(zlmCond, doLRT='groupKnee')
+    # get the table with log-fold changes and p-values
+    summaryDt <- summaryCond$datatable
+    result <- merge(summaryDt[contrast=='groupKnee' & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
+                     summaryDt[contrast=='groupKnee' & component=='logFC', .(primerid, coef)],
+                     by='primerid') # logFC coefficients
+    # MAST uses natural logarithm so we convert the coefficients to log2 base to be comparable to edgeR
+    result[,coef:=result[,coef]/log(2)]
+    # do multiple testing correction
+    result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
+    result = result[result$FDR<0.01,, drop=F]
+
+    result <- stats::na.omit(as.data.frame(result))
+    return(result)
+}
+
+
+-find_de_MAST_RE(adata_mono)
+-find de edger()
+
+
+-plot heatmap
+-plot volcano
+```
+
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
+```

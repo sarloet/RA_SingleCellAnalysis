@@ -1,0 +1,209 @@
+---
+title: "Enrichment Analysis"
+subtitle: "09_EnrichmentAnalysis"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Differential Expression Analysis
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(clusterProfiler)
+library(enrichplot)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r LoadDataset}
+## RA DATASET
+geneList <-
+
+```
+
+
+### Explore Dataset
+
+
+```{r LoadDataset}
+##Print table
+#head()
+
+```
+
+
+## Enrichment Analysis
+
+With clusterProfiler
+
+```{r LoadDataset}
+gene <- names(geneList)[abs(geneList) > 2]
+
+```
+
+### GO classification
+
+#### Run GO over-representation analysis
+
+```{r DE}
+ego <- enrichGO(gene          = gene,
+                universe      = names(geneList),
+                OrgDb         = org.Hs.eg.db,
+                keyType       = 'SYMBOL',
+                ont           = "CC",
+                pAdjustMethod = "BH",
+                pvalueCutoff  = 0.01,
+                qvalueCutoff  = 0.05,
+                readable      = TRUE)
+head(ego)
+
+```
+
+#### Visualize enriched GO terms as a directed acyclic graph
+
+```{r DE}
+goplot(ego)
+
+```
+
+
+### KEGG classification
+
+#### Run KEGG over-representation analysis
+
+```{r DE}
+kk <- enrichKEGG(gene         = gene,
+                 organism     = 'hsa',
+                 pvalueCutoff = 0.05)
+head(kk)
+```
+
+#### Visualize enriched GO terms as a directed acyclic graph
+
+```{r DE}
+library("pathview")
+hsa04110 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04110", #ADD pathway
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+
+```
+
+### WikiPathways classification
+
+#### Run WikiPathways over-representation analysis
+
+```{r DE}
+WP <- enrichWP(gene, organism = "Homo sapiens") 
+head(WP)
+```
+
+
+### WikiPathways classification
+
+#### Run WikiPathways over-representation analysis
+
+```{r DE}
+y <- gsePathway(geneList, 
+                pvalueCutoff = 0.2,
+                pAdjustMethod = "BH", 
+                verbose = FALSE)
+head(y)
+```
+
+#### Visualize enriched GO terms as a directed acyclic graph
+
+```{r DE}
+viewPathway("E2F mediated regulation of DNA replication", 
+            readable = TRUE, 
+            foldChange = geneList)   = list(gene=max(abs(geneList)), cpd=1))
+
+```
+
+
+### WikiPathways classification
+
+#### Run WikiPathways over-representation analysis
+
+```{r DE}
+y <- gsePathway(geneList, 
+                pvalueCutoff = 0.2,
+                pAdjustMethod = "BH", 
+                verbose = FALSE)
+head(y)
+```
+
+### Visualization of functional enrichment result
+
+#### Bar Plot
+
+```{r DE}
+barplot(edo, showCategory=20) 
+
+mutate(edo, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")
+```
+
+#### Dot plot
+
+```{r DE}
+dotplot(edo, showCategory=30) + ggtitle("dotplot for ORA")
+dotplot(edo2, showCategory=30) + ggtitle("dotplot for GSEA")
+```
+
+#### Heatmap-like functional classification
+
+```{r DE}
+p1 <- heatplot(edox, showCategory=5)
+p2 <- heatplot(edox, foldChange=geneList, showCategory=5)
+cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+```
+
+## Save the dataset
+
+```{r SaveData}
+
+```

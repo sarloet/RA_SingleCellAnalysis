@@ -136,9 +136,9 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 750 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 500 | sce$detected > 10000  # Cells have at least 300 genes expressed 
-colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 10 #Mitochondrial contamination has to be lower than 15%
+colData(sce)$qc.count_manual <- sce$sum < 400 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$detected > 10000  # Cells have at least 300 genes expressed 
+colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
 
 ```
@@ -278,7 +278,7 @@ plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",col
 #Plot Mito percent
 plotColData(sce, x="Sample", y="subsets_Hbb_percent", other_fields="Sample",colour_by = data.frame(factor(sce$qc.hbb_manual,levels=c(FALSE,TRUE)))) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
-    ggtitle("Mito percent")+
+    ggtitle("HBB percent")+
     guides(colour=guide_legend(title="Discarded"))+
     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 ```

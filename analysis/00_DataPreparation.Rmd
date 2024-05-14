@@ -144,14 +144,34 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
 names(colData(sce))[which(names(colData(sce))=="Sample")]="Orig.Identifier"
 names(colData(sce))[which(names(colData(sce))=="ID")]="Sample"
 
-#make row and col names unique
+#make col names unique
 colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
-rownames(sce) <- paste0(rowData(sce)$ID, ".", rowData(sce)$Symbol)
+
 
 
 ```
 
-### Exclude Samples
+
+
+### Annotate and Update genes
+
+```{r,LoadMetadata}
+#Change Name
+names(rowData(sce))[which(names(rowData(sce))=="ID")]="ENSEMBL"
+
+#Annotate genes
+AnnoGene <- annotate_genes(data.frame(rowData(sce)), gene_col = "Symbol")
+
+#Add Annotated and Updated genes
+rowData(sce) <- AnnoGene
+
+#make row and col names unique
+rownames(sce) <- paste0(rowData(sce)$ENSEMBL, ".", rowData(sce)$Symbol)
+
+
+```
+
+
 
 ```{r ShowDim}
 #Dimensions of count matrix

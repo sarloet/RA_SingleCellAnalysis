@@ -200,6 +200,23 @@ print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "Sample")
 ```
 
 
+## Plot QC UMAP of Fibroblast Subclusters  {.tabset}
+
+```{r UMAPSubclusterRecalc , results='asis'}
+cat(paste0("#### Colored by Mitochondrial Genes\n"))
+print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
+
+cat(paste0("#### Colored by Sample\n"))
+print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
+
+cat(paste0("#### Colored by Sample\n"))
+print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
+
+```
+
+
 ### Save the dataset
 
 ```{r SaveData}
