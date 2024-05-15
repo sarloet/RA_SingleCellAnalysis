@@ -99,20 +99,20 @@ update_gene_names <- function(gene_list) {
 
   new_names <- annotated_genes %>%
     drop_na() %>%
-    filter(gene != symbol) %>%
+    filter(gene != updatedsymbol) %>%
     pull(gene)
 
   duplicated_names <- annotated_genes %>%
     drop_na() %>%
-    dplyr::count(symbol) %>%
+    dplyr::count(updatedsymbol) %>%
     filter(n > 1) %>%
-    pull(symbol)
+    pull(updatedsymbol)
 
   updated_genes <- annotated_genes %>%
-    mutate(updated = case_when(symbol %in% duplicated_names ~ gene,
-                               gene %in% new_names ~ symbol,
+    mutate(updated = case_when(updatedsymbol %in% duplicated_names ~ gene,
+                               gene %in% new_names ~ updatedsymbol,
                                TRUE ~ gene)) %>%
-    dplyr::select(original = gene, hgnc = symbol, updated, entrez, description)
+    dplyr::select(original = gene, hgnc = updatedsymbol, updated, entrez, description)
 
   n_updated <- updated_genes %>% filter(original != updated) %>% nrow()
 

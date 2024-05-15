@@ -96,7 +96,6 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(ti
 ### Set Celltype Annotation to use
 
 ```{r DE}
-#sce$label <-
 # Nr of cells in celltypes per Sample
 as.data.frame.matrix(table(sce$label, sce$Sample))
 ```
@@ -104,11 +103,13 @@ as.data.frame.matrix(table(sce$label, sce$Sample))
 
 ```{r }
 
--Function find_de_MAST_RE takes a SingleCellExperiment object as input and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
+#Function find_de_MAST_RE takes a SingleCellExperiment object as input and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
 
-find_de_MAST_RE <- function(sce,C_type){
+find_de_MAST_RE <- function(sce,C_type,cond1,cond2){
     
     sce.subset <- sce[,sce$celltype == C_type]
+    sce.subset <- sce.subset[,sce.subset$Joint.Location == c(cond1, cond2)]
+    
     sca <- suppressMessages(SceToSingleCellAssay(sce.subset, class = "SingleCellAssay", check_sanity = TRUE))
   # create a MAST object
     print("Dimensions before subsetting:")
@@ -119,6 +120,7 @@ find_de_MAST_RE <- function(sce,C_type){
     print("Dimensions after subsetting:")
     print(dim(sca))
     print("")
+    
     # add a column to the data which contains scaled number of genes that are expressed in each cell
     cdr2 <- colSums(assay(sca)>0)
     colData(sca)$ngeneson <- scale(cdr2)
@@ -134,32 +136,44 @@ find_de_MAST_RE <- function(sce,C_type){
     # create a group per condition-celltype combination
     colData(sca)$group <- factor(colData(sca)$label)
     # define and fit the model
-    contrasts(colData(sca)$group)='contrast.joint'
+    #contrasts(colData(sca)$group)='contrast.joint'
+    options(mc.cores = 4)
     zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
                    sca=sca, 
                    method='glmer', 
                    ebayes=F, 
                    strictConvergence=F,
+                   parallel = TRUE,
                    fitArgsD=list(nAGQ = 0)) # to speed up calculations
     
     # perform likelihood-ratio test for the condition that we are interested in    
-    summaryCond <- MAST::summary(zlmCond, doLRT='groupKnee')
+    summaryCond <- MAST::summary(zlmCond, doLRT=paste0('group',cond2))
     # get the table with log-fold changes and p-values
     summaryDt <- summaryCond$datatable
-    result <- merge(summaryDt[contrast=='groupKnee' & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
-                     summaryDt[contrast=='groupKnee' & component=='logFC', .(primerid, coef)],
+    result <- merge(summaryDt[contrast== paste0('group',cond2) & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
+                     summaryDt[contrast== paste0('group',cond2) & component=='logFC', .(primerid, coef)],
                      by='primerid') # logFC coefficients
+    r<-result
     # MAST uses natural logarithm so we convert the coefficients to log2 base to be comparable to edgeR
-    result[,coef:=result[,coef]/log(2)]
+    result[,coef_baselog2:=result[,coef]/log(2)]
     # do multiple testing correction
     result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
-    result = result[result$FDR<0.01,, drop=F]
+    data.table::setorder(result, FDR)
+    #result = result[result$FDR<0.01,, drop=F]
 
     result <- stats::na.omit(as.data.frame(result))
+    
     return(result)
 }
+```
 
 
+```{r SaveData}
+res <- find_de_MAST_RE(sce,C_type="Fibroblast",cond1="Knee",cond2="MCP")
+```
+
+
+```{r SaveData}
 -find_de_MAST_RE(adata_mono)
 -find de edger()
 
@@ -169,9 +183,23 @@ find_de_MAST_RE <- function(sce,C_type){
 ```
 
 
+```{r SaveData, out.width = '30%',fig.height = 7}
+#res <- result
+res <- result[,c("Pr(>Chisq)","coef_baselog2")]
+row.names(res)<- result$primerid
+EnhancedVolcano(res, lab = row.names(res), x = 'coef_baselog2', y = 'Pr(>Chisq)',
+                pCutoff = 0.05, FCcutoff = 0.5,
+                title = paste("Differential expression", " Knee ", "vs", " MCP ", sep=' '),
+                subtitle = paste0("Fibroblast"," cluster (MAST)"),
+                pointSize = 2.0, colAlpha = 1,
+                legendPosition = 'right')
+```
+
 
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
+write.csv(result, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
+#write.csv(res, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
+#write.csv(res, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
 ```

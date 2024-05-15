@@ -59,7 +59,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-geneList <-
+geneList <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
 
 ```
 
@@ -69,7 +69,8 @@ geneList <-
 
 ```{r LoadDataset}
 ##Print table
-#head()
+head(geneList)
+
 
 ```
 
@@ -79,7 +80,13 @@ geneList <-
 With clusterProfiler
 
 ```{r LoadDataset}
-gene <- names(geneList)[abs(geneList) > 2]
+
+gene_List<-update_gene_names(geneList$primerid)
+gene_List<- gene_List$updated
+
+gene_List_MCP <- geneList[geneList$Pr..Chisq.<0.05 & geneList$coef_baselog2> 0.1,, drop=F]
+gene_List_Knee <- geneList[geneList$Pr..Chisq.<0.05 & geneList$coef_baselog2< -0.1,, drop=F]
+#gene <- siggene$primerid[abs(names(siggene$primerid)) > 2]
 
 ```
 
@@ -88,18 +95,33 @@ gene <- names(geneList)[abs(geneList) > 2]
 #### Run GO over-representation analysis
 
 ```{r DE}
-ego <- enrichGO(gene          = gene,
-                universe      = names(geneList),
+ego_Knee <- enrichGO(gene          = gene_List_Knee$primerid,
+                universe      = gene_List,
                 OrgDb         = org.Hs.eg.db,
                 keyType       = 'SYMBOL',
                 ont           = "CC",
                 pAdjustMethod = "BH",
-                pvalueCutoff  = 0.01,
+                pvalueCutoff  = 0.05,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
 head(ego)
 
 ```
+
+```{r DE}
+ego_MCP <- enrichGO(gene          = gene_List_MCP$primerid,
+                universe      = gene_List,
+                OrgDb         = org.Hs.eg.db,
+                keyType       = 'SYMBOL',
+                ont           = "CC",
+                pAdjustMethod = "BH",
+                pvalueCutoff  = 0.05,
+                qvalueCutoff  = 0.05,
+                readable      = TRUE)
+head(ego)
+
+```
+
 
 #### Visualize enriched GO terms as a directed acyclic graph
 
@@ -114,7 +136,7 @@ goplot(ego)
 #### Run KEGG over-representation analysis
 
 ```{r DE}
-kk <- enrichKEGG(gene         = gene,
+kk <- enrichKEGG(gene         = siggene$primerid,
                  organism     = 'hsa',
                  pvalueCutoff = 0.05)
 head(kk)
@@ -124,7 +146,7 @@ head(kk)
 
 ```{r DE}
 library("pathview")
-hsa04110 <- pathview(gene.data  = geneList,
+hsa04110 <- pathview(gene.data  = geneList$primerid,
                      pathway.id = "hsa04110", #ADD pathway
                      species    = "hsa",
                      limit      = list(gene=max(abs(geneList)), cpd=1))
@@ -136,7 +158,7 @@ hsa04110 <- pathview(gene.data  = geneList,
 #### Run WikiPathways over-representation analysis
 
 ```{r DE}
-WP <- enrichWP(gene, organism = "Homo sapiens") 
+WP <- enrichWP(siggene$primerid, organism = "Homo sapiens") 
 head(WP)
 ```
 
@@ -147,7 +169,7 @@ head(WP)
 
 ```{r DE}
 y <- gsePathway(geneList, 
-                pvalueCutoff = 0.2,
+                pvalueCutoff = 0.5,
                 pAdjustMethod = "BH", 
                 verbose = FALSE)
 head(y)
@@ -180,27 +202,37 @@ head(y)
 #### Bar Plot
 
 ```{r DE}
-barplot(edo, showCategory=20) 
+barplot(ego, showCategory=20) 
 
-mutate(edo, qscore = -log(p.adjust, base=10)) %>% 
+mutate(ego, qscore = -log(p.adjust, base=10)) %>% 
     barplot(x="qscore")
 ```
 
 #### Dot plot
 
 ```{r DE}
-dotplot(edo, showCategory=30) + ggtitle("dotplot for ORA")
-dotplot(edo2, showCategory=30) + ggtitle("dotplot for GSEA")
+dotplot(ego, showCategory=30) + ggtitle("dotplot for ORA")
+#dotplot(ego, showCategory=30) + ggtitle("dotplot for GSEA")
 ```
 
 #### Heatmap-like functional classification
 
 ```{r DE}
-p1 <- heatplot(edox, showCategory=5)
-p2 <- heatplot(edox, foldChange=geneList, showCategory=5)
+mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+p1 <- heatplot(ego, showCategory=2)
+p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
 cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
 ```
+
+#### running score and preranked list of GSEA result
+
+```{r DE}
+gseaplot(ego, geneSetID = 2, title = ego$Description[1])
+
+```
+
 
 ## Save the dataset
 

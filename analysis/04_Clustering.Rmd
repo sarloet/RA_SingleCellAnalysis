@@ -80,7 +80,7 @@ dim(sce.cluster)
 set.seed(123)
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
 
-colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=10,cluster.fun="louvain",type="jaccard",BPPARAM =bpp))
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=25,cluster.fun="louvain",type="jaccard",BPPARAM =bpp))
 
 data.frame(as.list(table(colData(sce.cluster)$louvain)))
 
