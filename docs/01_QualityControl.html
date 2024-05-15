@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">Quality Control and Filtering</h1>
 <h3 class="subtitle">01_QualityControl</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">May 14 2024 12:11:46</h4>
+<h4 class="date">May 15 2024 12:36:39</h4>
 
 </div>
 
@@ -420,7 +420,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -431,8 +431,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -441,13 +441,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-05-14
+<strong>Last updated:</strong> 2024-05-15
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
@@ -470,21 +470,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -575,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree14ca55cb84c60cf353776c22d595167915b30d9btargetblank14ca55ca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree69f37f025d6e7370ff044dfeb8d9a0122c30e1bbtargetblank69f37f0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/14ca55cb84c60cf353776c22d595167915b30d9b" target="_blank">14ca55c</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb" target="_blank">69f37f0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree14ca55cb84c60cf353776c22d595167915b30d9btargetblank14ca55ca"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree69f37f025d6e7370ff044dfeb8d9a0122c30e1bbtargetblank69f37f0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -593,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/14ca55cb84c60cf353776c22d595167915b30d9b" target="_blank">14ca55c</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb" target="_blank">69f37f0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -611,7 +608,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    data/cellbender_data_h5/
-    Ignored:    output/._Cluster_Marker_Genes.xlsx
     Ignored:    output/00_sce_DataPreparation.rds
     Ignored:    output/01_sce_QualityControl.rds
     Ignored:    output/01_sce_QualityControl_filtered.rds
@@ -626,16 +622,11 @@ Ignored files:
     Ignored:    output/06_sce_SC_Tcell.rds
     Ignored:    output/08_DifferentialAbundance_miloR.rds
     Ignored:    output/Cluster_Marker_Genes.xlsx
-
-Untracked files:
-    Untracked:  analysis/07_DifferentialExpression_MAST.Rmd
+    Ignored:    output/MAST_KneeVsMCP.csv
 
 Unstaged changes:
-    Modified:   analysis/01_QualityControl.Rmd
-    Modified:   analysis/03_Integration_Batchelor.Rmd
-    Modified:   analysis/04_Clustering.Rmd
     Modified:   analysis/06_SC_Fibroblast.Rmd
-    Modified:   analysis/06_SubClustering.Rmd
+    Modified:   analysis/07_DifferentialExpression_MAST.Rmd
 
 </code></pre>
 <p>
@@ -681,6 +672,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/analysis/01_QualityControl.Rmd" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/01_QualityControl.html" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+<td>
+fix
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1172,6 +1197,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots1-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots1-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -1255,6 +1291,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots2-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots2-1.png" target="_blank">14ca55c</a>
@@ -1341,6 +1388,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots3-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots3-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -1420,6 +1478,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots4-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots4-1.png" target="_blank">14ca55c</a>
@@ -1502,6 +1571,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots5-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots5-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -1571,6 +1651,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlotshbb-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlotshbb-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -1626,6 +1717,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots6-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots6-1.png" target="_blank">14ca55c</a>
@@ -1713,6 +1815,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/QcPlots7-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/QcPlots7-1.png" target="_blank">14ca55c</a>
@@ -1849,6 +1962,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/PlotCellsPerSampleAfterFiltering1-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -1930,6 +2054,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/PlotCellsPerJointAfterFiltering2-1.png" target="_blank">14ca55c</a>
@@ -2024,6 +2159,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/PlotTop25GenesAfterFiltering-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -2073,8 +2219,8 @@ sarloet
 <pre class="r"><code>rm(plot_data,rel_expression)
 gc()</code></pre>
 <pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells   8449657  451.3   15183757   811.0         NA   12050391   643.6
-Vcells 766643276 5849.1 2479447616 18916.7     102400 2009396642 15330.5</code></pre>
+Ncells  10093914  539.1   17773758   949.3         NA   17773758   949.3
+Vcells 769978285 5874.5 2484249994 18953.4     102400 2012732477 15356.0</code></pre>
 </div>
 </div>
 <div id="normalization" class="section level2">
@@ -2124,6 +2270,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/LibrarySizeNorm-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/LibrarySizeNorm-1.png" target="_blank">14ca55c</a>
@@ -2215,6 +2372,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/DeconvolutionNorm-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/DeconvolutionNorm-1.png" target="_blank">14ca55c</a>
@@ -2314,6 +2482,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/PlotSizeFactors1-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/PlotSizeFactors1-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -2393,6 +2572,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/PlotSizeFactors2-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/PlotSizeFactors2-1.png" target="_blank">14ca55c</a>
 </td>
 <td>
@@ -2455,8 +2645,8 @@ summary(sizeFactors(sce.filtered))</code></pre>
 <pre class="r"><code>rm(sce.lib, sce.deconv)
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
-Ncells    8505653  454.3   15183757   811.0         NA   15183757   811.0
-Vcells 1000975330 7636.9 2479447616 18916.7     102400 2473460198 18871.1</code></pre>
+Ncells   10149708  542.1   17773758   949.3         NA   17773758   949.3
+Vcells 1004310055 7662.3 2484249994 18953.4     102400 2476804762 18896.6</code></pre>
 </div>
 </div>
 <div id="variable-level-metrics" class="section level2">
@@ -2500,6 +2690,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/01_QualityControl.Rmd/VariableMetrics-1.png" target="_blank">69f37f0</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-14
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/14ca55cb84c60cf353776c22d595167915b30d9b/docs/figure/01_QualityControl.Rmd/VariableMetrics-1.png" target="_blank">14ca55c</a>
@@ -2582,64 +2783,88 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] gridExtra_2.3               scran_1.30.2               
- [3] scater_1.30.1               scuttle_1.12.0             
- [5] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
- [7] Biobase_2.62.0              GenomicRanges_1.54.1       
- [9] GenomeInfoDb_1.38.8         IRanges_2.36.0             
-[11] S4Vectors_0.40.2            BiocGenerics_0.48.1        
-[13] MatrixGenerics_1.14.0       matrixStats_1.3.0          
-[15] dplyr_1.1.4                 ggplot2_3.5.1              
-[17] BiocParallel_1.36.0         here_1.0.1                 
-[19] workflowr_1.7.1            
+ [1] tidyr_1.3.1                 org.Hs.eg.db_3.18.0        
+ [3] AnnotationDbi_1.64.1        clusterProfiler_4.10.1     
+ [5] gridExtra_2.3               scran_1.30.2               
+ [7] scater_1.30.1               scuttle_1.12.0             
+ [9] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
+[11] Biobase_2.62.0              GenomicRanges_1.54.1       
+[13] GenomeInfoDb_1.38.8         IRanges_2.36.0             
+[15] S4Vectors_0.40.2            BiocGenerics_0.48.1        
+[17] MatrixGenerics_1.14.0       matrixStats_1.3.0          
+[19] dplyr_1.1.4                 ggplot2_3.5.1              
+[21] BiocParallel_1.36.0         here_1.0.1                 
+[23] workflowr_1.7.1            
 
 loaded via a namespace (and not attached):
- [1] bitops_1.0-7              rlang_1.1.3              
- [3] magrittr_2.0.3            git2r_0.33.0             
- [5] compiler_4.3.3            getPass_0.2-4            
- [7] DelayedMatrixStats_1.24.0 callr_3.7.6              
- [9] vctrs_0.6.5               stringr_1.5.1            
-[11] pkgconfig_2.0.3           crayon_1.5.2             
-[13] fastmap_1.1.1             XVector_0.42.0           
-[15] labeling_0.4.3            utf8_1.2.4               
-[17] promises_1.3.0            rmarkdown_2.26           
-[19] ps_1.7.6                  ggbeeswarm_0.7.2         
-[21] xfun_0.43                 bluster_1.12.0           
-[23] zlibbioc_1.48.2           cachem_1.0.8             
-[25] beachmat_2.18.1           jsonlite_1.8.8           
-[27] highr_0.10                later_1.3.2              
-[29] DelayedArray_0.28.0       irlba_2.3.5.1            
-[31] parallel_4.3.3            cluster_2.1.6            
-[33] R6_2.5.1                  bslib_0.7.0              
-[35] stringi_1.8.4             limma_3.58.1             
-[37] jquerylib_0.1.4           Rcpp_1.0.12              
-[39] knitr_1.45                httpuv_1.6.15            
-[41] Matrix_1.6-5              igraph_2.0.3             
-[43] tidyselect_1.2.1          rstudioapi_0.16.0        
-[45] abind_1.4-5               yaml_2.3.8               
-[47] viridis_0.6.5             codetools_0.2-19         
-[49] processx_3.8.4            lattice_0.22-5           
-[51] tibble_3.2.1              withr_3.0.0              
-[53] evaluate_0.23             pillar_1.9.0             
-[55] whisker_0.4.1             generics_0.1.3           
-[57] rprojroot_2.0.4           RCurl_1.98-1.14          
-[59] sparseMatrixStats_1.14.0  munsell_0.5.1            
-[61] scales_1.3.0              glue_1.7.0               
-[63] metapod_1.10.1            tools_4.3.3              
-[65] BiocNeighbors_1.20.2      ScaledMatrix_1.10.0      
-[67] locfit_1.5-9.9            fs_1.6.4                 
-[69] cowplot_1.1.3             edgeR_4.0.16             
-[71] colorspace_2.1-0          GenomeInfoDbData_1.2.11  
-[73] beeswarm_0.4.0            BiocSingular_1.18.0      
-[75] vipor_0.4.7               cli_3.6.2                
-[77] rsvd_1.0.5                fansi_1.0.6              
-[79] S4Arrays_1.2.1            viridisLite_0.4.2        
-[81] gtable_0.3.5              sass_0.4.9               
-[83] digest_0.6.35             SparseArray_1.2.4        
-[85] ggrepel_0.9.5             dqrng_0.3.2              
-[87] farver_2.1.2              htmltools_0.5.8.1        
-[89] lifecycle_1.0.4           httr_1.4.7               
-[91] statmod_1.5.0            </code></pre>
+  [1] splines_4.3.3             later_1.3.2              
+  [3] bitops_1.0-7              ggplotify_0.1.2          
+  [5] tibble_3.2.1              polyclip_1.10-6          
+  [7] lifecycle_1.0.4           edgeR_4.0.16             
+  [9] rprojroot_2.0.4           processx_3.8.4           
+ [11] lattice_0.22-5            MASS_7.3-60.0.1          
+ [13] magrittr_2.0.3            limma_3.58.1             
+ [15] sass_0.4.9                rmarkdown_2.26           
+ [17] jquerylib_0.1.4           yaml_2.3.8               
+ [19] metapod_1.10.1            httpuv_1.6.15            
+ [21] cowplot_1.1.3             DBI_1.2.2                
+ [23] RColorBrewer_1.1-3        abind_1.4-5              
+ [25] zlibbioc_1.48.2           purrr_1.0.2              
+ [27] ggraph_2.2.1              RCurl_1.98-1.14          
+ [29] yulab.utils_0.1.4         tweenr_2.0.3             
+ [31] git2r_0.33.0              GenomeInfoDbData_1.2.11  
+ [33] enrichplot_1.22.0         ggrepel_0.9.5            
+ [35] irlba_2.3.5.1             tidytree_0.4.6           
+ [37] dqrng_0.3.2               DelayedMatrixStats_1.24.0
+ [39] codetools_0.2-19          DelayedArray_0.28.0      
+ [41] DOSE_3.28.2               ggforce_0.4.2            
+ [43] tidyselect_1.2.1          aplot_0.2.2              
+ [45] farver_2.1.2              ScaledMatrix_1.10.0      
+ [47] viridis_0.6.5             jsonlite_1.8.8           
+ [49] BiocNeighbors_1.20.2      tidygraph_1.3.1          
+ [51] tools_4.3.3               treeio_1.26.0            
+ [53] Rcpp_1.0.12               glue_1.7.0               
+ [55] SparseArray_1.2.4         xfun_0.43                
+ [57] qvalue_2.34.0             withr_3.0.0              
+ [59] fastmap_1.1.1             bluster_1.12.0           
+ [61] fansi_1.0.6               callr_3.7.6              
+ [63] digest_0.6.35             rsvd_1.0.5               
+ [65] R6_2.5.1                  gridGraphics_0.5-1       
+ [67] colorspace_2.1-0          GO.db_3.18.0             
+ [69] RSQLite_2.3.6             utf8_1.2.4               
+ [71] generics_0.1.3            data.table_1.15.4        
+ [73] graphlayouts_1.1.1        httr_1.4.7               
+ [75] S4Arrays_1.2.1            scatterpie_0.2.2         
+ [77] whisker_0.4.1             pkgconfig_2.0.3          
+ [79] gtable_0.3.5              blob_1.2.4               
+ [81] XVector_0.42.0            shadowtext_0.1.3         
+ [83] htmltools_0.5.8.1         fgsea_1.28.0             
+ [85] scales_1.3.0              png_0.1-8                
+ [87] ggfun_0.1.4               knitr_1.45               
+ [89] rstudioapi_0.16.0         reshape2_1.4.4           
+ [91] nlme_3.1-164              cachem_1.0.8             
+ [93] stringr_1.5.1             parallel_4.3.3           
+ [95] vipor_0.4.7               HDO.db_0.99.1            
+ [97] pillar_1.9.0              vctrs_0.6.5              
+ [99] promises_1.3.0            BiocSingular_1.18.0      
+[101] beachmat_2.18.1           cluster_2.1.6            
+[103] beeswarm_0.4.0            evaluate_0.23            
+[105] cli_3.6.2                 locfit_1.5-9.9           
+[107] compiler_4.3.3            rlang_1.1.3              
+[109] crayon_1.5.2              labeling_0.4.3           
+[111] ps_1.7.6                  getPass_0.2-4            
+[113] plyr_1.8.9                fs_1.6.4                 
+[115] ggbeeswarm_0.7.2          stringi_1.8.4            
+[117] viridisLite_0.4.2         munsell_0.5.1            
+[119] Biostrings_2.70.3         lazyeval_0.2.2           
+[121] GOSemSim_2.28.1           Matrix_1.6-5             
+[123] patchwork_1.2.0           sparseMatrixStats_1.14.0 
+[125] bit64_4.0.5               KEGGREST_1.42.0          
+[127] statmod_1.5.0             highr_0.10               
+[129] igraph_2.0.3              memoise_2.0.1            
+[131] bslib_0.7.0               ggtree_3.10.1            
+[133] fastmatch_1.1-4           bit_4.0.5                
+[135] ape_5.8                   gson_0.1.0               </code></pre>
 </div>
 </div>
 </div>
