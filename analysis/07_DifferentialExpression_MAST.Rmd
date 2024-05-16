@@ -49,7 +49,7 @@ library(EnhancedVolcano)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
+set.seed(123)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
@@ -91,52 +91,35 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(ti
 
 ```
 
-## Differential Expression
+## Differential Expression with MAST
 
-### Set Celltype Annotation to use
-
-```{r DE}
-# Nr of cells in celltypes per Sample
-as.data.frame.matrix(table(sce$label, sce$Sample))
-```
-
+### MAST function
 
 ```{r }
+#Function find_de_MAST takes a SingleCellExperiment object as input with two conditions to test (cond1 vs cond2)and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
 
-#Function find_de_MAST_RE takes a SingleCellExperiment object as input and runs MAST with RE pipeline. The output of the function is a table (pandas DataFrame in Python) which contains results of the analysis, e.g. log-fold change, p-value and FDR-corrected value for each gene.
-
-find_de_MAST_RE <- function(sce,C_type,cond1,cond2){
-    
-    sce.subset <- sce[,sce$celltype == C_type]
+find_de_MAST <- function(sce,cond1,cond2){
+    set.seed(123)
+    # Subset for conditions and create a MAST object
     sce.subset <- sce.subset[,sce.subset$Joint.Location == c(cond1, cond2)]
+    sca <- suppressMessages(SceToSingleCellAssay(sce.subset, class = "SingleCellAssay", check_sanity = TRUE)) # create a MAST object
     
-    sca <- suppressMessages(SceToSingleCellAssay(sce.subset, class = "SingleCellAssay", check_sanity = TRUE))
-  # create a MAST object
-    print("Dimensions before subsetting:")
-    print(dim(sca))
-    print("")
     # keep genes that are expressed in more than 10% of all cells
-    sca <- sca[freq(sca)>0.1,]
-    print("Dimensions after subsetting:")
+    print("Dimensions before filtering genes:")
     print(dim(sca))
-    print("")
+    sca <- sca[freq(sca)>0.1,]
+    print("Dimensions after filtering genes:")
+    print(dim(sca))
     
     # add a column to the data which contains scaled number of genes that are expressed in each cell
     cdr2 <- colSums(assay(sca)>0)
     colData(sca)$ngeneson <- scale(cdr2)
-    # store the columns that we are interested in as factors
-    colData(sca)$label <- factor(colData(sca)$Joint.Location)
-    # set the reference level
-    ##label <- relevel(label,"MCP")
-    ##colData(sca)$label <- label
-    #celltype <- factor(colData(sca)$cell_type)
-    #colData(sca)$celltype <- celltype
+
     # same for donors (which we need to model random effects)
     colData(sca)$replicate <- factor(colData(sca)$Sample)
     # create a group per condition-celltype combination
-    colData(sca)$group <- factor(colData(sca)$label)
+    colData(sca)$group <- factor(colData(sca)$Joint.Location)
     # define and fit the model
-    #contrasts(colData(sca)$group)='contrast.joint'
     options(mc.cores = 4)
     zlmCond <- zlm(formula = ~ngeneson + group + (1 | replicate), 
                    sca=sca, 
@@ -148,58 +131,124 @@ find_de_MAST_RE <- function(sce,C_type,cond1,cond2){
     
     # perform likelihood-ratio test for the condition that we are interested in    
     summaryCond <- MAST::summary(zlmCond, doLRT=paste0('group',cond2))
+    
     # get the table with log-fold changes and p-values
     summaryDt <- summaryCond$datatable
     result <- merge(summaryDt[contrast== paste0('group',cond2) & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
-                     summaryDt[contrast== paste0('group',cond2) & component=='logFC', .(primerid, coef)],
-                     by='primerid') # logFC coefficients
-    r<-result
+                     summaryDt[contrast== paste0('group',cond2) & component=='logFC', .(primerid, coef)],# logFC coefficients
+                     by='primerid') 
+    
     # MAST uses natural logarithm so we convert the coefficients to log2 base to be comparable to edgeR
-    result[,coef_baselog2:=result[,coef]/log(2)]
+    result[,log2FoldChange:=result[,coef]/log(2)]
+    
     # do multiple testing correction
     result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
     data.table::setorder(result, FDR)
-    #result = result[result$FDR<0.01,, drop=F]
-
+    
+    # omit possible NA
     result <- stats::na.omit(as.data.frame(result))
     
     return(result)
 }
 ```
 
+### Run MAST
+
+#### Fibroblast 
 
 ```{r SaveData}
-res <- find_de_MAST_RE(sce,C_type="Fibroblast",cond1="Knee",cond2="MCP")
+sce.subset <- sce[,sce$celltype == "Fibroblast"]
+```
+
+##### Knee vs MCP
+
+```{r SaveData}
+##### Knee vs MCPs
+res_KneeVsMCP <- find_de_MAST(sce.subset,cond1="Knee",cond2="MCP")
+##### Knee vs Wrist
+res_KneeVsWrist <- find_de_MAST(sce.subset,cond1="Knee",cond2="Wrist")
+#### MCP vs Wrist
+res_MCPVsWrist <- find_de_MAST(sce.subset,cond1="MCP",cond2="Wrist")
+
 ```
 
 
-```{r SaveData}
--find_de_MAST_RE(adata_mono)
--find de edger()
+## Show and Plot Result of DEG
 
+### Volcano plot
 
--plot heatmap
--plot volcano
+```{r SaveData,  results='asis', out.width = '30%',fig.height = 7}
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  #Create dd for plotting function
+  res_plot<-eval(parse(text = paste0("res_",comp)))
+  row.names(res_plot)<- res_plot$primerid
+  res_plot <- res_plot[,c("Pr(>Chisq)","log2FoldChange")]
+    
+  strspl<-strsplit(comp, split = "Vs")#
+  
+  #Create dd for plotting function
+  volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'Pr(>Chisq)',
+                  pCutoff = 0.05, FCcutoff = 0.5,
+                  title = paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
+                  subtitle = paste0("Fibroblast"," cluster (MAST)"),
+                  pointSize = 2.0, colAlpha = 1,
+                  legendPosition = 'right')
+    
+  print(volcano_plot)
+  cat(' \n')
+}
+
+```
+
+### Heatmap
+
+```{r SaveData, results='asis'}
+library(ComplexHeatmap)
+#select top denes
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  # Get top significant marker genes
+  res_sig <- res[res$`Pr(>Chisq)`<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
+  data.table::setorder(res_sig, Pr..Chisq.)
+  res_sig<-head(res_sig,n=25)
+  
+  # Subset sce to keep the tested conditions
+  strspl<-strsplit(comp, split = "Vs")#
+  sce.subset<-sce.subset[,sce.subset$Joint.Location == c(strspl[[1]][1], strspl[[1]][2])]
+  
+  # Aggregate cells by sample and subset for significant genes
+  sce.subset.aggr <- aggregateAcrossCells(sce.subset,  ids = sce.subset$Sample, statistics = "mean",use.assay.type = "logcounts", subset.row = res_sig$primerid)
+  
+  # Create Z-score
+  mat<-logcounts(sce.subset.aggr)
+  mat.z <- t(apply(mat,1,scale))
+  # Add colnames for Heatmap
+  colnames(mat.z) <- unique(paste0(sce.subset.aggr$Sample,":",sce.subset.aggr$Joint.Location))
+  
+  # Plot heatmap
+  heatmap_plot <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = colnames(mat.z),name="Z-score",
+    top_annotation = HeatmapAnnotation(Joint.Location = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 2)))
+
+  print(heatmap_plot)
+   
+   cat(' \n')
+}
+ 
 ```
 
 
-```{r SaveData, out.width = '30%',fig.height = 7}
-#res <- result
-res <- result[,c("Pr(>Chisq)","coef_baselog2")]
-row.names(res)<- result$primerid
-EnhancedVolcano(res, lab = row.names(res), x = 'coef_baselog2', y = 'Pr(>Chisq)',
-                pCutoff = 0.05, FCcutoff = 0.5,
-                title = paste("Differential expression", " Knee ", "vs", " MCP ", sep=' '),
-                subtitle = paste0("Fibroblast"," cluster (MAST)"),
-                pointSize = 2.0, colAlpha = 1,
-                legendPosition = 'right')
-```
-
-
-## Save the dataset
+## Save the datasets
 
 ```{r SaveData}
-write.csv(result, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
-#write.csv(res, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
-#write.csv(res, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
+write.csv(res_KneeVsMCP, paste0(path,'/output/MAST_KneeVsMCP.csv'), row.names=FALSE)
+write.csv(res_KneeVsWrist, paste0(path,'/output/MAST_KneeVsWrist.csv'), row.names=FALSE)
+write.csv(res_MCPVsWrist, paste0(path,'/output/MAST_MCPVsWrist.csv'), row.names=FALSE)
 ```

@@ -22,7 +22,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Differential Expression Analysis
+# Enrichment Analysis
 
 ## Setup
 
@@ -49,54 +49,112 @@ library(enrichplot)
 ### Set Parameter
 
 ```{r Setup}
-set.seed(100)
+set.seed(123)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
 ```
 
 
+### Load  Hallmark gene set collection
+
+```{r LoadDataset}
+
+#gmt <- msigdbr::msigdbr(species = "human", category = "H")
+
+#check if human==Homosapienz
+gene_set_C5 <- msigdbr(species = "Homo sapiens", category = "C5")
+gene_set_C2 <- msigdbr(species = "Homo sapiens", category = "C2")
+gene_set_H <- msigdbr(species = "Homo sapiens", category = "H")
+
+TERM2GENE <- rbind(gene_set_C5, gene_set_C2, gene_set_H) %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)
+
+full_msigdbr <- msigdbr(species = "Homo sapiens")
+
+TERM2GENE_full_msigdbr <- full_msigdbr %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)
+
+```
+
 ### Load Data
 
 ```{r LoadDataset}
 ## RA DATASET
-geneList <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
-
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
+#geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_KneeVsWrist.csv'))
+#geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_MCPVsWrist.csv'))
 ```
 
 
-### Explore Dataset
+## Set functions
 
+```{r LoadDataset}
+# Run enrichGO
+run_enrichGO <- function(gene_list, background) {
+  enrichGO_res <- enrichGO(
+    gene = gene_list,
+    universe =background,
+    OrgDb = org.Hs.eg.db,
+    keyType = 'SYMBOL',
+    ont = "CC",
+    pAdjustMethod = "BH",
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05,
+    readable. = TRUE)
+  return(enrichGO_res) 
+}
+
+# Run enrichr
+run_enrichr <- function(gene_list, gene_sets, background) {
+  
+  enrichr_res <- clusterProfiler::enricher(
+    gene_list,
+    TERM2GENE = gene_sets,
+    universe = background,
+    pvalueCutoff = 1,
+    qvalueCutoff = 1,
+    pAdjustMethod = "BH",
+    minGSSize = 50, 
+    maxGSSize = 1000)
+ 
+  return(enrichr_res) 
+}
+```
+
+
+## Enrichment Analysis Knee Vs MCP
+
+### Explore DEG Dataset
 
 ```{r LoadDataset}
 ##Print table
-head(geneList)
-
+head(geneList_KneeVsMCP)
 
 ```
 
-
-## Enrichment Analysis
-
-With clusterProfiler
-
+### Set up genelists
 ```{r LoadDataset}
+# Get names for all genes for the background/universe & update the gene symbols 
+gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
+geneList_KneeVsMCP$updated<- gene_List$updated
 
-gene_List<-update_gene_names(geneList$primerid)
-gene_List<- gene_List$updated
-
-gene_List_MCP <- geneList[geneList$Pr..Chisq.<0.05 & geneList$coef_baselog2> 0.1,, drop=F]
-gene_List_Knee <- geneList[geneList$Pr..Chisq.<0.05 & geneList$coef_baselog2< -0.1,, drop=F]
-#gene <- siggene$primerid[abs(names(siggene$primerid)) > 2]
+# Get significatn genes for each condidtion
+gene_List_Knee <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$coef_baselog2< -0.1,, drop=F] #genes for cond1
+gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$coef_baselog2> 0.1,, drop=F] #genes for cond2
 
 ```
 
-### GO classification
+### GO collection
 
 #### Run GO over-representation analysis
 
 ```{r DE}
-ego_Knee <- enrichGO(gene          = gene_List_Knee$primerid,
-                universe      = gene_List,
+ego_Knee <- enrichGO(gene          = gene_List_Knee$updated,
+                universe      = gene_List$updated,
                 OrgDb         = org.Hs.eg.db,
                 keyType       = 'SYMBOL',
                 ont           = "CC",
@@ -104,13 +162,9 @@ ego_Knee <- enrichGO(gene          = gene_List_Knee$primerid,
                 pvalueCutoff  = 0.05,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
-head(ego)
 
-```
-
-```{r DE}
-ego_MCP <- enrichGO(gene          = gene_List_MCP$primerid,
-                universe      = gene_List,
+ego_MCP <- enrichGO(gene          = gene_List_MCP$updated,
+                universe      = gene_List$updated,
                 OrgDb         = org.Hs.eg.db,
                 keyType       = 'SYMBOL',
                 ont           = "CC",
@@ -118,86 +172,50 @@ ego_MCP <- enrichGO(gene          = gene_List_MCP$primerid,
                 pvalueCutoff  = 0.05,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
-head(ego)
 
+
+ego_Knee <- run_enrichGO(gene_List_Knee$updated,gene_List$updated)
+ego_MCP <- run_enrichGO(gene_List_MCP$updated,gene_List$updated)
 ```
-
-
-#### Visualize enriched GO terms as a directed acyclic graph
+### Show enriched terms
 
 ```{r DE}
-goplot(ego)
+ego_Knee@result[ego_Knee@result$p.adjust<0.05,, drop=F]
+
+ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]
 
 ```
 
 
-### KEGG classification
 
-#### Run KEGG over-representation analysis
+### Hallmark collection
+
+#### Run over-representation analysis on set of genes of the Hallmark collection
+
 
 ```{r DE}
-kk <- enrichKEGG(gene         = siggene$primerid,
-                 organism     = 'hsa',
-                 pvalueCutoff = 0.05)
-head(kk)
-```
+tum_vs_norm_enrich <- clusterProfiler::enricher(gene = gene_List_Knee$updated,
+                                                universe = gene_List$updated,
+                                                pAdjustMethod = "BH",
+                                                pvalueCutoff  = 0.05,
+                                                qvalueCutoff  = 0.05,
+                                                TERM2GENE = gmt[,c("gs_name", "gene_symbol")])
 
-#### Visualize enriched GO terms as a directed acyclic graph
-
-```{r DE}
-library("pathview")
-hsa04110 <- pathview(gene.data  = geneList$primerid,
-                     pathway.id = "hsa04110", #ADD pathway
-                     species    = "hsa",
-                     limit      = list(gene=max(abs(geneList)), cpd=1))
-
-```
-
-### WikiPathways classification
-
-#### Run WikiPathways over-representation analysis
-
-```{r DE}
-WP <- enrichWP(siggene$primerid, organism = "Homo sapiens") 
-head(WP)
-```
-
-
-### WikiPathways classification
-
-#### Run WikiPathways over-representation analysis
-
-```{r DE}
-y <- gsePathway(geneList, 
-                pvalueCutoff = 0.5,
-                pAdjustMethod = "BH", 
-                verbose = FALSE)
-head(y)
-```
-
-#### Visualize enriched GO terms as a directed acyclic graph
-
-```{r DE}
-viewPathway("E2F mediated regulation of DNA replication", 
-            readable = TRUE, 
-            foldChange = geneList)   = list(gene=max(abs(geneList)), cpd=1))
+run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)
+run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)
 
 ```
 
 
-### WikiPathways classification
-
-#### Run WikiPathways over-representation analysis
-
-```{r DE}
-y <- gsePathway(geneList, 
-                pvalueCutoff = 0.2,
-                pAdjustMethod = "BH", 
-                verbose = FALSE)
-head(y)
-```
 
 ### Visualization of functional enrichment result
+
+#### Visualize enriched GO terms as a directed acyclic graph
+
+```{r DE}
+goplot(ego_Knee)
+goplot(ego_MCP)
+```
 
 #### Bar Plot
 
@@ -232,6 +250,11 @@ cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 gseaplot(ego, geneSetID = 2, title = ego$Description[1])
 
 ```
+
+
+
+
+
 
 
 ## Save the dataset

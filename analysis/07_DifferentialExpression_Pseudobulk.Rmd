@@ -1,6 +1,6 @@
 ---
-title: "Differential Expression Analysis"
-subtitle: "07_DifferentialExpression_muscat"
+title: "Differential Expression Analysis Pseudobulk"
+subtitle: "07_DifferentialExpression_Pseudobulk"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -15,9 +15,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
@@ -28,16 +26,19 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
 
 ```{r LoadPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
 library(muscat)
 library(limma)
 library(EnhancedVolcano)
@@ -60,8 +61,10 @@ path <- here::here()
 ## RA DATASET
 sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
-```
+#Select only Fibroblast and Myeloid
+sce <- sce[,sce$celltype == c("Fibroblast","Myeloid")]
 
+```
 
 ### Explore Dataset
 
@@ -92,14 +95,9 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(ti
 
 ## Differential Expression Pseudobulk
 
-### Set Celltype Annotation to use
+### Setup
 
-```{r DE}
-# Nr of cells in celltypes per Sample
-as.data.frame.matrix(table(sce$label, sce$Sample))
-```
-
-### Sample preparation
+#### Sample preparation
 
 ```{r DE}
 # create SCE
@@ -111,13 +109,15 @@ sce$id <- paste0(sce$Joint.Location, sce$Sample)
     drop = TRUE))  # drop all other colData columns
 ```
 
+#### Aggregated Data Overview
+
 ```{r DE, rows.print=20}
 # nr of cells per cluster-sample
 as.data.frame.matrix(t(table(sce$cluster_id, sce$sample_id)))
 ```
 
 
-### Creating pseudo-bulk
+#### Creating pseudo-bulk
 
 ```{r DE}
 # Aggregate Cells
@@ -150,9 +150,14 @@ contrast
 
 ```{r DE}
 # run DS analysis
-res<-pbDS(pb, design = mm, contrast = contrast, method = c("DESeq2"))
+
+res_edgeR<-pbDS(pb, design = mm, contrast = contrast, method = c("edgeR"))
+res_DESeq2<-pbDS(pb, design = mm, contrast = contrast, method = c("DESeq2"))
+res_limmatrend<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-trend"))
+res_limmavoom<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-voom"))
 
 ```
+
 ## Results for Differential Expression
 
 ### View results for first comparison (Knee-Wrist)
@@ -170,7 +175,7 @@ names(tbl)
 ```{r DE}
 # filter FDR < 5%, abs(logFC) > 1 & sort by adj. p-value
 tbl_fil <- lapply(tbl, function(u) {
-  u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 1)
+  u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
   dplyr::arrange(u, p_adj.loc)
 })
 
@@ -187,10 +192,6 @@ topn <- bind_rows(lapply(tbl_fil, top_n, -40, p_adj.loc))
 format(topn[, -ncol(topn)], digits = 2)
 ```
 
-```{r DE}
-# top-5 DS genes per cluster
-pbHeatmap(sce, tbl_fil, top_n = 5,sort_by="logFC")
-```
 
 #### View results for individual celltypes
 
