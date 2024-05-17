@@ -155,7 +155,7 @@ colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
 
 ### Annotate and Update genes
 
-```{r,LoadMetadata}
+```{r,UpdateGenes}
 #Change Name
 names(rowData(sce))[which(names(rowData(sce))=="ID")]="ENSEMBL"
 

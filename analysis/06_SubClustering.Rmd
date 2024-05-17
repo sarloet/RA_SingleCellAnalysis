@@ -360,6 +360,56 @@ print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "Sample"
 ```
 
 
+---------------
+
+
+## Sample distances
+
+A useful first step in an RNA-seq analysis is often to assess overall similarity between samples: Which samples are similar to each other, which are different? Does this fit to the expectation from the experiment’s design? We use the R function dist to calculate the Euclidean distance between samples.
+
+```{r SampleMetricsTranspose}
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+
+plot_dist_heatmap <- function(sce, sampleDists) {
+  
+  sampleDistMatrix <- as.matrix(sampleDists)
+  rownames(sampleDistMatrix) <- unique(paste( sce$Joint.Location, sce$Sample, sep = ":" ))
+  colnames(sampleDistMatrix) <- NULL
+  colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+  dist_heatmap<-pheatmap(sampleDistMatrix,
+           clustering_distance_rows = sampleDists,
+           clustering_distance_cols = sampleDists,
+           col = colors)
+
+  return(dist_heatmap) 
+}
+
+```
+
+```{r VariableMetrics}
+
+sce.subset <- sce[rowData(sce)$is_hvg== "TRUE",sce$celltype == "Fibroblast"]
+sce.subset.aggr <- aggregateAcrossCells(sce.subset,  ids = sce.subset$Sample, statistics = "mean",use.assay.type = "logcounts")
+
+sampleDists <- dist(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,sampleDists))
+
+poisd <- PoissonDistance(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,poisd$dd))
+
+
+```
+
+
+---------------
+
+
+
+
+
+
 ### Save the dataset
 
 ```{r SaveData}

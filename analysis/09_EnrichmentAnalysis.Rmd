@@ -85,8 +85,8 @@ TERM2GENE_full_msigdbr <- full_msigdbr %>%
 ```{r LoadDataset}
 ## RA DATASET
 geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
-#geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_KneeVsWrist.csv'))
-#geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_MCPVsWrist.csv'))
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_KneeVsWrist.csv'))
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_MCPVsWrist.csv'))
 ```
 
 
@@ -118,11 +118,12 @@ run_enrichr <- function(gene_list, gene_sets, background) {
     pvalueCutoff = 1,
     qvalueCutoff = 1,
     pAdjustMethod = "BH",
-    minGSSize = 50, 
-    maxGSSize = 1000)
+    minGSSize = 1, 
+    maxGSSize = 5000)
  
   return(enrichr_res) 
 }
+
 ```
 
 
@@ -153,7 +154,7 @@ gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneLis
 #### Run GO over-representation analysis
 
 ```{r DE}
-ego_Knee <- enrichGO(gene          = gene_List_Knee$updated,
+----ego_Knee <- enrichGO(gene          = gene_List_Knee$updated,
                 universe      = gene_List$updated,
                 OrgDb         = org.Hs.eg.db,
                 keyType       = 'SYMBOL',
@@ -163,7 +164,7 @@ ego_Knee <- enrichGO(gene          = gene_List_Knee$updated,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
 
-ego_MCP <- enrichGO(gene          = gene_List_MCP$updated,
+-----ego_MCP <- enrichGO(gene          = gene_List_MCP$updated,
                 universe      = gene_List$updated,
                 OrgDb         = org.Hs.eg.db,
                 keyType       = 'SYMBOL',
@@ -194,12 +195,13 @@ ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]
 
 
 ```{r DE}
-tum_vs_norm_enrich <- clusterProfiler::enricher(gene = gene_List_Knee$updated,
+-----enricher_res <- clusterProfiler::enricher(gene = gene_List_Knee$updated,
                                                 universe = gene_List$updated,
                                                 pAdjustMethod = "BH",
-                                                pvalueCutoff  = 0.05,
-                                                qvalueCutoff  = 0.05,
-                                                TERM2GENE = gmt[,c("gs_name", "gene_symbol")])
+                                                pvalueCutoff  = 1,
+                                                minGSSize = 1,
+                                                maxGSSize = 5000,
+------                                                TERM2GENE = gmt[,c("gs_name", "gene_symbol")])
 
 run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)
 run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)

@@ -105,7 +105,7 @@ data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```{r ExcludeSamples}
 #Dimensions of count matrix
 #sce <- sce[, !colData(sce)$discard]
-sce <- sce[,sce$Sample != "SynBio_049"]
+#sce <- sce[,sce$Sample != "SynBio_049"]
 dim(sce)
 ```
 

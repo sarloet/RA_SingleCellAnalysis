@@ -62,7 +62,8 @@ path <- here::here()
 sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
 #Select only Fibroblast and Myeloid
-sce <- sce[,sce$celltype == c("Fibroblast","Myeloid")]
+selected_celltype <- c("Fibroblast","Myeloid")
+sce <- sce[,sce$celltype == selected_celltype]
 
 ```
 
@@ -164,9 +165,19 @@ res_limmavoom<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-voom
 
 ```{r DE}
 # View results for first comparison (Knee-Wrist)
+for (method in c("edgeR","DESeq2","limmatrend","limmavoom")){
+  for (C_type in selected_celltype){
+    
+    tbl <- res_edgeR$table[["Knee-Wrist"]]
+    
+    
+  }
+  
+}
+
 
 # access results table for 1st comparison
-tbl <- res$table[["Knee-Wrist"]]
+tbl <- res_edgeR$table[["Knee-Wrist"]]
 # show clusters/labels
 names(tbl)
 ```
