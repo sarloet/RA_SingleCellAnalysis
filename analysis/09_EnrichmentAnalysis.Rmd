@@ -42,6 +42,7 @@ source(here("code", "standard_libraries.R"))
 suppressPackageStartupMessages({
 library(clusterProfiler)
 library(enrichplot)
+library(msigdbr)
 })
 
 ```
@@ -69,14 +70,16 @@ gene_set_H <- msigdbr(species = "Homo sapiens", category = "H")
 TERM2GENE <- rbind(gene_set_C5, gene_set_C2, gene_set_H) %>% 
   dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
   distinct() %>% 
-  dplyr::rename(entrez_gene = human_entrez_gene)
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
 
 full_msigdbr <- msigdbr(species = "Homo sapiens")
 
 TERM2GENE_full_msigdbr <- full_msigdbr %>% 
   dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
   distinct() %>% 
-  dplyr::rename(entrez_gene = human_entrez_gene)
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
 
 ```
 
@@ -104,7 +107,7 @@ run_enrichGO <- function(gene_list, background) {
     pAdjustMethod = "BH",
     pvalueCutoff = 0.05,
     qvalueCutoff = 0.05,
-    readable. = TRUE)
+    readable = TRUE)
   return(enrichGO_res) 
 }
 
@@ -120,12 +123,13 @@ run_enrichr <- function(gene_list, gene_sets, background) {
     pAdjustMethod = "BH",
     minGSSize = 1, 
     maxGSSize = 5000)
- 
   return(enrichr_res) 
 }
 
 ```
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Enrichment Analysis Knee Vs MCP
 
@@ -138,14 +142,15 @@ head(geneList_KneeVsMCP)
 ```
 
 ### Set up genelists
+
 ```{r LoadDataset}
 # Get names for all genes for the background/universe & update the gene symbols 
 gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
 geneList_KneeVsMCP$updated<- gene_List$updated
 
 # Get significatn genes for each condidtion
-gene_List_Knee <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$coef_baselog2< -0.1,, drop=F] #genes for cond1
-gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$coef_baselog2> 0.1,, drop=F] #genes for cond2
+gene_List_Knee <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange> 0.1,, drop=F] #genes for cond2
 
 ```
 
@@ -154,30 +159,11 @@ gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneLis
 #### Run GO over-representation analysis
 
 ```{r DE}
-----ego_Knee <- enrichGO(gene          = gene_List_Knee$updated,
-                universe      = gene_List$updated,
-                OrgDb         = org.Hs.eg.db,
-                keyType       = 'SYMBOL',
-                ont           = "CC",
-                pAdjustMethod = "BH",
-                pvalueCutoff  = 0.05,
-                qvalueCutoff  = 0.05,
-                readable      = TRUE)
-
------ego_MCP <- enrichGO(gene          = gene_List_MCP$updated,
-                universe      = gene_List$updated,
-                OrgDb         = org.Hs.eg.db,
-                keyType       = 'SYMBOL',
-                ont           = "CC",
-                pAdjustMethod = "BH",
-                pvalueCutoff  = 0.05,
-                qvalueCutoff  = 0.05,
-                readable      = TRUE)
-
 
 ego_Knee <- run_enrichGO(gene_List_Knee$updated,gene_List$updated)
 ego_MCP <- run_enrichGO(gene_List_MCP$updated,gene_List$updated)
 ```
+
 ### Show enriched terms
 
 ```{r DE}
@@ -195,20 +181,155 @@ ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]
 
 
 ```{r DE}
------enricher_res <- clusterProfiler::enricher(gene = gene_List_Knee$updated,
-                                                universe = gene_List$updated,
-                                                pAdjustMethod = "BH",
-                                                pvalueCutoff  = 1,
-                                                minGSSize = 1,
-                                                maxGSSize = 5000,
-------                                                TERM2GENE = gmt[,c("gs_name", "gene_symbol")])
+msig_Knee <- run_enrichr(gene_List_Knee$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
 
-run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)
-run_enrichr(gene_List_Knee$updated,gmt[,c("gs_name", "gene_symbol")],gene_List$updated)
+```
+
+### Show enriched terms
+
+```{r DE}
+msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
+
+msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
+
+```
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Enrichment Analysis Knee Vs Wirst
+
+### Explore DEG Dataset
+
+```{r LoadDataset}
+##Print table
+head(geneList_KneeVsWrist)
+
+```
+
+### Set up genelists
+
+```{r LoadDataset}
+# Get names for all genes for the background/universe & update the gene symbols 
+gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
+geneList_KneeVsWrist$updated<- gene_List$updated
+
+# Get significatn genes for each condidtion
+gene_List_Knee <- geneList_KneeVsWrist[geneList_KneeVsWrist$Pr..Chisq.<0.05 & geneList_KneeVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_Wrist <- geneList_KneeVsWrist[geneList_KneeVsWrist$Pr..Chisq.<0.05 & geneList_KneeVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
+
+```
+
+### GO collection
+
+#### Run GO over-representation analysis
+
+```{r DE}
+
+ego_Knee <- run_enrichGO(gene_List_Knee$updated,gene_List$updated)
+ego_Wrist <- run_enrichGO(gene_List_Wrist$updated,gene_List$updated)
+```
+
+### Show enriched terms
+
+```{r DE}
+ego_Knee@result[ego_Knee@result$p.adjust<0.05,, drop=F]
+
+ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]
 
 ```
 
 
+
+### Hallmark collection
+
+#### Run over-representation analysis on set of genes of the Hallmark collection
+
+
+```{r DE}
+msig_Knee <- run_enrichr(gene_List_Knee$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+msig_Wrist <- run_enrichr(gene_List_Wrist$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+
+```
+
+### Show enriched terms
+
+```{r DE}
+msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
+
+msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
+
+```
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Enrichment Analysis Knee Vs MCP
+
+### Explore DEG Dataset
+
+```{r LoadDataset}
+##Print table
+head(geneList_MCPVsWrist)
+
+```
+
+### Set up genelists
+
+```{r LoadDataset}
+# Get names for all genes for the background/universe & update the gene symbols 
+gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
+geneList_MCPVsWrist$updated<- gene_List$updated
+
+# Get significatn genes for each condidtion
+gene_List_MCP <- geneList_MCPVsWrist[geneList_MCPVsWrist$Pr..Chisq.<0.05 & geneList_MCPVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_Wrist <- geneList_MCPVsWrist[geneList_MCPVsWrist$Pr..Chisq.<0.05 & geneList_MCPVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
+
+```
+
+### GO collection
+
+#### Run GO over-representation analysis
+
+```{r DE}
+
+ego_MCP <- run_enrichGO(gene_List_MCP$updated,gene_List$updated)
+ego_Wrist <- run_enrichGO(gene_List_Wrist$updated,gene_List$updated)
+```
+
+### Show enriched terms
+
+```{r DE}
+ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]
+
+ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]
+
+```
+
+
+
+### Hallmark collection
+
+#### Run over-representation analysis on set of genes of the Hallmark collection
+
+
+```{r DE}
+msig_Knee <- run_enrichr(gene_List_Knee$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+
+```
+
+### Show enriched terms
+
+```{r DE}
+msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
+
+msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
+
+```
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### Visualization of functional enrichment result
 

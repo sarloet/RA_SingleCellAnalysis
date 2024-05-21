@@ -121,6 +121,8 @@ sce
 
 ```
 
+
+
 ### Load and add Metadata
 
 ```{r,LoadMetadata}
@@ -255,7 +257,7 @@ dim_before_filtering <- dim(sce)
 
 #Get only the detected Genes
 #Remove Cells with very low counts of less than 150 and genes not expressed 
-sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 0] #200
+sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 100] #200
 
 
 dim_after_filtering <- dim(sce)

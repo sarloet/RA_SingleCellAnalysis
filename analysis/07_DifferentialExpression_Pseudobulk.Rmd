@@ -166,9 +166,30 @@ res_limmavoom<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-voom
 ```{r DE}
 # View results for first comparison (Knee-Wrist)
 for (method in c("edgeR","DESeq2","limmatrend","limmavoom")){
+    
+  #Select correct DEG table
+  tbl <- res_edgeR$table[["Knee-Wrist"]]
+    
+  #Take the significant entries of the table
+  tbl_fil <- lapply(tbl, function(u) {
+    u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
+    dplyr::arrange(u, p_adj.loc)
+  })
+    
   for (C_type in selected_celltype){
     
-    tbl <- res_edgeR$table[["Knee-Wrist"]]
+    #Select correct celltype
+    tbl_fil_CT <- tbl_fil$Fibroblast[1]
+    
+    dd <- data.frame()
+    dd$edgeR <-integer()
+    
+    if 
+    #empty dataframe of ctype
+    #append colum of the method
+    #append row of gene and add 0 to already existing colums if gene not in table already
+    #entries either 1 or 0 if gene is DEG
+    
     
     
   }
@@ -196,201 +217,17 @@ p_de <- format(n_de / nrow(sce) * 100, digits = 3)
 data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
 ```
 
+## Upset plot of DEGS
 
-```{r DE}
-# view top hits in each cluster
-topn <- bind_rows(lapply(tbl_fil, top_n, -40, p_adj.loc))
-format(topn[, -ncol(topn)], digits = 2)
+```{r SaveData}
+plot
 ```
-
-
-#### View results for individual celltypes
-
-
-```{r DE, fig.height=10, results='asis'}
-for (Ctype in names(n_de[n_de!=0])){
-  
-  cat(paste0("#### ", Ctype, "\n"))
-  
-  TableCtype <- tbl[[Ctype]]
-  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
-  
-  
-  print(
-  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
-                x = 'logFC', y = 'p_adj.loc', 
-                pCutoff = 0.05, FCcutoff = 1,
-                title = paste("Differential expression", " Knee ", "vs", " Wrist ", sep=' '),
-                subtitle = paste0(Ctype," cluster (pseudobulk)"),
-                pointSize = 2.0, colAlpha = 1,
-                legendPosition = 'right')
-  )
-  
-  
-  cat(' \n')
-  
-  
-  
-}
-
-
-
-```
-
-```{r DE }
-
-plotExpression(sce[, sce$cluster_id == "Fibroblast"],
-  features = tbl_fil$`Fibroblast`$gene[seq_len(6)],
-  x = "sample_id", colour_by = "group_id", ncol = 3) +
-  guides(fill = guide_legend(override.aes = list(size = 5, alpha = 1))) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-pbHeatmap(sce, res, k = "Fibroblast",sort_by = "logFC")
-
-```
-
-
-### View results for second comparison (Knee-MCP)
-
-```{r DE}
-# View results for first comparison (Knee-Wrist)
-
-# access results table for 1st comparison
-tbl <- res$table[["Knee-MCP"]]
-# show clusters/labels
-names(tbl)
-```
-
-
-```{r DE}
-# filter FDR < 5%, abs(logFC) > 1 & sort by adj. p-value
-tbl_fil <- lapply(tbl, function(u) {
-  u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 1)
-  dplyr::arrange(u, p_adj.loc)
-})
-
-# nb. of DS genes & % of total by cluster
-n_de <- vapply(tbl_fil, nrow, numeric(1))
-p_de <- format(n_de / nrow(sce) * 100, digits = 3)
-data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
-```
-
-
-```{r DE,rows.print=25}
-# view top hits in each cluster
-topn <- bind_rows(lapply(tbl_fil, top_n, 200, -p_adj.loc))
-format(topn[, -ncol(topn)], digits = 2)
-```
-
-
-```{r DE}
-# top-5 DS genes per cluster
-pbHeatmap(sce, tbl_fil, top_n = 25,sort_by="logFC")
-```
-
-
-#### View results for individual celltypes
-
-```{r DE, fig.height=10, results='asis'}
-for (Ctype in names(n_de[n_de!=0])){
-  
-  cat(paste0("#### ", Ctype, "\n"))
-  
-  TableCtype <- tbl[[Ctype]]
-  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
-  
-  
-  print(
-  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
-                x = 'logFC', y = 'p_adj.loc', 
-                pCutoff = 0.05, FCcutoff = 1,
-                title = paste("Differential expression", " Knee ", "vs", " MCP ", sep=' '),
-                subtitle = paste0(Ctype," cluster (pseudobulk)"),
-                pointSize = 2.0, colAlpha = 1,
-                legendPosition = 'right')
-  )
-  cat(' \n')
-  
-}
-
-
-```
-
-
-
-### View results for third comparison (Wrist-MCP)
-
-```{r DE}
-# View results for first comparison (Wrist-MCP)
-
-# access results table for 1st comparison
-tbl <- res$table[["Wrist-MCP"]]
-# show clusters/labels
-names(tbl)
-```
-
-
-```{r DE}
-# filter FDR < 5%, abs(logFC) > 1 & sort by adj. p-value
-tbl_fil <- lapply(tbl, function(u) {
-  u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 1)
-  dplyr::arrange(u, p_adj.loc)
-})
-
-# nb. of DS genes & % of total by cluster
-n_de <- vapply(tbl_fil, nrow, numeric(1))
-p_de <- format(n_de / nrow(sce) * 100, digits = 3)
-data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
-```
-
-
-```{r DE}
-# view top hits in each cluster
-topn <- bind_rows(lapply(tbl_fil, top_n, -200, p_adj.loc))
-format(topn[, -ncol(topn)], digits = 2)
-```
-
-
-```{r DE}
-# top-5 DS genes per cluster
-pbHeatmap(sce, tbl_fil, top_n = 5,sort_by="logFC")
-```
-
-#### View results for individual celltypes
-
-```{r DE, fig.height=10, results='asis'}
-for (Ctype in names(n_de[n_de!=0])){
-  
-  cat(paste0("#### ", Ctype, "\n"))
-  
-  TableCtype <- tbl[[Ctype]]
-  print(head(dplyr::arrange(format(TableCtype[, -ncol(TableCtype)], digits = 2), as.numeric(p_adj.loc)),n = -100L))
-  
-  
-  print(
-  EnhancedVolcano(TableCtype, lab = TableCtype$gene,
-                x = 'logFC', y = 'p_adj.loc', 
-                pCutoff = 0.05, FCcutoff = 1,
-                title = paste("Differential expression", " Wrist ", "vs", " MCP ", sep=' '),
-                subtitle = paste0(Ctype," cluster (pseudobulk)"),
-                pointSize = 2.0, colAlpha = 1,
-                legendPosition = 'right')
-  )
-  cat(' \n')
-  
-}
-
-
-
-```
-
-
 
 
 ## Save the dataset
 
 ```{r SaveData}
-#resDS(sce, res, bind = "row", frq = TRUE)
 
-saveRDS(sce, file =paste0(path,'/output/07_sce_DifferentialExpression.rds'))
+saveRDS(sce, file =paste0(path,''))
+
 ```

@@ -445,7 +445,7 @@ gc()
 
 ```{r ClusterInfo}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(celltype, Sample) %>%
+  group_by(celltype, Sample,Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
 ```
 
@@ -456,7 +456,8 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="stack") +
   labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  theme_classic()
 
 ```
 
@@ -467,7 +468,112 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=celltype)) +
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="fill") +
   labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  theme_classic()
+
+
+```
+
+
+### Grouped boxplot
+
+```{r PlotGroupedClustering}
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') %>%
+  mutate(freq = cells / sum(cells) * 100)
+
+
+ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
+    geom_bar(position="dodge", stat="identity")+ 
+    theme_classic()+
+    labs(title="", x="", y="Fraction of cells [%]")
+
+
+# 
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype, Sample,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') %>%
+  mutate(freq = cells / sum(cells) * 100)
+
+
+ggplot(Totalcelltype, aes( y=freq, fill=Joint.Location)) + 
+  geom_boxplot()+
+  facet_wrap(~celltype, scales = "free_y",ncol = 5, nrow = 2) +
+  labs(title="Relative cell type abundance", x="", y="")+ 
+  theme_classic()
+
+
+
+# Fraction of cells [%] from total cells in that joint location
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+    group_by(Joint.Location) %>%
+    summarise(totalcells = n(),.groups = 'drop') %>% 
+    left_join(ClusterInfo%>% group_by(Joint.Location,celltype), Totalcelltype,by ="Joint.Location") %>%
+    mutate(freq = cells / totalcells * 100)
+
+
+ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
+    geom_boxplot()+ 
+    theme_classic()
+
+ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
+    geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
+    theme_classic()+
+    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")
+
+
+
+# Fraction of cells [%] from total cells in that celltype
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+    group_by(celltype) %>%
+    summarise(totalcells = n(),.groups = 'drop') %>% 
+    left_join(ClusterInfo, Totalcelltype,by ="celltype") %>%
+    mutate(freq = cells / totalcells * 100)
+
+
+ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
+    geom_boxplot()
+
+ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
+    geom_bar(position="dodge", stat="identity")+ 
+    theme_classic()+
+    labs(title="", x="", y="Fraction of cells [%]")
+
+
+
+
+
+#--------------------------------------------------------FINAL
+# Fraction of cells [%] from total cells in that celltype
+
+Totaljoint <- as.data.frame(colData(sce)) %>% 
+     group_by(Joint.Location) %>%
+     summarise(totalcellsjoint = n(),.groups = 'drop')
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+    group_by(Joint.Location,celltype) %>%
+    summarise(totalcells = n(),.groups = 'drop') %>% 
+    left_join(Totaljoint, Totalcelltype,by ="Joint.Location") %>%
+    mutate(freq = totalcells / totalcellsjoint * 100)
+
+
+ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
+    geom_boxplot()
+
+ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
+    geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
+    theme_classic()+
+    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")
+
+
+
+
+
 
 
 ```

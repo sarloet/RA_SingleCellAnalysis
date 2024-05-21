@@ -93,6 +93,8 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(ti
 
 ## Differential Expression with MAST
 
+MAST framework models single-cell gene expression using a two-part generalized linear model. One component of MAST models the discrete expression rate of each gene across cells, while the other component models the conditional continuous expression level (conditional on the gene being expressed). 
+
 ### MAST function
 
 ```{r }

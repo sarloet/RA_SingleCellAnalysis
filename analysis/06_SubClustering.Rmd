@@ -388,6 +388,8 @@ plot_dist_heatmap <- function(sce, sampleDists) {
 
 ```
 
+
+
 ```{r VariableMetrics}
 
 sce.subset <- sce[rowData(sce)$is_hvg== "TRUE",sce$celltype == "Fibroblast"]
@@ -404,9 +406,6 @@ print(plot_dist_heatmap(sce.subset,poisd$dd))
 
 
 ---------------
-
-
-
 
 
 
