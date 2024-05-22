@@ -144,7 +144,7 @@ find_de_MAST <- function(sce,cond1,cond2){
     result[,log2FoldChange:=result[,coef]/log(2)]
     
     # do multiple testing correction
-    result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
+    #result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
     data.table::setorder(result, FDR)
     
     # omit possible NA
@@ -162,7 +162,7 @@ find_de_MAST <- function(sce,cond1,cond2){
 sce.subset <- sce[,sce$celltype == "Fibroblast"]
 ```
 
-##### Knee vs MCP
+##### Run Function
 
 ```{r SaveData}
 ##### Knee vs MCPs
@@ -176,6 +176,23 @@ res_MCPVsWrist <- find_de_MAST(sce.subset,cond1="MCP",cond2="Wrist")
 
 
 ## Show and Plot Result of DEG
+
+
+### Show tables
+
+```{r SaveData,  results='asis', out.width = '30%',fig.height = 7}
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  table<-geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F]
+  print(table)
+  dim(table)
+  
+  cat(' \n')
+}
+
+```
 
 ### Volcano plot
 

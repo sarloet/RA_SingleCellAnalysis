@@ -41,7 +41,7 @@ source(here("code", "standard_libraries.R"))
 suppressPackageStartupMessages({
 library(muscat)
 library(limma)
-library(EnhancedVolcano)
+library(UpSetR)
 })
 
 ```
@@ -62,7 +62,7 @@ path <- here::here()
 sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 
 #Select only Fibroblast and Myeloid
-selected_celltype <- c("Fibroblast","Myeloid")
+selected_celltype <- c("Fibroblast")
 sce <- sce[,sce$celltype == selected_celltype]
 
 ```
@@ -141,86 +141,57 @@ pbMDS(pb)
 ei <- metadata(sce)$experiment_info
 mm <- model.matrix(~ 0 + ei$group_id)
 dimnames(mm) <- list(ei$sample_id, levels(ei$group_id))
-x <- c("Knee-Wrist","Knee-MCP","Wrist-MCP")
+x <- c("Knee-Wrist","Knee-MCP","MCP-Wrist")
 contrast <- makeContrasts(contrasts=x, levels = mm)
 contrast
 
 ```
 
-### Run DS analysis
-
-```{r DE}
-# run DS analysis
-
-res_edgeR<-pbDS(pb, design = mm, contrast = contrast, method = c("edgeR"))
-res_DESeq2<-pbDS(pb, design = mm, contrast = contrast, method = c("DESeq2"))
-res_limmatrend<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-trend"))
-res_limmavoom<-pbDS(pb, design = mm, contrast = contrast, method = c("limma-voom"))
-
-```
-
-## Results for Differential Expression
+## Run DS analysis & Results for Differential Expression
 
 ### View results for first comparison (Knee-Wrist)
 
 ```{r DE}
 # View results for first comparison (Knee-Wrist)
-for (method in c("edgeR","DESeq2","limmatrend","limmavoom")){
-    
-  #Select correct DEG table
-  tbl <- res_edgeR$table[["Knee-Wrist"]]
-    
-  #Take the significant entries of the table
-  tbl_fil <- lapply(tbl, function(u) {
-    u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
-    dplyr::arrange(u, p_adj.loc)
-  })
-    
-  for (C_type in selected_celltype){
-    
-    #Select correct celltype
-    tbl_fil_CT <- tbl_fil$Fibroblast[1]
-    
-    dd <- data.frame()
-    dd$edgeR <-integer()
-    
-    if 
-    #empty dataframe of ctype
-    #append colum of the method
-    #append row of gene and add 0 to already existing colums if gene not in table already
-    #entries either 1 or 0 if gene is DEG
-    
-    
-    
+for (method in c("edgeR","DESeq2","limma-voom","edgeR_glm")){
+  
+  if (method=="edgeR_glm"){
+    res<-pbDS(pb, design = mm, contrast = contrast, method = "edgeR" ,BPPARAM =bpp, treat = TRUE)
+  }else{
+    res<-pbDS(pb, design = mm, contrast = contrast, method = method ,BPPARAM =bpp)
   }
   
+  
+  
+  glist<-c()
+  
+  for (cont in c("Knee-MCP","Knee-Wrist","MCP-Wrist")){
+    #Select correct DEG table
+    tbl <- res$table[[cont]]
+    #Take the significant entries of the table
+    tbl_fil <- lapply(tbl, function(u) {
+      u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
+      dplyr::arrange(u, p_adj.loc)
+      dplyr::select(u, gene)
+    })
+    glist<-c(glist, tbl_fil$Fibroblast$gene)
+    
+    }
+  
+  glist<-unique(glist)
+  assign(x = paste0(method),value =glist)
+    
 }
 
-
-# access results table for 1st comparison
-tbl <- res_edgeR$table[["Knee-Wrist"]]
-# show clusters/labels
-names(tbl)
 ```
 
+#Upset plot
 
 ```{r DE}
-# filter FDR < 5%, abs(logFC) > 1 & sort by adj. p-value
-tbl_fil <- lapply(tbl, function(u) {
-  u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
-  dplyr::arrange(u, p_adj.loc)
-})
 
-# nb. of DS genes & % of total by cluster
-n_de <- vapply(tbl_fil, nrow, numeric(1))
-p_de <- format(n_de / nrow(sce) * 100, digits = 3)
-data.frame("#DS" = n_de, "%DS" = p_de, check.names = FALSE)
-```
+listInput <- list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edgeRglm = edgeR_glm)
+upset(fromList(listInput), order.by = "freq")
 
-## Upset plot of DEGS
-
-```{r SaveData}
-plot
 ```
 
 

@@ -195,6 +195,38 @@ msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
 
 ```
 
+
+
+
+
+### Visualization of functional enrichment result
+
+#### Knee
+
+```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
+goplot(ego_Knee)
+
+# Bar Plot
+barplot(ego_Knee, showCategory=20) 
+
+mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")
+
+# Dot plot
+dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
+
+# Heatmap-like functional classification
+mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+p1 <- heatplot(ego, showCategory=2)
+p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+
+```
+
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Enrichment Analysis Knee Vs Wirst
@@ -262,6 +294,37 @@ msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
 ```
 
 
+
+
+### Visualization of functional enrichment result
+
+#### Knee
+
+```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
+goplot(ego_Knee)
+
+# Bar Plot
+barplot(ego_Knee, showCategory=20) 
+
+mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")
+
+# Dot plot
+
+dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
+
+# Heatmap-like functional classification
+mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+p1 <- heatplot(ego, showCategory=2)
+p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+
+
+```
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Enrichment Analysis Knee Vs MCP
@@ -304,6 +367,7 @@ ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]
 
 ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]
 
+
 ```
 
 
@@ -322,61 +386,45 @@ msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symb
 ### Show enriched terms
 
 ```{r DE}
-msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
-
 msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
 
+msig_Wrist@result[msig_Knee@result$p.adjust<0.05,, drop=F]
 ```
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 ### Visualization of functional enrichment result
 
-#### Visualize enriched GO terms as a directed acyclic graph
+#### Knee
 
 ```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
 goplot(ego_Knee)
-goplot(ego_MCP)
-```
 
-#### Bar Plot
+# Bar Plot
+barplot(ego_Knee, showCategory=20) 
 
-```{r DE}
-barplot(ego, showCategory=20) 
-
-mutate(ego, qscore = -log(p.adjust, base=10)) %>% 
+mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
     barplot(x="qscore")
-```
 
-#### Dot plot
+# Dot plot
 
-```{r DE}
-dotplot(ego, showCategory=30) + ggtitle("dotplot for ORA")
-#dotplot(ego, showCategory=30) + ggtitle("dotplot for GSEA")
-```
+dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
 
-#### Heatmap-like functional classification
-
-```{r DE}
+# Heatmap-like functional classification
 mygeneList <- setNames(geneList$coef_baselog2, gene_List)
 
 p1 <- heatplot(ego, showCategory=2)
 p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
 cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
-```
 
-#### running score and preranked list of GSEA result
-
-```{r DE}
-gseaplot(ego, geneSetID = 2, title = ego$Description[1])
 
 ```
 
-
-
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 

@@ -578,6 +578,9 @@ ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) +
 
 ```
 
+
+
+
 ## Identify Marker Genes for Annotation
 
 

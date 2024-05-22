@@ -15,30 +15,30 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE)
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
 knitr::opts_chunk$set(dpi = 300, fig.align = "center")
 knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Differential Expression Analysis
+# Differential Abundance Analysis
 
 ## Setup
 
-### Load Packages
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
 
 ```{r LoadPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
-library(scater)
 library(miloR)
 library(patchwork)
 })
@@ -58,8 +58,8 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
-
+#sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 ```
 
 
@@ -120,6 +120,32 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
 
 
 ```
+
+
+
+
+
+```{r propeller}
+library(speckle)
+sce.prop <- sce[,sce$Joint.Location == c("MCP", "Knee")]
+sce.prop$sample <- sce.prop$Sample
+sce.prop$group <- sce.prop$Joint.Location
+sce.prop$cluster <- sce.prop$celltype
+
+plotCellTypeProps(sce.prop)
+
+props <- getTransformedProps(sce.prop$cluster, sce.prop$sample, transform="asin")
+
+par(mfrow=c(1,1))
+plotCellTypeMeanVar(props$Counts)
+
+plotCellTypePropsMeanVar(props$Counts)
+
+propeller(sce.prop)
+
+rm(sce.prop)
+```
+
 
 
 
