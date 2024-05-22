@@ -413,7 +413,7 @@ div.tocify {
 integration</h1>
 <h3 class="subtitle">03_Integration_Batchelor</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">May 21 2024 14:08:01</h4>
+<h4 class="date">May 22 2024 14:25:42</h4>
 
 </div>
 
@@ -421,7 +421,7 @@ integration</h1>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -432,8 +432,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -442,13 +442,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-05-21
+<strong>Last updated:</strong> 2024-05-22
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
@@ -471,21 +471,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -576,15 +573,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb195126af9bc8ebc4aff104c2c0fd9abb278b36targetblankdb19512a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeed4a9caf149bb230a93515926649150ab4ffc913targetblanked4a9caa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db195126af9bc8ebc4aff104c2c0fd9abb278b36" target="_blank">db19512</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/ed4a9caf149bb230a93515926649150ab4ffc913" target="_blank">ed4a9ca</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreedb195126af9bc8ebc4aff104c2c0fd9abb278b36targetblankdb19512a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreeed4a9caf149bb230a93515926649150ab4ffc913targetblanked4a9caa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -594,7 +591,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/db195126af9bc8ebc4aff104c2c0fd9abb278b36" target="_blank">db19512</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/ed4a9caf149bb230a93515926649150ab4ffc913" target="_blank">ed4a9ca</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -633,11 +630,6 @@ Ignored files:
     Ignored:    output/MAST_MCPVsWrist.csv
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
-    Modified:   analysis/03_Integration_Batchelor.Rmd
-    Modified:   analysis/05_CelltypeAnnotation.Rmd
-    Modified:   analysis/06_SubClustering.Rmd
-    Modified:   analysis/07_DifferentialExpression_MAST.Rmd
     Modified:   analysis/07_DifferentialExpression_Pseudobulk.Rmd
     Modified:   analysis/09_EnrichmentAnalysis.Rmd
 
@@ -686,6 +678,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/analysis/03_Integration_Batchelor.Rmd" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/ed4a9caf149bb230a93515926649150ab4ffc913/docs/03_Integration_Batchelor.html" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+<td>
+fix
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1494,6 +1520,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotPCABB-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -1711,6 +1748,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPBB-1.png" target="_blank">69f37f0</a>
@@ -2009,6 +2057,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB1-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -2226,6 +2285,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB2-1.png" target="_blank">69f37f0</a>
@@ -2447,6 +2517,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB3-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -2664,6 +2745,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotPCAAB4-1.png" target="_blank">69f37f0</a>
@@ -2891,6 +2983,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB1-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -3108,6 +3211,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB2-1.png" target="_blank">69f37f0</a>
@@ -3340,6 +3454,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB3-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -3568,6 +3693,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotUMAPAB4-1.png" target="_blank">69f37f0</a>
@@ -3806,6 +3942,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP1-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP1-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -3891,6 +4038,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP2-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP2-1.png" target="_blank">69f37f0</a>
@@ -3980,6 +4138,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP3-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP3-1.png" target="_blank">69f37f0</a>
 </td>
 <td>
@@ -4065,6 +4234,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP4-1.png" target="_blank">ed4a9ca</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-21
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/69f37f025d6e7370ff044dfeb8d9a0122c30e1bb/docs/figure/03_Integration_Batchelor.Rmd/PlotQcUMAP4-1.png" target="_blank">69f37f0</a>
