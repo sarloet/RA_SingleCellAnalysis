@@ -80,9 +80,9 @@ dim(sce.cluster)
 set.seed(123)
 #colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
 
-colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=25,cluster.fun="louvain",type="jaccard",BPPARAM =bpp))
+colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=30,cluster.fun="louvain",BPPARAM =bpp))
 
-data.frame(as.list(table(colData(sce.cluster)$louvain)))
+data.frame(as.list(table(colData(sce.cluster)$louvain))) 
 
 ```
 
@@ -279,3 +279,5 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
 ```{r SaveData}
 saveRDS(sce, file =paste0(path,'/output/04_sce_Clustering.rds'))
 ```
+
+

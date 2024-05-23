@@ -129,6 +129,7 @@ find_de_MAST <- function(sce,cond1,cond2){
                    ebayes=F, 
                    strictConvergence=F,
                    parallel = TRUE,
+                   exprs_value = 'logcounts',
                    fitArgsD=list(nAGQ = 0)) # to speed up calculations
     
     # perform likelihood-ratio test for the condition that we are interested in    
@@ -232,17 +233,19 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   
   cat(paste0("#### ", comp, "\n"))
   
+  res <- get(paste0("res_",comp))
+  
   # Get top significant marker genes
-  res_sig <- res[res$`Pr(>Chisq)`<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
+  res_sig <- res[res$`Pr..Chisq.`<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
   data.table::setorder(res_sig, Pr..Chisq.)
   res_sig<-head(res_sig,n=25)
   
   # Subset sce to keep the tested conditions
   strspl<-strsplit(comp, split = "Vs")#
-  sce.subset<-sce.subset[,sce.subset$Joint.Location == c(strspl[[1]][1], strspl[[1]][2])]
+  sce.subset.Joint<-sce.subset[,sce.subset$Joint.Location == c(strspl[[1]][1], strspl[[1]][2])]
   
   # Aggregate cells by sample and subset for significant genes
-  sce.subset.aggr <- aggregateAcrossCells(sce.subset,  ids = sce.subset$Sample, statistics = "mean",use.assay.type = "logcounts", subset.row = res_sig$primerid)
+  sce.subset.aggr <- aggregateAcrossCells(sce.subset.Joint,  ids = sce.subset.Joint$Sample, statistics = "mean",use.assay.type = "logcounts", subset.row = res_sig$primerid)
   
   # Create Z-score
   mat<-logcounts(sce.subset.aggr)
@@ -254,6 +257,7 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   heatmap_plot <- Heatmap(
     mat.z,cluster_rows = T,cluster_columns = T, 
     column_labels = colnames(mat.z),name="Z-score",
+    column_title=paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
     top_annotation = HeatmapAnnotation(Joint.Location = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 2)))
 
   print(heatmap_plot)

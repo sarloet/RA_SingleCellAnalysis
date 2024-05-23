@@ -405,6 +405,19 @@ print(plot_dist_heatmap(sce.subset,poisd$dd))
 ```
 
 
+
+## HOX-Gene dotplots
+
+
+```{r}
+
+
+
+
+```
+
+
+
 ---------------
 
 

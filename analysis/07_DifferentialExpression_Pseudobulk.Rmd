@@ -188,10 +188,8 @@ for (method in c("edgeR","DESeq2","limma-voom","edgeR_glm")){
 #Upset plot
 
 ```{r DE}
-
 listInput <- list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edgeRglm = edgeR_glm)
 upset(fromList(listInput), order.by = "freq")
-
 ```
 
 

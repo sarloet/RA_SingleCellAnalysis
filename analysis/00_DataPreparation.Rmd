@@ -196,6 +196,18 @@ data.frame(colData(sce))
 data.frame(rowData(sce))
 ```
 
+### Exclude Samples
+
+```{r ExcludeSamples}
+#Dimensions of count matrix
+#sce <- sce[, !colData(sce)$discard]
+sce <- sce[,sce$Sample != "SynBio_130"]
+dim(sce)
+```
+
+
+
+
 ## Exploratory plots
 
 ### Histogramm with number of cells {.tabset}
