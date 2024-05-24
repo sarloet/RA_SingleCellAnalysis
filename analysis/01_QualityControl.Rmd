@@ -136,8 +136,8 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 400 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$detected > 10000  # Cells have at least 300 genes expressed 
+colData(sce)$qc.count_manual <- sce$sum < 250 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.genexp_manual <- sce$detected < 250 | sce$detected > 10000  # Cells have at least 300 genes expressed 
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
 

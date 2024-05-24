@@ -70,7 +70,7 @@ sce <- readRDS(file = paste0(path,'/output/04_sce_Clustering.rds'))
 ```{r ChangeRownames}
 #Change to genesymbol whenever possible
 rowData(sce)$UniqID <-rownames(sce)
-rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ID, rowData(sce)$Symbol)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ENSEMBL, rowData(sce)$Symbol)
 data.frame(rowData(sce))
 ```
 
@@ -146,7 +146,7 @@ for (i in 1:max(as.integer(levels(sce$cluster)))){
   #Save table in Exelsheet
   addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=FALSE,col.names = TRUE)
 }
-saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
+#saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 
 

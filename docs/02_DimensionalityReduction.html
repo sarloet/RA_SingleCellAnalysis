@@ -412,7 +412,7 @@ div.tocify {
 <h1 class="title toc-ignore">Dimensionality Reduction</h1>
 <h3 class="subtitle">02_DimensionalityReduction</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">May 23 2024 17:34:47</h4>
+<h4 class="date">May 24 2024 14:28:17</h4>
 
 </div>
 
@@ -441,7 +441,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-05-23
+<strong>Last updated:</strong> 2024-05-24
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -572,15 +572,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreefba7c69ce2f0480d62c6599589a6759c4fedf996targetblankfba7c69a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree906ed8cca35b490674aba343f419314d06637324targetblank906ed8ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/fba7c69ce2f0480d62c6599589a6759c4fedf996" target="_blank">fba7c69</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/906ed8cca35b490674aba343f419314d06637324" target="_blank">906ed8c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreefba7c69ce2f0480d62c6599589a6759c4fedf996targetblankfba7c69a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree906ed8cca35b490674aba343f419314d06637324targetblank906ed8ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -590,7 +590,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/fba7c69ce2f0480d62c6599589a6759c4fedf996" target="_blank">fba7c69</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/906ed8cca35b490674aba343f419314d06637324" target="_blank">906ed8c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,11 +629,9 @@ Ignored files:
     Ignored:    output/MAST_MCPVsWrist.csv
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
-    Modified:   analysis/04_Clustering.Rmd
-    Modified:   analysis/06_SubClustering.Rmd
-    Modified:   analysis/07_DifferentialExpression_MAST.Rmd
-    Modified:   analysis/07_DifferentialExpression_Pseudobulk.Rmd
+    Modified:   analysis/01_QualityControl.Rmd
+    Modified:   analysis/03_Integration_Batchelor.Rmd
+    Modified:   analysis/05_CelltypeAnnotation.Rmd
 
 </code></pre>
 <p>
@@ -680,6 +678,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/906ed8cca35b490674aba343f419314d06637324/docs/02_DimensionalityReduction.html" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+<td>
+fix
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1417,7 +1432,7 @@ sce &lt;- readRDS(file = paste0(path,&#39;/output/01_sce_QualityControl.rds&#39;
 <h3>Explore Dataset</h3>
 <pre class="r"><code>#Dimensions of count matrix
 dim(sce)</code></pre>
-<pre><code>[1] 30485 64834</code></pre>
+<pre><code>[1] 30488 65418</code></pre>
 </div>
 </div>
 <div id="feature-selection" class="section level2">
@@ -1440,7 +1455,7 @@ as.data.frame(dec[order(dec$bio, decreasing=TRUE),]) %&gt;%
   head(n=10)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mean"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["total"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["tech"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["bio"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["FDR"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"2.762590","2":"7.920649","3":"1.755659","4":"6.164990","5":"0","6":"0","_rn_":"ENSG00000115414.FN1"},{"1":"2.728333","2":"7.539720","3":"1.730505","4":"5.809215","5":"0","6":"0","_rn_":"ENSG00000204287.HLA-DRA"},{"1":"4.855726","2":"8.121826","3":"2.764119","4":"5.357707","5":"0","6":"0","_rn_":"ENSG00000087086.FTL"},{"1":"1.547836","2":"6.697572","3":"1.896144","4":"4.801428","5":"0","6":"0","_rn_":"ENSG00000163220.S100A9"},{"1":"1.356881","2":"6.016149","3":"1.267104","4":"4.749045","5":"0","6":"0","_rn_":"ENSG00000168542.COL3A1"},{"1":"1.663552","2":"6.117453","3":"1.522680","4":"4.594773","5":"0","6":"0","_rn_":"ENSG00000090382.LYZ"},{"1":"2.363753","2":"6.842253","3":"2.333572","4":"4.508681","5":"0","6":"0","_rn_":"ENSG00000128512.DOCK4"},{"1":"1.292039","2":"5.315292","3":"1.215163","4":"4.100130","5":"0","6":"0","_rn_":"ENSG00000164692.COL1A2"},{"1":"3.247261","2":"5.996211","3":"2.013375","4":"3.982836","5":"0","6":"0","_rn_":"ENSG00000019582.CD74"},{"1":"1.200251","2":"4.945697","3":"1.106829","4":"3.838867","5":"0","6":"0","_rn_":"ENSG00000108821.COL1A1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["mean"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["total"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["tech"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["bio"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["FDR"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"2.745968","2":"7.854306","3":"1.774336","4":"6.079970","5":"0","6":"0","_rn_":"ENSG00000115414.FN1"},{"1":"2.729191","2":"7.607198","3":"1.740644","4":"5.866554","5":"0","6":"0","_rn_":"ENSG00000204287.HLA-DRA"},{"1":"4.887801","2":"8.350183","3":"3.059805","4":"5.290377","5":"0","6":"0","_rn_":"ENSG00000087086.FTL"},{"1":"1.601734","2":"7.050983","3":"2.148979","4":"4.902004","5":"0","6":"0","_rn_":"ENSG00000163220.S100A9"},{"1":"1.669157","2":"6.181354","3":"1.553243","4":"4.628111","5":"0","6":"0","_rn_":"ENSG00000090382.LYZ"},{"1":"1.334017","2":"5.886603","3":"1.291587","4":"4.595016","5":"0","6":"0","_rn_":"ENSG00000168542.COL3A1"},{"1":"2.394826","2":"7.107007","3":"2.560480","4":"4.546527","5":"0","6":"0","_rn_":"ENSG00000128512.DOCK4"},{"1":"3.244773","2":"6.060188","3":"2.028791","4":"4.031397","5":"0","6":"0","_rn_":"ENSG00000019582.CD74"},{"1":"1.269119","2":"5.192160","3":"1.227631","4":"3.964529","5":"0","6":"0","_rn_":"ENSG00000164692.COL1A2"},{"1":"1.157416","2":"5.664868","3":"1.822898","4":"3.841970","5":"0","6":"0","_rn_":"ENSG00000143546.S100A8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -1506,6 +1521,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">ed4a9ca</a>
@@ -1755,6 +1781,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -2000,6 +2037,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">ed4a9ca</a>
@@ -2249,6 +2297,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -2490,7 +2549,7 @@ much loss of information.</p>
 data.frame(reducedDim(sce, &quot;PCA&quot;)[1:10, 1:5])</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["PC1"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["PC2"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["PC3"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["PC4"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["PC5"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"13.71703","2":"5.512961","3":"-1.654109","4":"32.150207","5":"0.07990338","_rn_":"SynBio_028.GACTCTCAGGTAACTA-1"},{"1":"27.01094","2":"20.110802","3":"-5.397854","4":"-1.610380","5":"-1.93061488","_rn_":"SynBio_028.GTTCCGTAGCATACTC-1"},{"1":"29.21182","2":"21.549996","3":"-5.574870","4":"-6.559056","5":"1.58003724","_rn_":"SynBio_028.AAACGAAGTAGTCCTA-1"},{"1":"28.06049","2":"21.701396","3":"-6.685454","4":"-4.967855","5":"1.01173008","_rn_":"SynBio_028.CCCGGAAAGTCTGCAT-1"},{"1":"26.18253","2":"14.390688","3":"-3.303758","4":"-1.801462","5":"4.83234343","_rn_":"SynBio_028.TACCGAACAGAAACCG-1"},{"1":"22.32805","2":"13.442708","3":"-1.008529","4":"-1.018114","5":"5.29464493","_rn_":"SynBio_028.GGGTTATAGATACATG-1"},{"1":"23.53826","2":"14.266374","3":"-1.502152","4":"-1.128890","5":"3.60044154","_rn_":"SynBio_028.CCTCCTCCAGCATTGT-1"},{"1":"27.56664","2":"22.702309","3":"-5.773481","4":"-6.173536","5":"-1.21808957","_rn_":"SynBio_028.GGTGTTAAGTGCTCAT-1"},{"1":"-13.71363","2":"15.883967","3":"8.386640","4":"2.369469","5":"-0.62765500","_rn_":"SynBio_028.TCAGTCCGTAATGATG-1"},{"1":"24.39977","2":"13.551673","3":"-2.124316","4":"-2.227693","5":"6.03781541","_rn_":"SynBio_028.CAGCACGGTTGTACGT-1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["PC1"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["PC2"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["PC3"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["PC4"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["PC5"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"13.59298","2":"6.95389","3":"-2.079848","4":"32.298612","5":"0.8227628","_rn_":"SynBio_028.GACTCTCAGGTAACTA-1"},{"1":"25.41681","2":"21.10965","3":"-6.393423","4":"-1.714341","5":"2.5389314","_rn_":"SynBio_028.GTTCCGTAGCATACTC-1"},{"1":"27.33710","2":"22.43312","3":"-7.048871","4":"-6.581256","5":"-0.7026076","_rn_":"SynBio_028.AAACGAAGTAGTCCTA-1"},{"1":"26.25239","2":"22.19000","3":"-7.860006","4":"-5.070119","5":"-0.1976110","_rn_":"SynBio_028.CCCGGAAAGTCTGCAT-1"},{"1":"25.29423","2":"15.79800","3":"-4.843747","4":"-2.355861","5":"-4.5435929","_rn_":"SynBio_028.TACCGAACAGAAACCG-1"},{"1":"21.56739","2":"14.91612","3":"-2.597358","4":"-1.347767","5":"-4.5689233","_rn_":"SynBio_028.GGGTTATAGATACATG-1"},{"1":"22.65472","2":"15.50873","3":"-2.962249","4":"-1.375247","5":"-3.2436461","_rn_":"SynBio_028.CCTCCTCCAGCATTGT-1"},{"1":"25.78640","2":"23.17565","3":"-6.476215","4":"-6.181425","5":"1.7060191","_rn_":"SynBio_028.GGTGTTAAGTGCTCAT-1"},{"1":"-14.34707","2":"15.61771","3":"9.146186","4":"1.976214","5":"-0.7510191","_rn_":"SynBio_028.TCAGTCCGTAATGATG-1"},{"1":"23.45583","2":"15.44560","3":"-3.953191","4":"-2.580465","5":"-5.0512926","_rn_":"SynBio_028.CAGCACGGTTGTACGT-1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <pre class="r"><code># extract variance explained
@@ -2527,6 +2586,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">ed4a9ca</a>
@@ -2802,6 +2872,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA1-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA1-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -3054,6 +3135,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -3304,6 +3396,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">ed4a9ca</a>
@@ -3561,6 +3664,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -3810,6 +3924,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">ed4a9ca</a>
@@ -4069,6 +4194,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PCAMetrics-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PCAMetrics-1.png" target="_blank">ed4a9ca</a>
@@ -4334,6 +4470,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -4594,6 +4741,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">ed4a9ca</a>
@@ -4862,6 +5020,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -5123,6 +5292,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">ed4a9ca</a>
@@ -5394,6 +5574,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -5655,6 +5846,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">ed4a9ca</a>
@@ -5920,6 +6122,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">ed4a9ca</a>
 </td>
 <td>
@@ -6181,6 +6394,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/906ed8cca35b490674aba343f419314d06637324/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">906ed8c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-05-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ed4a9caf149bb230a93515926649150ab4ffc913/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">ed4a9ca</a>

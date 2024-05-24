@@ -1,0 +1,175 @@
+---
+title: "Clustering"
+subtitle: "10_Plotting"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Plotting
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(gridExtra)
+library(dittoSeq)
+library(ggpubr)
+})
+
+```
+
+
+### Set Parameter
+
+```{r Setup}
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
+path <- here::here()
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## HOX genes plots
+
+### Load Data
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+Marker <- c("HOXD11","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
+
+```
+
+### Dotplot
+
+```{r }
+
+Dotplot_facet <- function(sce, Marker, label, condition) {
+  p <- list() 
+  for (c_type in label){
+
+    p[[c_type]]<-dittoDotPlot(sce[,sce$celltype == c_type], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0.1,max.percent=1,scale = FALSE,max=2 )+ theme(axis.title.x=element_blank())+
+      coord_flip()+ ggtitle(c_type)+ theme(plot.title = element_text(hjust = 0.5))
+}
+  return(p) 
+}
+
+```
+
+```{r , fig.width=15}
+
+p<- Dotplot_facet(sce, Marker, unique(sce$label), condition="Joint.Location")
+
+grid.arrange(p$`Edothelial cell` + theme(legend.position="none"), 
+             p$Fibroblast + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Myeloid + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Plasma + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$`T cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$`B cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Neutrophil + theme(axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             ncol = 7, widths = c(1.5/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1.5/8))
+
+#add lines between plots
+x = c(1.5/8, 1.5/8, 2.5/8, 2.5/8, 3.5/8, 3.5/8, 4.5/8, 4.5/8, 5.5/8, 5.5/8, 6.5/8, 6.5/8)
+y = rep(c(0.1, 0.92),times=6)
+id = c(1,1,2,2,3,3,4,4,5,5,6,6)
+grid::grid.polygon(x,y,id)
+```
+
+### Histogramm
+
+```{r }
+
+Histplot_facet <- function(sce, Marker, condition) {
+  p <- list() 
+  for (m in Marker){
+    p[[m]] <- dittoPlot(sce, m, group.by = condition, split.by = 'label' ,split.ncol = 7,max=2)+
+      theme(axis.title.x=element_blank(),plot.title=element_blank(),legend.position="none",strip.background = element_blank(),strip.text.x = element_blank(), axis.text.x=element_blank())
+      
+}
+  return(p) 
+}
+
+
+```
+
+```{r }
+
+p<- Histplot_facet(sce, Marker, condition="Joint.Location")
+
+
+do.call("grid.arrange", c(p, nrow=length(p)))
+#ggarrange(plotlist=p,
+          
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Sample distances
+
+A useful first step in an RNA-seq analysis is often to assess overall similarity between samples: Which samples are similar to each other, which are different? Does this fit to the expectation from the experiment’s design? We use the R function dist to calculate the Euclidean distance between samples.
+
+```{r SampleMetricsTranspose}
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+
+plot_dist_heatmap <- function(sce, sampleDists) {
+  
+  sampleDistMatrix <- as.matrix(sampleDists)
+  rownames(sampleDistMatrix) <- unique(paste( sce$Joint.Location, sce$Sample, sep = ":" ))
+  colnames(sampleDistMatrix) <- NULL
+  colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+  dist_heatmap<-pheatmap(sampleDistMatrix,
+           clustering_distance_rows = sampleDists,
+           clustering_distance_cols = sampleDists,
+           col = colors)
+
+  return(dist_heatmap) 
+}
+
+```
+
+
+
+```{r VariableMetrics}
+
+sce.subset <- sce[rowData(sce)$is_hvg== "TRUE",sce$celltype == "Fibroblast"]
+sce.subset.aggr <- aggregateAcrossCells(sce.subset,  ids = sce.subset$Sample, statistics = "mean",use.assay.type = "logcounts")
+
+sampleDists <- dist(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,sampleDists))
+
+poisd <- PoissonDistance(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,poisd$dd))
+
+
+```
