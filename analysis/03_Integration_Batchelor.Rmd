@@ -137,7 +137,7 @@ rm(sce.Batchelor)
 ### Chosing the number of PCs after correction
 
 ```{r SelectPC}
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=10)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=15)))
 cat(paste0("Elbow Point: ",elbow))
 
 #PCA select nr of PC

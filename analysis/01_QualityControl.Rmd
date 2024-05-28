@@ -82,7 +82,9 @@ Show the number of cells detected in each sample or joint location before filter
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Sample)) +
   geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
 
 data.frame(as.list(table(colData(sce)$Sample)))
 
@@ -94,7 +96,9 @@ data.frame(as.list(table(colData(sce)$Sample)))
 #Histogramm with number of cells per sample
 ggplot(colData(sce), aes(x=Joint.Location))+
   geom_bar(stat = "count")+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() +stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))
+  theme_bw() +stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
 
 data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```
@@ -136,8 +140,8 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb))
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 250 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 250 | sce$detected > 10000  # Cells have at least 300 genes expressed 
+colData(sce)$qc.count_manual <- sce$sum < 200 |sce$sum > 90000 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.genexp_manual <- sce$detected < 200 | sce$detected > 10000  # Cells have at least 300 genes expressed 
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
 
@@ -163,11 +167,11 @@ abline(v = 300, col = "red")
 ```{r AdaptiveThresholds}
 
 # Detect cells with very low number of counts
-colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
+colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="lower",batch =sce$Sample )
 data.frame(attr(colData(sce)$qc.count, "thresholds")) 
 
 # Detect cells with very low number of genes
-colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
+colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="lower",batch =sce$Sample)
 data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
 
 # Detect cells with high mitochondrial content
@@ -381,7 +385,9 @@ Show the number of cells detected in each sample or joint location after filteri
 ```{r PlotCellsPerSampleAfterFiltering1}
 #Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
 
 data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```
@@ -391,7 +397,9 @@ data.frame(as.list(table(colData(sce.filtered)$Sample)))
 ```{r PlotCellsPerJointAfterFiltering2}
 #Histogramm with number of cells per sample after filtering
 ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))
+  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
 
 data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
 ```

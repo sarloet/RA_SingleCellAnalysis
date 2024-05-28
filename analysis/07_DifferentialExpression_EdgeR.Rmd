@@ -129,8 +129,7 @@ discarded <- current$ncells < 10
 summary(discarded)
 y <- y[,!discarded]
 
-keep <- filterByExpr(y, group=current$	
-Joint.Location)
+keep <- filterByExpr(y, group=current$Joint.Location)
 summary(keep)
 y <- y[keep,]
 

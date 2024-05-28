@@ -84,6 +84,7 @@ Dotplot_facet <- function(sce, Marker, label, condition) {
 
 ```
 
+
 ```{r , fig.width=15}
 
 p<- Dotplot_facet(sce, Marker, unique(sce$label), condition="Joint.Location")
@@ -96,6 +97,14 @@ grid.arrange(p$`Edothelial cell` + theme(legend.position="none"),
              p$`B cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
              p$Neutrophil + theme(axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
              ncol = 7, widths = c(1.5/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1.5/8))
+
+
+#p[[1]] <- p[[1]]+ theme(legend.position="none")
+#p[seq(2,length(p)-1)]<-lapply(p[seq(2,length(p)-1)], function(x) x<- x + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()))
+#p[[length(p)]] <-p[[length(p)]]+ theme(axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+#do.call("grid.arrange", c(p, ncol=length(p), widths = c(1.5/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1.5/8)))
+
 
 #add lines between plots
 x = c(1.5/8, 1.5/8, 2.5/8, 2.5/8, 3.5/8, 3.5/8, 4.5/8, 4.5/8, 5.5/8, 5.5/8, 6.5/8, 6.5/8)

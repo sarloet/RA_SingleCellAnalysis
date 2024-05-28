@@ -161,7 +161,7 @@ pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentV
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
 #PCA dim estimate the elbowpoint
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=15)))
 cat(paste0("Elbow Point: ",elbow))
 #cat(paste0("Elbow Point: ",findElbowPoint(pca_pct_variance$variance)))
 ```
@@ -174,7 +174,7 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 
 ```{r SelectPC}
 #PCA select nr of PC
-reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(20)]
+reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
 reducedDimNames(sce)
 
 ncol(reducedDim(sce,"PCA"))
@@ -184,14 +184,7 @@ ncol(reducedDim(sce,"PCA_reduced"))
 
 #### Plot PCA  {.tabset}
 
-##### PCA Normal
-
-```{r PlotPCA1}
-#Plot PCA 
-plotReducedDim(sce, dimred = "PCA", colour_by = "Sample")
-```
-
-##### PCA reduced
+##### PCA 
 
 ```{r PlotPCA2}
 #Plot PCA 

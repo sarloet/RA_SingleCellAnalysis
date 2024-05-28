@@ -134,7 +134,7 @@ sce.prop$cluster <- sce.prop$celltype
 
 plotCellTypeProps(sce.prop)
 
-props <- getTransformedProps(sce.prop$cluster, sce.prop$sample, transform="asin")
+props <- getTransformedProps(sce.prop$cluster, sce.prop$Sample, transform="asin")
 
 par(mfrow=c(1,1))
 plotCellTypeMeanVar(props$Counts)

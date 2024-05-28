@@ -19,3 +19,5 @@ traditional to choose a [Creative Commons][cc] license for this type of content.
 
 How should others cite your work? It's a convention to save a file `CITATION`
 in the root of your Git repo that contains the citation information.
+
+
