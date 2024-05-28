@@ -105,7 +105,7 @@ Batches are merged in a pairwise manner (first two batches are merged to create 
 #Set manual merge_order
 merge_order <- list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee 
           list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"),#Wrist
-          list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"))#MCP,"SynBio_130"
+          list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"))#MCP,"SynBio_130", 
 
 
 ```

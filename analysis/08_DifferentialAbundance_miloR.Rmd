@@ -127,12 +127,24 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
 
 ```{r propeller}
 library(speckle)
-sce.prop <- sce[,sce$Joint.Location == c("MCP", "Knee")]
+#create sce element to test
+sce.prop <- sce
 sce.prop$sample <- sce.prop$Sample
 sce.prop$group <- sce.prop$Joint.Location
 sce.prop$cluster <- sce.prop$celltype
 
+#create design matrix
+a<-as.data.frame(colData(sce.prop)) %>% distinct(sample, group)
+rownames(a)<-a$sample
+
+
+design <- model.matrix(~ 0 + group, data=a)
+design
+
+
 plotCellTypeProps(sce.prop)
+
+propeller.anova(prop.list=props, design=design, coef = c(1,2,3), robust=TRUE, trend=FALSE, sort=TRUE)
 
 props <- getTransformedProps(sce.prop$cluster, sce.prop$Sample, transform="asin")
 
@@ -142,6 +154,16 @@ plotCellTypeMeanVar(props$Counts)
 plotCellTypePropsMeanVar(props$Counts)
 
 propeller(sce.prop)
+
+
+
+x <- c("groupKnee-groupMCP")
+contrast <- makeContrasts(contrasts=x, levels = design)
+
+propeller.ttest(props, design, contrasts = contrast, robust=TRUE, trend=FALSE, 
+                sort=TRUE)
+
+
 
 rm(sce.prop)
 ```

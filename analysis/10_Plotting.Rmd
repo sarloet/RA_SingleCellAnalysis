@@ -55,6 +55,50 @@ bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## UMAP
+
+### Load Data
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+
+```
+
+```{r SampleMetricsTranspose}
+  umap_dt = data.table(
+    cell_id   = rownames(umap_x),
+    idv_umap1 = umap_x[, 1],
+    idv_umap2 = umap_x[, 2]
+    )
+
+nice_cols   = c(
+    "#DC050C", "#FB8072", "#1965B0", "#7BAFDE", "#882E72", "#B17BA6",
+    "#FF7F00", "#FDB462", "#E7298A", "#E78AC3", "#33A02C", "#B2DF8A",
+    "#55A1B1", "#8DD3C7", "#A6761D", "#E6AB02", "#7570B3", "#BEAED4",
+    "#666666", "#999999", "#aa8282", "#d4b7b7", "#8600bf", "#ba5ce3",
+    "#808000", "#aeae5c", "#1e90ff", "#00bfff", "#56ff0d", "#ffff00"
+    )
+
+sce$MNN_UMAP_reduced[,1]
+sce$MNN_UMAP_reduced[,2]
+
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="label",order_by="label",point_alpha=1,point_size=1)
+ 
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_UMAP_reduced")[,1], y = reducedDim(sce,"MNN_UMAP_reduced")[,2], colour = label) + 
+    geom_point( size=1.5 ) + 
+    scale_colour_manual( values=nice_cols[seq.int(length(unique(sce$label)))] ) + theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ theme_classic()
+
+
+
+```
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## HOX genes plots

@@ -102,7 +102,7 @@ In this analysis we take the top 3000 genes with largest (biological) variation.
 #top.hvgs <- getTopHVGs(dec, prop=0.1)
 
 # Get the top 2000 genes.
-top.hvgs <- getTopHVGs(dec, n=3000)
+top.hvgs <- getTopHVGs(dec, n=4000)
 
 # Get all genes with positive biological components.
 #top.hvgs <- getTopHVGs(dec, var.threshold=0)

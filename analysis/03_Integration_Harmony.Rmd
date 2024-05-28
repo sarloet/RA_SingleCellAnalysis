@@ -124,7 +124,7 @@ The advantage of using PCA is that the total amount of variance explained by the
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "harmony")), k=10)))
 
 #PCA select nr of PC
-reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(20)]
+reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
 reducedDimNames(sce.BatchR)
 
 ncol(reducedDim(sce.BatchR,"harmony"))
@@ -185,6 +185,38 @@ plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Sample") + 
 ```{r}
 #Plot UMAP after data integration per joint
 plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="Joint.Location") + ggtitle("UMAP after data integration with harmony")+ facet_wrap(~sce.BatchR$Joint.Location)
+```
+
+## Plot UMAP with QC metrics {.tabset}
+
+Check if there is any clustering caused by number of counts, genes or mitochondrial content. This might also give information about the cell type associated with a cluster.
+
+### Colored by Mitochondrial Genes
+
+```{r PlotQcUMAP1}
+#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+```
+
+### Colored by nr of Genes
+
+```{r PlotQcUMAP2}
+#Plot UMAP colored by detected
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes")
+```
+
+### Colored by nr of Counts
+
+```{r PlotQcUMAP3}
+#Plot UMAP colored by sum
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", colour_by="sum", order_by = "sum") + ggtitle("Sum of UMI Counts in Cell")
+```
+
+### Colored by Ubi Markergene
+
+```{r PlotQcUMAP4}
+#Plot UMAP colored by Ubi Markergene expression
+plotReducedDim(sce.BatchR, dimred="harmony_reduced_UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
 ```
 
 
