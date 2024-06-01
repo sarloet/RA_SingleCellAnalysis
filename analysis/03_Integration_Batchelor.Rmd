@@ -114,7 +114,7 @@ merge_order <- list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a",
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
 bpstart(bpp)
-sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order,  correct.all=TRUE,BPPARAM = bpp)#auto.merge =TRUE
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order,  correct.all=TRUE, BPPARAM = bpp)#auto.merge =TRUE
 bpstop(bpp)
 
 
@@ -137,7 +137,7 @@ rm(sce.Batchelor)
 ### Chosing the number of PCs after correction
 
 ```{r SelectPC}
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=15)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=5)))
 cat(paste0("Elbow Point: ",elbow))
 
 #PCA select nr of PC

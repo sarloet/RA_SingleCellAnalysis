@@ -62,7 +62,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
 
 ```
 
@@ -88,7 +88,7 @@ plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "subcluster", text
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, paste0("SC_UMAP_", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title="SubCluster ",subtitle="Colored by clustering")
 ```
 
 
@@ -97,7 +97,7 @@ plotReducedDim(sce, paste0("SC_UMAP_", cell_type),colour_by = "subcluster", text
 ### Frequencies of celltypes in clusters per Sample {.tabset}
 
 ```{r ClusterInfo}
-ClusterInfo <- as.data.frame(colData(sce.sc[,sce.sc$celltype == "Fibroblast"])) %>% 
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(ManualAnno_L2, Sample) %>%
   summarise(cells = n(),.groups = 'drop') 
 ```
@@ -125,11 +125,10 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=ManualAnno_L2)) +
 
 ```
 
-
 ### Frequencies of celltypes in clusters per Joint Location {.tabset}
 
 ```{r ClusterInfo}
-ClusterInfo <- as.data.frame(colData(sce.sc[,sce.sc$celltype == "Fibroblast"])) %>% 
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(ManualAnno_L2, Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
 ```
@@ -157,12 +156,45 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=ManualAnno_L2)) +
 
 ```
 
-```{r TestProportionsWilcoxon}
-Correlation abundance analysis
+```{r TestProportionsScProportionTest}
+library(scProportionTest)
+library(Seurat)
 
-ClusterInfo
-wilcox.test()
+so <- as.Seurat(sce)
 
+prop_test <- sc_utils(so)
+
+#Knee vs MCP
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "ManualAnno_L2",
+	sample_1 = "Knee", sample_2 = "MCP",
+	sample_identity = "Joint.Location"
+)
+print(prop_test)
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+#Knee vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "ManualAnno_L2",
+	sample_1 = "Knee", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+
+print(prop_test)
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+#MCP vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "ManualAnno_L2",
+	sample_1 = "MCP", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+print(prop_test)
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 
 

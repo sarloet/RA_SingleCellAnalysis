@@ -93,14 +93,14 @@ View the CellBender html report output for each sample
 - [SynBio098a](CellBender/cellbender_output_SynBio098a_w_introns_report.html)\n
 - [SynBio098b](CellBender/cellbender_output_SynBio098b_w_introns_report.html)\n
 - [SynBio127](CellBender/cellbender_output_SynBio127_w_introns_report.html)\n
-- [SynBio130](CellBender/cellbender_output_SynBio130_w_introns_RL2_reporthtml)\n
+- [SynBio130](CellBender/cellbender_output_SynBio130_w_introns_RL2_report.html)\n
 
 
 ## Cellranger Sample Metrics
 
 ### Read in the cellranger sample metrics csv files
 
-```{r LoadDataset}
+```{r CRSampleMetrics}
 foldernames <- list.dirs(paste0(path,"/data/cellranger_data_h5") ,recursive = F, full.names = T)
 
 CR.metrics <- lapply(foldernames, function(i){
@@ -115,7 +115,7 @@ colnames(experiment.metrics) <- gsub("\\."," ", colnames(experiment.metrics))
 rownames(experiment.metrics) <-sub("\\_.*","\\1",rownames(experiment.metrics))
 
 # Print table
-sequencing_metrics
+experiment.metrics
 ```
 
 ## Load Data
@@ -142,8 +142,6 @@ colData(sce)$Sample = sub("\\_w_introns.*", "", sub("cellbender_output_", "", as
 sce
 
 ```
-
-
 
 ### Load and add Metadata
 
@@ -291,7 +289,7 @@ dim_before_filtering <- dim(sce)
 
 #Get only the detected Genes
 #Remove Cells with very low counts of less than 150 and genes not expressed 
-sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 200] #200
+sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150] #200
 
 
 dim_after_filtering <- dim(sce)
@@ -392,13 +390,16 @@ colData(sce) %>%
 
 ```{r DoubletRemoval}
 
-print(paste0("NR of Cells Before Doublet Removal ", dim(sce)[2]))
+before <- dim(sce)[2]
+print(paste0("NR of Cells Before Doublet Removal ", before))
+
 
 #Apply Doublet Removal
 sce <- sce[ ,sce$scDblFinder.class == "singlet"]
 
 print(paste0("NR of Cells After Doublet Removal ", dim(sce)[2]))
 
+print(paste0("NR of Cells Removed", before - dim(sce)[2] ))
 ```
 
 

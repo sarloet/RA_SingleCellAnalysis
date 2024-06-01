@@ -56,6 +56,42 @@ path <- here::here()
 ```
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))#03_sce_Integration_Batchelor.rds
+#sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Harmony.rds'))#03_sce_Integration_Batchelor.rds
+
+#Change to genesymbol whenever possible
+rowData(sce)$UniqID <-rownames(sce)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ENSEMBL, rowData(sce)$Symbol)
+```
+
+```{r}
+#Heatmap of Marker Gened used for Annotation
+#Endo "PECAM1", "CDH5"
+#Myeloid "CD14","FCGR3A"
+#Bcell "CD19","MS4A1","CD79A"
+#Plasma "SDC1","MZB1"
+#Tcell "CD3E", "CD3G"
+#Mast "KIT","IL1RL1","MS4A2"
+#Fibroblast "PDGFRB","DCN","COL1A1"
+#Neutrophil "CSF3R","S100A8","TREM1"
+#pDC
+#SMC
+markr<-c("CDH5","CD14","CD19","SDC1","CD3E","KIT","COL1A1","CSF3R","ACTA2","CLEC4C","UPK3A","CLEC9A","CCL22","PROX1","LYVE1")
+
+```
+
+
+```{r}
+# RA DATASET
+for(i in markr){
+  print(plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by = i, order_by=i,point_alpha=1,point_size=0.5 )+scale_colour_gradient(name = i,low = "lightgrey", high = "red"))#harmony_reduced_UMAP
+  }
+
+
+```
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -108,7 +144,9 @@ ggplot(as.data.frame(colData(sce))) +
 ```{r}
 # RA DATASET
 sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
-Marker <- c("HOXD11","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
+Marker <- c("HOXD11","HOXD13","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
+
+Marker <- c("HOXD13","HOXD11","HOXD10","HOXD-AS2","HOXD9","HOXD8","HOXD3","HOXD4","HOXD1","HOXA1","HOXA2","HOXA3","HOXA-AS2","HOXA4","HOXA-AS3","HOXA5","HOXA6","HOXA7","HOXA9","HOXA10-AS","HOXA10","HOXA11","HOXA11-AS","HOXA13","HOXC13","HOXC11","HOXC-AS3" ,"HOXC10","HOXC6","HOXC-AS2","HOXC9","HOXC-AS1","HOXC8","HOXC4","HOXC5","HOXB2","HOXB-AS1","HOXB3","HOXB-AS3","HOXB4","HOXB5","HOXB6","HOXB7","HOXB8","HOXB9","HOXB13")
 
 ```
 

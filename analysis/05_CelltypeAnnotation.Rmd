@@ -159,7 +159,7 @@ for (i in 1:max(as.integer(levels(sce$cluster)))){
 
 # To avoid a too big plot we only keep every 20th cell
 sce.plot <- sce[unique(top3DEgenes), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),order.by="cluster", scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE,heatmap.colors = colorRampPalette(c("dark blue", "white", "dark red"))(100),breaks = seq(-3, 3, length.out = 101 ) #assay = "scaled_asinh"
+dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),order.by="cluster", scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE,heatmap.colors = colorRampPalette(c("darkblue", "white", "darkred"))(100),breaks = seq(-3, 3, length.out = 101 )) #assay = "scaled_asinh"
 
 
 #Dotplot
@@ -185,7 +185,7 @@ VizGenEx <- function(markr){
   
     gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, text_by = "cluster"), 
-                  plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, order_by=i ) 
+                  plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, order_by=i ,point_alpha=1,point_size=0.5) 
                     +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
                   plotExpression(sce, features = i, x = "cluster"),nrow = 2)
     cat(' \n')
@@ -239,10 +239,10 @@ VizGenEx(c("CDH5","ECSCR","CCL14"))
 sce$ManualAnno_L0 <- as.integer(sce$cluster)
 unique(sce$ManualAnno_L0)
 
-sce$ManualAnno_L0[sce$cluster %in% c(5,12,13,16,17)] <- "Lymphocyte"
-sce$ManualAnno_L0[sce$cluster %in% c(4,7,8,9,15,19)] <- "Myeloid"
-sce$ManualAnno_L0[sce$cluster %in% c(2,3,6,10,11)] <- "Stromal"
-sce$ManualAnno_L0[sce$cluster %in% c(1,14,18)] <- "Endothelial"
+sce$ManualAnno_L0[sce$cluster %in% c(5,11,12,16,18,19)] <- "Lymphocyte"
+sce$ManualAnno_L0[sce$cluster %in% c(4,7,8,9,14,17,21)] <- "Myeloid"
+sce$ManualAnno_L0[sce$cluster %in% c(2,3,6,10,13)] <- "Stromal"
+sce$ManualAnno_L0[sce$cluster %in% c(1,15,20)] <- "Endothelial"
 
 ```
 
@@ -327,7 +327,7 @@ VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 
 ```{r MastcellL1, results='asis'}
 
-VizGenEx(c("TPSAB1","CPA3","HPGDS","VWA5A"))
+VizGenEx(c("TPSAB1","CPA3","HPGDS"))
 
 ```
 
@@ -335,7 +335,7 @@ VizGenEx(c("TPSAB1","CPA3","HPGDS","VWA5A"))
 
 ```{r NeutrophilL1, results='asis'}
 
-VizGenEx(c("CSF3R","S100A8","TREM1"))
+VizGenEx(c("CSF3R","S100A8","TREM1","NAMPT"))
   
 ```
 
@@ -343,9 +343,20 @@ VizGenEx(c("CSF3R","S100A8","TREM1"))
 
 ```{r pDCL1, results='asis'}
 
-VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
+#VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26")) #pDC
+VizGenEx(c("FLT3","BTLA","CD86","CLEC9A","CCL22","CD1C")) #cDC
 
 ```
+
+
+#### Proliferating Cells{.tabset}
+
+```{r pDCL1, results='asis'}
+
+VizGenEx(c("MKI67","PCNA","STMN1","HMGB2")) 
+
+```
+
 
 ### Assignement - Level1 
 
@@ -355,16 +366,16 @@ VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26"))
 sce$ManualAnno_L1 <- as.integer(sce$cluster)
 unique(sce$ManualAnno_L1)
 
-sce$ManualAnno_L1[sce$cluster %in% c(2,3,6,10,11)] <- "Fibroblast"
-#sce$ManualAnno_L1[sce$cluster %in% c(15)] <- "Smooth muscle cell"
-sce$ManualAnno_L1[sce$cluster %in% c(1,14,18)] <- "Endothelial cell"
-sce$ManualAnno_L1[sce$cluster %in% c(12,13,16)] <- "T cell"
-sce$ManualAnno_L1[sce$cluster %in% c(17)] <- "B cell"
-sce$ManualAnno_L1[sce$cluster %in% c(19)] <- "Neutrophil"
-#sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
-sce$ManualAnno_L1[sce$cluster %in% c(4,7,8,9,15)] <- "Myeloid"
+sce$ManualAnno_L1[sce$cluster %in% c(2,3,6,13)] <- "Fibroblast"
+sce$ManualAnno_L1[sce$cluster %in% c(10)] <- "Smooth muscle cell"
+sce$ManualAnno_L1[sce$cluster %in% c(1,15,20)] <- "Endothelial cell"
+sce$ManualAnno_L1[sce$cluster %in% c(11,12,18)] <- "T cell"
+sce$ManualAnno_L1[sce$cluster %in% c(19)] <- "B cell"
+sce$ManualAnno_L1[sce$cluster %in% c(21)] <- "Neutrophil"
+sce$ManualAnno_L1[sce$cluster %in% c(16)] <- "Mast cell"
+sce$ManualAnno_L1[sce$cluster %in% c(4,8,9,14,17)] <- "Myeloid"
 sce$ManualAnno_L1[sce$cluster %in% c(5)] <- "Plasma"
-#sce$ManualAnno_L1[sce$cluster %in% c(13)] <- "Plasmacytoid dendritic cell"
+sce$ManualAnno_L1[sce$cluster %in% c(7)] <- "Dendritic cell"
 ```
 
 ```{r AssignementCheck}
@@ -413,18 +424,18 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", co
 
 ```{r PlotHeatmap}
 #Heatmap of Marker Gened used for Annotation
-#Endo "PECAM1", "CDH5"
+#Endo "VWF", "CDH5"
 #Myeloid "CD14","FCGR3A"
 #Bcell "CD19","MS4A1","CD79A"
 #Plasma "SDC1","MZB1"
 #Tcell "CD3E", "CD3G"
-#Mast "KIT","IL1RL1","MS4A2"
+#Mast "KIT","IL1RL1","MS4A2" "TPSAB1","CPA3"
 #Fibroblast "PDGFRB","DCN","COL1A1"
 #Neutrophil "CSF3R","S100A8","TREM1"
 #pDC
 #SMC
 
-markers <- c("PDGFRB","DCN","COL1A1","PECAM1", "CDH5","CD14","FCGR3A","CD19","MS4A1","CD79A","SDC1","MZB1","CD3E", "CD3G","KIT","MS4A2","CSF3R","S100A8","TREM1")
+markers <- c("PDGFRB","COL1A1","ACTA2","VWF", "CDH5","CD14","FCGR3A","CSF3R","S100A8","CLEC9A","CCL22","TPSAB1","CPA3","KIT","MS4A2","CD19","MS4A1","CD79A","SDC1","MZB1","CD3E", "CD3G")
 
 
 
@@ -434,7 +445,10 @@ dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("label"),scaled.to.m
 
 
 #Dotplot
-dittoDotPlot(sce, vars = markers , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+dittoDotPlot(sce, vars = markers , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE,
+             y.reorder=c(4,9,3,6,7,2,5,1,8,10))
+
+#order-->c("Fibroblast","Smooth muscle cell","Endothelial cell","Myeloid","Neutrophil","Dendritic cell","Mast cell","B cell","Plasma","T cell")
 
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 gc()
@@ -474,81 +488,44 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
 
 ```
 
+## Frequencies of celltypes in clusters per Condition {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(celltype,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  theme_classic()
+
+```
+
+### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  theme_classic()
+
+
+```
+
 
 ### Grouped boxplot
 
 ```{r PlotGroupedClustering}
 
-Totalcelltype <- as.data.frame(colData(sce)) %>% 
-  group_by(celltype,Joint.Location) %>%
-  summarise(cells = n(),.groups = 'drop') %>%
-  mutate(freq = cells / sum(cells) * 100)
-
-
-ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
-    geom_bar(position="dodge", stat="identity")+ 
-    theme_classic()+
-    labs(title="", x="", y="Fraction of cells [%]")
-
-
-# 
-
-Totalcelltype <- as.data.frame(colData(sce)) %>% 
-  group_by(celltype, Sample,Joint.Location) %>%
-  summarise(cells = n(),.groups = 'drop') %>%
-  mutate(freq = cells / sum(cells) * 100)
-
-
-ggplot(Totalcelltype, aes( y=freq, fill=Joint.Location)) + 
-  geom_boxplot()+
-  facet_wrap(~celltype, scales = "free_y",ncol = 5, nrow = 2) +
-  labs(title="Relative cell type abundance", x="", y="")+ 
-  theme_classic()
-
-
-
-# Fraction of cells [%] from total cells in that joint location
-
-Totalcelltype <- as.data.frame(colData(sce)) %>% 
-    group_by(Joint.Location) %>%
-    summarise(totalcells = n(),.groups = 'drop') %>% 
-    left_join(ClusterInfo%>% group_by(Joint.Location,celltype), Totalcelltype,by ="Joint.Location") %>%
-    mutate(freq = cells / totalcells * 100)
-
-
-ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
-    geom_boxplot()+ 
-    theme_classic()
-
-ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
-    geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
-    theme_classic()+
-    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")
-
-
-
-# Fraction of cells [%] from total cells in that celltype
-
-Totalcelltype <- as.data.frame(colData(sce)) %>% 
-    group_by(celltype) %>%
-    summarise(totalcells = n(),.groups = 'drop') %>% 
-    left_join(ClusterInfo, Totalcelltype,by ="celltype") %>%
-    mutate(freq = cells / totalcells * 100)
-
-
-ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
-    geom_boxplot()
-
-ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
-    geom_bar(position="dodge", stat="identity")+ 
-    theme_classic()+
-    labs(title="", x="", y="Fraction of cells [%]")
-
-
-
-
-
-#--------------------------------------------------------FINAL
 # Fraction of cells [%] from total cells in that celltype
 
 Totaljoint <- as.data.frame(colData(sce)) %>% 
@@ -562,17 +539,11 @@ Totalcelltype <- as.data.frame(colData(sce)) %>%
     mutate(freq = totalcells / totalcellsjoint * 100)
 
 
-ggplot(Totalcelltype, aes(x= celltype , y=freq, fill=Joint.Location)) + 
-    geom_boxplot()
-
 ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
     geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
     theme_classic()+
-    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")
-
-
-
-
+    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
 
 
 
@@ -598,9 +569,9 @@ for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
   wb = createWorkbook()
   for (i in 1:max(as.integer(levels(sce$paste0(labeling))))){
     #get genes for the Anno
-    markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
+    markers<-topDEgenes[,paste0(i), drop=TRUE]
     #Create table
-    tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
+    tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
     
     #Save table in Exelsheet
     addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
@@ -651,8 +622,6 @@ for (i in 1:max(as.integer(levels(sce$ManualAnno_L1)))){
 }
 saveWorkbook(wb,paste0( path , "/output/Annotated_L1_Wilcoxon.xlsx"))
 ```
-
-
 
 
 

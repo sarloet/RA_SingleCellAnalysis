@@ -61,7 +61,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 ```
 
 ### Explore Dataset
@@ -97,23 +97,17 @@ sce.BatchR <- sce
 ### Run Harmony 
 
 ```{r}
-#Perform scaling normalization within each batch
-meta_data <- colData(sce.BatchR) %>%
-  as.data.frame() %>%
-  dplyr::select(c(Sample)) #Add covariates zb protocol
 
-sce.BatchR <- harmony::RunHarmony(sce.BatchR, group.by.vars=c("Sample"),reduction.save="harmony",verbose=FALSE) #  Add covariates zb protocol
-```
-
-
-### QC Plots Harmony
-
-We use the percentage of variance lost as a diagnostic measure.Large proportions of lost variance (>10%) suggest that correction is removing genuine biological heterogeneity.
-```{r}
-# Percentage of variance lost 
-metadata(sce.BatchR)$merge.info$lost.var
+#Harmony
+sce.BatchR <- harmony::RunHarmony(sce.BatchR,
+    group.by.vars=c("Sample"),
+    reduction.save = "harmony",
+    reduction = "PCA_reduced",
+    verbose=FALSE)
 
 ```
+
+
 
 ### Chosing the number of PCs
 
@@ -121,14 +115,14 @@ The advantage of using PCA is that the total amount of variance explained by the
 
 ```{r ShowPC}
 #PCA dim elbow estimate using 
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "harmony")), k=10)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "harmony")), k=5)))
 
 #PCA select nr of PC
-reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
+reducedDim(sce.BatchR,"MNN_UMAP") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
 reducedDimNames(sce.BatchR)
 
-ncol(reducedDim(sce.BatchR,"harmony"))
-ncol(reducedDim(sce.BatchR,"harmony_reduced"))
+ncol(reducedDim(sce.BatchR,"MNN"))
+ncol(reducedDim(sce.BatchR,"MNN_UMAP"))
 ```
 
 
@@ -161,7 +155,7 @@ plotReducedDim(sce.BatchR, dimred="harmony_reduced", colour_by="Joint.Location")
 ```{r}
 #Run UMAP
 sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony", name="harmony_UMAP")
-sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", name="harmony_reduced_UMAP")
+sce.BatchR <- runUMAP(sce.BatchR, dimred="harmony_reduced", name="harmony_reduced_UMAP",subset_row=rowData(sce.BatchR)$is_hvg)
 
 ```
 

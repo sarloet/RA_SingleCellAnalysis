@@ -149,8 +149,8 @@ gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
 geneList_KneeVsMCP$updated<- gene_List$updated
 
 # Get significatn genes for each condidtion
-gene_List_Knee <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F] #genes for cond1
-gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange> 0.1,, drop=F] #genes for cond2
+gene_List_Knee <- geneList_KneeVsMCP[geneList_KneeVsMCP$PValue<0.05 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_MCP <- geneList_KneeVsMCP[geneList_KneeVsMCP$PValue<0.05 & geneList_KneeVsMCP$log2FoldChange> 0.1,, drop=F] #genes for cond2
 
 ```
 
@@ -247,8 +247,8 @@ gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
 geneList_KneeVsWrist$updated<- gene_List$updated
 
 # Get significatn genes for each condidtion
-gene_List_Knee <- geneList_KneeVsWrist[geneList_KneeVsWrist$Pr..Chisq.<0.05 & geneList_KneeVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
-gene_List_Wrist <- geneList_KneeVsWrist[geneList_KneeVsWrist$Pr..Chisq.<0.05 & geneList_KneeVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
+gene_List_Knee <- geneList_KneeVsWrist[geneList_KneeVsWrist$PValue<0.05 & geneList_KneeVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_Wrist <- geneList_KneeVsWrist[geneList_KneeVsWrist$PValue<0.05 & geneList_KneeVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
 
 ```
 
@@ -345,8 +345,8 @@ gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
 geneList_MCPVsWrist$updated<- gene_List$updated
 
 # Get significatn genes for each condidtion
-gene_List_MCP <- geneList_MCPVsWrist[geneList_MCPVsWrist$Pr..Chisq.<0.05 & geneList_MCPVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
-gene_List_Wrist <- geneList_MCPVsWrist[geneList_MCPVsWrist$Pr..Chisq.<0.05 & geneList_MCPVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
+gene_List_MCP <- geneList_MCPVsWrist[geneList_MCPVsWrist$PValue<0.05 & geneList_MCPVsWrist$log2FoldChange< -0.1,, drop=F] #genes for cond1
+gene_List_Wrist <- geneList_MCPVsWrist[geneList_MCPVsWrist$PValue<0.05 & geneList_MCPVsWrist$log2FoldChange> 0.1,, drop=F] #genes for cond2
 
 ```
 

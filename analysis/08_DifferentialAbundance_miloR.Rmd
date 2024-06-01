@@ -58,7 +58,6 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-#sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
 ```
 
@@ -86,7 +85,7 @@ plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="celltype", text_by="celltype"
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, "MNN_UMAP", colour_by="Joint.Location") +labs(title="UMAP colored by Joint Location",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="Joint.Location") +labs(title="UMAP colored by Joint Location",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -123,6 +122,49 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
 
 
 
+```{r propeller}
+library(scProportionTest)
+library(Seurat)
+
+so <- as.Seurat(sce)
+
+prop_test <- sc_utils(so)
+
+#Knee vs MCP
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "label",
+	sample_1 = "Knee", sample_2 = "MCP",
+	sample_identity = "Joint.Location"
+)
+
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+#Knee vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "label",
+	sample_1 = "Knee", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+#MCP vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "label",
+	sample_1 = "MCP", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+
+permutation_plot(prop_test)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+```
+
+
+
 
 
 ```{r propeller}
@@ -142,11 +184,13 @@ design <- model.matrix(~ 0 + group, data=a)
 design
 
 
-plotCellTypeProps(sce.prop)
+plotCellTypeProps(sce.prop)+theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+
+
+props <- getTransformedProps(sce.prop$cluster, sce.prop$Sample, transform="logit")
 
 propeller.anova(prop.list=props, design=design, coef = c(1,2,3), robust=TRUE, trend=FALSE, sort=TRUE)
-
-props <- getTransformedProps(sce.prop$cluster, sce.prop$Sample, transform="asin")
 
 par(mfrow=c(1,1))
 plotCellTypeMeanVar(props$Counts)
@@ -164,6 +208,18 @@ propeller.ttest(props, design, contrasts = contrast, robust=TRUE, trend=FALSE,
                 sort=TRUE)
 
 
+x <- c("groupKnee-groupWrist")
+contrast <- makeContrasts(contrasts=x, levels = design)
+
+propeller.ttest(props, design, contrasts = contrast, robust=TRUE, trend=FALSE, 
+                sort=TRUE)
+
+
+x <- c("groupMCP-groupWrist")
+contrast <- makeContrasts(contrasts=x, levels = design)
+
+propeller.ttest(props, design, contrasts = contrast, robust=TRUE, trend=FALSE, 
+                sort=TRUE)
 
 rm(sce.prop)
 ```
@@ -179,22 +235,17 @@ rm(sce.prop)
 ```{r }
 #Create milo object
 
-sce.milo <- Milo(sce)
+#sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 
 ```
 
 ```{r }
-#Decide on d parameter
+#Create milo object
 
-elbow <- ceiling(as.numeric(intrinsicDimension::maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=10)))
-
-# Extract variance explained
-pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentVar"))
-pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
-
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow, color="red")
+sce.milo <- Milo(sce)
 
 ```
+
 
 
 ### Construct KNN graph
@@ -203,7 +254,7 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point(
 ```{r }
 #construct KNN graph
 dim <- ncol(reducedDim(sce,"MNN_reduced"))
-sce.milo <- buildGraph(sce.milo, k = 40, d = dim, reduced.dim = "MNN_reduced")
+sce.milo <- buildGraph(sce.milo, k = 40, d = dim, reduced.dim = "MNN_reduced",BPPARAM=bpp)
 
 ```
 
@@ -220,8 +271,8 @@ plotNhoodSizeHist(sce.milo)
 
 
 ```{r }
-# Counting cells in neighbourhoods
 
+# Counting cells in neighbourhoods
 sce.milo <- countCells(sce.milo, meta.data = data.frame(colData(sce.milo)), sample="Sample")
 head(nhoodCounts(sce.milo))
 
@@ -230,6 +281,7 @@ head(nhoodCounts(sce.milo))
 ### Defining experimental design
 
 ```{r }
+
 # Defining experimental design
 design <- data.frame(colData(sce.milo))[,c("Sample", "Joint.Location")]
 
@@ -264,9 +316,22 @@ sce.milo <- calcNhoodDistance(sce.milo, d=dim, reduced.dim = "MNN_reduced")
 
 ```
 
+
+
+
+
 ```{r }
 # Testing
-res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+
+res_KneeVsMCP <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationMCP", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+
+
+res_KneeVsWrist <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationKnee-Joint.LocationWrist", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+
+
+res_MCPVsWrist <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, model.contrasts = "Joint.LocationMCP-Joint.LocationWrist", reduced.dim = "MNN_reduced", fdr.weighting="graph-overlap") # fdr.weighting="graph-overlap"
+
+
 
 ```
 
@@ -275,11 +340,23 @@ res <- testNhoods(sce.milo, design = ~ 0 + Joint.Location, design.df = design, m
 
 
 ```{r }
-res %>%
-  arrange(SpatialFDR) %>%
-  head()
 
-table(res$SpatialFDR < 0.1)
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+  
+  print(res %>%
+  arrange(SpatialFDR) %>%
+  head())
+
+ print(table(res$SpatialFDR < 0.1))
+  
+  cat(' \n')
+}
+
+
 ```
 
 #### Distribution of uncorrected P values
@@ -287,7 +364,17 @@ table(res$SpatialFDR < 0.1)
 We expect a peak to very low extreme and a tail towards 1
 
 ```{r }
-ggplot(res, aes(PValue)) + geom_histogram(bins=50)
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+
+  print(ggplot(res, aes(PValue)) + geom_histogram(bins=50)+theme_classic())
+  
+  cat(' \n')
+}
+
 ```
 
 #### Volcano plot of neighbourhoods
@@ -295,49 +382,86 @@ ggplot(res, aes(PValue)) + geom_histogram(bins=50)
 Check to see whether neighborhoods were there is a significant difference where detected in cell abundances between sample groups.
 
 ```{r }
-ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercept = 1, color="red") 
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+
+  print(ggplot(res, aes(logFC, -log10(SpatialFDR))) + geom_point() +geom_hline(yintercept = 1, color="red")+theme_classic())
+  
+  cat(' \n')
+}
+
 ```
 
 #### Abstracted graph of neighbourhoods
 
 ```{r }
-sce.milo <- buildNhoodGraph(sce.milo)
 
-## Plot single-cell UMAP
-umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP_reduced", 
-                          text_size = 3, point_size=0.5) +
-  guides(fill="none")
 
-## Plot neighbourhood graph
-nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP_reduced",alpha=0.1) 
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   
-umap_pl + nh_graph_pl +
-  plot_layout(guides="auto")
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+
+  sce.milo <- buildNhoodGraph(sce.milo)
+
+  ## Plot single-cell UMAP
+  umap_pl <- plotReducedDim(sce.milo, dimred = "MNN_UMAP_reduced", text_size = 3, point_size=0.5) +
+    guides(fill="none")
+  
+  ## Plot neighbourhood graph
+  nh_graph_pl <- plotNhoodGraphDA(sce.milo, res, layout="MNN_UMAP_reduced",alpha=0.1) 
+    
+  print(umap_pl + nh_graph_pl +
+    plot_layout(guides="auto"))
+  
+  cat(' \n')
+}
+
+
+
 
 ```
+
+
 #### Assign cell labels to each neighbourhood 
-
-```{r }
-res <- annotateNhoods(sce.milo, res, coldata_col = "label")
-res
-```
 
 Plot to see what the distribution of neighbourhoods is like within our labels. We could take this as a measure of how similar our clustering is with the KNN neighborhood as defined by Milo
 
+
 ```{r }
-ggplot(res, aes(label_fraction)) + geom_histogram(bins=50)
+
+
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+
+  res <- annotateNhoods(sce.milo, res, coldata_col = "label")
+  res
+  
+  
+  print(ggplot(res, aes(label_fraction)) + geom_histogram(bins=50))
+  
+  # Define a threshold for label_fraction to exclude neighbourhoods that are a mix of cell types
+  res$label <- ifelse(res$label_fraction < 0.8, "Mixed", res$label)
+  
+  # Visualise the distribution of DA Fold Changes in different labels.
+  print(plotDAbeeswarm(res, group.by = "label"))
+  
+  cat(' \n')
+}
+
+
 ```
 
 
-```{r }
-# Define a threshold for label_fraction to exclude neighbourhoods that are a mix of cell types
-res$label <- ifelse(res$label_fraction < 0.8, "Mixed", res$label)
-```
-
-```{r }
-# Visualise the distribution of DA Fold Changes in different labels.
-plotDAbeeswarm(res, group.by = "label")
-```
 
 ## Save the dataset
 

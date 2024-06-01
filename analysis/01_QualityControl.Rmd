@@ -133,16 +133,21 @@ rowData(sce)$Symbol[is_mito] #Show the MT genes
 is_hbb<- grepl("(^HBB)|(^hbb)", rowData(sce)$Symbol)
 rowData(sce)$Symbol[is_hbb] #Show the HBB genes
 
+# Indentify Ribosomal genes
+is_ribo<- grepl("(^RPL)|(^RPS)|(^rpl)|(^rps)", rowData(sce)$Symbol)
+rowData(sce)$Symbol[is_ribo] #Show the MT genes
+
+
 # calculate per-cell quality control (QC) metrics using scater
-sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb))
+sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb, Ribo=is_ribo))
 ```
 
 ### Fixed Filtering Thresholds
 
 ```{r FixedThresholds}
 #Some Fixed thresholds
-colData(sce)$qc.count_manual <- sce$sum < 200 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
-colData(sce)$qc.genexp_manual <- sce$detected < 200 | sce$detected > 10000  # Cells have at least 300 genes expressed 
+colData(sce)$qc.count_manual <- sce$sum < 400 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
+colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$detected > 10000  # Cells have at least 300 genes expressed 
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
 colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
 
@@ -330,6 +335,7 @@ as.data.frame(colData(sce)) %>%
 ```
 
 ### Apply filtering
+
 ```{r}
 
 
@@ -337,9 +343,9 @@ as.data.frame(colData(sce)) %>%
 sce.filtered <- sce[, !colData(sce)$discard]
 
 cat(
-    "NR of Genes Before Filtering ", dim(sce)[2],
-    "\nNR of Genes After Filtering ", dim(sce.filtered)[2],
-    "\nNR of Genes Filtered out ", dim(sce)[2] - dim(sce.filtered)[2]
+    "NR of Cells Before Filtering ", dim(sce)[2],
+    "\nNR of Cells After Filtering ", dim(sce.filtered)[2],
+    "\nNR of Cells Filtered out ", dim(sce)[2] - dim(sce.filtered)[2]
     )
 ```
 

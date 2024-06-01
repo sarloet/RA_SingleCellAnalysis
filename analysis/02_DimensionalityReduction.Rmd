@@ -102,7 +102,7 @@ In this analysis we take the top 3000 genes with largest (biological) variation.
 #top.hvgs <- getTopHVGs(dec, prop=0.1)
 
 # Get the top 2000 genes.
-top.hvgs <- getTopHVGs(dec, n=4000)
+top.hvgs <- getTopHVGs(dec, n=3000)
 
 # Get all genes with positive biological components.
 #top.hvgs <- getTopHVGs(dec, var.threshold=0)
@@ -111,6 +111,7 @@ top.hvgs <- getTopHVGs(dec, n=4000)
 #top.hvgs <- getTopHVGs(dec, fdr.threshold=0.05)
 
 length(top.hvgs)
+
 ```
 
 
@@ -161,7 +162,7 @@ pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentV
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
 #PCA dim estimate the elbowpoint
-elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=15)))
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=5)))
 cat(paste0("Elbow Point: ",elbow))
 #cat(paste0("Elbow Point: ",findElbowPoint(pca_pct_variance$variance)))
 ```

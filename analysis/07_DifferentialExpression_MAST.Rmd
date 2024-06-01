@@ -79,7 +79,7 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ```{r UMAPAnnotation}
 #cell type
-plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -87,7 +87,7 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -137,7 +137,7 @@ find_de_MAST <- function(sce,cond1,cond2){
     
     # get the table with log-fold changes and p-values
     summaryDt <- summaryCond$datatable
-    result <- merge(summaryDt[contrast== paste0('group',cond2) & component=='H',.(primerid, `Pr(>Chisq)`)], # p-values
+    result <- merge(summaryDt[contrast== paste0('group',cond2) & component=='H', .(primerid, `Pr(>Chisq)`)], # p-values
                      summaryDt[contrast== paste0('group',cond2) & component=='logFC', .(primerid, coef)],# logFC coefficients
                      by='primerid') 
     
@@ -145,9 +145,12 @@ find_de_MAST <- function(sce,cond1,cond2){
     result[,log2FoldChange:=result[,coef]/log(2)]
     
     # do multiple testing correction
-    #result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
+    result[,FDR:=p.adjust(`Pr(>Chisq)`, 'fdr')]
     data.table::setorder(result, FDR)
     
+    #Rename
+    names(result)[names(result) == "Pr(>Chisq)"] <- "PValue"
+     
     # omit possible NA
     result <- stats::na.omit(as.data.frame(result))
     
@@ -186,7 +189,9 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   
   cat(paste0("#### ", comp, "\n"))
   
-  table<-geneList_KneeVsMCP[geneList_KneeVsMCP$Pr..Chisq.<0.05 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F]
+  res<-eval(parse(text = paste0("res_",comp)))
+  
+  table<-res[res$PValue<0.05 & res$log2FoldChange< -0.1,, drop=F]
   print(table)
   dim(table)
   
@@ -205,12 +210,12 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   #Create dd for plotting function
   res_plot<-eval(parse(text = paste0("res_",comp)))
   row.names(res_plot)<- res_plot$primerid
-  res_plot <- res_plot[,c("Pr(>Chisq)","log2FoldChange")]
+  res_plot <- res_plot[,c("PValue","log2FoldChange")]
     
   strspl<-strsplit(comp, split = "Vs")#
   
   #Create dd for plotting function
-  volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'Pr(>Chisq)',
+  volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'PValue',
                   pCutoff = 0.05, FCcutoff = 0.5,
                   title = paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
                   subtitle = paste0("Fibroblast"," cluster (MAST)"),
@@ -236,8 +241,8 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   res <- get(paste0("res_",comp))
   
   # Get top significant marker genes
-  res_sig <- res[res$`Pr..Chisq.`<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
-  data.table::setorder(res_sig, Pr..Chisq.)
+  res_sig <- res[res$PValue<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
+  data.table::setorder(res_sig, PValue)
   res_sig<-head(res_sig,n=25)
   
   # Subset sce to keep the tested conditions

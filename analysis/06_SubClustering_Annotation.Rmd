@@ -63,13 +63,13 @@ path <- here::here()
 ```{r VizGenExFunction}
 #Function to visuaise gene Expression for vector of genes
 
-VizGenEx <- function(markr,Ctype){
+VizGenEx <- function(sce.sc,markr,Ctype){
   for(i in markr){
     
     cat(paste0("#### ", i, "\n"))
     gridExtra::grid.arrange(
-      arrangeGrob(plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, text_by = "subcluster"), 
-                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = paste0("SC_UMAP_",Ctype), colour_by = i, order_by=i ) 
+      arrangeGrob(plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = "MNN_UMAP_SC_reduced", colour_by = i, text_by = "subcluster"), 
+                  plotReducedDim(sce.sc[,sce.sc$celltype == Ctype], dimred = "MNN_UMAP_SC_reduced", colour_by = i, order_by=i ) 
                     +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
                   plotExpression(sce.sc[,sce.sc$celltype == Ctype], features = i, x = "subcluster"),nrow = 2)
     cat(' \n')
@@ -114,7 +114,8 @@ Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, 
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce.sc <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+cell_type<- "Fibroblast"
 
 ```
 
@@ -122,7 +123,7 @@ sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
 
 ```{r ShowDim}
 #Dimensions of count matrix
-dim(sce)
+dim(sce.sc)
 ```
 
 ### Plot Annotation {.tabset}
@@ -131,14 +132,14 @@ dim(sce)
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, paste0("MNN_UMAP_reduced", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", cell_type),subtitle="Colored by clustering")
 ```
 
 #### Plot Recalculated UMAP of Subclusters 
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, paste0("SC_UMAP_", cell_type),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", name),subtitle="Colored by clustering")
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", cell_type),subtitle="Colored by clustering")
 ```
 
 
@@ -152,7 +153,7 @@ sce.sc$ManualAnno_L2 <- as.integer(sce.sc$celltype)
 #### Identify Marker Genes Wilcoxon rank-sum test
 
 ```{r FibroblastsIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
+markers_wilcox <- wilcoxauc(sce.sc, 'subcluster', assay = 'logcounts')
 data.frame(markers_wilcox)
 ```
 
@@ -161,19 +162,19 @@ tmp <-top_markers(markers_wilcox, n = 4)
 
 tail(unlist(unname(as.list(tmp))),-4)
 
-dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars = unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+dittoDotPlot(sce.sc, vars = unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
 #dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
 ```
 
 
-#### Test Fibroblast marker {.tabset}
+#### Test Known Fibroblast marker {.tabset}
 
 Lining vs Sublining
 
 
 ```{r FibroblastsL2, results='asis'}
-#Lining Fibroblst
-VizGenEx(c("PRG4","THY1"),"Fibroblast")  
+#Lining vs Sublining Fibroblst
+VizGenEx(sce.sc,c("PRG4","THY1"),"Fibroblast")  
 
 
 ```
@@ -181,7 +182,7 @@ VizGenEx(c("PRG4","THY1"),"Fibroblast")
 
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("PRG4","CRTAC1", "CLU","CLIC5"),"Fibroblast")  
+VizGenEx(sce.sc,c("PRG4","CRTAC1", "CLU","CLIC5"),"Fibroblast")  
 
 
 ```
@@ -190,7 +191,7 @@ VizGenEx(c("PRG4","CRTAC1", "CLU","CLIC5"),"Fibroblast")
 
 ```{r FibroblastsL2, results='asis'}
 #SMC
-VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"),"Fibroblast")  
+VizGenEx(sce.sc,c("ACTA2","MYL9", "DES", "MYH11"),"Fibroblast")  
 
 
 ```
@@ -198,22 +199,14 @@ VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"),"Fibroblast")
 
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("CHI3L2","SAA1", "FN1"),"Fibroblast")  
+VizGenEx(sce.sc,c("CHI3L2","SAA1", "FN1"),"Fibroblast")  
 
 
 ```
 
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("CXCL12","CCL2","SFRP1"),"Fibroblast")  
-
-
-```
-
-
-```{r FibroblastsL2, results='asis'}
-#Lining Fibroblst
-VizGenEx(c("POSTN","COL1A1", "FNDC1"),"Fibroblast")  
+VizGenEx(sce.sc,c("CXCL12","CCL2","SFRP1"),"Fibroblast")  
 
 
 ```
@@ -221,14 +214,22 @@ VizGenEx(c("POSTN","COL1A1", "FNDC1"),"Fibroblast")
 
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("CXCL14","MFAP5"),"Fibroblast")  
+VizGenEx(sce.sc,c("POSTN","COL1A1", "FNDC1"),"Fibroblast")  
+
+
+```
+
+
+```{r FibroblastsL2, results='asis'}
+#Lining Fibroblst
+VizGenEx(sce.sc,c("CXCL14","MFAP5"),"Fibroblast")  
 
 
 ```
 
 ```{r FibroblastsL2, results='asis'}
 #Lining Fibroblst
-VizGenEx(c("TRPS1","FTX","NEAT1","MALAT1"),"Fibroblast")  
+VizGenEx(sce.sc,c("TRPS1","FTX","NEAT1","MALAT1"),"Fibroblast")  
 
 ```
 
@@ -238,35 +239,35 @@ VizGenEx(c("TRPS1","FTX","NEAT1","MALAT1"),"Fibroblast")
 
 
 sce.sc$ManualAnno_L2 <- as.integer(sce.sc$subcluster)
-unique(sce$ManualAnno_L2)
+unique(sce.sc$ManualAnno_L2)
 
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1,8)] <- "POSTN+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(2,7)] <- "CHI3L2+"
+#sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1,2)] <- "POSTN+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "CHI3L2+"
 sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(5)] <- "PRG4+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "CXCL12+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(4)] <- "FTX+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(4)] <- "CXCL12+"
+sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "MFAP5+"
 
-sce$ManualAnno_L2 <- as.integer(sce.sc$ManualAnno_L2)
+unique(sce.sc$ManualAnno_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
 ```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
-          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", cell_type),subtitle="Colored by Celltype")
 ```
 
 ```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2") +
-          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
+          labs(title=paste0("Recalculated UMAP for Subcluster ", cell_type),subtitle="Colored by Celltype")
 ```
 
 
 ### Save the Annotated dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
+saveRDS(sce.sc, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 
@@ -300,26 +301,6 @@ saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx"))
 
 ```
 
-
-
-```{r }
-
-Marker <- c("HOXD11","HOXD10","HOXB-AS1","HOXA6","HOXA5","HOXA3","HOXA11-AS","HOXC9","HOXC8","HOXC11","HOXC10","HOXC-AS1","HOXC-AS2","HOXC-AS3","HOXB3","HOXB2")
-
-
-dittoDotPlot(sce[,sce$celltype == "Fibroblast"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = FALSE )
-
-dittoDotPlot(sce[,sce$celltype == "Fibroblast"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = TRUE )
-
-
-
-dittoDotPlot(sce[,sce$celltype == "Edothelial cell"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = FALSE )
-
-dittoDotPlot(sce[,sce$celltype == "Edothelial cell"], vars = Marker , group.by = "Joint.Location",min.color="lightgrey", max.color="blue",min.percent=0,max.percent=1,scale = TRUE )
-
-
-
-```
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

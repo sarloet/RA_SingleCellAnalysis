@@ -1,0 +1,140 @@
+---
+title: "Clustering"
+subtitle: "11_CellCycle"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Plotting
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadAddPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(Seurat)
+})
+
+```
+
+
+### Set Parameter
+
+```{r Setup}
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
+path <- here::here()
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+```
+
+### Explore Dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+
+## Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+```
+
+
+## Determine Cell cycle
+
+## Define function
+
+```{r LoadDataset}
+## RA DATASET
+CellCycle <- function(sce)
+{
+  sce$S.Score <- rep(NA,ncol(sce))
+  sce$G2M.Score <- rep(NA,ncol(sce))
+  sce$phase <- rep(NA,ncol(sce))
+  rownames(sce) <- rowData(sce)$Symbol
+  
+  s.genes = cc.genes$s.genes
+  g2m.genes = cc.genes$g2m.genes
+  so <- Seurat::CreateSeuratObject(as.matrix(counts(sce)))
+  so <- Seurat::NormalizeData(so)
+  so <- Seurat::FindVariableFeatures(so, selection.method = "vst")
+  so <- Seurat::ScaleData(so, features = rownames(so))
+  so <- Seurat::CellCycleScoring(so, s.features = s.genes, g2m.features = g2m.genes, set.ident = TRUE)
+  
+  sce$S.Score <- so$S.Score
+  sce$G2M.Score <- so$G2M.Score
+  sce$phase  <- so$Phase
+  return(sce)
+}
+```
+
+
+
+
+```{r LoadDataset}
+## RA DATASET
+sce.cc<-CellCycle(sce)
+  
+```
+
+
+### PCA
+
+```{r PlotPCAAB2}
+#Plot PCA after data integration
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="Phase") + ggtitle("PCA after data integration with fastMNN")
+```
+
+
+### UMAP
+
+```{r PlotUMAPAB1}
+#Plot UMAP after data integration
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Phase") + ggtitle("UMAP after data integration with fastMNN")
+```
+
+
+
+## Save the dataset
+
+```{r SaveData}
+#saveRDS(sce.BatchR, file =paste0(path,'/output/03_sce_CellCycle.rds'))
+```
+
