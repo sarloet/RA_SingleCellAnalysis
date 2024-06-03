@@ -69,14 +69,6 @@ dim(sce)
 ```
 
 
-## Load Data
-
-```{r LoadDataset}
-## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
-```
-
-
 ## Determine Cell cycle
 
 ## Define function
@@ -88,7 +80,6 @@ CellCycle <- function(sce)
   sce$S.Score <- rep(NA,ncol(sce))
   sce$G2M.Score <- rep(NA,ncol(sce))
   sce$phase <- rep(NA,ncol(sce))
-  rownames(sce) <- rowData(sce)$Symbol
   
   s.genes = cc.genes$s.genes
   g2m.genes = cc.genes$g2m.genes
@@ -110,7 +101,7 @@ CellCycle <- function(sce)
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.cc<-CellCycle(sce)
+sce<-CellCycle(sce)
   
 ```
 
@@ -119,7 +110,7 @@ sce.cc<-CellCycle(sce)
 
 ```{r PlotPCAAB2}
 #Plot PCA after data integration
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="Phase") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="phase") + ggtitle("PCA colored by Cellcycle")
 ```
 
 
@@ -127,14 +118,82 @@ plotReducedDim(sce, dimred="MNN_reduced", colour_by="Phase") + ggtitle("PCA afte
 
 ```{r PlotUMAPAB1}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Phase") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="phase") + ggtitle("UMAP colored by Cellcycle")
 ```
 
+## Frequencies of cellcycle phase per Sample {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(phase, Sample,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=phase)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+
+```
+
+
+### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=phase)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+
+```
+
+
+
+## Frequencies of celltypes in clusters per Condition {.tabset}
+
+```{r ClusterInfo}
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(phase,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+```
+
+### Absolute comparison
+
+```{r PlotAbsoluteClustering}
+
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=phase)) +
+  geom_bar(stat="identity", position="stack") +
+  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+
+```
+
+### Relative comparison
+
+```{r PlotRelativeClustering}
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=phase)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+
+
+```
 
 
 ## Save the dataset
 
 ```{r SaveData}
-#saveRDS(sce.BatchR, file =paste0(path,'/output/03_sce_CellCycle.rds'))
+saveRDS(sce, file =paste0(path,'/output/11_sce_CellCycle.rds'))
 ```
 

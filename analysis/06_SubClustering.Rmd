@@ -221,16 +221,20 @@ print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "Sample")
 ## Plot QC UMAP of Fibroblast Subclusters  {.tabset}
 
 ```{r UMAPSubclusterRecalc , results='asis'}
+
+library(viridis)
 cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
+print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))+ scale_fill_viridis_c(option="magma")
 
 cat(paste0("#### Colored by Sample\n"))
 print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
+scale_fill_viridis(option="magma")
 
 cat(paste0("#### Colored by Sample\n"))
 print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
+scale_fill_viridis(option="magma")
 
 
 
@@ -241,6 +245,23 @@ plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "PRG4
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "COMP" , order_by="COMP" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "COMP",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "MFAP5" , order_by="COMP" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "MFAP5",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "ACTA2" , order_by="ACTA2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "ACTA2",low = "lightgrey", high = "red")
+
+
+plotColData(sce.Fibroblast, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Mito percent")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+plotColData(sce.Fibroblast, x="subcluster", y="detected", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Detected Genes")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+
+plotColData(sce.Fibroblast, x="subcluster", y="sum", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Total Counts")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 ```
 
 

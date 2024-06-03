@@ -211,21 +211,46 @@ goplot(ego_Knee)
 barplot(ego_Knee, showCategory=20) 
 
 mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
-    barplot(x="qscore")
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 # Dot plot
 dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
 
 # Heatmap-like functional classification
-mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+#mygeneList <- setNames(geneList$coef_baselog2, gene_List)
 
-p1 <- heatplot(ego, showCategory=2)
-p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
-cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+#p1 <- heatplot(ego, showCategory=2)
+#p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+#cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
 
 ```
+#### MCP
 
+```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
+goplot(ego_MCP)
+
+# Bar Plot
+barplot(ego_MCP, showCategory=20) 
+
+mutate(ego_MCP, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+# Dot plot
+dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
+
+# Heatmap-like functional classification
+#mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+#p1 <- heatplot(ego, showCategory=2)
+#p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+#cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+
+```
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -308,7 +333,8 @@ goplot(ego_Knee)
 barplot(ego_Knee, showCategory=20) 
 
 mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
-    barplot(x="qscore")
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 # Dot plot
 
@@ -324,10 +350,39 @@ cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
 
 ```
+#### Wrist
 
+```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
+goplot(ego_Wrist)
+
+barplot(ego_Wrist, showCategory=20) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+# Bar Plot
+barplot(ego_Wrist, showCategory=20) 
+
+mutate(ego_Wrist, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+# Dot plot
+
+dotplot(ego_Wrist, showCategory=30) + ggtitle("dotplot for ORA")
+
+# Heatmap-like functional classification
+mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+p1 <- heatplot(ego, showCategory=2)
+p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+
+
+```
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Enrichment Analysis Knee Vs MCP
+## Enrichment Analysis MCP Vs MCP
 
 ### Explore DEG Dataset
 
@@ -397,21 +452,22 @@ msig_Wrist@result[msig_Knee@result$p.adjust<0.05,, drop=F]
 
 ### Visualization of functional enrichment result
 
-#### Knee
+#### MCP
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_Knee)
+goplot(ego_MCP)
 
 # Bar Plot
-barplot(ego_Knee, showCategory=20) 
+barplot(ego_MCP, showCategory=20) 
 
-mutate(ego_Knee, qscore = -log(p.adjust, base=10)) %>% 
-    barplot(x="qscore")
+mutate(ego_MCP, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 # Dot plot
 
-dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
+dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
 
 # Heatmap-like functional classification
 mygeneList <- setNames(geneList$coef_baselog2, gene_List)
@@ -424,10 +480,42 @@ cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
 ```
 
+#### Wrist
+
+```{r DE}
+# Visualize enriched GO terms as a directed acyclic graph
+goplot(ego_Wrist)
+
+barplot(ego_Wrist, showCategory=3) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+# Bar Plot
+barplot(ego_Wrist, showCategory=20) 
+
+mutate(ego_Wrist, qscore = -log(p.adjust, base=10)) %>% 
+    barplot(x="qscore")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+# Dot plot
+
+dotplot(ego_Wrist, showCategory=30) + ggtitle("dotplot for ORA")
+
+# Heatmap-like functional classification
+mygeneList <- setNames(geneList$coef_baselog2, gene_List)
+
+p1 <- heatplot(ego, showCategory=2)
+p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
+cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+
+
+```
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
+  
+  
 ## Save the dataset
 
 ```{r SaveData}

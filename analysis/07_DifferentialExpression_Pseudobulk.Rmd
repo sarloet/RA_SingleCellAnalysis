@@ -82,7 +82,7 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ```{r UMAPAnnotation}
 #cell type
-plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="celltype", text_by="celltype") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -90,7 +90,7 @@ plotReducedDim(sce, "MNN_UMAP", colour_by="celltype", text_by="celltype") +labs(
 
 ```{r UMAPCluster}
 #cluster
-plotReducedDim(sce, "MNN_UMAP", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="cluster", text_by="cluster") +labs(title="UMAP colored by clusters",subtitle = "UMAP of all integrated datasets")
 
 ```
 
@@ -185,12 +185,44 @@ for (method in c("edgeR","DESeq2","limma-voom","edgeR_glm")){
 
 ```
 
-#Upset plot
+##Upset plot
 
 ```{r DE}
 listInput <- list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edgeRglm = edgeR_glm)
 upset(fromList(listInput), order.by = "freq")
 ```
+
+
+##Add MAST results 
+
+
+```{r LoadMAST}
+## Load MAST
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_KneeVsWrist.csv'))
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_MCPVsWrist.csv'))
+
+```
+
+```{r LoadMAST}
+glist<-c()
+  
+for (name in c("geneList_KneeVsMCP","geneList_KneeVsWrist","geneList_MCPVsWrist")){
+  
+  tbl<-eval(parse(text =name))
+  tbl<- tbl[tbl$FDR<0.05 & abs(tbl$log2FoldChange) > 0.1,, drop=F]
+  glist<-c(glist, tbl$primerid )
+}
+glist<-unique(glist)
+assign(x = paste0("MAST"),value =glist)
+
+```
+
+```{r DEwMAST}
+listInput <- list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edgeRglm = edgeR_glm,MAST=MAST)
+upset(fromList(listInput), order.by = "freq")
+```
+
 
 
 ## Save the dataset
