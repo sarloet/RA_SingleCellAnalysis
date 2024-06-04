@@ -22,22 +22,17 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-
 # Quality Control and Preprocessing
 
 ## Setup
 
-
 ### Standard packages
-
 ```{r LoadPackages, warning=FALSE}
 library(here)
 source(here("code", "standard_libraries.R"))
 ```
 
 ### Additional Packages
-
-
 ```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 suppressPackageStartupMessages({
@@ -47,25 +42,20 @@ library(grid)
 ```
 
 ### Set Parameter
-
 ```{r Setup}
 set.seed(123)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
-
 ## Load Data
 
 ```{r LoadDataset}
 ## Load the RA DATASET
 sce <- readRDS(file = paste0(path,'/output/00_sce_DataPreparation.rds'))
-
 ```
 
-
 ### Explore Dataset Dimensions
-
 ```{r ShowDim}
 #Dimensions of count matrix
 dim(sce)
@@ -79,38 +69,27 @@ Show the number of cells detected in each sample or joint location before filter
 #### Per Sample
 
 ```{r PlotCellsPerSample}
-#Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Sample)) +
-  geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
-  theme(panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
+#Histogramm with number of cells per Sample
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
 
 data.frame(as.list(table(colData(sce)$Sample)))
-
 ```
 
 #### Per Joint Location
 
 ```{r PlotCellsJoint}
-#Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Joint.Location))+
-  geom_bar(stat = "count")+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() +stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
-  theme(panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
+#Histogramm with number of cells per Joint
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
 
 data.frame(as.list(table(colData(sce)$Joint.Location)))
-```
-
-
-### Exclude Samples
-
-```{r ExcludeSamples}
-#Dimensions of count matrix
-#sce <- sce[, !colData(sce)$discard]
-#sce <- sce[,sce$Sample != "SynBio_049"]
-dim(sce)
 ```
 
 
@@ -119,24 +98,23 @@ dim(sce)
 The main goal of quality control is to remove low-quality reads from the dataset. When a cell has a low number of detected genes, a low count depth and a high fraction of mitochondrial counts it might have a broken membrane which can indicate a dying cell. 
 
 We filter for:
-- Low number of counts per barcode (count depth)
-- Low number number of genes per barcode
+- Low and high number of counts per barcode (count depth)
+- Low and high number of genes per barcode
 - High fraction of counts from mitochondrial genes per barcode
-
+- High fraction of counts from HBB genes per barcode (erythrocytes)
 
 ```{r CalcQcMetrics}
 # Indentify mitochondrial genes
 is_mito<- grepl("(^MT-)|(^mt-)", rowData(sce)$Symbol)
-rowData(sce)$Symbol[is_mito] #Show the MT genes
+cat("Mitochondrial genes:", rowData(sce)$Symbol[is_mito]) #Show the MT genes
 
 # Indentify HBB genes
 is_hbb<- grepl("(^HBB)|(^hbb)", rowData(sce)$Symbol)
-rowData(sce)$Symbol[is_hbb] #Show the HBB genes
+cat("HBB genes:", rowData(sce)$Symbol[is_hbb]) #Show the HBB genes
 
 # Indentify Ribosomal genes
-is_ribo<- grepl("(^RPL)|(^RPS)|(^rpl)|(^rps)", rowData(sce)$Symbol)
-rowData(sce)$Symbol[is_ribo] #Show the MT genes
-
+is_ribo<- grepl("(^RPL)|(^RPS)|(^rpl)|(^rps)", rowData(sce)$Symbol) 
+cat("Ribosomal genes:", rowData(sce)$Symbol[is_ribo])#Show the Ribo genes
 
 # calculate per-cell quality control (QC) metrics using scater
 sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb, Ribo=is_ribo))
@@ -165,6 +143,7 @@ abline(v = 100000, col = "red")
 #Some Fixed thresholds
 hist(sce$detected,breaks = 100, main ="Detected gene distribution",xlab ="Detected")
 abline(v = 300, col = "red")
+abline(v = 10000, col = "red")
 ```
 
 
@@ -174,15 +153,15 @@ abline(v = 300, col = "red")
 
 # Detect cells with very low number of counts
 colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
-data.frame(attr(colData(sce)$qc.count, "thresholds")) 
+data.frame(t(attr(colData(sce)$qc.count, "thresholds")))
 
 # Detect cells with very low number of genes
 colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.genexp, "thresholds"))
+data.frame(t(attr(colData(sce)$qc.genexp, "thresholds")))
 
 # Detect cells with high mitochondrial content
 colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
-data.frame(attr(colData(sce)$qc.mito, "thresholds")) 
+data.frame(t(attr(colData(sce)$qc.mito, "thresholds"))) 
 
 
 # Mark all Cells to be Discarted
@@ -194,11 +173,11 @@ colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce
 ```{r QcSummary}
 
 # Summary of all discarted cells
-data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
+t(data.frame(`Library_size` = sum(sce$qc.count | sce$qc.count_manual),
            `Genes_detected` = sum(sce$qc.genexp| sce$qc.genexp_manual),
            `Mitochondrial_percentage` = sum(sce$qc.mito| sce$qc.mito_manual),
            `HBB_expression` = sum(sce$qc.hbb_manual),
-           Total_discarded = sum(sce$discard))
+           Total_discarded = sum(sce$discard)))
 
 ```
 
@@ -216,13 +195,14 @@ colData(sce) %>%
     as.data.frame() %>% 
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = detected)) +
-      geom_point(aes(colour = discard)) + 
+      geom_point(aes(colour = discard),size=0.5) + 
       facet_wrap(vars(Sample))+
       labs(title="Total number of detected genes plotted against total number of UMIs",
        x="Total counts",
        y="Detected genes") +
       ggtitle("Total number of detected genes plotted against total number of UMIs") + 
-      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
+      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) + 
+      scale_fill_manual(values = c("#4dc8c9","#FB8072"))
 
 ```
 
@@ -233,12 +213,13 @@ colData(sce) %>%
     as.data.frame() %>% 
     arrange(discard) %>% 
     ggplot(aes(x = sum, y = subsets_Mito_percent)) +
-      geom_point(aes(colour = discard)) + 
+      geom_point(aes(colour = discard),size=0.5) + 
       facet_wrap(vars(Sample)) +
       labs(title="Percentage of mitochondrial UMIs plotted against total number of UMIs",
        x="Total counts",
        y="Mitochondrial UMIs [%]") +
-      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
+      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) + 
+      scale_fill_manual(values = c("#4dc8c9","#FB8072"))
 
 
 
@@ -311,7 +292,8 @@ as.data.frame(colData(sce)) %>%
        x="",
        y="Number of cells") + 
     geom_text(size=3, position = position_stack(vjust=0.5))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) + 
+    scale_fill_manual(values = c("#4dc8c9","#FB8072"))
 
 ```
 
@@ -330,7 +312,9 @@ as.data.frame(colData(sce)) %>%
        x="",
        y="Number of cells") + 
     geom_text(size=3, position = position_fill(vjust=0.5))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA))+ 
+    scale_fill_manual(values = c("#4dc8c9","#FB8072"))
+ 
 
 ```
 
@@ -345,13 +329,14 @@ sce.filtered <- sce[, !colData(sce)$discard]
 cat(
     "NR of Cells Before Filtering ", dim(sce)[2],
     "\nNR of Cells After Filtering ", dim(sce.filtered)[2],
-    "\nNR of Cells Filtered out ", dim(sce)[2] - dim(sce.filtered)[2]
+    "\nNR of Cells Filtered out ", dim(sce)[2] - dim(sce.filtered)[2],
+    "\nCells Filtered out: [%]", (dim(sce)[2] - dim(sce.filtered)[2])/dim(sce)[2]*100
     )
 ```
 
-#### Save filtered Data
+#### Save cell filtered Data
 ```{r SaveDataFiltered}
-saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl_filtered.rds'))
+saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl_cellfiltered.rds'))
 ```
 
 
@@ -376,7 +361,8 @@ dim_after_filtering <- dim(sce.filtered)
 cat(
     "NR of Genes Before Filtering ", dim_before_filtering[1],
     "\nNR of Genes After Filtering ", dim_after_filtering[1],
-    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1]
+    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1],
+    "\nGenes Filtered out: [%]", (dim_before_filtering[1] - dim_after_filtering[1])/dim_before_filtering[1]*100
     )
 
 ```
@@ -391,24 +377,26 @@ Show the number of cells detected in each sample or joint location after filteri
 #### Per Sample
 ```{r PlotCellsPerSampleAfterFiltering1}
 #Histogramm with number of cells per sample after filtering
-ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
-  theme(panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
+ggplot(colData(sce.filtered), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
 
-data.frame(as.list(table(colData(sce.filtered)$Sample)))
+t(data.frame(as.list(table(colData(sce.filtered)$Sample))))
 ```
 
 #### Per Joint Location
 
 ```{r PlotCellsPerJointAfterFiltering2}
-#Histogramm with number of cells per sample after filtering
-ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint") + 
-  theme_bw() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
-  theme(panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank())
+#Histogramm with number of cells per Joint after filtering
+ggplot(colData(sce.filtered), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
 
-data.frame(as.list(table(colData(sce.filtered)$Joint.Location)))
+t(data.frame(as.list(table(colData(sce.filtered)$Joint.Location))))
 ```
 
 
@@ -443,12 +431,13 @@ Library size normalization is the simplest strategy for performing scaling norma
 # Library size normalization
 sce.lib <- computeLibraryFactors(sce.filtered)
 
-
+# Plot library size factors
 ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.lib))), aes(x=log10libSf)) +
   xlab("Log10 Library size factor") +
   geom_histogram(bins=50)+
   ggtitle("Distribution of Library size factors")+
-  theme_bw()
+  theme_bw()+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())
 
 ```
 
@@ -467,7 +456,8 @@ ggplot(data.frame("log10libSf"=log10(sizeFactors(sce.deconv))), aes(x=log10libSf
   xlab("Log10 Library size factor") +
   geom_histogram(bins=50)+
   ggtitle("Distribution of Deconvolution size factors")+
-  theme_bw()
+  theme_bw()+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())
 
 ```
 
@@ -508,6 +498,7 @@ data.frame(LibrarySizeFactors = unname(sizeFactors(sce.lib)), DeconvolutionSizeF
 ### Apply Normalization 
 
 Apply the chosen normalization method
+
 ```{r ApplyNorm}
 # Apply Normalisation
 sce.filtered <- logNormCounts(sce.deconv)

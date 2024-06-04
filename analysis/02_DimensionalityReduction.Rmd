@@ -80,7 +80,6 @@ In feature selection the goal is to remove genes which are uninteresting or unin
 # HVG selection with Turned off weighting to avoid overfitting for each donor.
 dec <- modelGeneVar(sce, block=sce$Sample, density.weights=FALSE)
 
-
 ```
 
 ```{r TopHVGTable}
@@ -88,7 +87,6 @@ dec <- modelGeneVar(sce, block=sce$Sample, density.weights=FALSE)
 as.data.frame(dec[order(dec$bio, decreasing=TRUE),]) %>%
   dplyr::select(c("mean", "total", "tech", "bio", "p.value", "FDR")) %>%
   head(n=10)
-
 
 ```
 
@@ -101,7 +99,7 @@ In this analysis we take the top 3000 genes with largest (biological) variation.
 # Get the top 10% of genes.
 #top.hvgs <- getTopHVGs(dec, prop=0.1)
 
-# Get the top 2000 genes.
+# Get the top 3000 genes.
 top.hvgs <- getTopHVGs(dec, n=3000)
 
 # Get all genes with positive biological components.
@@ -110,7 +108,7 @@ top.hvgs <- getTopHVGs(dec, n=3000)
 # Get all genes with FDR below 5%.
 #top.hvgs <- getTopHVGs(dec, fdr.threshold=0.05)
 
-length(top.hvgs)
+length(top.hvgs)#Check HVG amount
 
 ```
 
@@ -119,7 +117,7 @@ length(top.hvgs)
 
 Plot variance vs mean for each gene and visualise the limit of technical variance according to the fitted trend line. We would regard those features below the trend line as technical noise.
 ```{r VariationPlot}
-# Mark HVGs
+# Mark HVGs in sce
 rowData(sce)$is_hvg <- rownames(sce) %in% top.hvgs
 
 # Plot per-gene variation
@@ -127,10 +125,10 @@ per.block <- dec$per.block
 par(mfrow=c(2, 2))
 for (i in seq_along(per.block)) {
     decX <- per.block[[i]]
-    plot(decX$mean, decX$total, col= c("pink","black")[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
+    plot(decX$mean, decX$total, col= c("#F5953C","#7A95BD")[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
         ylab="Variance", main=names(per.block)[i] )
-    curve(metadata(decX)$trend(x), col="blue", add=TRUE)
-    legend("topright", legend=c("Not HVG", "HVG"), col = c("pink","black"),bty="n",pch=10)
+    curve(metadata(decX)$trend(x), col="black", add=TRUE)
+    legend("topright", legend=c("Not HVG", "HVG"), col = c("#F5953C","#7A95BD"),bty="n",pch=10)
 }
 ```
 
@@ -161,7 +159,7 @@ data.frame(reducedDim(sce, "PCA")[1:10, 1:5])
 pca_pct_variance <- data.frame(variance = attr(reducedDim(sce, "PCA"), "percentVar"))
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
-#PCA dim estimate the elbowpoint
+#PCA dim estimate the maxLikGlobalDimEst
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "PCA")), k=5)))
 cat(paste0("Elbow Point: ",elbow))
 #cat(paste0("Elbow Point: ",findElbowPoint(pca_pct_variance$variance)))
@@ -169,17 +167,18 @@ cat(paste0("Elbow Point: ",elbow))
 
 ```{r PCvsVariance}
 # Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")+theme_classic()
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = elbow,color="red")+theme_classic()+ ggtitle("Percentage variance explained by PCs")
 
 ```
 
 ```{r SelectPC}
 #PCA select nr of PC
 reducedDim(sce,"PCA_reduced") <- reducedDim(sce,"PCA")[,seq_len(elbow)]
-reducedDimNames(sce)
 
-ncol(reducedDim(sce,"PCA"))
-ncol(reducedDim(sce,"PCA_reduced"))
+cat("Reduced Dimensions in sce :",reducedDimNames(sce),"\n")
+cat("Nr PCs in PCA :", ncol(reducedDim(sce,"PCA")),"\n")
+cat("Nr PCs in PCA_reduced :", ncol(reducedDim(sce,"PCA_reduced")),"\n")
+
 
 ```
 
@@ -189,14 +188,22 @@ ncol(reducedDim(sce,"PCA_reduced"))
 
 ```{r PlotPCA2}
 #Plot PCA 
-plotReducedDim(sce, dimred = "PCA_reduced", colour_by = "Sample")
+plotReducedDim(sce, dimred = "PCA_reduced", colour_by = "Sample",point_alpha=0.8,point_size=0.1)+ 
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" ) +
+  labs( x='PCA 1', y='PCA 2' )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
 ```
 
 ##### PCA three PC's
 
 ```{r PlotPCA3}
 #Plot PCA 
-plotReducedDim(sce, dimred = "PCA_reduced", ncomponents = 3, colour_by = "Sample")
+plotReducedDim(sce, dimred = "PCA_reduced", ncomponents = 3, colour_by = "Sample",point_alpha=0.8,point_size=0.1)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
 ```
 
 
@@ -204,15 +211,25 @@ plotReducedDim(sce, dimred = "PCA_reduced", ncomponents = 3, colour_by = "Sample
 
 ##### PCA per Sample
 
-```{r PlotFacetPCA1}
+```{r PlotFacetPCA1,fig.height=10, fig.width=15}
 #Plot PCA per sample
-plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
+plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
 ```
 
 ##### PCA per Joint
 
-```{r PlotFacetPCA2}
-plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_size=0.8) + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotFacetPCA2, fig.height=5, fig.width=15}
+plotReducedDim(sce, dimred="PCA_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
 ```
 
 
@@ -234,7 +251,7 @@ While PCA can only capture linear transformations of the original variables (gen
 
 ```{r RunUMAP}
 #Run UMAP
-sce <- runUMAP(sce,name = "UMAP", dimred = "PCA_reduced")
+sce <- runUMAP(sce,name = "UMAP", dimred = "PCA_reduced", subset_row = top.hvgs)
 
 ```
 
@@ -244,13 +261,19 @@ sce <- runUMAP(sce,name = "UMAP", dimred = "PCA_reduced")
 ##### Colored by Sample
 
 ```{r PlotUMAP1}
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample") #+ facet_wrap(~sce$Sample)
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 ##### Colored by Joint
 
 ```{r PlotUMAP2}
-plotReducedDim(sce, dimred="UMAP", colour_by="Joint.Location")
+plotReducedDim(sce, dimred="UMAP", colour_by="Joint.Location",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$Joint.Location,name = "Joint.Location" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))#+ facet_wrap(~sce$Sample)
 ```
 
 
@@ -258,17 +281,27 @@ plotReducedDim(sce, dimred="UMAP", colour_by="Joint.Location")
 
 ##### Facet by Sample
 
-```{r PlotFacetUMAP1}
-#Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
+
+```{r PlotFacetPCA1,fig.height=10, fig.width=15}
+#Plot PCA per sample
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
+
 
 ##### Facet by Joint
 
-```{r PlotFacetUMAP2}
-#Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample") + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotFacetPCA2, fig.height=5, fig.width=12}
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
+
 
 #### Plot UMAP with QC metrics {.tabset}
 
@@ -278,28 +311,42 @@ Check if there is any clustering caused by number of counts, genes or mitochondr
 
 ```{r PlotQcUMAP1}
 #Plot UMAP colored by subsets_Mito_percent
-plotReducedDim(sce, dimred="UMAP", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+plotReducedDim(sce, dimred="UMAP", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Mitochondrial Genes")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
 ```
 
 ##### Colored by nr of Genes
 
 ```{r PlotQcUMAP2}
 #Plot UMAP colored by detected
-plotReducedDim(sce, dimred="UMAP", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes ")
+plotReducedDim(sce, dimred="UMAP", colour_by="detected",order_by="detected",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Number of detected Genes ")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
 ```
 
 ##### Colored by nr of Counts
 
 ```{r PlotQcUMAP3}
 #Plot UMAP colored by sum
-plotReducedDim(sce, dimred="UMAP", colour_by="sum", order_by = "sum") + ggtitle("Sum of UMI Counts in Cell")
+plotReducedDim(sce, dimred="UMAP", colour_by="sum", order_by = "sum",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Sum of UMI Counts in Cell")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 ##### Colored by Ubi Markergene
 
 ```{r PlotQcUMAP4}
 #Plot UMAP colored by Ubi Markergene expression
-plotReducedDim(sce, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
+plotReducedDim(sce, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.1)+ 
+  ggtitle("Expression of some Ubi Markergene")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 ## Save Dataset

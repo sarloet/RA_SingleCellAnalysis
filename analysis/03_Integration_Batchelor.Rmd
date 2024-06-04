@@ -76,14 +76,21 @@ dim(sce)
 
 ```{r PlotPCABB}
 #Plot UMAP before data integration
-plotReducedDim(sce, dimred="PCA", colour_by="Sample")
+plotReducedDim(sce, dimred = "PCA_reduced", colour_by = "Sample",point_alpha=0.8,point_size=0.1)+ 
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" ) +
+  labs( x='PCA 1', y='PCA 2' )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
 ```
 
 ### UMAP
 
 ```{r PlotUMAPBB}
 #Plot UMAP before data integration
-plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 ## Batch Removal with MNN
@@ -95,6 +102,8 @@ The Mutual Nearest Neighbours (MNN) algorithm works by determining if pairs of c
 ```{r RunBatchelor}
 #Perform scaling normalization within each batch
 sce.Batchelor <-multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
+
+#Show size factors
 summary(sizeFactors(sce.Batchelor))
 
 ```
@@ -138,14 +147,15 @@ rm(sce.Batchelor)
 
 ```{r SelectPC}
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, "MNN")), k=5)))
-cat(paste0("Elbow Point: ",elbow))
+cat("Elbow Point: ",elbow,"\n")
 
 #PCA select nr of PC
 reducedDim(sce,"MNN_reduced") <- reducedDim(sce,"MNN")[,seq_len(elbow)]
-reducedDimNames(sce)
 
-ncol(reducedDim(sce,"MNN"))
-ncol(reducedDim(sce,"MNN_reduced"))
+cat("Reduced Dimensions in sce :",reducedDimNames(sce),"\n")
+cat("Nr PCs in MNN :", ncol(reducedDim(sce,"MNN")),"\n")
+cat("Nr PCs in MNN_reduced :", ncol(reducedDim(sce,"MNN_reduced")),"\n")
+
 
 ```
 
@@ -156,28 +166,49 @@ ncol(reducedDim(sce,"MNN_reduced"))
 
 ```{r PlotPCAAB1}
 #Plot PCA after data integration
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce, dimred = "MNN_reduced", colour_by = "Sample",point_alpha=0.8,point_size=0.1)+ 
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" ) +
+  ggtitle("PCA after data integration with fastMNN")+ 
+  labs( x='PCA 1', y='PCA 2' )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
 ```
 
 ### Colored by Joint
 
 ```{r PlotPCAAB2}
 #Plot PCA after data integration
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="Joint.Location",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$Joint.Location,name = "Joint.Location" )+ 
+  ggtitle("PCA after data integration with fastMNN")+ 
+  labs( x='PCA 1', y='PCA 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))#+ facet_wrap(~sce$Sample)
 ```
 
 ### Facet by Sample
 
-```{r PlotPCAAB3}
-#Plot PCA after data integration per sample
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="Sample") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotPCAAB3,fig.height=10, fig.width=15}
+#Plot PCA per sample
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+
+  ggtitle("PCA after data integration with fastMNN")+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
 ```
+
 
 ### Facet by Joint
 
-```{r PlotPCAAB4}
-#Plot PCA before data integration per joint
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="Joint.Location") + ggtitle("PCA after data integration with fastMNN")+ facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotPCAAB4, fig.height=5, fig.width=15}
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  ggtitle("PCA after data integration with fastMNN")+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
 ```
 
 
@@ -193,28 +224,46 @@ sce <- runUMAP(sce ,name = "MNN_UMAP_reduced", dimred = "MNN_reduced")
 
 ```{r PlotUMAPAB1}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+
+  ggtitle("UMAP after data integration with fastMNN") + 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='UMAP 1', y='UMAP 1' )
 ```
 
 ### Colored by Joint
 
 ```{r PlotUMAPAB2}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$Joint.Location,name = "Joint.Location" )+ 
+  ggtitle("UMAP after data integration with fastMNN")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))#+ facet_wrap(~sce$Sample)
 ```
 
 ### Facet by Sample
 
-```{r PlotUMAPAB3}
-#Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotUMAPAB3,fig.height=10, fig.width=15}
+#Plot PCA per sample
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+
+  ggtitle("UMAP after data integration with fastMNN")+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
+
 
 ### Facet by Joint
 
-```{r PlotUMAPAB4}
-#Plot UMAP before data integration per joint
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Joint.Location") + ggtitle("UMAP after data integration with fastMNN")+ facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill="white"))
+```{r PlotFacetPCA2, fig.height=5, fig.width=12}
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="Sample",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )+ 
+  ggtitle("UMAP after data integration with fastMNN")+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 
@@ -226,28 +275,40 @@ Check if there is any clustering caused by number of counts, genes or mitochondr
 
 ```{r PlotQcUMAP1}
 #Plot UMAP colored by subsets_Mito_percent
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",order_by="subsets_Mito_percent",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Mitochondrial Genes")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 ### Colored by nr of Genes
 
 ```{r PlotQcUMAP2}
 #Plot UMAP colored by detected
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by="detected") + ggtitle("Number of detected Genes")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by="detected",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Number of detected Genes ")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 ### Colored by nr of Counts
 
 ```{r PlotQcUMAP3}
 #Plot UMAP colored by sum
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum", order_by = "sum") + ggtitle("Sum of UMI Counts in Cell")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum", order_by = "sum",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Sum of UMI Counts in Cell")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 ### Colored by Ubi Markergene
 
 ```{r PlotQcUMAP4}
 #Plot UMAP colored by Ubi Markergene expression
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)])+ ggtitle("Expression of some Ubi Markergene")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.5)+ 
+  ggtitle("Expression of some Ubi Markergene")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 ```
 
 

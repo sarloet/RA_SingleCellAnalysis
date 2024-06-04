@@ -7,6 +7,7 @@ suppressPackageStartupMessages({
   library(scater)
   library(scran)
   library(gridExtra)
+  library(viridis)
   #utilities
   library(clusterProfiler)
   library(org.Hs.eg.db)
@@ -17,29 +18,64 @@ suppressPackageStartupMessages({
 
 meta_colors = list(
 
+  "Joint.Location" = c(
+    "MCP" = "#FB8072",
+    "Wrist" = "#B2DF8A",
+    "Knee" = "#7BAFDE"
+  ),
+
   "celltye_level0" = c(
-    "Lymphocyte" = "#FB8072",
-    "Myeloid" = "#A6CEE3",
-    "Stromal" = "#E6F598",
-    "Endothelial" = "#FEE08B"
+    "Lymphocyte" = "#DC050C",
+    "Myeloid" = "#FB8072",
+    "Stromal" = "#B17BA6",
+    "Endothelial" = "#7BAFDE"
   ),
 
   "celltype_level1" = c(
-    "Fibroblast" = "#E6F598",
-    "Edothelial cell" = "#d11141",
-    "Smooth muscle cell" = "#F46D43",
-    "T cell" = "#FEE08B",
-    "B cell" = "#FCCDE5",
-    "Neutrophil" = "#A6CEE3",
-    "Mast cell" = "#1F78B4",
-    "Myeloid" = "#238B45",
-    "Plasma" = "#842bd7",
-    "Plasmacytoid dendritic cell" = "yellow4"
-  )
+    "B cell" = "#DC050C",
+    "Dendritic cell" = "#FB8072",
+    "Endothelial cell" = "#1965B0",
+    "Fibroblast" = "#7BAFDE",
+    "Mast cell" = "#882E72",
+    "Myeloid" = "#B17BA6",
+    "Neutrophil" = "#FF7F00",
+    "Plasma" = "#FDB462",
+    "Smooth muscle cell" = "#E7298A",
+    "T cell" = "#E78AC3"
+  ),
+
+  "celltype_level2" = c(
+    "B cell" = "#DC050C",
+    "Dendritic cell" = "#FB8072",
+    "Endothelial cell" = "#1965B0",
+    "Fibroblast" = "#7BAFDE",
+    "Mast cell" = "#882E72",
+    "Myeloid" = "#B17BA6",
+    "Neutrophil" = "#FF7F00",
+    "Plasma" = "#FDB462",
+    "Smooth muscle cell" = "#E7298A",
+    "T cell" = "#E78AC3"
+  ),
+
+
+  "nice_cols" = c(
+    "#d0b4dc", "#FCCDE5", "#945cb4", "#842bd7", "yellow4", "#B38072",
+    "#9E0142","#FB8072","#d11141", "#E7298A","#FEE08B","grey", "#1F78B4",
+    "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598")
 )
 
-#scale_fill_manual( values = c("#d0b4dc", "#FCCDE5", "#945cb4", "#842bd7", "yellow4", "#B38072","#9E0142","#FB8072","#d11141", "#FDB462","#FEE08B","grey", "#1F78B4", "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598",)
+nice_cols = c(
+  "#d0b4dc", "#FCCDE5", "#945cb4", "#842bd7", "yellow4", "#B38072",
+  "#9E0142","#FB8072","#d11141", "#FDB462","#FEE08B","grey", "#1F78B4",
+  "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598")
 
+nice_cols2   = c(
+  "#DC050C", "#FB8072", "#1965B0", "#7BAFDE", "#882E72", "#B17BA6",
+  "#FF7F00", "#FDB462", "#E7298A", "#E78AC3", "#33A02C", "#B2DF8A",
+  "#55A1B1", "#8DD3C7", "#A6761D", "#E6AB02", "#7570B3", "#BEAED4",
+  "#666666", "#999999", "#aa8282", "#d4b7b7", "#8600bf", "#ba5ce3",
+  "#808000", "#aeae5c", "#1e90ff", "#00bfff", "#56ff0d", "#ffff00"
+)
 
 
 # Annotate genes ----------------------------------------------------------

@@ -317,7 +317,7 @@ print(plotReducedDim(sce.Tcell, "MNN_UMAP_reduced",colour_by = "Sample") +
 ```
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+## Plot Recalculated UMAP of T cell Subclusters  {.tabset}
 
 ```{r UMAPSubclusterRecalc , results='asis'}
 cat(paste0("#### Colored by Clustering\n"))
@@ -425,7 +425,7 @@ print(plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "Sample") +
 ```
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+## Plot Recalculated UMAP of Endothelial Subclusters  {.tabset}
 
 ```{r UMAPSubclusterRecalc , results='asis'}
 cat(paste0("#### Colored by Clustering\n"))

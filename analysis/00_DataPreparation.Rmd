@@ -183,17 +183,15 @@ names(rowData(sce))[which(names(rowData(sce))=="ID")]="ENSEMBL"
 
 #Annotate genes
 AnnoGene <- annotate_genes(data.frame(rowData(sce)), gene_col = "Symbol")
-
 #Add Annotated and Updated genes
 rowData(sce) <- AnnoGene
 
-#make row and col names unique
+#Make row and col names unique
 rownames(sce) <- paste0(rowData(sce)$ENSEMBL, ".", rowData(sce)$Symbol)
-
 
 ```
 
-
+Dimensions of the count matrix
 
 ```{r ShowDim}
 #Dimensions of count matrix
@@ -202,9 +200,6 @@ dim(sce)
 ```
 
 ## Explore dataset
-
-Dimensions of the count matrix
-
 
 ```{r ShowColData}
 #Feautures/row data
@@ -219,13 +214,9 @@ data.frame(rowData(sce))
 ### Exclude Samples
 
 ```{r ExcludeSamples}
-#Dimensions of count matrix
-#sce <- sce[, !colData(sce)$discard]
 sce <- sce[,sce$Sample != "SynBio_130"]
 dim(sce)
 ```
-
-
 
 
 ## Exploratory plots
@@ -238,15 +229,25 @@ Show the number of cells detected in each sample or joint location before filter
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + theme_bw()
+ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
+
 data.frame(as.list(table(colData(sce)$Sample)))
 
 ```
 #### Per Joint Location
 
 ```{r PlotCellsJoint}
-#Histogramm with number of cells per sample
-ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + theme_bw()
+#Histogramm with number of cells per Joint
+ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
+  theme_classic()+
+  stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
+  scale_y_continuous(expand = c(0,0))
+
 data.frame(as.list(table(colData(sce)$Joint.Location)))
 ```
 
@@ -258,7 +259,9 @@ This plot shows cell counts per sample / count occurrence
 #Number of genes detected per cell
 #Total UMI for a gene versus the number of times detected
 genesPerCell <- colSums(counts(sce) > 0)
-plot(density(genesPerCell), xlab="Genes per cell", main="Number of genes detected per cell")
+plot(density(genesPerCell), 
+     xlab="Genes per cell", 
+     main="Number of genes detected per cell")
 
 ```
 ### Plot transcript capture efficiency
@@ -289,20 +292,21 @@ dim_before_filtering <- dim(sce)
 
 #Get only the detected Genes
 #Remove Cells with very low counts of less than 150 and genes not expressed 
-sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150] #200
+sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150]
 
 
 dim_after_filtering <- dim(sce)
 
-cat("NR of Cells Before Initial Filtering: ", dim_before_filtering[2],
-    "\nNR of Cells After Initial Filtering: ", dim_after_filtering[2],
-    "\nNR of Cells Filtered out: ", dim_before_filtering[2] - dim_after_filtering[2],
-    "\nCells Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100,
-    
-    "\n\nNR of Genes Before Initial Filtering: ", dim_before_filtering[1],
-    "\nNR of Genes After Initial Filtering: ", dim_after_filtering[1],
-    "\nNR of Genes Filtered out: ", dim_before_filtering[1] - dim_after_filtering[1],
-    "\nGenes Filtered out: [%]", (dim_before_filtering[1] - dim_after_filtering[1])/dim_before_filtering[1]*100
+#Give Stats
+cat("NR of Cells Before Initial Filtering: ", dim_before_filtering[2],"\n",
+    "NR of Cells After Initial Filtering: ", dim_after_filtering[2],"\n",
+    "NR of Cells Filtered out: ", dim_before_filtering[2] - dim_after_filtering[2],"\n",
+    "Cells Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100,"\n",
+    "\n",
+    "NR of Genes Before Initial Filtering: ", dim_before_filtering[1],"\n",
+    "NR of Genes After Initial Filtering: ", dim_after_filtering[1],"\n",
+    "NR of Genes Filtered out: ", dim_before_filtering[1] - dim_after_filtering[1],"\n",
+    "Genes Filtered out: [%]", (dim_before_filtering[1] - dim_after_filtering[1])/dim_before_filtering[1]*100,"\n"
     )
 
 
@@ -311,7 +315,7 @@ cat("NR of Cells Before Initial Filtering: ", dim_before_filtering[2],
 
 ## Doublet Detection
 
-Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets. Doublet removal is performed on raw (unfiltered) feature-barcode matrix after a inital filtering to remove Cells with very low counts of less than 200 counts and genes not expressed.
+Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets. Doublet removal is performed on feature-barcode matrix after a initial filtering to remove Cells with very low counts of less than 200 counts and genes not expressed to ensure no potential empty droplets.
 
 
 
@@ -341,9 +345,11 @@ as.data.frame(colData(sce)) %>%
   ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class,label=Freq)) + 
     geom_bar(stat="identity") +
     labs(title="Doublet detection results",
-    subtitle="By sample",x="",y="Number of Cells") +
+    subtitle="By Sample",x="",y="Number of Cells") +
     geom_text(size=3, position = position_stack(vjust=0.5))+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA))+
+    scale_y_continuous(expand = c(0,0)) + 
+    scale_fill_manual(values = c("#4dc8c9","#FB8072"))
 
 ```
 
@@ -357,11 +363,13 @@ as.data.frame(colData(sce)) %>%
   ggplot(aes(x=Sample, y=Freq, fill=scDblFinder.class, label=Freq)) +
     geom_bar(stat="identity", position="fill") +
     labs(title="Doublet detection results",
-       subtitle="By sample",
+       subtitle="By Sample",
        x="Sample",
        y="Number of cells") + 
     geom_text(size=2.5, position = position_fill(vjust=0.5)) +
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA))+
+    scale_y_continuous(expand = c(0,0))+ 
+    scale_fill_manual(values = c("#4dc8c9","#FB8072"))
 ```
 
 
@@ -375,12 +383,13 @@ colData(sce) %>%
     as.data.frame() %>% 
     arrange(scDblFinder.class) %>% 
     ggplot(aes(x = sum, y = detected )) +
-      geom_point(aes(colour = scDblFinder.class)) + 
+      geom_point(aes(colour = scDblFinder.class),size=0.5) + 
       facet_wrap(vars(Sample))+ 
       labs(title="Total number of detected genes plotted against total number of UMIs",
        x="Total counts",
        y="Detected genes") +
-      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black")) 
+      theme(strip.background=element_rect(fill="white"), panel.background = element_rect(fill = NA),axis.line = element_line(colour = "black"))+ 
+    scale_fill_manual(values = c("#FB8072","#4dc8c9"))
 
 
 ```
@@ -389,17 +398,23 @@ colData(sce) %>%
 ### Apply Doublet Removal
 
 ```{r DoubletRemoval}
+#Doublet Removal
 
-before <- dim(sce)[2]
-print(paste0("NR of Cells Before Doublet Removal ", before))
-
+dim_before_doublet <- dim(sce)
 
 #Apply Doublet Removal
 sce <- sce[ ,sce$scDblFinder.class == "singlet"]
 
-print(paste0("NR of Cells After Doublet Removal ", dim(sce)[2]))
+dim_after_doublet <- dim(sce)
 
-print(paste0("NR of Cells Removed", before - dim(sce)[2] ))
+
+#Give Stats
+cat("NR of Cells Before Doublet Removal: ", dim_before_doublet[2],"\n",
+    "NR of Cells After Doublet Removal: ", dim_after_doublet[2],"\n",
+    "NR of Cells Filtered out: ", dim_before_doublet[2] - dim_after_doublet[2],"\n",
+    "Cells Filtered out: [%]", (dim_before_doublet[2] - dim_after_doublet[2])/dim_before_doublet[2]*100,"\n"
+    )
+
 ```
 
 

@@ -130,7 +130,7 @@ methods <- c("louvain","leiden","walktrap")
 for (i in methods){
   cat(paste0("#### ",i, "\n"))
   print(
-  plotReducedDim(sce.cluster, dimred="MNN_reduced", colour_by=i ,text_by=i) + ggtitle(paste0("PCA with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_reduced", colour_by=i ,text_by=i,point_alpha=0.7,point_size=2) + ggtitle(paste0("PCA with ",i," clusters"))
   )
   cat(' \n \n')
   }

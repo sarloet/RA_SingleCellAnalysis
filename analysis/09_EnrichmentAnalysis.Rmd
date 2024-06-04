@@ -190,8 +190,10 @@ msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symb
 
 ```{r DE}
 msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
-
 msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
+
+write.csv(msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/Knee_KvM.csv"))
+write.csv(msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/MCP_KvM.csv"))
 
 ```
 
@@ -291,7 +293,6 @@ ego_Wrist <- run_enrichGO(gene_List_Wrist$updated,gene_List$updated)
 
 ```{r DE}
 ego_Knee@result[ego_Knee@result$p.adjust<0.05,, drop=F]
-
 ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]
 
 ```
@@ -313,9 +314,10 @@ msig_Wrist <- run_enrichr(gene_List_Wrist$updated,TERM2GENE[,c("gs_name", "gene_
 
 ```{r DE}
 msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F]
-
 msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
 
+write.csv(msig_Knee@result[msig_Knee@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/Knee_KvW.csv"))
+write.csv(msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/Wrist_KvW.csv"))
 ```
 
 
@@ -442,8 +444,10 @@ msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symb
 
 ```{r DE}
 msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
-
 msig_Wrist@result[msig_Knee@result$p.adjust<0.05,, drop=F]
+
+write.csv(msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/MCP_MvW.csv"))
+write.csv(msig_Wrist@result[msig_Knee@result$p.adjust<0.05,, drop=F],file=paste0(path,"/output/Wrist_MvW.csv"))
 ```
 
 
