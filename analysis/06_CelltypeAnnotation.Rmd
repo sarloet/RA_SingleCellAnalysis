@@ -1,6 +1,6 @@
 ---
 title: "Marker Genes and Celltype Annotation"
-subtitle: "05_CelltypeAnnotation"
+subtitle: "06_CelltypeAnnotation"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -61,7 +61,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/04_sce_Clustering.rds'))
+sce <- readRDS(file = paste0(path,'/output/05_sce_Clustering.rds'))
 
 ```
 
@@ -88,23 +88,43 @@ dim(sce)
 ### PCA
 
 ```{r PlotClusterPCA}
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with cluster label")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster",point_alpha=0.8,point_size=1) + 
+  ggtitle("PCA with clusters")+
+  labs( x='PCA 1', y='PCA 2' )
 ```
 
 ### UMAP
 
 ```{r PlotClusterUMAP}
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with cluster label")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster",point_alpha=0.8,point_size=1) + 
+  ggtitle("UMAP with with clusters")+
+  labs( x='UMAP 1', y='UMAP 2' )
 ```
 
 ### QC UMAPs
 
-```{r PlotClusterQCUMAP,fig.dim = c(8, 6)}
-p1 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent") + ggtitle("Mitochondrial Genes")
-p2 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected") + ggtitle("Number of detected Genes ")
-p3 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum") + ggtitle("Sum of UMI Counts in Cell")
+```{r PlotClusterQCUMAP,fig.height=3, fig.width=12}
+p1 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",order_by = "subsets_Mito_percent",point_alpha=0.8,point_size=0.5) + ggtitle("Mitochondrial Genes")+
+  theme(legend.title=element_blank())+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
+p2 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by = "detected",point_alpha=0.8,point_size=0.5) + ggtitle("Number of detected Genes ")+
+  theme(legend.title=element_blank())+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
+p3 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum",order_by = "sum",point_alpha=0.8,point_size=0.5) + ggtitle("Sum of UMI Counts in Cell")+
+  theme(legend.title=element_blank())+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
 grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
 rm(p1, p2, p3)
+
+
+
+print(Plot_QC(sce,dim="MNN_UMAP_reduced"))
 ```
 
 
@@ -114,19 +134,16 @@ rm(p1, p2, p3)
 ### Wilcoxon rank-sum test on Cluster
 
 ```{r IdentifyMarker}
-#Select the hvg
-sce.marker <- sce[rowData(sce)$is_hvg==TRUE,]
-rownames(sce.marker) <- rowData(sce.marker)$Symbol
-
 #Wilcoxon rank-sum test
 markers_wilcox <- wilcoxauc(sce, group_by='cluster', assay = 'logcounts')
 
 ```
 
+
 ```{r SaveTopMarker}
 # Get the top 3 markers for each cluster (for heatmap)
-# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-top3DEgenes <- top_markers(markers_wilcox, n = 3, auc_min = 0.5, pval_max = 0.05)
+# filter for nominally significant (p<0.05)and over-expressed (auc>0.5)
+top3DEgenes <- top_markers(markers_wilcox, n = 3, padj_max = 0.05, pct_in_min = 20, auc_min = 0.5)#auc_min = 0.5
 
 #Show top 3 DE Genes of each cluster
 data.frame(top3DEgenes)
@@ -134,7 +151,9 @@ top3DEgenes<-unlist(as.data.frame(top3DEgenes[,-1]),use.names = FALSE)
 
 # Get the top 50 markers for each cluster (save in excel file)
 # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-top50DEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
+top50DEgenes <- top_markers(markers_wilcox, n = 50, padj_max = 0.05, pct_in_min = 20, auc_min = 0.5)
+data.frame(top50DEgenes)
+
 
 wb = createWorkbook()
 for (i in 1:max(as.integer(levels(sce$cluster)))){

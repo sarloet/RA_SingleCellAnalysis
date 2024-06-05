@@ -1,4 +1,7 @@
-#load Packages
+
+#---------------------------------------------------------------------------
+## load Packages -----------------------------------------------------------
+
 suppressPackageStartupMessages({
   library(BiocParallel)
   library(ggplot2)
@@ -8,13 +11,14 @@ suppressPackageStartupMessages({
   library(scran)
   library(gridExtra)
   library(viridis)
-  #utilities
+#utilities
   library(clusterProfiler)
   library(org.Hs.eg.db)
   library(tidyr)
 })
 
-# Set Color Sceme ----------------------------------------------------------
+#---------------------------------------------------------------------------
+## Set Color Sceme ---------------------------------------------------------
 
 meta_colors = list(
 
@@ -61,21 +65,20 @@ meta_colors = list(
   "nice_cols" = c(
     "#d0b4dc", "#FCCDE5", "#945cb4", "#842bd7", "yellow4", "#B38072",
     "#9E0142","#FB8072","#d11141", "#E7298A","#FEE08B","grey", "#1F78B4",
-    "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598")
+    "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598"),
+
+  "nice_cols_more"   = c(
+    "#DC050C", "#FB8072", "#1965B0", "#7BAFDE", "#882E72", "#B17BA6",
+    "#FF7F00", "#FDB462", "#E7298A", "#E78AC3", "#33A02C", "#B2DF8A",
+    "#55A1B1", "#8DD3C7", "#A6761D", "#E6AB02", "#7570B3", "#BEAED4",
+    "#666666", "#999999", "#aa8282", "#d4b7b7", "#8600bf", "#ba5ce3",
+    "#808000", "#aeae5c", "#1e90ff", "#00bfff", "#56ff0d", "#ffff00"
+  )
 )
 
-nice_cols = c(
-  "#d0b4dc", "#FCCDE5", "#945cb4", "#842bd7", "yellow4", "#B38072",
-  "#9E0142","#FB8072","#d11141", "#FDB462","#FEE08B","grey", "#1F78B4",
-  "#A6CEE3", "#66C2A4", "#CCECE6", "#238B45", "#A1D99B","#ABDDA4","#E6F598")
+#---------------------------------------------------------------------------
+## Set utility Functions ---------------------------------------------------
 
-nice_cols2   = c(
-  "#DC050C", "#FB8072", "#1965B0", "#7BAFDE", "#882E72", "#B17BA6",
-  "#FF7F00", "#FDB462", "#E7298A", "#E78AC3", "#33A02C", "#B2DF8A",
-  "#55A1B1", "#8DD3C7", "#A6761D", "#E6AB02", "#7570B3", "#BEAED4",
-  "#666666", "#999999", "#aa8282", "#d4b7b7", "#8600bf", "#ba5ce3",
-  "#808000", "#aeae5c", "#1e90ff", "#00bfff", "#56ff0d", "#ffff00"
-)
 
 
 # Annotate genes ----------------------------------------------------------
@@ -156,3 +159,66 @@ update_gene_names <- function(gene_list) {
 
   return(updated_genes)
 }
+
+
+#---------------------------------------------------------------------------
+## Set Plotting Functions --------------------------------------------------
+
+
+# Plot data tables  --------------------------------------------------------
+
+# Plot data tables
+
+show_table <- function(dataframe, digits=3, PageSize=10) {
+  dataframe <- dataframe %>%
+    mutate_if(is.numeric, ~signif(.,digits))
+  return(reactable::reactable(dataframe,filterable=TRUE,defaultPageSize=Page))
+
+
+}
+
+# Summary plot of QC Statistics  --------------------------------------------
+
+
+Plot_QC <- function(sce, dim) {
+
+  p_mito <- plotReducedDim(sce, dimred=dim, colour_by="subsets_Mito_percent",order_by = "subsets_Mito_percent",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Mitochondrial Genes")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )+
+    scale_color_viridis(option="magma")
+
+  p_detected <- plotReducedDim(sce, dimred=dim, colour_by="detected",order_by = "detected",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Number of Genes detected")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )+
+    scale_color_viridis(option="magma")
+
+  p_sum <- plotReducedDim(sce, dimred=dim, colour_by="sum",order_by = "sum",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Number of UMI Counts")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )+
+    scale_color_viridis(option="magma")
+
+  p_cellcycle <- plotReducedDim(sce, dimred=dim, colour_by="phase",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Cellcycle")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )
+
+  p_sample <- plotReducedDim(sce, dimred=dim, colour_by="Sample",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Sample")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )+
+    scale_color_viridis(option="magma")
+
+  p_ribo <- plotReducedDim(sce, dimred=dim, colour_by="subsets_Ribo_percent",order_by = "subsets_Ribo_percent",point_alpha=0.8,point_size=0.5) +
+    ggtitle("Ribosomal Genes")+
+    theme(legend.title=element_blank())+
+    labs( x='UMAP 1', y='UMAP 2' )
+
+  plot<-grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
+
+  return(plot)
+}
+
+

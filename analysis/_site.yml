@@ -20,10 +20,14 @@ navbar:
       href: 02_DimensionalityReduction.html
     - text: Integration
       href: 03_Integration_Batchelor.html
+    - text: Cellcycle Assignement
+      href: 04_CellCycle.html
     - text: Clustering
-      href: 04_Clustering.html
+      href: 05_Clustering.html
     - text: Annotation
-      href: 05_CelltypeAnnotation.html
+      href: 06_CelltypeAnnotation.html
+    - text: Subclustering
+      href: 07_Subclustering.html
   - text: License
     href: license.html
 

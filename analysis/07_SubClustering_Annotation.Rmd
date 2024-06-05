@@ -1,6 +1,6 @@
 ---
 title: "Subcluster Annotation"
-subtitle: "06_SubClustering_Annotation"
+subtitle: "07_SubClustering_Annotation"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -114,7 +114,7 @@ Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, 
 
 ```{r LoadDataset}
 ## RA DATASET
-sce.sc <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
 cell_type<- "Fibroblast"
 
 ```
@@ -267,7 +267,7 @@ plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
 ### Save the Annotated dataset
 
 ```{r SaveData}
-saveRDS(sce.sc, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
+saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 
@@ -311,7 +311,7 @@ saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx"))
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
 
 ```
 
@@ -416,7 +416,7 @@ plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "Manual
 ### Save the Annotated dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
+saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 
@@ -428,7 +428,7 @@ saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
 
 ```
 
@@ -499,7 +499,7 @@ VizGenEx(c("FLT3","UPK3A","CLEC9A","CCL22","ZNF366","CD1C"),"Myeloid")
 ### Save the Annotated dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
+saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 
@@ -511,7 +511,7 @@ saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
 
 ```
 
@@ -572,7 +572,7 @@ VizGenEx(c("PROX1","LYVE1", "CCL21"),"Endothelial")
 ### Save the Annotated dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast_Anno.rds'))
+saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 

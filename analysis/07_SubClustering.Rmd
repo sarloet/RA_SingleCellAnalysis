@@ -1,6 +1,6 @@
 ---
 title: "Subclustering"
-subtitle: "06_SubClustering"
+subtitle: "07_SubClustering"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -285,7 +285,7 @@ plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster") +
 ### Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.Fibroblast, file =paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
+saveRDS(sce.Fibroblast, file =paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
 ```
 
 
@@ -332,7 +332,7 @@ print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
 ### Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.Tcell, file =paste0(path,'/output/06_sce_SC_Tcell.rds'))
+saveRDS(sce.Tcell, file =paste0(path,'/output/07_sce_SC_Tcell.rds'))
 ```
 
 
@@ -394,7 +394,7 @@ print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "sum",order_
 ### Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.Myeloid, file =paste0(path,'/output/06_sce_SC_Myeloid.rds'))
+saveRDS(sce.Myeloid, file =paste0(path,'/output/07_sce_SC_Myeloid.rds'))
 ```
 
 
@@ -513,7 +513,7 @@ plotReducedDim(sce.Endothelial, dimred = "MNN_UMAP_SC_reduced", colour_by = "ACT
 ### Save the dataset
 
 ```{r SaveData}
-saveRDS(sce.Endothelial, file =paste0(path,'/output/06_sce_SC_Endothelial.rds'))
+saveRDS(sce.Endothelial, file =paste0(path,'/output/07_sce_SC_Endothelial.rds'))
 ```
 
 

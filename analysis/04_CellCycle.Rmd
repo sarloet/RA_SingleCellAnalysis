@@ -1,6 +1,6 @@
 ---
 title: "Clustering"
-subtitle: "11_CellCycle"
+subtitle: "04_CellCycle"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Plotting
+# Cell Cycle
 
 ## Setup
 
@@ -58,7 +58,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 ```
 
 ### Explore Dataset
@@ -77,10 +77,16 @@ dim(sce)
 ## RA DATASET
 CellCycle <- function(sce)
 {
+  #Create empty column in sce
   sce$S.Score <- rep(NA,ncol(sce))
   sce$G2M.Score <- rep(NA,ncol(sce))
   sce$phase <- rep(NA,ncol(sce))
   
+  #Change to gene symbol whenever possible
+  rowData(sce)$UniqID <-rownames(sce)
+  rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ENSEMBL, rowData(sce)$Symbol)
+  
+  #CellCycleScoring through seurat
   s.genes = cc.genes$s.genes
   g2m.genes = cc.genes$g2m.genes
   so <- Seurat::CreateSeuratObject(as.matrix(counts(sce)))
@@ -89,6 +95,7 @@ CellCycle <- function(sce)
   so <- Seurat::ScaleData(so, features = rownames(so))
   so <- Seurat::CellCycleScoring(so, s.features = s.genes, g2m.features = g2m.genes, set.ident = TRUE)
   
+  #Add scores to sce
   sce$S.Score <- so$S.Score
   sce$G2M.Score <- so$G2M.Score
   sce$phase  <- so$Phase
@@ -98,30 +105,48 @@ CellCycle <- function(sce)
 
 
 
-
 ```{r LoadDataset}
 ## RA DATASET
 sce<-CellCycle(sce)
   
 ```
 
+## Plot the Cellcycle phases
 
 ### PCA
 
-```{r PlotPCAAB2}
+```{r PlotPCA}
 #Plot PCA after data integration
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="phase") + ggtitle("PCA colored by Cellcycle")
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="phase",point_alpha=0.8,point_size=0.1) +
+  labs( x='PCA 1', y='PCA 2' )+ 
+  ggtitle("PCA colored by Cellcycle")+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
 ```
+### PCA facet by Cellcycle phase
+
+```{r PlotFacetPCA, fig.height=5, fig.width=15}
+plotReducedDim(sce, dimred="PCA_reduced", colour_by="phase",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$phase)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
+```
+
 
 
 ### UMAP
 
-```{r PlotUMAPAB1}
+```{r PlotUMAP}
 #Plot UMAP after data integration
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="phase") + ggtitle("UMAP colored by Cellcycle")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="phase",point_alpha=0.7,point_size=0.1) + 
+  ggtitle("UMAP colored by Cellcycle")+
+  labs( x='UMAP 1', y='UMAP 2' )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+  
 ```
 
-## Frequencies of cellcycle phase per Sample {.tabset}
+## Frequencies of Cellcycle phase per Sample {.tabset}
 
 ```{r ClusterInfo}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
@@ -135,9 +160,11 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=phase)) +
   geom_bar(stat="identity", position="stack") +
-  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  labs(title="Absolute comparison",subtitle="Per Sample",x="",y="Number of cells")+
   theme_classic()+
+  scale_fill_manual( values=c("#6D96CC","#F99636","#68BD49"),name = "phase" )+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  scale_y_continuous(expand = c(0,0))
 
 ```
 
@@ -148,10 +175,11 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=phase)) +
 
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=phase)) +
   geom_bar(stat="identity", position="fill") +
-  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  labs(title="Relative comparison",subtitle="Per Sample",x="",y="Number of cells")+
   theme_classic()+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
-
+  scale_fill_manual( values=c("#6D96CC","#F99636","#68BD49"),name = "phase" )+
+  theme(axis.text.x = element_text(angle = 45,hjust=1))+
+  scale_y_continuous(expand = c(0,0))
 
 ```
 
@@ -171,9 +199,11 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=phase)) +
   geom_bar(stat="identity", position="stack") +
-  labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  labs(title="Absolute comparison",subtitle="Per Condition",x="",y="Number of cells")+
   theme_classic()+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
+  scale_fill_manual( values=c("#6D96CC","#F99636","#68BD49"),name = "phase" )+
+  theme(axis.text.x = element_text(angle = 45,hjust=1))+
+  scale_y_continuous(expand = c(0,0))
 
 ```
 
@@ -183,10 +213,11 @@ ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=phase)) +
 
 ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=phase)) +
   geom_bar(stat="identity", position="fill") +
-  labs(title="Relative comparison nr Cells in celltype",subtitle="Per Condition",x="",y="Number of cells")+
+  labs(title="Relative comparison",subtitle="Per Condition",x="",y="Number of cells")+
   theme_classic()+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
-
+  scale_fill_manual( values=c("#6D96CC","#F99636","#68BD49"),name = "phase" )+
+  theme(axis.text.x = element_text(angle = 45,hjust=1))+
+  scale_y_continuous(expand = c(0,0))
 
 ```
 
@@ -194,6 +225,6 @@ ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=phase)) +
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/11_sce_CellCycle.rds'))
+saveRDS(sce, file =paste0(path,'/output/04_sce_CellCycle.rds'))
 ```
 

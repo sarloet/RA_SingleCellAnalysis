@@ -1,6 +1,6 @@
 ---
 title: "Clustering"
-subtitle: "04_Clustering"
+subtitle: "05_Clustering"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
 output: 
@@ -59,7 +59,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
+sce <- readRDS(file = paste0(path,'/output/04_sce_CellCycle.rds'))
 sce.cluster <- sce
 ```
 
@@ -78,10 +78,8 @@ dim(sce.cluster)
 ```{r Louvain}
 #Louvain Clustering
 set.seed(123)
-#colData(sce.)$louvain <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000), NNGraphParam(k=5,cluster.fun="louvain")))
 
 colData(sce.cluster)$louvain <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=15,cluster.fun="louvain",BPPARAM =bpp))
-
 data.frame(as.list(table(colData(sce.cluster)$louvain))) 
 
 ```
@@ -92,10 +90,8 @@ data.frame(as.list(table(colData(sce.cluster)$louvain)))
 ```{r Leiden}
 #Leiden Clustering
 set.seed(123)
-#colData(sce)$leiden <- clusterRows(reducedDim(sce, "MNN"),TwoStepParam(KmeansParam(centers=1000 , nstart = 10, iter.max = 100), NNGraphParam(k=15,cluster.fun="leiden",BPPARAM =bpp)))
+
 colData(sce.cluster)$leiden <- clusterCells(sce.cluster, use.dimred = "MNN_reduced", BLUSPARAM = SNNGraphParam(k=70,cluster.fun="leiden",BPPARAM =bpp))
-
-
 data.frame(as.list(table(colData(sce.cluster)$leiden)))
 
 
@@ -108,10 +104,9 @@ data.frame(as.list(table(colData(sce.cluster)$leiden)))
 #Walktrap Clustering
 
 set.seed(123)
+
 colData(sce.cluster)$walktrap <- clusterRows(reducedDim(sce.cluster, "MNN_reduced"),TwoStepParam(KmeansParam(centers=10000, nstart = 5, iter.max = 100), NNGraphParam(k=10,cluster.fun="walktrap",BPPARAM=bpp)))
 #colData(sce)$walktrap <- clusterCells(sce, use.dimred = "MNN", BLUSPARAM = SNNGraphParam(k=20,cluster.fun="walktrap", BPPARAM=bpp))
-
-
 data.frame(as.list(table(colData(sce.cluster)$walktrap)))
 
 
@@ -130,7 +125,9 @@ methods <- c("louvain","leiden","walktrap")
 for (i in methods){
   cat(paste0("#### ",i, "\n"))
   print(
-  plotReducedDim(sce.cluster, dimred="MNN_reduced", colour_by=i ,text_by=i,point_alpha=0.7,point_size=2) + ggtitle(paste0("PCA with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_reduced", colour_by=i ,text_by=i,point_alpha=0.8,point_size=0.1) + 
+    ggtitle(paste0("PCA with ",i," clusters"))+
+    labs( x='PCA 1', y='PCA 2' )
   )
   cat(' \n \n')
   }
@@ -142,7 +139,9 @@ for (i in methods){
 for (i in methods){
   cat(paste0("#### ", i, "\n"))
   print(
-  plotReducedDim(sce.cluster, dimred="MNN_UMAP_reduced", colour_by=i,text_by=i) + ggtitle(paste0("UMAP with ",i," clusters"))
+  plotReducedDim(sce.cluster, dimred="MNN_UMAP_reduced", colour_by=i,text_by=i,point_alpha=0.8,point_size=0.1) + 
+    ggtitle(paste0("UMAP with ",i," clusters"))+
+    labs( x='UMAP 1', y='UMAP 2' )
   )
   cat(' \n \n')
   }
@@ -167,7 +166,8 @@ for (i in methods){
   ggplot(sil.data, aes(x=cluster, y=width, colour=closest))+
     ggbeeswarm::geom_quasirandom(method="smiley")+
     ggtitle(paste0("Silhouette plot ",i," Clustering"))+
-    theme_bw() 
+    theme_classic() + 
+    theme(panel.grid.major.x = element_blank(),panel.grid.minor.x = element_blank())
   )
   cat(' \n \n')
   }
@@ -189,7 +189,8 @@ for (i in methods){
   ggplot(data=ClusterInfo, aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="stack") +
     labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) +
+    scale_y_continuous(expand = c(0,0))
   )
   cat(' \n \n')
   }
@@ -211,11 +212,13 @@ for (i in methods){
   ggplot(data=ClusterInfo,aes_string(x="Sample",y="cells", fill=i)) +
     geom_bar(stat="identity", position="fill") +
     labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA))+
+    scale_y_continuous(expand = c(0,0)) 
   )
   cat(' \n \n')
   }
 ```
+
 
 ## Set clustering to use downstream {.tabset}
 
@@ -224,6 +227,7 @@ for (i in methods){
 ##leiden or louvain or walktrap
 
 colData(sce)$cluster<- colData(sce.cluster)$leiden
+
 #Set as collabel
 colLabels(sce)<- colData(sce)$cluster
 
@@ -232,52 +236,24 @@ colLabels(sce)<- colData(sce)$cluster
 ### UMAP
 
 ```{r UMAPClustering}
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster") + ggtitle("UMAP with assigned clusters")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="cluster",point_alpha=0.8,point_size=1) + 
+  ggtitle("UMAP with assigned clusters")+
+  labs( x='UMAP 1', y='UMAP 2' )
 ```
 
 ### PCA
 
 ```{r PCAClustering}
-plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster") + ggtitle("PCA with assigned clusters")
-```
-
-
-## Frequencies of cells in clusters per Sample {.tabset}
-
-```{r ClusterInfo}
-ClusterInfo <- as.data.frame(colData(sce)) %>% 
-  group_by(cluster, Sample) %>%
-  summarise(cells = n(),.groups = 'drop') 
-```
-
-### Absolute comparison
-
-```{r PlotAbsoluteClustering}
-
-ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=cluster)) +
-  geom_bar(stat="identity", position="stack") +
-  labs(title="Absolute comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
-
-```
-
-### Relative comparison
-
-```{r PlotRelativeClustering}
-
-ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=cluster)) +
-  geom_bar(stat="identity", position="fill") +
-  labs(title="Relative comparison nr Cells in Cluster",subtitle="Per Sample",x="",y="Number of cells")+
-  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())
-
-
+plotReducedDim(sce, dimred="MNN_reduced", colour_by="cluster",text_by="cluster",point_alpha=0.8,point_size=1) + 
+  ggtitle("PCA with assigned clusters")+
+  labs( x='PCA 1', y='PCA 2' )
 ```
 
 
 ## Save the dataset
 
 ```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/04_sce_Clustering.rds'))
+saveRDS(sce, file =paste0(path,'/output/05_sce_Clustering.rds'))
 ```
 
 
