@@ -373,10 +373,16 @@ div.tocify {
       <a href="03_Integration_Batchelor.html">Integration</a>
     </li>
     <li>
-      <a href="04_Clustering.html">Clustering</a>
+      <a href="04_CellCycle.html">Cellcycle Assignement</a>
     </li>
     <li>
-      <a href="05_CelltypeAnnotation.html">Annotation</a>
+      <a href="05_Clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="06_CelltypeAnnotation.html">Annotation</a>
+    </li>
+    <li>
+      <a href="07_Subclustering.html">Subclustering</a>
     </li>
   </ul>
 </li>
@@ -412,7 +418,7 @@ div.tocify {
 <h1 class="title toc-ignore">Dimensionality Reduction</h1>
 <h3 class="subtitle">02_DimensionalityReduction</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Jun 1 2024 00:05:34</h4>
+<h4 class="date">Jun 5 2024 20:46:21</h4>
 
 </div>
 
@@ -441,7 +447,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-06-01
+<strong>Last updated:</strong> 2024-06-05
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -575,15 +581,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2targetblank4b8dd48a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree8be1325b4f1f68b038dda8cc4de3afa05defb4cctargetblank8be1325a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2" target="_blank">4b8dd48</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/8be1325b4f1f68b038dda8cc4de3afa05defb4cc" target="_blank">8be1325</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2targetblank4b8dd48a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree8be1325b4f1f68b038dda8cc4de3afa05defb4cctargetblank8be1325a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -593,7 +599,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2" target="_blank">4b8dd48</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/8be1325b4f1f68b038dda8cc4de3afa05defb4cc" target="_blank">8be1325</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -622,38 +628,34 @@ Ignored files:
     Ignored:    output/00_DoubletDetection.rds
     Ignored:    output/00_sce_DataPreparation.rds
     Ignored:    output/01_sce_QualityControl.rds
-    Ignored:    output/01_sce_QualityControl_filtered.rds
+    Ignored:    output/01_sce_QualityControl_cellfiltered.rds
     Ignored:    output/02_sce_DimensionalityReduction.rds
     Ignored:    output/03_sce_Integration_Batchelor.rds
     Ignored:    output/03_sce_Integration_Harmony.rds
-    Ignored:    output/04_sce_Clustering.rds
-    Ignored:    output/05_sce_CelltypeAnnotation.rds
-    Ignored:    output/06_sce_SC_Endothelial.rds
-    Ignored:    output/06_sce_SC_Fibroblast.rds
-    Ignored:    output/06_sce_SC_Myeloid.rds
-    Ignored:    output/06_sce_SC_Tcell.rds
+    Ignored:    output/04_sce_CellCycle.rds
+    Ignored:    output/05_sce_Clustering.rds
+    Ignored:    output/06_sce_CelltypeAnnotation.rds
+    Ignored:    output/07_sce_SC_Endothelial.rds
+    Ignored:    output/07_sce_SC_Fibroblast.rds
+    Ignored:    output/07_sce_SC_Fibroblast_Anno.rds
+    Ignored:    output/07_sce_SC_Myeloid.rds
+    Ignored:    output/07_sce_SC_Tcell.rds
     Ignored:    output/08_DifferentialAbundance_miloR.rds
     Ignored:    output/Cluster_Marker_Genes.xlsx
+    Ignored:    output/Knee_KvM.csv
+    Ignored:    output/Knee_KvW.csv
     Ignored:    output/MAST_KneeVsMCP.csv
     Ignored:    output/MAST_KneeVsWrist.csv
     Ignored:    output/MAST_MCPVsWrist.csv
-
-Untracked files:
-    Untracked:  analysis/11_CellCycle.Rmd
+    Ignored:    output/MCP_KvM.csv
+    Ignored:    output/MCP_MvW.csv
+    Ignored:    output/Wrist_KvW.csv
+    Ignored:    output/Wrist_MvW.csv
+    Ignored:    renv/library/
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
     Modified:   analysis/01_QualityControl.Rmd
     Modified:   analysis/02_DimensionalityReduction.Rmd
-    Modified:   analysis/03_Integration_Batchelor.Rmd
-    Modified:   analysis/03_Integration_Harmony.Rmd
-    Modified:   analysis/04_Clustering.Rmd
-    Modified:   analysis/05_CelltypeAnnotation.Rmd
-    Modified:   analysis/06_SubClustering.Rmd
-    Modified:   analysis/07_DifferentialExpression_MAST.Rmd
-    Modified:   analysis/08_DifferentialAbundance_miloR.Rmd
-    Modified:   analysis/09_EnrichmentAnalysis.Rmd
-    Modified:   analysis/10_Plotting.Rmd
 
 </code></pre>
 <p>
@@ -700,6 +702,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/d24d8cc92001393c2858190589fd3e3fdf24a43f/analysis/02_DimensionalityReduction.Rmd" target="_blank">d24d8cc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-04
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/analysis/02_DimensionalityReduction.Rmd" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/02_DimensionalityReduction.html" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+<td>
+fix
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1575,7 +1628,7 @@ variation.</p>
 # Get the top 10% of genes.
 #top.hvgs &lt;- getTopHVGs(dec, prop=0.1)
 
-# Get the top 2000 genes.
+# Get the top 3000 genes.
 top.hvgs &lt;- getTopHVGs(dec, n=3000)
 
 # Get all genes with positive biological components.
@@ -1584,7 +1637,7 @@ top.hvgs &lt;- getTopHVGs(dec, n=3000)
 # Get all genes with FDR below 5%.
 #top.hvgs &lt;- getTopHVGs(dec, fdr.threshold=0.05)
 
-length(top.hvgs)</code></pre>
+length(top.hvgs)#Check HVG amount</code></pre>
 <pre><code>[1] 3000</code></pre>
 </div>
 <div id="plot-per-gene-variation" class="section level3">
@@ -1592,7 +1645,7 @@ length(top.hvgs)</code></pre>
 <p>Plot variance vs mean for each gene and visualise the limit of
 technical variance according to the fitted trend line. We would regard
 those features below the trend line as technical noise.</p>
-<pre class="r"><code># Mark HVGs
+<pre class="r"><code># Mark HVGs in sce
 rowData(sce)$is_hvg &lt;- rownames(sce) %in% top.hvgs
 
 # Plot per-gene variation
@@ -1600,10 +1653,10 @@ per.block &lt;- dec$per.block
 par(mfrow=c(2, 2))
 for (i in seq_along(per.block)) {
     decX &lt;- per.block[[i]]
-    plot(decX$mean, decX$total, col= c(&quot;pink&quot;,&quot;black&quot;)[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab=&quot;Mean log-expression&quot;, 
+    plot(decX$mean, decX$total, col= c(&quot;#F5953C&quot;,&quot;#7A95BD&quot;)[(names(metadata(decX)$mean) %in% top.hvgs)+1], xlab=&quot;Mean log-expression&quot;, 
         ylab=&quot;Variance&quot;, main=names(per.block)[i] )
-    curve(metadata(decX)$trend(x), col=&quot;blue&quot;, add=TRUE)
-    legend(&quot;topright&quot;, legend=c(&quot;Not HVG&quot;, &quot;HVG&quot;), col = c(&quot;pink&quot;,&quot;black&quot;),bty=&quot;n&quot;,pch=10)
+    curve(metadata(decX)$trend(x), col=&quot;black&quot;, add=TRUE)
+    legend(&quot;topright&quot;, legend=c(&quot;Not HVG&quot;, &quot;HVG&quot;), col = c(&quot;#F5953C&quot;,&quot;#7A95BD&quot;),bty=&quot;n&quot;,pch=10)
 }</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
@@ -1628,6 +1681,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">4b8dd48</a>
@@ -1921,6 +1985,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">4b8dd48</a>
 </td>
 <td>
@@ -2212,6 +2287,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">4b8dd48</a>
 </td>
 <td>
@@ -2501,6 +2587,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">4b8dd48</a>
@@ -2795,13 +2892,13 @@ data.frame(reducedDim(sce, &quot;PCA&quot;)[1:10, 1:5])</code></pre>
 pca_pct_variance &lt;- data.frame(variance = attr(reducedDim(sce, &quot;PCA&quot;), &quot;percentVar&quot;))
 pca_pct_variance$PC &lt;- 1:nrow(pca_pct_variance)
 
-#PCA dim estimate the elbowpoint
+#PCA dim estimate the maxLikGlobalDimEst
 elbow &lt;- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce, &quot;PCA&quot;)), k=5)))
 cat(paste0(&quot;Elbow Point: &quot;,elbow))</code></pre>
 <pre><code>Elbow Point: 13</code></pre>
 <pre class="r"><code>#cat(paste0(&quot;Elbow Point: &quot;,findElbowPoint(pca_pct_variance$variance)))</code></pre>
 <pre class="r"><code># Elbow Plot (PC vs variance)
-ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color=&quot;grey&quot;) +geom_point() +labs(y = &quot;Variance explained (%)&quot;)+ geom_vline(xintercept = elbow,color=&quot;red&quot;)+theme_classic()</code></pre>
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color=&quot;grey&quot;) +geom_point() +labs(y = &quot;Variance explained (%)&quot;)+ geom_vline(xintercept = elbow,color=&quot;red&quot;)+theme_classic()+ ggtitle(&quot;Percentage variance explained by PCs&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCvsVariance-1">
@@ -2825,6 +2922,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">4b8dd48</a>
@@ -3106,19 +3214,23 @@ sarloet
 </div>
 <pre class="r"><code>#PCA select nr of PC
 reducedDim(sce,&quot;PCA_reduced&quot;) &lt;- reducedDim(sce,&quot;PCA&quot;)[,seq_len(elbow)]
-reducedDimNames(sce)</code></pre>
-<pre><code>[1] &quot;PCA&quot;         &quot;PCA_reduced&quot;</code></pre>
-<pre class="r"><code>ncol(reducedDim(sce,&quot;PCA&quot;))</code></pre>
-<pre><code>[1] 50</code></pre>
-<pre class="r"><code>ncol(reducedDim(sce,&quot;PCA_reduced&quot;))</code></pre>
-<pre><code>[1] 13</code></pre>
+
+cat(&quot;Reduced Dimensions in sce :&quot;,reducedDimNames(sce),&quot;\n&quot;)</code></pre>
+<pre><code>Reduced Dimensions in sce : PCA PCA_reduced </code></pre>
+<pre class="r"><code>cat(&quot;Nr PCs in PCA :&quot;, ncol(reducedDim(sce,&quot;PCA&quot;)),&quot;\n&quot;)</code></pre>
+<pre><code>Nr PCs in PCA : 50 </code></pre>
+<pre class="r"><code>cat(&quot;Nr PCs in PCA_reduced :&quot;, ncol(reducedDim(sce,&quot;PCA_reduced&quot;)),&quot;\n&quot;)</code></pre>
+<pre><code>Nr PCs in PCA_reduced : 13 </code></pre>
 </div>
 <div id="plot-pca" class="section level4 tabset">
 <h4 class="tabset">Plot PCA</h4>
 <div id="pca" class="section level5">
 <h5>PCA</h5>
 <pre class="r"><code>#Plot PCA 
-plotReducedDim(sce, dimred = &quot;PCA_reduced&quot;, colour_by = &quot;Sample&quot;)</code></pre>
+plotReducedDim(sce, dimred = &quot;PCA_reduced&quot;, colour_by = &quot;Sample&quot;,point_alpha=0.8,point_size=0.1)+ 
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; ) +
+  labs( x=&#39;PCA 1&#39;, y=&#39;PCA 2&#39; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPCA2-1">
@@ -3142,6 +3254,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">4b8dd48</a>
@@ -3414,7 +3537,10 @@ sarloet
 <div id="pca-three-pcs" class="section level5">
 <h5>PCA three PC’s</h5>
 <pre class="r"><code>#Plot PCA 
-plotReducedDim(sce, dimred = &quot;PCA_reduced&quot;, ncomponents = 3, colour_by = &quot;Sample&quot;)</code></pre>
+plotReducedDim(sce, dimred = &quot;PCA_reduced&quot;, ncomponents = 3, colour_by = &quot;Sample&quot;,point_alpha=0.8,point_size=0.1)+ 
+  theme(strip.background=element_rect(fill=&quot;white&quot;))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPCA3-1">
@@ -3438,6 +3564,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">4b8dd48</a>
@@ -3713,7 +3850,12 @@ sarloet
 <div id="pca-per-sample" class="section level5">
 <h5>PCA per Sample</h5>
 <pre class="r"><code>#Plot PCA per sample
-plotReducedDim(sce, dimred=&quot;PCA_reduced&quot;, colour_by=&quot;Sample&quot;,point_size=0.8) + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+plotReducedDim(sce, dimred=&quot;PCA_reduced&quot;, colour_by=&quot;Sample&quot;,point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill=&quot;white&quot;))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x=&#39;PCA 1&#39;, y=&#39;PCA 2&#39; )</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotFacetPCA1-1">
@@ -3737,6 +3879,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">4b8dd48</a>
@@ -4008,7 +4161,12 @@ sarloet
 </div>
 <div id="pca-per-joint" class="section level5">
 <h5>PCA per Joint</h5>
-<pre class="r"><code>plotReducedDim(sce, dimred=&quot;PCA_reduced&quot;, colour_by=&quot;Sample&quot;,point_size=0.8) + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<pre class="r"><code>plotReducedDim(sce, dimred=&quot;PCA_reduced&quot;, colour_by=&quot;Sample&quot;,point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill=&quot;white&quot;))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x=&#39;PCA 1&#39;, y=&#39;PCA 2&#39; )</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotFacetPCA2-1">
@@ -4032,6 +4190,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">4b8dd48</a>
@@ -4337,6 +4506,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PCAMetrics-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PCAMetrics-1.png" target="_blank">4b8dd48</a>
 </td>
 <td>
@@ -4613,12 +4793,15 @@ variables (genes), UMAP performs a non-linear transformation of the data
 to project it down to lower dimensions. This preserves both local and
 global structures.</p>
 <pre class="r"><code>#Run UMAP
-sce &lt;- runUMAP(sce,name = &quot;UMAP&quot;, dimred = &quot;PCA_reduced&quot;)</code></pre>
+sce &lt;- runUMAP(sce,name = &quot;UMAP&quot;, dimred = &quot;PCA_reduced&quot;, subset_row = top.hvgs)</code></pre>
 <div id="plot-umap" class="section level4 tabset">
 <h4 class="tabset">Plot UMAP</h4>
 <div id="colored-by-sample" class="section level5">
 <h5>Colored by Sample</h5>
-<pre class="r"><code>plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;) #+ facet_wrap(~sce$Sample)</code></pre>
+<pre class="r"><code>plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;,point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  guides(colour = guide_legend(override.aes = list(size=2)))</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotUMAP1-1">
@@ -4642,6 +4825,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">4b8dd48</a>
@@ -4924,7 +5118,10 @@ sarloet
 </div>
 <div id="colored-by-joint" class="section level5">
 <h5>Colored by Joint</h5>
-<pre class="r"><code>plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Joint.Location&quot;)</code></pre>
+<pre class="r"><code>plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Joint.Location&quot;,point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$Joint.Location,name = &quot;Joint.Location&quot; )+ 
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  guides(colour = guide_legend(override.aes = list(size=2)))#+ facet_wrap(~sce$Sample)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotUMAP2-1">
@@ -4948,6 +5145,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">4b8dd48</a>
@@ -5233,8 +5441,12 @@ sarloet
 <h4 class="tabset">Plot UMAP Facet</h4>
 <div id="facet-by-sample" class="section level5">
 <h5>Facet by Sample</h5>
-<pre class="r"><code>#Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;) + facet_wrap(~sce$Sample)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<pre class="r"><code>#Plot PCA per sample
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;,point_alpha=0.8,point_size=0.5) + 
+  facet_wrap(~sce$Sample)+ 
+  theme(strip.background=element_rect(fill=&quot;white&quot;))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotFacetUMAP1-1">
@@ -5258,6 +5470,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">4b8dd48</a>
@@ -5540,8 +5763,11 @@ sarloet
 </div>
 <div id="facet-by-joint" class="section level5">
 <h5>Facet by Joint</h5>
-<pre class="r"><code>#Plot UMAP before data integration per sample
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;) + facet_wrap(~sce$Joint.Location)+ theme(strip.background=element_rect(fill=&quot;white&quot;))</code></pre>
+<pre class="r"><code>plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;Sample&quot;,point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$Joint.Location)+ 
+  theme(strip.background=element_rect(fill=&quot;white&quot;))+
+  scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = &quot;Sample&quot; )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotFacetUMAP2-1">
@@ -5565,6 +5791,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">4b8dd48</a>
@@ -5854,7 +6091,10 @@ type associated with a cluster.</p>
 <div id="colored-by-mitochondrial-genes" class="section level5">
 <h5>Colored by Mitochondrial Genes</h5>
 <pre class="r"><code>#Plot UMAP colored by subsets_Mito_percent
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;subsets_Mito_percent&quot;,order_by=&quot;subsets_Mito_percent&quot;) + ggtitle(&quot;Mitochondrial Genes&quot;)</code></pre>
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;subsets_Mito_percent&quot;,order_by=&quot;subsets_Mito_percent&quot;,point_alpha=0.8,point_size=0.5) + 
+  ggtitle(&quot;Mitochondrial Genes&quot;)+
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotQcUMAP1-1">
@@ -5878,6 +6118,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">4b8dd48</a>
@@ -6161,7 +6412,10 @@ sarloet
 <div id="colored-by-nr-of-genes" class="section level5">
 <h5>Colored by nr of Genes</h5>
 <pre class="r"><code>#Plot UMAP colored by detected
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;detected&quot;,order_by=&quot;detected&quot;) + ggtitle(&quot;Number of detected Genes &quot;)</code></pre>
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;detected&quot;,order_by=&quot;detected&quot;,point_alpha=0.8,point_size=0.5) + 
+  ggtitle(&quot;Number of detected Genes &quot;)+
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotQcUMAP2-1">
@@ -6185,6 +6439,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">4b8dd48</a>
@@ -6468,7 +6733,10 @@ sarloet
 <div id="colored-by-nr-of-counts" class="section level5">
 <h5>Colored by nr of Counts</h5>
 <pre class="r"><code>#Plot UMAP colored by sum
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;sum&quot;, order_by = &quot;sum&quot;) + ggtitle(&quot;Sum of UMI Counts in Cell&quot;)</code></pre>
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;sum&quot;, order_by = &quot;sum&quot;,point_alpha=0.8,point_size=0.5) + 
+  ggtitle(&quot;Sum of UMI Counts in Cell&quot;)+
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotQcUMAP3-1">
@@ -6492,6 +6760,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">4b8dd48</a>
@@ -6775,7 +7054,10 @@ sarloet
 <div id="colored-by-ubi-markergene" class="section level5">
 <h5>Colored by Ubi Markergene</h5>
 <pre class="r"><code>#Plot UMAP colored by Ubi Markergene expression
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, by_exprs_values = &quot;logcounts&quot;, colour_by= rownames(sce)[grepl(&quot;(^B2M)&quot;, rowData(sce)$Symbol)])+ ggtitle(&quot;Expression of some Ubi Markergene&quot;)</code></pre>
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, by_exprs_values = &quot;logcounts&quot;, colour_by= rownames(sce)[grepl(&quot;(^B2M)&quot;, rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.1)+ 
+  ggtitle(&quot;Expression of some Ubi Markergene&quot;)+
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotQcUMAP4-1">
@@ -6799,6 +7081,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">e3ca53c</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-01
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/4b8dd48c4471f612e317d4ea6cf4c4598cdfb3d2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">4b8dd48</a>
@@ -7109,23 +7402,24 @@ time zone: Europe/Warsaw
 tzcode source: internal
 
 attached base packages:
-[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[1] stats4    stats     graphics  grDevices datasets  utils     methods  
 [8] base     
 
 other attached packages:
  [1] intrinsicDimension_1.2.0    yaImpute_1.0-34            
  [3] tidyr_1.3.1                 org.Hs.eg.db_3.18.0        
  [5] AnnotationDbi_1.64.1        clusterProfiler_4.10.1     
- [7] gridExtra_2.3               scran_1.30.2               
- [9] scater_1.30.1               scuttle_1.12.0             
-[11] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
-[13] Biobase_2.62.0              GenomicRanges_1.54.1       
-[15] GenomeInfoDb_1.38.8         IRanges_2.36.0             
-[17] S4Vectors_0.40.2            BiocGenerics_0.48.1        
-[19] MatrixGenerics_1.14.0       matrixStats_1.3.0          
-[21] dplyr_1.1.4                 ggplot2_3.5.1              
-[23] BiocParallel_1.36.0         here_1.0.1                 
-[25] workflowr_1.7.1            
+ [7] viridis_0.6.5               viridisLite_0.4.2          
+ [9] gridExtra_2.3               scran_1.30.2               
+[11] scater_1.30.1               scuttle_1.12.0             
+[13] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
+[15] Biobase_2.62.0              GenomicRanges_1.54.1       
+[17] GenomeInfoDb_1.38.8         IRanges_2.36.0             
+[19] S4Vectors_0.40.2            BiocGenerics_0.48.1        
+[21] MatrixGenerics_1.14.0       matrixStats_1.3.0          
+[23] dplyr_1.1.4                 ggplot2_3.5.1              
+[25] BiocParallel_1.36.0         here_1.0.1                 
+[27] workflowr_1.7.1            
 
 loaded via a namespace (and not attached):
   [1] RcppAnnoy_0.0.22          splines_4.3.3            
@@ -7151,43 +7445,43 @@ loaded via a namespace (and not attached):
  [41] DelayedArray_0.28.0       DOSE_3.28.2              
  [43] ggforce_0.4.2             tidyselect_1.2.1         
  [45] aplot_0.2.2               farver_2.1.2             
- [47] ScaledMatrix_1.10.0       viridis_0.6.5            
- [49] jsonlite_1.8.8            BiocNeighbors_1.20.2     
- [51] tidygraph_1.3.1           tools_4.3.3              
- [53] treeio_1.26.0             Rcpp_1.0.12              
- [55] glue_1.7.0                SparseArray_1.2.4        
- [57] xfun_0.44                 qvalue_2.34.0            
- [59] withr_3.0.0               fastmap_1.2.0            
+ [47] ScaledMatrix_1.10.0       jsonlite_1.8.8           
+ [49] BiocNeighbors_1.20.2      tidygraph_1.3.1          
+ [51] tools_4.3.3               treeio_1.26.0            
+ [53] Rcpp_1.0.12               glue_1.7.0               
+ [55] SparseArray_1.2.4         xfun_0.44                
+ [57] qvalue_2.34.0             withr_3.0.0              
+ [59] BiocManager_1.30.23       fastmap_1.2.0            
  [61] bluster_1.12.0            fansi_1.0.6              
  [63] callr_3.7.6               digest_0.6.35            
  [65] rsvd_1.0.5                R6_2.5.1                 
  [67] gridGraphics_0.5-1        colorspace_2.1-0         
  [69] GO.db_3.18.0              RSQLite_2.3.6            
  [71] utf8_1.2.4                generics_0.1.3           
- [73] data.table_1.15.4         graphlayouts_1.1.1       
- [75] httr_1.4.7                S4Arrays_1.2.1           
- [77] scatterpie_0.2.2          whisker_0.4.1            
- [79] uwot_0.2.2                pkgconfig_2.0.3          
- [81] gtable_0.3.5              blob_1.2.4               
- [83] XVector_0.42.0            shadowtext_0.1.3         
- [85] htmltools_0.5.8.1         fgsea_1.28.0             
- [87] scales_1.3.0              png_0.1-8                
- [89] ggfun_0.1.4               knitr_1.45               
- [91] rstudioapi_0.16.0         reshape2_1.4.4           
- [93] nlme_3.1-164              cachem_1.1.0             
- [95] stringr_1.5.1             parallel_4.3.3           
- [97] vipor_0.4.7               HDO.db_0.99.1            
- [99] pillar_1.9.0              grid_4.3.3               
-[101] vctrs_0.6.5               promises_1.3.0           
-[103] BiocSingular_1.18.0       beachmat_2.18.1          
-[105] cluster_2.1.6             beeswarm_0.4.0           
-[107] evaluate_0.23             cli_3.6.2                
-[109] locfit_1.5-9.9            compiler_4.3.3           
-[111] rlang_1.1.3               crayon_1.5.2             
-[113] labeling_0.4.3            ps_1.7.6                 
-[115] getPass_0.2-4             plyr_1.8.9               
-[117] fs_1.6.4                  ggbeeswarm_0.7.2         
-[119] stringi_1.8.4             viridisLite_0.4.2        
+ [73] renv_1.0.7                data.table_1.15.4        
+ [75] graphlayouts_1.1.1        httr_1.4.7               
+ [77] S4Arrays_1.2.1            scatterpie_0.2.2         
+ [79] whisker_0.4.1             uwot_0.2.2               
+ [81] pkgconfig_2.0.3           gtable_0.3.5             
+ [83] blob_1.2.4                XVector_0.42.0           
+ [85] shadowtext_0.1.3          htmltools_0.5.8.1        
+ [87] fgsea_1.28.0              scales_1.3.0             
+ [89] png_0.1-8                 ggfun_0.1.4              
+ [91] knitr_1.45                rstudioapi_0.16.0        
+ [93] reshape2_1.4.4            nlme_3.1-164             
+ [95] cachem_1.1.0              stringr_1.5.1            
+ [97] parallel_4.3.3            vipor_0.4.7              
+ [99] HDO.db_0.99.1             pillar_1.9.0             
+[101] grid_4.3.3                vctrs_0.6.5              
+[103] promises_1.3.0            BiocSingular_1.18.0      
+[105] beachmat_2.18.1           cluster_2.1.6            
+[107] beeswarm_0.4.0            evaluate_0.23            
+[109] cli_3.6.2                 locfit_1.5-9.9           
+[111] compiler_4.3.3            rlang_1.1.3              
+[113] crayon_1.5.2              labeling_0.4.3           
+[115] ps_1.7.6                  getPass_0.2-4            
+[117] plyr_1.8.9                fs_1.6.4                 
+[119] ggbeeswarm_0.7.2          stringi_1.8.4            
 [121] munsell_0.5.1             Biostrings_2.70.3        
 [123] lazyeval_0.2.2            GOSemSim_2.28.1          
 [125] Matrix_1.6-5              patchwork_1.2.0          
@@ -7196,8 +7490,8 @@ loaded via a namespace (and not attached):
 [131] highr_0.10                igraph_2.0.3             
 [133] memoise_2.0.1             bslib_0.7.0              
 [135] ggtree_3.10.1             fastmatch_1.1-4          
-[137] bit_4.0.5                 ape_5.8                  
-[139] gson_0.1.0               </code></pre>
+[137] bit_4.0.5                 gson_0.1.0               
+[139] ape_5.8                  </code></pre>
 </div>
 </div>
 </div>

@@ -70,7 +70,7 @@ Show the number of cells detected in each sample or joint location before filter
 
 ```{r PlotCellsPerSample}
 #Histogramm with number of cells per Sample
-ggplot(colData(sce), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+ggplot(as.data.frame(colData(sce)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
   theme_classic()+
   stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
   theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
@@ -83,7 +83,7 @@ data.frame(as.list(table(colData(sce)$Sample)))
 
 ```{r PlotCellsJoint}
 #Histogramm with number of cells per Joint
-ggplot(colData(sce), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
+ggplot(as.data.frame(colData(sce)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
   theme_classic()+
   stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
   theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
@@ -377,7 +377,7 @@ Show the number of cells detected in each sample or joint location after filteri
 #### Per Sample
 ```{r PlotCellsPerSampleAfterFiltering1}
 #Histogramm with number of cells per sample after filtering
-ggplot(colData(sce.filtered), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Sample))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per sample") + 
   theme_classic()+
   stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.65))+
   theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+
@@ -390,7 +390,7 @@ t(data.frame(as.list(table(colData(sce.filtered)$Sample))))
 
 ```{r PlotCellsPerJointAfterFiltering2}
 #Histogramm with number of cells per Joint after filtering
-ggplot(colData(sce.filtered), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
+ggplot(as.data.frame(colData(sce.filtered)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ ggtitle("Number of cells per Joint") + 
   theme_classic()+
   stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
   theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())+

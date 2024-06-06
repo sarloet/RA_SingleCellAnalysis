@@ -124,7 +124,7 @@ rm(p1, p2, p3)
 
 
 
-print(Plot_QC(sce,dim="MNN_UMAP_reduced"))
+print(Plot_QC_dimred(sce,dim="MNN_UMAP_reduced"))
 ```
 
 
@@ -187,7 +187,6 @@ dittoDotPlot(sce, vars = unique(top3DEgenes) , group.by = "label",min.color="lig
 rm(sce.marker,sce.plot,column_annotations,markers_wilcox_up)
 gc()
 ```
-
 
 
 
@@ -593,7 +592,7 @@ for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
     tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
     
     #Save table in Exelsheet
-    addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+    addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
   }
   saveWorkbook(wb,paste0( path , "/output/",paste0(labeling),"_Wilcoxon.xlsx"))  
   

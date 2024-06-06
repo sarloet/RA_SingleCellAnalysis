@@ -180,7 +180,7 @@ show_table <- function(dataframe, digits=3, PageSize=10) {
 # Summary plot of QC Statistics  --------------------------------------------
 
 
-Plot_QC <- function(sce, dim) {
+Plot_QC_dimred <- function(sce, dim) {
 
   p_mito <- plotReducedDim(sce, dimred=dim, colour_by="subsets_Mito_percent",order_by = "subsets_Mito_percent",point_alpha=0.8,point_size=0.5) +
     ggtitle("Mitochondrial Genes")+
@@ -217,6 +217,35 @@ Plot_QC <- function(sce, dim) {
     labs( x='UMAP 1', y='UMAP 2' )
 
   plot<-grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
+
+  return(plot)
+}
+
+
+Plot_QC_violin <- function(sce, dim,labels) {
+
+  p_mito <- plotColData(sce, x=label, y="subsets_Mito_percent", other_fields=label) +
+    facet_wrap(~label, nrow=1, scales = "free_x") +
+    ggtitle("Mito percent")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+  p_detected <- plotColData(sce, x=label, y="detected", other_fields=label) +
+    facet_wrap(~label, nrow=1, scales = "free_x") +
+    ggtitle("Detected Genes")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+  p_sum <- plotColData(sce, x=label, y="sum", other_fields=label) +
+    facet_wrap(~label, nrow=1, scales = "free_x") +
+    ggtitle("Total Counts")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+  p_ribo <- plotColData(sce, x=label, y="subsets_Ribo_percent", other_fields=label) +
+    facet_wrap(~label, nrow=1, scales = "free_x") +
+    ggtitle("Ribo percent")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+
+  plot<-grid.arrange(p_mito, p_detected, p_sum, p_ribo, nrow = 4, ncol = 1)
 
   return(plot)
 }

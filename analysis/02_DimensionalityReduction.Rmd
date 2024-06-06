@@ -282,7 +282,7 @@ plotReducedDim(sce, dimred="UMAP", colour_by="Joint.Location",point_alpha=0.7,po
 ##### Facet by Sample
 
 
-```{r PlotFacetPCA1,fig.height=10, fig.width=15}
+```{r PlotFacetUMAP1,fig.height=10, fig.width=15}
 #Plot PCA per sample
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.8,point_size=0.5) + 
   facet_wrap(~sce$Sample)+ 
@@ -294,7 +294,7 @@ plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.8,point_size
 
 ##### Facet by Joint
 
-```{r PlotFacetPCA2, fig.height=5, fig.width=12}
+```{r PlotFacetUMAP2, fig.height=5, fig.width=12}
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample",point_alpha=0.8,point_size=0.1) + 
   facet_wrap(~sce$Joint.Location)+ 
   theme(strip.background=element_rect(fill="white"))+

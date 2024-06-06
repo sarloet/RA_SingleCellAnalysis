@@ -22,7 +22,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Subcluster Fibroblast
+# Subcluster Fibroblast Genelist Check
 
 ## Setup
 
@@ -36,7 +36,7 @@ source(here("code", "standard_libraries.R"))
 ### Additional Packages
 
 
-```{r LoadPackages, warning=FALSE,eval=FALSE}
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
@@ -44,6 +44,7 @@ library(readxl)
 library(presto)
 library(dittoSeq)
 library(gridExtra)
+library(xlsx)
 })
 
 ```
@@ -78,42 +79,42 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 #### Plot UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPCluster1}
 #cluster
 plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
 
 #### Plot Recalculated UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPCluster2}
 #cluster
 plotReducedDim(sce, paste0("MNN_UMAP_SC_reduced"),colour_by = "ManualAnno_L2", text_by="ManualAnno_L2") +labs(title="SubCluster ",subtitle="Colored by clustering")
 ```
 
 
 
-### Load Data
+### Load Table
 
-```{r LoadDataset}
+```{r LoadTable}
 ## load Eges genelist
-gene_list<-read_excel("/Users/student/Desktop/risk_loci_with_attributes_stimulation_and_expression.xlsx")
-
+gene_list<-readxl::read_excel("/Users/student/Desktop/risk_loci_with_attributes_stimulation_and_expression.xlsx")
+gene_list
 ```
 
 
-```{r LoadDataset}
+```{r GenesInSCE}
 #Get gene vector
 gene_vector <- gene_list$hgnc_symbol
 
 #Genes that are not in the SCE element
-cat("Genes not in sce:")
+cat("Genes not in sce: ",length(gene_vector[! gene_vector %in% rowData(sce)$Symbol]),"\n")
 gene_vector[! gene_vector %in% rowData(sce)$Symbol]
 
 #Only keep genes that are in the sce element
 gene_vector<-gene_vector[gene_vector %in% rowData(sce)$Symbol]
 
 #Print genevector genes that are in sce
-cat("Genes in sce:")
+cat("Genes in sce:  ",length(gene_vector),"\n")
 gene_vector
 ```
 
@@ -121,19 +122,19 @@ gene_vector
 ### Create Dotplot
 
 #### Relative expression
-```{r LoadDataset,fig.height=10, fig.width=25}
+```{r DotplotAll,fig.height=10, fig.width=25}
 dittoDotPlot(sce, vars = gene_vector, group.by ="ManualAnno_L2",min.color="lightgrey", max.color="blue",min.percent=0.1,ylab=NULL)
 ```
 
 #### Absolute expression
-```{r LoadDataset,fig.height=10, fig.width=25}
+```{r DotplotAllScaled,fig.height=10, fig.width=25}
 dittoDotPlot(sce, vars = gene_vector, group.by ="ManualAnno_L2",min.color="lightgrey", max.color="blue",min.percent=0.1,ylab=NULL,scale = FALSE)
 ```
 
 
 
 ### Wilcoxon
-```{r LoadDataset}
+```{r Wilcoxon}
 #Do wilcoxon
 markers_wilcox <- wilcoxauc(sce, group_by= "ManualAnno_L2", assay = 'logcounts')
 
@@ -142,54 +143,60 @@ topDEgenes <- top_markers(markers_wilcox, 50, padj_max = 0.05)
 topDEgenes
 #Filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
 markers_wilcox[markers_wilcox$padj<0.05 & abs(markers_wilcox$logFC)> 0.1,, drop=F]
-markers_wilcox[markers_wilcox$padj<0.05 & abs(markers_wilcox$logFC)> 0.1 & abs(markers_wilcox$auc)> 0.5,, drop=F]
+#markers_wilcox[markers_wilcox$padj<0.05 & abs(markers_wilcox$logFC)> 0.1 & abs(markers_wilcox$auc)> 0.5,, drop=F]
+
+```
+
+Save top 50 markers for each subcluster on excel sheet
+```{r SaveWCgenes}
+wb = createWorkbook()
+for (i in unique(sce$ManualAnno_L2)){
+  #get genes for the Anno
+  topDEgenes <- top_markers(markers_wilcox, 100, padj_max = 0.05)
+  markers<-topDEgenes[,paste0(i), drop=TRUE]
+  #Create table with top DE markers
+  tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
+  #Order list after padj
+  tmp <- tmp[order(tmp$padj, decreasing = FALSE),]
+  #Save table in Exelsheet
+  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE, col.names = TRUE)
+}
+saveWorkbook(wb,paste0("/Users/student/Desktop/","Ege_SC_Fibroblast_Wilcoxon.xlsx")) 
+
 
 ```
 
 
-```{r LoadDataset}
+### Get Genes that are in Genelist from Wilcoxon
+
+Get Genes that are in Genelist
+```{r WilcoxonAndGenelist}
 #Subset the wilcoxon table to only contain genes that are in the vector
 wilcox_genelist<-markers_wilcox[markers_wilcox$feature %in% gene_vector,]
+wilcox_genelist
 
 #Only take the significant genes
-wilcox_genelist[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 & abs(wilcox_genelist$auc)> 0.5,, drop=F]
-
+wilcox_genelist[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 ,, drop=F]#& abs(wilcox_genelist$auc)> 0.5
+#write.xlsx(wilcox_genelist[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 ,, drop=F], 'Ege_SC_Fibroblast_Wilcoxon.xlsx')
 
 #How many genes are in there uniquely
 cat("total")
-length(wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.01 & abs(wilcox_genelist$auc)> 0.5, drop=F])
+length(wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 & abs(wilcox_genelist$auc)> 0.5, drop=F])
 cat("unique")
-length(unique(wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.01 & abs(wilcox_genelist$auc)> 0.5, drop=F]))
+length(unique(wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 & abs(wilcox_genelist$auc)> 0.5, drop=F]))
 ```
 
-#### Dotplot of wilcoxon genes
-```{r LoadDataset,fig.height=10, fig.width=15}
-v<- wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 & abs(wilcox_genelist$auc)> 0.5 & wilcox_genelist$group=="PRG4+", drop=F]
+#### Dotplot of wilcoxon genes DE in PRG4+
+```{r DotplotPRG4,fig.height=10, fig.width=15}
+#Get DE WC genes for PRG4+
+v<- wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1  & wilcox_genelist$group=="PRG4+", drop=F]#& abs(wilcox_genelist$auc)> 0.5
+
 # Relative expression
 dittoDotPlot(sce, vars = unique(v), group.by ="ManualAnno_L2",min.color="lightgrey", max.color="blue",min.percent=0.1,ylab=NULL)
 # Absolute expression
 dittoDotPlot(sce, vars = unique(v), group.by ="ManualAnno_L2",min.color="lightgrey", max.color="blue",min.percent=0.1,ylab=NULL,scale = FALSE)
 ```
 
-
-
-
-```{r LoadDataset}
-
-wb = createWorkbook()
-if(Create.Table==TRUE){
-    for (i in 1:max(as.integer(levels(sce$paste0(ManualAnno_L2))))){
-      #get genes for the Anno
-      markers<-topDEgenes[,paste0(i), drop=TRUE]
-      #Create table
-      tmp<-markers_wilcox[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
-      #Save table in Exelsheet
-      addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
-    }
-    saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx")) 
-  }
-
-```
 
 ## Save the dataset
 

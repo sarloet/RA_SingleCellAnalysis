@@ -1,5 +1,5 @@
 ---
-title: "Clustering"
+title: "Cellcycle Assignement"
 subtitle: "04_CellCycle"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
@@ -27,14 +27,12 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ## Setup
 
 ### Standard packages
-
 ```{r LoadPackages, warning=FALSE}
 library(here)
 source(here("code", "standard_libraries.R"))
 ```
 
 ### Additional Packages
-
 ```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
@@ -44,25 +42,20 @@ library(Seurat)
 
 ```
 
-
 ### Set Parameter
-
 ```{r Setup}
 set.seed(123)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
 path <- here::here()
 ```
 
-
 ## Load Data
-
 ```{r LoadDataset}
 ## RA DATASET
 sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))
 ```
 
 ### Explore Dataset
-
 ```{r ShowDim}
 #Dimensions of count matrix
 dim(sce)
@@ -71,9 +64,8 @@ dim(sce)
 
 ## Determine Cell cycle
 
-## Define function
-
-```{r LoadDataset}
+### Define function
+```{r SetFunction}
 ## RA DATASET
 CellCycle <- function(sce)
 {
@@ -104,8 +96,8 @@ CellCycle <- function(sce)
 ```
 
 
-
-```{r LoadDataset}
+### Run Fnction
+```{r AssignCellcycle}
 ## RA DATASET
 sce<-CellCycle(sce)
   
@@ -148,7 +140,7 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="phase",point_alpha=0.7
 
 ## Frequencies of Cellcycle phase per Sample {.tabset}
 
-```{r ClusterInfo}
+```{r ClusterInfoSample}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(phase, Sample,Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
@@ -156,7 +148,7 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ### Absolute comparison
 
-```{r PlotAbsoluteClustering}
+```{r PlotAbsoluteClusteringSample}
 
 ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=phase)) +
   geom_bar(stat="identity", position="stack") +
@@ -171,7 +163,7 @@ ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=phase)) +
 
 ### Relative comparison
 
-```{r PlotRelativeClustering}
+```{r PlotRelativeClusteringSample}
 
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=phase)) +
   geom_bar(stat="identity", position="fill") +
@@ -187,7 +179,7 @@ ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=phase)) +
 
 ## Frequencies of celltypes in clusters per Condition {.tabset}
 
-```{r ClusterInfo}
+```{r ClusterInfoCondition}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(phase,Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
@@ -195,7 +187,7 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ### Absolute comparison
 
-```{r PlotAbsoluteClustering}
+```{r PlotAbsoluteClusteringCondition}
 
 ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=phase)) +
   geom_bar(stat="identity", position="stack") +
@@ -209,7 +201,7 @@ ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=phase)) +
 
 ### Relative comparison
 
-```{r PlotRelativeClustering}
+```{r PlotRelativeClusteringCondition}
 
 ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=phase)) +
   geom_bar(stat="identity", position="fill") +

@@ -62,7 +62,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/06_sce_CelltypeAnnotation.rds'))
 
 ```
 
@@ -281,7 +281,6 @@ plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by subcluster")
 ```
 
-
 ### Save the dataset
 
 ```{r SaveData}
@@ -345,7 +344,7 @@ saveRDS(sce.Tcell, file =paste0(path,'/output/07_sce_SC_Tcell.rds'))
 sce$celltype <- colData(sce)$ManualAnno_L1
 
 # Run Subcluster Function
-sce.Myeloid<-SUBCLUSTER(sce, "Myeloid", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
+sce.Myeloid<-SUBCLUSTER(sce, "Myeloid", clust_param="leiden", k_param=55, merge_order, batchcorr=FALSE)
 
 ```
 
@@ -388,6 +387,23 @@ cat(paste0("#### Colored by Sample\n"))
 print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
 
+
+
+plotColData(sce.Myeloid, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Mito percent")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+plotColData(sce.Myeloid, x="subcluster", y="detected", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Detected Genes")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+
+plotColData(sce.Myeloid, x="subcluster", y="sum", other_fields="subcluster") + 
+     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
+     ggtitle("Total Counts")+
+     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 
 ```
 
