@@ -28,7 +28,7 @@ meta_colors = list(
     "Knee" = "#7BAFDE"
   ),
 
-  "celltye_level0" = c(
+  "celltype_level0" = c(
     "Lymphocyte" = "#DC050C",
     "Myeloid" = "#FB8072",
     "Stromal" = "#B17BA6",
@@ -200,21 +200,22 @@ Plot_QC_dimred <- function(sce, dim) {
     labs( x='UMAP 1', y='UMAP 2' )+
     scale_color_viridis(option="magma")
 
-  p_cellcycle <- plotReducedDim(sce, dimred=dim, colour_by="phase",point_alpha=0.8,point_size=0.5) +
-    ggtitle("Cellcycle")+
+  p_cellcycle <- plotReducedDim(sce, dimred=dim, colour_by="phase",point_alpha=0.8,point_size=0.1) +
+    ggtitle("Cell cycle")+
     theme(legend.title=element_blank())+
     labs( x='UMAP 1', y='UMAP 2' )
 
-  p_sample <- plotReducedDim(sce, dimred=dim, colour_by="Sample",point_alpha=0.8,point_size=0.5) +
+  p_sample <- plotReducedDim(sce, dimred=dim, colour_by="Sample",point_alpha=0.8,point_size=0.1) +
     ggtitle("Sample")+
     theme(legend.title=element_blank())+
     labs( x='UMAP 1', y='UMAP 2' )+
-    scale_color_viridis(option="magma")
+    scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))],name = "Sample" )
 
   p_ribo <- plotReducedDim(sce, dimred=dim, colour_by="subsets_Ribo_percent",order_by = "subsets_Ribo_percent",point_alpha=0.8,point_size=0.5) +
     ggtitle("Ribosomal Genes")+
     theme(legend.title=element_blank())+
-    labs( x='UMAP 1', y='UMAP 2' )
+    labs( x='UMAP 1', y='UMAP 2' )+
+    scale_color_viridis(option="magma")
 
   plot<-grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
 
@@ -222,7 +223,7 @@ Plot_QC_dimred <- function(sce, dim) {
 }
 
 
-Plot_QC_violin <- function(sce, dim,labels) {
+Plot_QC_violin <- function(sce,label) {
 
   p_mito <- plotColData(sce, x=label, y="subsets_Mito_percent", other_fields=label) +
     facet_wrap(~label, nrow=1, scales = "free_x") +

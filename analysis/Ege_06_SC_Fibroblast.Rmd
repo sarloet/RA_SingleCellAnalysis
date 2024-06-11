@@ -1,24 +1,14 @@
 ---
 title: "Subcluster Fibroblast"
-subtitle: "06_SC_Fibroblast"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
-output: 
-  html_document:
-    toc: true
-    number_sections: true   
-    toc_float: true
-    code_folding: hide
-    df_print: paged
-editor_options:
-  chunk_output_type: inline
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
-knitr::opts_chunk$set(dpi = 300, fig.align = "center")
-knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
@@ -143,7 +133,6 @@ topDEgenes <- top_markers(markers_wilcox, 50, padj_max = 0.05)
 topDEgenes
 #Filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
 markers_wilcox[markers_wilcox$padj<0.05 & abs(markers_wilcox$logFC)> 0.1,, drop=F]
-#markers_wilcox[markers_wilcox$padj<0.05 & abs(markers_wilcox$logFC)> 0.1 & abs(markers_wilcox$auc)> 0.5,, drop=F]
 
 ```
 
@@ -175,7 +164,7 @@ Get Genes that are in Genelist
 wilcox_genelist<-markers_wilcox[markers_wilcox$feature %in% gene_vector,]
 wilcox_genelist
 
-#Only take the significant genes
+#Only take the significant genes padj<0.05 abs(wilcox_genelist$logFC)> 0.1
 wilcox_genelist[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 ,, drop=F]#& abs(wilcox_genelist$auc)> 0.5
 #write.xlsx(wilcox_genelist[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1 ,, drop=F], 'Ege_SC_Fibroblast_Wilcoxon.xlsx')
 
@@ -188,8 +177,9 @@ length(unique(wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_gen
 
 #### Dotplot of wilcoxon genes DE in PRG4+
 ```{r DotplotPRG4,fig.height=10, fig.width=15}
-#Get DE WC genes for PRG4+
+#Get DE WC genes for PRG4+ padj<0.05 abs(wilcox_genelist$logFC)> 0.1
 v<- wilcox_genelist$feature[wilcox_genelist$padj<0.05 & abs(wilcox_genelist$logFC)> 0.1  & wilcox_genelist$group=="PRG4+", drop=F]#& abs(wilcox_genelist$auc)> 0.5
+v
 
 # Relative expression
 dittoDotPlot(sce, vars = unique(v), group.by ="ManualAnno_L2",min.color="lightgrey", max.color="blue",min.percent=0.1,ylab=NULL)
@@ -198,8 +188,3 @@ dittoDotPlot(sce, vars = unique(v), group.by ="ManualAnno_L2",min.color="lightgr
 ```
 
 
-## Save the dataset
-
-```{r SaveData}
-#saveRDS(sce, file =paste0(path,'/output/06_sce_SC_Fibroblast.rds'))
-```

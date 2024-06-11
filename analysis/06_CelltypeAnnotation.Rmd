@@ -39,11 +39,12 @@ source(here("code", "standard_libraries.R"))
 #Load Packages
 
 suppressPackageStartupMessages({
-#library(scuttle)
 library(dittoSeq)
 library(pheatmap)
 library(xlsx)
 library(presto)
+library(UCell)
+library(patchwork)
 })
 
 ```
@@ -103,33 +104,12 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="cluster",text_by="clus
 
 ### QC UMAPs
 
-```{r PlotClusterQCUMAP,fig.height=3, fig.width=12}
-p1 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Mito_percent",order_by = "subsets_Mito_percent",point_alpha=0.8,point_size=0.5) + ggtitle("Mitochondrial Genes")+
-  theme(legend.title=element_blank())+
-  labs( x='UMAP 1', y='UMAP 2' )+
-  scale_color_viridis(option="magma")
-
-p2 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="detected",order_by = "detected",point_alpha=0.8,point_size=0.5) + ggtitle("Number of detected Genes ")+
-  theme(legend.title=element_blank())+
-  labs( x='UMAP 1', y='UMAP 2' )+
-  scale_color_viridis(option="magma")
-
-p3 <- plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum",order_by = "sum",point_alpha=0.8,point_size=0.5) + ggtitle("Sum of UMI Counts in Cell")+
-  theme(legend.title=element_blank())+
-  labs( x='UMAP 1', y='UMAP 2' )+
-  scale_color_viridis(option="magma")
-
-grid.arrange(p1, p2, p3, nrow = 1, ncol = 3)
-rm(p1, p2, p3)
-
-
-
+```{r PlotClusterQCUMAP,fig.height=10, fig.width=15}
 print(Plot_QC_dimred(sce,dim="MNN_UMAP_reduced"))
 ```
 
 
 ## Identify Marker Genes
-
 
 ### Wilcoxon rank-sum test on Cluster
 
@@ -139,22 +119,14 @@ markers_wilcox <- wilcoxauc(sce, group_by='cluster', assay = 'logcounts')
 
 ```
 
-
 ```{r SaveTopMarker}
-# Get the top 3 markers for each cluster (for heatmap)
-# filter for nominally significant (p<0.05)and over-expressed (auc>0.5)
-top3DEgenes <- top_markers(markers_wilcox, n = 3, padj_max = 0.05, pct_in_min = 20, auc_min = 0.5)#auc_min = 0.5
-
-#Show top 3 DE Genes of each cluster
-data.frame(top3DEgenes)
-top3DEgenes<-unlist(as.data.frame(top3DEgenes[,-1]),use.names = FALSE)
-
 # Get the top 50 markers for each cluster (save in excel file)
 # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
 top50DEgenes <- top_markers(markers_wilcox, n = 50, padj_max = 0.05, pct_in_min = 20, auc_min = 0.5)
 data.frame(top50DEgenes)
 
 
+#Save top 50 Markers of clusters in excel sheet
 wb = createWorkbook()
 for (i in 1:max(as.integer(levels(sce$cluster)))){
   #get genes for the cluster
@@ -165,20 +137,30 @@ for (i in 1:max(as.integer(levels(sce$cluster)))){
   #Save table in Exelsheet
   addDataFrame(tmp, sheet=createSheet(wb, paste0("Cluster ", i)), startColumn=1, row.names=FALSE,col.names = TRUE)
 }
-#saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
-
-
+saveWorkbook(wb,paste0( path , "/output/Cluster_Marker_Genes.xlsx"))
 
 ```
 
-### Wilcoxon heatmap
+### Wilcoxon heatmap and dotplot
 
-```{r PlotHeatmap}
+```{r PlotHeatmap,fig.height=10, fig.width=15}
+
+# Get the top 3 markers for each cluster 
+# filter for nominally significant (p<0.05)and over-expressed (auc>0.5)
+top3DEgenes <- top_markers(markers_wilcox, n = 3, padj_max = 0.05, pct_in_min = 20, auc_min = 0.5)#auc_min = 0.5
+
+#Show top 3 DE Genes of each cluster
+data.frame(top3DEgenes)
+top3DEgenes<-unlist(as.data.frame(top3DEgenes[,-1]),use.names = FALSE)
+
+
+
 #Heatmap of top marker genes of each cluster by Wilcoxon rank-sum 
 
 # To avoid a too big plot we only keep every 20th cell
 sce.plot <- sce[unique(top3DEgenes), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),order.by="cluster", scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE,heatmap.colors = colorRampPalette(c("darkblue", "white", "darkred"))(100),breaks = seq(-3, 3, length.out = 101 )) #assay = "scaled_asinh"
+#Heatmap
+dittoHeatmap(sce.plot, vars = unique(top3DEgenes), annot.by = c("cluster"),order.by="cluster", scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE) 
 
 
 #Dotplot
@@ -190,11 +172,92 @@ gc()
 
 
 
+
+## Cell module score with UCell
+
+### Create cell signatures with marker genes
+
+```{r MarkerGenes}
+#Function to visuaise gene Expression for vector of genes
+
+Coarse_signatures <- list(
+    Lymphocyte = c("PTPRC","CORO1A","RAC2"),
+    Myeloid = c("CSF3R","MS4A6A","MS4A7"),
+    Stromal = c("PDGFRB","DCN","PCOLCE","ACTA2"),
+    Endothelial = c("CDH5","ECSCR","CCL14")
+)
+
+Fine_signatures<- list(
+    Fibroblast = c("PDGFRB","DCN","COL1A1","PRG4"),
+    Smooth_muscle_cell = c("ACTA2","MYL9","DES","MYH11"),
+    Endothelial_cell = c("CDH5","VWF", "PECAM1","CCL14"),
+    Tcell = c("CD3E","CD3D", "CD3G","TRAC"),
+    Bcell = c("CD19","MS4A1","CD79A","TNFRSF13C"),
+    Neutrophil = c("CSF3R","S100A8","TREM1","NAMPT"),
+    Mast_cell = c("TPSAB1","CPA3","HPGDS"),
+    Myeloid = c("MARCO","LYZ","MSR1","CD14","FCGR3A"),
+    Plasma = c("JSRP1","DERL3", "JCHAIN","SDC1","MZB1"),
+    Dendritic_cell = c("FLT3","BTLA","CD86","CLEC9A","CCL22","CD1C")
+)   
+    
+```
+
+
+
+### Run UCell on sce object
+
+#### Coarse signatures
+```{r UCellCoarse}
+#Coarse_signatures
+sce.ucell <- ScoreSignatures_UCell(sce, features=Coarse_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+```
+
+```{r UCellCoarseUMAP,fig.height=10, fig.width=15}
+pll <- lapply(names(Coarse_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_reduced", colour_by=x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
+  labs( x='UMAP 1', y='UMAP 2' )
+})
+wrap_plots(pll)
+```
+
+```{r UCellCoarseExpression,fig.height=10, fig.width=15}
+pll <- lapply(names(Coarse_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = "cluster",exprs_values = "UCell")
+})
+wrap_plots(pll,ncol=2)
+```
+
+
+#### Fine signatures
+
+```{r UCellFine}
+#Fine_signatures
+sce.ucell <- ScoreSignatures_UCell(sce, features=Fine_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+```
+
+```{r UCellFineUMAP,fig.height=10, fig.width=15}
+pll <- lapply(names(Fine_signatures), function(x) {
+    plotReducedDim(sce.ucell, dimred="MNN_UMAP_reduced", colour_by=x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
+  labs( x='UMAP 1', y='UMAP 2' )
+})
+wrap_plots(pll)
+```
+
+```{r UCellFineExpression,fig.height=10, fig.width=15}
+pll <- lapply(names(Fine_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = "cluster",exprs_values = "UCell")
+})
+wrap_plots(pll,ncol=2)
+```
+
+
+
 ## Manual Celltype annotation
 
 ```{r VizGenExFunction}
 #Function to visuaise gene Expression for vector of genes
-
 VizGenEx <- function(markr){
  
   for(i in markr){
@@ -202,14 +265,12 @@ VizGenEx <- function(markr){
     cat(paste0("\n##### ", i, "\n"))
   
     gridExtra::grid.arrange(
-      arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, text_by = "cluster"), 
+      arrangeGrob(plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, text_by = "cluster",point_alpha=1,point_size=0.5), 
                   plotReducedDim(sce, dimred = "MNN_UMAP_reduced", colour_by = i, order_by=i ,point_alpha=1,point_size=0.5) 
                     +scale_colour_gradient(name = i,low = "lightgrey", high = "red"), ncol = 2), 
                   plotExpression(sce, features = i, x = "cluster"),nrow = 2)
     cat(' \n')
-  
   }
-     
 }
 
 ```
@@ -223,30 +284,29 @@ Identify major cell types for a Rough Annotation on high hierarchical level
 
 ```{r LymphocyteL0, results='asis'}
   
-VizGenEx(c("PTPRC","CORO1A","RAC2"))  
+VizGenEx(Coarse_signatures$Lymphocyte)  
 ```
 
 #### Myeloid {.tabset}
 
 ```{r MyeloidL0, results='asis'}
 
-VizGenEx(c("CSF3R","MS4A6A","MS4A7"))  
+VizGenEx(Coarse_signatures$Myeloid)  
 
 ```
 
-#### Fibroblast {.tabset}
+#### Stromal {.tabset}
 
-```{r FibroblastL0, results='asis'}
+```{r StromalL0, results='asis'}
 
-VizGenEx(c("PDGFRB","DCN","PCOLCE","ACTA2")) 
+VizGenEx(Coarse_signatures$Stromal)  
 
 ```
 
 #### Endothelial {.tabset}
 
 ```{r EndothelialL0, results='asis'}
-
-VizGenEx(c("CDH5","ECSCR","CCL14")) 
+VizGenEx(Coarse_signatures$Endothelial)  
 
 ```
 
@@ -271,7 +331,7 @@ Identify cell types for a finer grained Annotation on lower hierarchical level
 #### Myeloid / Macrophage {.tabset}
 
 ```{r MacrophageL1, results='asis'}
-
+VizGenEx(Fine_signatures$Myeloid) 
 VizGenEx(c("MARCO","LYZ","MSR1","CD14","FCGR3A")) 
 
 ```
@@ -280,7 +340,7 @@ VizGenEx(c("MARCO","LYZ","MSR1","CD14","FCGR3A"))
 #### Fibroblast {.tabset}
 
 ```{r FibroblastL1, results='asis'}
-
+VizGenEx(Fine_signatures$Fibroblast) 
 VizGenEx(c("PDGFRB","DCN","COL1A1")) 
 
 ```
@@ -288,7 +348,7 @@ VizGenEx(c("PDGFRB","DCN","COL1A1"))
 #### Lining Fibroblast {.tabset}
 
 ```{r LiningFibroblastL1, results='asis'}
-
+#VizGenEx(Fine_signatures$) 
 VizGenEx(c("PRG4","CRTAC1", "CLU")) 
 
 ```
@@ -296,7 +356,7 @@ VizGenEx(c("PRG4","CRTAC1", "CLU"))
 #### Endothelial {.tabset}
 
 ```{r EndothelialL1, results='asis'}
-
+VizGenEx(Fine_signatures$Endothelial_cell) 
 VizGenEx(c("CDH5","VWF", "PECAM1","CCL14"))
 
 ```
@@ -304,7 +364,7 @@ VizGenEx(c("CDH5","VWF", "PECAM1","CCL14"))
 #### Lymphatic Endothelial {.tabset}
 
 ```{r LymphaticEndothelialL1, results='asis'}
-
+#VizGenEx(Fine_signatures$) 
 VizGenEx(c("PROX1","LYVE1", "CCL21"))
 
 ```
@@ -312,7 +372,7 @@ VizGenEx(c("PROX1","LYVE1", "CCL21"))
 #### BCell {.tabset}
 
 ```{r BCellL1, results='asis'}
-
+VizGenEx(Fine_signatures$Bcell) 
 VizGenEx(c("CD19","MS4A1","CD79A","TNFRSF13C"))
 
 ```
@@ -320,7 +380,7 @@ VizGenEx(c("CD19","MS4A1","CD79A","TNFRSF13C"))
 #### Plasma {.tabset}
 
 ```{r PlasmaL1, results='asis'}
-
+VizGenEx(Fine_signatures$Plasma) 
 VizGenEx(c("JSRP1","DERL3", "JCHAIN","SDC1","MZB1"))
 
 ```
@@ -328,7 +388,7 @@ VizGenEx(c("JSRP1","DERL3", "JCHAIN","SDC1","MZB1"))
 #### Tcell {.tabset}
 
 ```{r TcellL1, results='asis'} 
- 
+VizGenEx(Fine_signatures$Tcell) 
 VizGenEx(c("CD3E","CD3D", "CD3G","TRAC"))
 
 ```
@@ -336,7 +396,7 @@ VizGenEx(c("CD3E","CD3D", "CD3G","TRAC"))
 #### Smooth muscle cell {.tabset}
 
 ```{r SMCL1, results='asis'}
-
+VizGenEx(Fine_signatures$Smooth_muscle_cell) 
 VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 
 ```
@@ -344,7 +404,7 @@ VizGenEx(c("ACTA2","MYL9", "DES", "MYH11"))
 #### Mastcell {.tabset}
 
 ```{r MastcellL1, results='asis'}
-
+VizGenEx(Fine_signatures$Mast_cell) 
 VizGenEx(c("TPSAB1","CPA3","HPGDS"))
 
 ```
@@ -352,15 +412,15 @@ VizGenEx(c("TPSAB1","CPA3","HPGDS"))
 #### Neutrophil {.tabset}
 
 ```{r NeutrophilL1, results='asis'}
-
+VizGenEx(Fine_signatures$Neutrophil) 
 VizGenEx(c("CSF3R","S100A8","TREM1","NAMPT"))
   
 ```
 
-#### Plasmacytoid dendritic cell {.tabset}
+#### Dendritic cell {.tabset}
 
-```{r pDCL1, results='asis'}
-
+```{r DCL1, results='asis'}
+VizGenEx(Fine_signatures$Dendritic_cell) 
 #VizGenEx(c("PTPRC","CLEC4C","LILRA4","LRRC26")) #pDC
 VizGenEx(c("FLT3","BTLA","CD86","CLEC9A","CCL22","CD1C")) #cDC
 
@@ -369,8 +429,8 @@ VizGenEx(c("FLT3","BTLA","CD86","CLEC9A","CCL22","CD1C")) #cDC
 
 #### Proliferating Cells{.tabset}
 
-```{r pDCL1, results='asis'}
-
+```{r ProliferatingL1, results='asis'}
+#VizGenEx(Fine_signatures$) 
 VizGenEx(c("MKI67","PCNA","STMN1","HMGB2")) 
 
 ```
@@ -408,22 +468,26 @@ unique(sce$ManualAnno_L1)
 
 ```{r PlotL1}
 #Plot manual Annotation
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L1", text_by="ManualAnno_L1")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="ManualAnno_L1",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$celltype_level1[seq.int(length(unique(sce$ManualAnno_L1)))],name = "Annotation" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 ##### UMAP L0
 
 ```{r PlotL0}
 #Plot manual Annotation
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by="ManualAnno_L0", text_by="ManualAnno_L0")+ ggtitle("UMAP Celllabel")
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="ManualAnno_L0",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$celltype_level0[seq.int(length(unique(sce$ManualAnno_L0)))],name = "Annotation" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 
 ## Set the Final Celllabels
 
-```{r}
+```{r SetLabel}
 ## Set Celltypes to use downstream as colLabels
 colLabels(sce) <- colData(sce)$ManualAnno_L1
 sce$celltype <- colData(sce)$ManualAnno_L1
@@ -432,15 +496,17 @@ sce$celltype <- colData(sce)$ManualAnno_L1
 
 ## Plot the assigned Cell labels
 
-```{r}
-plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= "celltype")+ ggtitle("UMAP Celllabel")
-
+```{r PlotLabel}
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="celltype",point_alpha=0.7,point_size=0.1)+
+  scale_colour_manual( values=meta_colors$celltype_level1[seq.int(length(unique(sce$celltype)))],name = "Annotation" )+ 
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
 ```
 
 
 ## Plot Selected Markergenes 
 
-```{r PlotHeatmap}
+```{r PlotLabelHeatmap}
 #Heatmap of Marker Gened used for Annotation
 #Endo "VWF", "CDH5"
 #Myeloid "CD14","FCGR3A"
@@ -459,12 +525,11 @@ markers <- c("PDGFRB","COL1A1","ACTA2","VWF", "CDH5","CD14","FCGR3A","CSF3R","S1
 
 # To avoid a too big plot we only keep every 20th cell
 sce.plot <- sce[unique(markers), seq(1, dim(sce)[2], 20)]
-dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("label"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=TRUE )
+dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("label"),scaled.to.max = TRUE,cluster_rows=FALSE,cluster_cols=FALSE)
 
 
 #Dotplot
-dittoDotPlot(sce, vars = markers , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE,
-             y.reorder=c(4,9,3,6,7,2,5,1,8,10))
+dittoDotPlot(sce, vars = markers , group.by = "label",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE, y.reorder=c(4,9,3,6,7,2,5,1,8,10))
 
 #order-->c("Fibroblast","Smooth muscle cell","Endothelial cell","Myeloid","Neutrophil","Dendritic cell","Mast cell","B cell","Plasma","T cell")
 
@@ -475,7 +540,7 @@ gc()
 
 ## Frequencies of celltypes in clusters per Sample {.tabset}
 
-```{r ClusterInfo}
+```{r ClusterInfoSample}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(celltype, Sample,Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
@@ -483,32 +548,35 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ### Absolute comparison
 
-```{r PlotAbsoluteClustering}
+```{r PlotAbsoluteClusteringSample}
 
 ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$celltype_level1[seq.int(length(unique(ClusterInfo$celltype)))] )+
   labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
-  theme_classic()
+  scale_y_continuous(expand = c(0,0)) 
 
 ```
 
 ### Relative comparison
 
-```{r PlotRelativeClustering}
+```{r PlotRelativeClusteringSample}
 
 ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$celltype_level1[seq.int(length(unique(ClusterInfo$celltype)))] )+
   labs(title="Relative comparison nr Cells in celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
-  theme_classic()
-
+  scale_y_continuous(expand = c(0,0)) 
 
 ```
 
 ## Frequencies of celltypes in clusters per Condition {.tabset}
 
-```{r ClusterInfo}
+```{r ClusterInfoCond}
 ClusterInfo <- as.data.frame(colData(sce)) %>% 
   group_by(celltype,Joint.Location) %>%
   summarise(cells = n(),.groups = 'drop') 
@@ -516,10 +584,11 @@ ClusterInfo <- as.data.frame(colData(sce)) %>%
 
 ### Absolute comparison
 
-```{r PlotAbsoluteClustering}
+```{r PlotAbsoluteClusteringCond}
 
 ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$celltype_level1[seq.int(length(unique(ClusterInfo$celltype)))] )+
   labs(title="Absolute comparison nr Cells in Celltype",subtitle="Per Condition",x="",y="Number of cells")+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
   theme_classic()
@@ -528,10 +597,11 @@ ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=celltype)) +
 
 ### Relative comparison
 
-```{r PlotRelativeClustering}
+```{r PlotRelativeClusteringCond}
 
 ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=celltype)) +
   geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$celltype_level1[seq.int(length(unique(ClusterInfo$celltype)))] )+
   labs(title="Relative comparison nr Cells in celltype",subtitle="Per Condition",x="",y="Number of cells")+
   theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
   theme_classic()
@@ -559,6 +629,7 @@ Totalcelltype <- as.data.frame(colData(sce)) %>%
 
 ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) + 
     geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
+    scale_fill_manual( values=meta_colors$Joint.Location[seq.int(length(unique(ClusterInfo$celltype)))] )+
     theme_classic()+
     labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
@@ -573,19 +644,18 @@ ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=celltype)) +
 ## Identify Marker Genes for Annotation
 
 
-### Wilcoxon rank-sum test on Cluster
+### Wilcoxon rank-sum test on Annotation
 
-```{r AnnoMarker, eval=FALSE}
-
+```{r WilcoxonLabel}
 for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
   #Wilcoxon rank-sum test
   markers_wilcox <- wilcoxauc(sce, group_by=labeling, assay = 'logcounts')
-  # Get the top 50 markers for each Anno (save in excel file)
+  # Get the top 100 markers for each Anno (save in excel file)
   # filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-  topDEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
+  topDEgenes <- top_markers(markers_wilcox, n = 100, auc_min = 0.5, pval_max = 0.05)
   
   wb = createWorkbook()
-  for (i in 1:max(as.integer(levels(sce$paste0(labeling))))){
+  for (i in unique(markers_wilcox$group) ){
     #get genes for the Anno
     markers<-topDEgenes[,paste0(i), drop=TRUE]
     #Create table
@@ -595,50 +665,8 @@ for (labeling in c('ManualAnno_L0','ManualAnno_L1')){
     addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
   }
   saveWorkbook(wb,paste0( path , "/output/",paste0(labeling),"_Wilcoxon.xlsx"))  
-  
-  
 }
 
-
-
-------------------------------------
-#Wilcoxon rank-sum test
-markers_wilcox_L0 <- wilcoxauc(sce, group_by='ManualAnno_L0', assay = 'logcounts')
-# Get the top 50 markers for each cluster (save in excel file)
-# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-topDEgenes_L0 <- top_markers(markers_wilcox_L0, n = 50, auc_min = 0.5, pval_max = 0.05)
-
-wb = createWorkbook()
-for (i in 1:max(as.integer(levels(sce$ManualAnno_L0)))){
-  #get genes for the cluster
-  markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
-  #Create table
-  tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
-  
-  #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
-}
-saveWorkbook(wb,paste0( path , "/output/Annotated_L0_Wilcoxon.xlsx"))
-
-
-
-
-markers_wilcox_L1 <- wilcoxauc(sce, group_by='ManualAnno_L1', assay = 'logcounts')
-# Get the top 50 markers for each ManualAnno_L1 (save in excel file)
-# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-topDEgenes_L1 <- top_markers(markers_wilcox_L1, n = 50, auc_min = 0.5, pval_max = 0.05)
-
-wb = createWorkbook()
-for (i in 1:max(as.integer(levels(sce$ManualAnno_L1)))){
-  #get genes for the ManualAnno_L1
-  markers<-top50DEgenes[,paste0(i), drop=TRUE]
-  #Create table
-  tmp<-markers_wilcox_L1[markers_wilcox_L1$feature %in% markers & markers_wilcox_L1$group == i,]
-  
-  #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
-}
-saveWorkbook(wb,paste0( path , "/output/Annotated_L1_Wilcoxon.xlsx"))
 ```
 
 
