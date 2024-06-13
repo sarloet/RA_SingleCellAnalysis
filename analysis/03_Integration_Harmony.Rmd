@@ -97,7 +97,6 @@ sce.BatchR <- sce
 ### Run Harmony 
 
 ```{r}
-
 #Harmony
 sce.BatchR <- harmony::RunHarmony(sce.BatchR,
     group.by.vars=c("Sample"),
@@ -118,11 +117,11 @@ The advantage of using PCA is that the total amount of variance explained by the
 elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.BatchR, "harmony")), k=5)))
 
 #PCA select nr of PC
-reducedDim(sce.BatchR,"MNN_UMAP") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
+reducedDim(sce.BatchR,"harmony_reduced") <- reducedDim(sce.BatchR,"harmony")[,seq_len(elbow)]
 reducedDimNames(sce.BatchR)
 
-ncol(reducedDim(sce.BatchR,"MNN"))
-ncol(reducedDim(sce.BatchR,"MNN_UMAP"))
+ncol(reducedDim(sce.BatchR,"harmony"))
+ncol(reducedDim(sce.BatchR,"harmony_reduced"))
 ```
 
 
