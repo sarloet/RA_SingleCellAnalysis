@@ -12,6 +12,7 @@ navbar:
   - text: Analysis
     icon: fa-bar-chart
     menu:
+    - text: Preprocessing
     - text: Data Preparation
       href: 00_DataPreparation.html
     - text: Quality Control
@@ -26,8 +27,34 @@ navbar:
       href: 05_Clustering.html
     - text: Annotation
       href: 06_CelltypeAnnotation.html
+    - text: '---------'
     - text: Subclustering
+    - text: Create Subclustering
       href: 07_Subclustering.html
+    - text: Subclustering Annotation
+      href: 07_SubClustering_Annotation.html
+    - text: Merge Subclusters
+      href: 07_SubClustering_Merge.html
+    - text: '---------'
+    - text: Analysis
+    - text: Differential Abundance
+      href: 08_DifferentialAbundance.html
+    - text: Fibroblast Subcluster Profiling
+      href: 09_SC_Fibroblast.html
+    - text: Macrophage Subcluster Profiling
+      href: 09_SC_Macrophage.html
+    - text: Differential Expression
+      href: 10_DifferentialExpression_MAST.html
+    - text: Enrichment Analysis
+      href: 11_EnrichmentAnalysis.html
+    - text: Cell Cell Communication
+      href: 11_EnrichmentAnalysis.html
+    - text: '---------'
+    - text: Spatial Transcriptomics
+    - text: Spatial Transcriptomics Knee
+      href: Spatial_knee.html
+    - text: Spatial Transcriptomics Hand
+      href: Spatial_hand.html
   - text: License
     href: license.html
 

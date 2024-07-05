@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SarahL." />
+
+
+<title>Subclustering</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Preprocessing</li>
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+    <li>
+      <a href="01_QualityControl.html">Quality Control</a>
+    </li>
+    <li>
+      <a href="02_DimensionalityReduction.html">Dimensionality Reduction</a>
+    </li>
+    <li>
+      <a href="03_Integration_Batchelor.html">Integration</a>
+    </li>
+    <li>
+      <a href="04_CellCycle.html">Cellcycle Assignement</a>
+    </li>
+    <li>
+      <a href="05_Clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="06_CelltypeAnnotation.html">Annotation</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Subclustering</li>
+    <li>
+      <a href="07_Subclustering.html">Create Subclustering</a>
+    </li>
+    <li>
+      <a href="07_Subclustering.html">Subclustering Annotation</a>
+    </li>
+    <li>
+      <a href="07_Subclustering.html">Merge Subclusters</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Analysis</li>
+    <li>
+      <a href="08_DifferentialAbundance.html">Differential Abundance</a>
+    </li>
+    <li>
+      <a href="09_SC_Fibroblast.html">Fibroblast Subcluster Profiling</a>
+    </li>
+    <li>
+      <a href="09_SC_Macrophage.html">Macrophage Subcluster Profiling</a>
+    </li>
+    <li>
+      <a href="10_DifferentialExpression_MAST.html">Differential Expression</a>
+    </li>
+    <li>
+      <a href="11_EnrichmentAnalysis.html">Enrichment Analysis</a>
+    </li>
+    <li>
+      <a href="11_EnrichmentAnalysis.html">Cell Cell Communication</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Spatial Transcriptomics</li>
+    <li>
+      <a href="Spatial_knee.html">Spatial Transcriptomics Knee</a>
+    </li>
+    <li>
+      <a href="Spatial_hand.html">Spatial Transcriptomics Hand</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Subclustering</h1>
+<h3 class="subtitle">07_SubClustering</h3>
+<h4 class="author">SarahL.</h4>
+<h4 class="date">Jun 27 2024 20:13:04</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-06-27
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240328code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240328)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240328code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240328)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    data/cellbender_data_h5/
+    Ignored:    data/spatial/
+    Ignored:    output/00_DoubletDetection.rds
+    Ignored:    output/00_sce_DataPreparation.rds
+    Ignored:    output/01_sce_QualityControl.rds
+    Ignored:    output/01_sce_QualityControl_cellfiltered.rds
+    Ignored:    output/02_sce_DimensionalityReduction.rds
+    Ignored:    output/03_sce_Integration_Batchelor.rds
+    Ignored:    output/03_sce_Integration_Harmony.rds
+    Ignored:    output/04_sce_CellCycle.rds
+    Ignored:    output/05_sce_CelltypeAnnotation.rds
+    Ignored:    output/05_sce_Clustering.rds
+    Ignored:    output/06_sce_CelltypeAnnotation.rds
+    Ignored:    output/07_sce_SC_Bcell.rds
+    Ignored:    output/07_sce_SC_Dendritic.rds
+    Ignored:    output/07_sce_SC_Dendritic_Anno.rds
+    Ignored:    output/07_sce_SC_Endothelial.rds
+    Ignored:    output/07_sce_SC_Endothelial_Anno.rds
+    Ignored:    output/07_sce_SC_Fibroblast.rds
+    Ignored:    output/07_sce_SC_Fibroblast_Anno.rds
+    Ignored:    output/07_sce_SC_Macrophage.rds
+    Ignored:    output/07_sce_SC_Macrophage_Anno.rds
+    Ignored:    output/07_sce_SC_Mast.rds
+    Ignored:    output/07_sce_SC_Merge.rds
+    Ignored:    output/07_sce_SC_Neutrophil.rds
+    Ignored:    output/07_sce_SC_Plasma.rds
+    Ignored:    output/07_sce_SC_SmoothMuscle.rds
+    Ignored:    output/07_sce_SC_Tcell.rds
+    Ignored:    output/07_sce_SC_Tcell_Anno.rds
+    Ignored:    output/08_DifferentialAbundance_miloR.rds
+    Ignored:    output/10_sce_CellChat_Knee.rds
+    Ignored:    output/10_sce_CellChat_MCP.rds
+    Ignored:    output/10_sce_CellChat_Wrist.rds
+    Ignored:    output/Annotation_L0_Wilcoxon.xlsx
+    Ignored:    output/Annotation_L1_Wilcoxon.xlsx
+    Ignored:    output/Annotation_output/
+    Ignored:    output/Cluster_Marker_Genes.xlsx
+    Ignored:    output/Knee_KvM.csv
+    Ignored:    output/Knee_KvW.csv
+    Ignored:    output/MAST_output/
+    Ignored:    output/MCP_KvM.csv
+    Ignored:    output/MCP_MvW.csv
+    Ignored:    output/ManualAnno_L0_Wilcoxon.xlsx
+    Ignored:    output/ManualAnno_L1_Wilcoxon.xlsx
+    Ignored:    output/ScMergeAnnotation_output/
+    Ignored:    output/Spatial_knee.rds
+    Ignored:    output/Spatial_knee_SC.rds
+    Ignored:    output/Subcluster_Annotation_output/
+    Ignored:    output/Wrist_KvW.csv
+    Ignored:    output/Wrist_MvW.csv
+    Ignored:    renv/.DS_Store
+    Ignored:    renv/library/
+    Ignored:    renv/staging/
+
+Untracked files:
+    Untracked:  analysis/07_SubClustering_Merge.Rmd
+    Untracked:  analysis/08_DifferentialExpression_EdgeR.Rmd
+    Untracked:  analysis/08_DifferentialExpression_MAST.Rmd
+    Untracked:  analysis/08_DifferentialExpression_Pseudobulk.Rmd
+    Untracked:  analysis/08_DifferentialExpression_muscat.Rmd
+    Untracked:  analysis/09_DifferentialAbundance_miloR.Rmd
+    Untracked:  analysis/10_EnrichmentAnalysis.Rmd
+    Untracked:  analysis/11_CellChat.Rmd
+    Untracked:  analysis/99_Plotting.Rmd
+    Untracked:  analysis/Spatial_hand.Rmd
+    Untracked:  analysis/Spatial_knee.Rmd
+
+Unstaged changes:
+    Modified:   analysis/02_DimensionalityReduction.Rmd
+    Modified:   analysis/03_Integration_Batchelor.Rmd
+    Modified:   analysis/06_CelltypeAnnotation.Rmd
+    Modified:   analysis/06_SC_Fibroblast.Rmd
+    Deleted:    analysis/07_DifferentialExpression_EdgeR.Rmd
+    Deleted:    analysis/07_DifferentialExpression_MAST.Rmd
+    Deleted:    analysis/07_DifferentialExpression_Pseudobulk.Rmd
+    Deleted:    analysis/07_DifferentialExpression_muscat.Rmd
+    Modified:   analysis/07_SubClustering.Rmd
+    Modified:   analysis/07_SubClustering_Annotation.Rmd
+    Deleted:    analysis/08_DifferentialAbundance_miloR.Rmd
+    Deleted:    analysis/09_EnrichmentAnalysis.Rmd
+    Deleted:    analysis/10_Plotting.Rmd
+    Deleted:    analysis/Ege_06_SC_Fibroblast.Rmd
+    Deleted:    analysis/OLD06_SubClustering.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/index.Rmd
+    Modified:   code/standard_libraries.R
+    Modified:   renv.lock
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/07_SubClustering.Rmd</code>) and
+HTML (<code>docs/07_SubClustering.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5887ab5acd04bce3d1a3c048b1b47c5817fd9520/analysis/07_SubClustering.Rmd" target="_blank">5887ab5</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-20
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ba195bc605e0eb9b5f59bbb4eff395f8fe034a2c/analysis/07_SubClustering.Rmd" target="_blank">ba195bc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-13
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/analysis/07_SubClustering.Rmd" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/8be1325b4f1f68b038dda8cc4de3afa05defb4cc/analysis/07_SubClustering.Rmd" target="_blank">8be1325</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-05
+</td>
+<td>
+renv
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="subclustering" class="section level1">
+<h1>Subclustering</h1>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="standard-packages" class="section level3">
+<h3>Standard packages</h3>
+<pre class="r"><code>library(here)
+source(here(&quot;code&quot;, &quot;standard_libraries.R&quot;))</code></pre>
+</div>
+<div id="additional-packages" class="section level3">
+<h3>Additional Packages</h3>
+<pre class="r"><code>#Load Packages
+
+suppressPackageStartupMessages({
+library(batchelor)
+library(bluster)
+library(presto)
+library(dittoSeq)
+library(gridExtra)
+library(intrinsicDimension)
+})</code></pre>
+</div>
+<div id="set-parameter" class="section level3">
+<h3>Set Parameter</h3>
+<pre class="r"><code>set.seed(123)
+bpp &lt;- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
+path &lt;- here::here()</code></pre>
+</div>
+<div id="load-data" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce &lt;- readRDS(file = paste0(path,&#39;/output/06_sce_CelltypeAnnotation.rds&#39;)) # 06</code></pre>
+</div>
+<div id="explore-dataset" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce)</code></pre>
+<pre><code>[1] 30488 64639</code></pre>
+<p><a
+href="https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html##"
+class="uri">https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html##</a>
+UMAPs coloured by cluster or cell type</p>
+</div>
+<div id="plot-annotation" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+</div>
+<div id="annotation-l1" class="section level3">
+<h3>Annotation L1</h3>
+<pre class="r"><code>#cluster
+plotReducedDim(sce, &quot;MNN_UMAP_reduced&quot;, colour_by=&quot;Annotation_L1&quot;, text_by=&quot;Annotation_L1&quot;) +labs(title=&quot;UMAP colored by clusters&quot;,subtitle = &quot;UMAP of integrated dataset&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPAnnotationL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="annotation-l0" class="section level3">
+<h3>Annotation L0</h3>
+<pre class="r"><code>#cell type
+plotReducedDim(sce, &quot;MNN_UMAP_reduced&quot;, colour_by=&quot;Annotation_L0&quot;, text_by=&quot;Annotation_L0&quot;) +labs(title=&quot;UMAP colored by Cell type &quot;,subtitle = &quot;UMAP of integrated dataset&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPAnnotationL0-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="subclustering-function" class="section level2">
+<h2>Subclustering Function</h2>
+<pre class="r"><code># Create Subclustering function
+
+SUBCLUSTER &lt;- function(sce.sc, sc_celltype, clust_param=&quot;leiden&quot;, k_param=50, merge_order, batchcorr=FALSE){
+set.seed(123)
+
+#Subset sce object for ce scelltype
+sce.subset &lt;- sce.sc[,sce.sc$celltype == sc_celltype]
+    
+#Get top HVG for subcluster
+dec &lt;- modelGeneVar(sce.subset, block=sce.subset$Sample, density.weights=FALSE,BPPARAM=bpp)
+top.hvgs &lt;- getTopHVGs(dec, n=2000)
+rowData(sce.subset)$hvg.sc &lt;- rownames(sce.subset) %in% top.hvgs
+
+
+
+if(batchcorr==TRUE){
+  #Batch correction on subcluster
+  sce.Batchelor &lt;- fastMNN(sce.Batchelor, 
+                            batch=sce.Batchelor$Sample, 
+                            prop.k=0.05,  
+                            subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[[&quot;hvg.sc&quot;]]], 
+                            correct.all=TRUE, merge.order = merge_order, BPPARAM = bpp)
+      
+  assay(sce.subset, &quot;reconstructed&quot;) &lt;- assay(sce.Batchelor, &quot;reconstructed&quot;)
+  reducedDim(sce.subset, &#39;MNN_SC&#39;) &lt;- reducedDim(sce.Batchelor, &#39;corrected&#39;)
+  reducedDim(sce.subset, &#39;MNN_SC_reduced&#39;) &lt;- reducedDim(sce.Batchelor, &#39;corrected&#39;)[,seq_len(15)]
+         
+  }else{
+  #Re run PCA on subset
+  sce.subset&lt;-runPCA(sce.subset,exprs_values =&quot;reconstructed&quot;, subset_row = rowData(sce.subset)$hvg.sc, name = &quot;MNN_SC&quot;)
+  reducedDim(sce.subset, &#39;MNN_SC_reduced&#39;) &lt;- reducedDim(sce.subset, &#39;MNN_SC&#39;)[,seq_len(15)]
+  
+  }
+
+#Get recalculated UMAP on subset
+sce.subset &lt;- runUMAP(sce.subset,name = &quot;MNN_UMAP_SC_reduced&quot;, dimred = &#39;MNN_SC_reduced&#39;,subset_row=rowData(sce.subset)$hvg.sc)
+
+#Recluster the cells 
+set.seed(123)
+cluster &lt;- clusterCells(sce.subset, use.dimred = &quot;MNN_SC_reduced&quot;, BLUSPARAM = bluster::SNNGraphParam(k= k_param,cluster.fun=clust_param, BPPARAM =bpp))
+
+#Add Subcluster label to sce
+colData(sce.subset)$subcluster &lt;- cluster
+sce.subset$subcluster &lt;- factor(sce.subset$subcluster)
+    
+return(sce.subset)
+}</code></pre>
+<pre class="r"><code>#Set manual merge_order
+merge_order &lt;- list(
+            list(&quot;SynBio_028&quot;, &quot;SynBio_049&quot;, &quot;SynBio_076&quot;, &quot;SynBio_081&quot;, &quot;SynBio_087&quot;),#MCP
+            list(&quot;SynBio_077a&quot;,&quot;SynBio_093&quot;, &quot;SynBio_096&quot;,&quot;SynBio_098a&quot;, &quot;SynBio_127&quot;),#Knee 
+            list(&quot;SynBio_050&quot;, &quot;SynBio_074&quot;, &quot;SynBio_077b&quot;,&quot;SynBio_083&quot;,&quot;SynBio_084&quot;,&quot;SynBio_098b&quot;))#Wrist</code></pre>
+<hr />
+</div>
+<div id="subcluster-fibroblast" class="section level2">
+<h2>Subcluster Fibroblast</h2>
+<div id="run-subclustering" class="section level3">
+<h3>Run Subclustering</h3>
+<pre class="r"><code>#get correct parent label to subcluster
+sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Fibroblast&lt;-SUBCLUSTER(sce, &quot;Fibroblast&quot;, clust_param=&quot;leiden&quot;, k_param=45, merge_order, batchcorr=FALSE)</code></pre>
+<pre class="r"><code>dim(sce.Fibroblast)</code></pre>
+<pre><code>[1] 30488 14722</code></pre>
+</div>
+<div id="plot-umap-of-subclusters" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterFB1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterFB1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-1" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcFB1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-1" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcFB1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Fibroblast,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterOC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Fibroblast,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterOC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="remove-bad-quality-subcluster" class="section level3">
+<h3>Remove bad quality subcluster</h3>
+<pre class="r"><code>dim(sce.Fibroblast)</code></pre>
+<pre><code>[1] 30488 14722</code></pre>
+<pre class="r"><code>sce.Fibroblast &lt;- sce.Fibroblast[,sce.Fibroblast$subcluster != 7]
+sce.Fibroblast &lt;- sce.Fibroblast[,sce.Fibroblast$subcluster != 8]
+sce.Fibroblast &lt;- sce.Fibroblast[,sce.Fibroblast$subcluster != 9]
+dim(sce.Fibroblast)</code></pre>
+<pre><code>[1] 30488 13739</code></pre>
+<pre class="r"><code># Re-Run Subcluster Function
+sce.Fibroblast&lt;-SUBCLUSTER(sce.Fibroblast, &quot;Fibroblast&quot;, clust_param=&quot;leiden&quot;, k_param=45, merge_order, batchcorr=FALSE)</code></pre>
+</div>
+<div id="plot-umap-of-subclusters-1" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-2" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterFB2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-2" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterFB2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-1"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-3" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcFB2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-3" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcFB2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;POSTN&quot; , order_by=&quot;POSTN&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;POSTN&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;CXCL12&quot; , order_by=&quot;CXCL12&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;CXCL12&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;PRG4&quot; , order_by=&quot;PRG4&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;PRG4&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;COMP&quot; , order_by=&quot;COMP&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;COMP&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;MFAP5&quot; , order_by=&quot;MFAP5&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;MFAP5&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;ACTA2&quot; , order_by=&quot;ACTA2&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;ACTA2&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/unnamed-chunk-1-6.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="subcluster-umap" class="section level3">
+<h3>Subcluster UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce.Fibroblast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by subcluster&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/FinalUMAPFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="save-the-dataset" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Fibroblast, file =paste0(path,&#39;/output/07_sce_SC_Fibroblast.rds&#39;))
+rm(sce.Fibroblast)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10361093  553.4   17478465   933.5         NA   17478465   933.5
+Vcells 948331925 7235.2 1831819130 13975.7     102400 1824656392 13921.1</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-macrophage" class="section level2">
+<h2>Subcluster Macrophage</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Macrophage&lt;-SUBCLUSTER(sce, &quot;Macrophage&quot;, clust_param=&quot;leiden&quot;, k_param=65, merge_order, batchcorr=FALSE)</code></pre>
+<pre class="r"><code>dim(sce.Macrophage)</code></pre>
+<pre><code>[1] 30488 20592</code></pre>
+<div id="plot-umap-of-subclusters-2" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-4" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMP1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-4" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMP1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-2"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-5" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMP1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-5" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMP1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Plot_QC_dimred(sce.Macrophage,&quot;MNN_UMAP_SC_reduced&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterOCMP1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Macrophage,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterOCMP1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+</div>
+<div id="remove-bad-quality-subcluster-1" class="section level3">
+<h3>Remove bad quality subcluster</h3>
+<pre class="r"><code>dim(sce.Macrophage)</code></pre>
+<pre><code>[1] 30488 20592</code></pre>
+<pre class="r"><code>sce.Macrophage &lt;- sce.Macrophage[,sce.Macrophage$subcluster != 3]
+sce.Macrophage &lt;- sce.Macrophage[,sce.Macrophage$subcluster != 4]
+dim(sce.Macrophage)</code></pre>
+<pre><code>[1] 30488 19510</code></pre>
+<pre class="r"><code># Re-Run Subcluster Function
+sce.Macrophage&lt;-SUBCLUSTER(sce.Macrophage, &quot;Macrophage&quot;, clust_param=&quot;leiden&quot;, k_param=55, merge_order, batchcorr=FALSE)</code></pre>
+</div>
+<div id="plot-umap-of-subclusters-3" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-6" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-6" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-3"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-7" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-7" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="subcluster-umap-1" class="section level3">
+<h3>Subcluster UMAP</h3>
+<pre class="r"><code>plotReducedDim(sce.Macrophage, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by subcluster&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/FinalUMAPMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="save-the-dataset-1" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Macrophage, file =paste0(path,&#39;/output/07_sce_SC_Macrophage.rds&#39;))
+rm(sce.Macrophage)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10361380  553.4   17478465   933.5         NA   17478465   933.5
+Vcells 979146360 7470.3 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-t-cell" class="section level2">
+<h2>Subcluster T cell</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Tcell&lt;-SUBCLUSTER(sce, &quot;T cell&quot;, clust_param=&quot;leiden&quot;, k_param=55, merge_order,batchcorr=FALSE) #55</code></pre>
+<div id="plot-umap-of-subclusters-4" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-8" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Tcell, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterTC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-8" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Tcell, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterTC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-4"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-9" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Tcell, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcTC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-9" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Tcell, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcTC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster-1" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Tcell,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcTC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Tcell,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcTC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="save-the-dataset-2" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Tcell, file =paste0(path,&#39;/output/07_sce_SC_Tcell.rds&#39;))
+rm(sce.Tcell)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10361536  553.4   17478465   933.5         NA   17478465   933.5
+Vcells 865629026 6604.3 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-endothelial" class="section level2">
+<h2>Subcluster Endothelial</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Endothelial&lt;-SUBCLUSTER(sce, &quot;Endothelial cell&quot;, clust_param=&quot;leiden&quot;, k_param=50, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-5" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-10" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterEC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-10" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterEC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-5"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-11" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcEC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-11" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcEC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster-2" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>Plot_QC_dimred(sce.Endothelial,dim=&quot;MNN_UMAP_SC_reduced&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQc1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Plot_QC_violin(sce.Endothelial,label=&quot;subcluster&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQc1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#remove bad subcluster
+dim(sce.Endothelial)</code></pre>
+<pre><code>[1] 30488  5819</code></pre>
+<pre class="r"><code>sce.Endothelial &lt;- sce.Endothelial[,sce.Endothelial$subcluster != 3]
+dim(sce.Endothelial)</code></pre>
+<pre><code>[1] 30488  5012</code></pre>
+<pre class="r"><code># Run Subcluster Function
+sce.Endothelial&lt;-SUBCLUSTER(sce.Endothelial, &quot;Endothelial cell&quot;, clust_param=&quot;leiden&quot;, k_param=39, merge_order, batchcorr=FALSE)</code></pre>
+</div>
+<div id="plot-umap-of-subclusters-6" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-12" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterEC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-12" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterEC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-6"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-13" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcEC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-13" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Endothelial, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcEC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-dataset-3" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Endothelial, file =paste0(path,&#39;/output/07_sce_SC_Endothelial.rds&#39;))
+rm(sce.Endothelial)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10361786  553.4   17478465   933.5         NA   17478465   933.5
+Vcells 809344264 6174.9 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-smc" class="section level2">
+<h2>Subcluster SMC</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.SmoothMuscle&lt;-SUBCLUSTER(sce, &quot;Smooth muscle cell&quot;, clust_param=&quot;leiden&quot;, k_param=40, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-7" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-14" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterSMC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-14" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterSMC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-7"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-15" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcSMC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-15" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcSMC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster-3" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.SmoothMuscle,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.SmoothMuscle,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;ACTA2&quot; , order_by=&quot;ACTA2&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;ACTA2&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC1%20-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#remove bad subcluster
+dim(sce.SmoothMuscle)</code></pre>
+<pre><code>[1] 30488   815</code></pre>
+<pre class="r"><code>sce.SmoothMuscle &lt;- sce.SmoothMuscle[,sce.SmoothMuscle$subcluster != 2]
+dim(sce.SmoothMuscle)</code></pre>
+<pre><code>[1] 30488   392</code></pre>
+<pre class="r"><code># Run Subcluster Function
+#sce.SmoothMuscle&lt;-SUBCLUSTER(sce.SmoothMuscle, &quot;Endothelial cell&quot;, clust_param=&quot;leiden&quot;, k_param=40, merge_order, batchcorr=FALSE)</code></pre>
+</div>
+<div id="plot-umap-of-subclusters-8" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-16" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterSMC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-16" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterSMC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-8"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-17" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcSMC2C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-17" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcSMC2S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster-4" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.SmoothMuscle,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.SmoothMuscle,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC2-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+<pre class="r"><code>plotReducedDim(sce.SmoothMuscle, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;ACTA2&quot; , order_by=&quot;ACTA2&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;ACTA2&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcSMC2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="save-the-dataset-4" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.SmoothMuscle, file =paste0(path,&#39;/output/07_sce_SC_SmoothMuscle.rds&#39;))
+rm(sce.SmoothMuscle)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10366763  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 740810347 5652.0 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-dendrittic-cells" class="section level2">
+<h2>Subcluster Dendrittic Cells</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Dendritic&lt;-SUBCLUSTER(sce, &quot;Dendritic cell&quot;, clust_param=&quot;leiden&quot;, k_param=45, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-9" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-18" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Dendritic, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterDC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-18" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Dendritic, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterDC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-9"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-19" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Dendritic, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcDC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-19" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Dendritic, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcDC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subcluster-5" class="section level3">
+<h3>Plot QC UMAP of Subcluster</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Dendritic,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcDC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Dendritic,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcDC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="save-the-dataset-5" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Dendritic, file =paste0(path,&#39;/output/07_sce_SC_Dendritic.rds&#39;))
+rm(sce.Dendritic)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10366224  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 751271904 5731.8 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-mast-cells" class="section level2">
+<h2>Subcluster Mast Cells</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Mast&lt;-SUBCLUSTER(sce, &quot;Mast cell&quot;, clust_param=&quot;leiden&quot;, k_param=20, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-10" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-20" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Mast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-20" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Mast, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterMC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-10"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-21" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Mast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-21" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Mast, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcMC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subclusters" class="section level3">
+<h3>Plot QC UMAP of Subclusters</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Mast,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcMC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Mast,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcMC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+<pre class="r"><code>plotReducedDim(sce.Mast, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = &quot;TPSAB1&quot; , order_by=&quot;TPSAB1&quot; ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = &quot;TPSAB1&quot;,low = &quot;lightgrey&quot;, high = &quot;red&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcMC1%20-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#remove bad subcluster
+dim(sce.Mast)</code></pre>
+<pre><code>[1] 30488   300</code></pre>
+<pre class="r"><code>sce.Mast &lt;- sce.Mast[,sce.Mast$subcluster == 2]
+dim(sce.Mast)</code></pre>
+<pre><code>[1] 30488   198</code></pre>
+</div>
+<div id="save-the-dataset-6" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Mast, file =paste0(path,&#39;/output/07_sce_SC_Mast.rds&#39;))
+rm(sce.Mast)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10367224  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 738633659 5635.4 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-b-cell" class="section level2">
+<h2>Subcluster B cell</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Bcell&lt;-SUBCLUSTER(sce, &quot;B cell&quot;, clust_param=&quot;leiden&quot;, k_param=50, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-11" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-22" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Bcell, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterBC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-22" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Bcell, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterBC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-11"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-23" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Bcell, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcBC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-23" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Bcell, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcBC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subclusters-1" class="section level3">
+<h3>Plot QC UMAP of Subclusters</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Bcell,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcBC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Bcell,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcBC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="save-the-dataset-7" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Bcell, file =paste0(path,&#39;/output/07_sce_SC_Bcell.rds&#39;))
+rm(sce.Bcell)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10366620  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 748157433 5708.0 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-plasma-cell" class="section level2">
+<h2>Subcluster Plasma cell</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Plasma&lt;-SUBCLUSTER(sce, &quot;Plasma&quot;, clust_param=&quot;leiden&quot;, k_param=50, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-12" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-24" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Plasma, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterPC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-24" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Plasma, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterPC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-12"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-25" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Plasma, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcPC1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-25" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Plasma, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcPC1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subclusters-2" class="section level3">
+<h3>Plot QC UMAP of Subclusters</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Plasma,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcPC1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Plasma,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcPC1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="save-the-dataset-8" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Plasma, file =paste0(path,&#39;/output/07_sce_SC_Plasma.rds&#39;))
+rm(sce.Plasma)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10366807  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 745439692 5687.3 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<hr />
+</div>
+</div>
+<div id="subcluster-neutrophil" class="section level2">
+<h2>Subcluster Neutrophil</h2>
+<pre class="r"><code>sce$celltype &lt;- colData(sce)$Annotation_L1
+
+# Run Subcluster Function
+sce.Neutrophil&lt;-SUBCLUSTER(sce, &quot;Neutrophil&quot;, clust_param=&quot;leiden&quot;, k_param=50, merge_order, batchcorr=FALSE)</code></pre>
+<div id="plot-umap-of-subclusters-13" class="section level3 tabset">
+<h3 class="tabset">Plot UMAP of Subclusters</h3>
+<div id="colored-by-clustering-26" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Neutrophil, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterNP1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-26" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Neutrophil, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;UMAP of Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterNP1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-recalculated-umap-of-subcluster-13"
+class="section level3 tabset">
+<h3 class="tabset">Plot Recalculated UMAP of Subcluster</h3>
+<div id="colored-by-clustering-27" class="section level4">
+<h4>Colored by Clustering</h4>
+<pre class="r"><code>plotReducedDim(sce.Neutrophil, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;,text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcNP1C%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="colored-by-sample-27" class="section level4">
+<h4>Colored by Sample</h4>
+<pre class="r"><code>plotReducedDim(sce.Neutrophil, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Sample&quot;) +
+          labs(title=paste0(&quot;Recalculated UMAP for Subcluster&quot;),subtitle=&quot;Colored by Sample&quot;)</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterRecalcNP1S%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plot-qc-umap-of-subclusters-3" class="section level3">
+<h3>Plot QC UMAP of Subclusters</h3>
+<pre class="r"><code>print(Plot_QC_dimred(sce.Neutrophil,dim=&quot;MNN_UMAP_SC_reduced&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcNP1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(2 x 3) “arrange”: 6 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (1-1,2-2) arrange gtable[layout] 3 3 (1-1,3-3)
+arrange gtable[layout] 4 4 (2-2,1-1) arrange gtable[layout] 5 5
+(2-2,2-2) arrange gtable[layout] 6 6 (2-2,3-3) arrange
+gtable[layout]</p>
+<pre class="r"><code>print(Plot_QC_violin(sce.Neutrophil,label=&quot;subcluster&quot;))</code></pre>
+<p><img src="figure/07_SubClustering.Rmd/UMAPSubclusterQcNP1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" />TableGrob
+(4 x 1) “arrange”: 4 grobs z cells name grob 1 1 (1-1,1-1) arrange
+gtable[layout] 2 2 (2-2,1-1) arrange gtable[layout] 3 3 (3-3,1-1)
+arrange gtable[layout] 4 4 (4-4,1-1) arrange gtable[layout]</p>
+</div>
+<div id="save-the-dataset-9" class="section level3">
+<h3>Save the dataset</h3>
+<pre class="r"><code>saveRDS(sce.Neutrophil, file =paste0(path,&#39;/output/07_sce_SC_Neutrophil.rds&#39;))
+rm(sce.Neutrophil)
+gc()</code></pre>
+<pre><code>            used   (Mb) gc trigger    (Mb) limit (Mb)   max used    (Mb)
+Ncells  10367037  553.7   17478465   933.5         NA   17478465   933.5
+Vcells 741039896 5653.7 1831819130 13975.7     102400 1831817973 13975.7</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.3 (2024-02-29)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Warsaw
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices datasets  utils     methods  
+[8] base     
+
+other attached packages:
+ [1] tidyr_1.3.1                 org.Hs.eg.db_3.18.0        
+ [3] AnnotationDbi_1.64.1        clusterProfiler_4.10.1     
+ [5] viridis_0.6.5               viridisLite_0.4.2          
+ [7] gridExtra_2.3               scran_1.30.2               
+ [9] scater_1.30.1               scuttle_1.12.0             
+[11] SingleCellExperiment_1.24.0 SummarizedExperiment_1.32.0
+[13] Biobase_2.62.0              GenomicRanges_1.54.1       
+[15] GenomeInfoDb_1.38.8         IRanges_2.36.0             
+[17] S4Vectors_0.40.2            BiocGenerics_0.48.1        
+[19] MatrixGenerics_1.14.0       matrixStats_1.3.0          
+[21] dplyr_1.1.4                 ggplot2_3.5.1              
+[23] BiocParallel_1.36.0         here_1.0.1                 
+[25] workflowr_1.7.1            
+
+loaded via a namespace (and not attached):
+  [1] RcppAnnoy_0.0.22          splines_4.3.3            
+  [3] later_1.3.2               bitops_1.0-7             
+  [5] ggplotify_0.1.2           tibble_3.2.1             
+  [7] polyclip_1.10-6           lifecycle_1.0.4          
+  [9] edgeR_4.0.16              rprojroot_2.0.4          
+ [11] processx_3.8.4            lattice_0.22-6           
+ [13] MASS_7.3-60.0.1           magrittr_2.0.3           
+ [15] limma_3.58.1              sass_0.4.9               
+ [17] rmarkdown_2.27            jquerylib_0.1.4          
+ [19] yaml_2.3.8                metapod_1.10.1           
+ [21] httpuv_1.6.15             cowplot_1.1.3            
+ [23] DBI_1.2.3                 RColorBrewer_1.1-3       
+ [25] abind_1.4-5               zlibbioc_1.48.2          
+ [27] purrr_1.0.2               ggraph_2.2.1             
+ [29] RCurl_1.98-1.14           yulab.utils_0.1.4        
+ [31] tweenr_2.0.3              git2r_0.33.0             
+ [33] GenomeInfoDbData_1.2.11   enrichplot_1.22.0        
+ [35] ggrepel_0.9.5             irlba_2.3.5.1            
+ [37] tidytree_0.4.6            dqrng_0.4.1              
+ [39] DelayedMatrixStats_1.24.0 codetools_0.2-20         
+ [41] DelayedArray_0.28.0       DOSE_3.28.2              
+ [43] ggforce_0.4.2             tidyselect_1.2.1         
+ [45] aplot_0.2.3               farver_2.1.2             
+ [47] ScaledMatrix_1.10.0       jsonlite_1.8.8           
+ [49] BiocNeighbors_1.20.2      tidygraph_1.3.1          
+ [51] tools_4.3.3               treeio_1.26.0            
+ [53] Rcpp_1.0.12               glue_1.7.0               
+ [55] SparseArray_1.2.4         xfun_0.45                
+ [57] qvalue_2.34.0             withr_3.0.0              
+ [59] BiocManager_1.30.23       fastmap_1.2.0            
+ [61] bluster_1.12.0            fansi_1.0.6              
+ [63] callr_3.7.6               digest_0.6.36            
+ [65] rsvd_1.0.5                R6_2.5.1                 
+ [67] gridGraphics_0.5-1        colorspace_2.1-0         
+ [69] GO.db_3.18.0              RSQLite_2.3.7            
+ [71] utf8_1.2.4                generics_0.1.3           
+ [73] renv_1.0.7                data.table_1.15.4        
+ [75] FNN_1.1.4                 graphlayouts_1.1.1       
+ [77] httr_1.4.7                S4Arrays_1.2.1           
+ [79] scatterpie_0.2.3          whisker_0.4.1            
+ [81] uwot_0.2.2                pkgconfig_2.0.3          
+ [83] gtable_0.3.5              blob_1.2.4               
+ [85] XVector_0.42.0            shadowtext_0.1.3         
+ [87] htmltools_0.5.8.1         fgsea_1.28.0             
+ [89] scales_1.3.0              png_0.1-8                
+ [91] ggfun_0.1.5               knitr_1.47               
+ [93] rstudioapi_0.16.0         reshape2_1.4.4           
+ [95] nlme_3.1-165              cachem_1.1.0             
+ [97] stringr_1.5.1             parallel_4.3.3           
+ [99] vipor_0.4.7               HDO.db_0.99.1            
+[101] pillar_1.9.0              grid_4.3.3               
+[103] vctrs_0.6.5               promises_1.3.0           
+[105] BiocSingular_1.18.0       beachmat_2.18.1          
+[107] cluster_2.1.6             beeswarm_0.4.0           
+[109] evaluate_0.24.0           cli_3.6.3                
+[111] locfit_1.5-9.10           compiler_4.3.3           
+[113] rlang_1.1.4               crayon_1.5.3             
+[115] labeling_0.4.3            ps_1.7.6                 
+[117] getPass_0.2-4             plyr_1.8.9               
+[119] fs_1.6.4                  ggbeeswarm_0.7.2         
+[121] stringi_1.8.4             munsell_0.5.1            
+[123] Biostrings_2.70.3         lazyeval_0.2.2           
+[125] GOSemSim_2.28.1           Matrix_1.6-5             
+[127] patchwork_1.2.0           sparseMatrixStats_1.14.0 
+[129] bit64_4.0.5               KEGGREST_1.42.0          
+[131] statmod_1.5.0             highr_0.11               
+[133] igraph_2.0.3              memoise_2.0.1            
+[135] bslib_0.7.0               ggtree_3.10.1            
+[137] fastmatch_1.1-4           bit_4.0.5                
+[139] gson_0.1.0                ape_5.8                  </code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

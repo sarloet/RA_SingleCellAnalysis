@@ -1,0 +1,178 @@
+---
+title: "Spatial Analysis Hand"
+subtitle: "Spatial_hand"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Spatial Analysis Knee
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(ggspavis)
+library(bluster)
+library(SPOTlight)
+library(SpatialExperiment)
+library(ggcorrplot)
+library(NMF)
+})
+
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r }
+#C1_OA488_Hand D_RA_MCP
+spe <- read10xVisium(paste0(path,'/data/spatial/D_RA_MCP'), c("D_RA_MCP"), type = "sparse", data = "filtered", images = "lowres", load = FALSE)
+
+#Edit Rownames
+rowData(spe)$ENSEMBL <- rownames(spe)
+rownames(spe) <- paste0(rowData(spe)$ENSEMBL, ".", rowData(spe)$symbol)
+spe
+```
+
+```{r }
+dim(spe)
+```
+
+```{r }
+#Inspect spe object
+head(colData(spe))
+head(rowData(spe))
+head(spatialCoords(spe))
+imgData(spe)
+```
+
+
+```{r }
+spi <- getImg(spe)
+
+#Plot H&E image
+plot(imgRaster(spi))
+
+#Plot spatial coordinates (spots)
+plotSpots(spe)
+```
+
+```{r }
+# subset to keep only spots over tissue
+spe <- spe[, colData(spe)$in_tissue == 1]
+dim(spe)
+```
+
+
+## Pre-processing
+
+```{r }
+# Indentify mitochondrial genes
+is_mito<- grepl("(^MT-)|(^mt-)", rowData(spe)$symbol)
+cat("Mitochondrial genes:", rowData(spe)$symbol[is_mito]) #Show the MT genes
+table(is_mito)
+```
+
+
+```{r }
+# calculate per-spot QC metrics and store in colData
+spe <- addPerCellQC(spe, subsets = list(mito = is_mito))
+head(colData(spe))
+```
+
+
+
+```{r }
+#Plot Library size
+hist(spe$sum,breaks = 100,main ="UMIs per spot",xlab ="UMI")
+abline(v = 750, col = "red")
+plotSpots(spe, annotate = "sum",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
+#Plot Genes detected
+hist(spe$detected,breaks = 100,main ="Genes per spot",xlab ="UMI")
+abline(v = 500, col = "red")
+plotSpots(spe, annotate = "detected",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
+#Plot Genes detected
+#hist(spe$subsets_Mito_percent,breaks = 100,main ="Genes per spot",xlab ="UMI")
+#abline(v = 400, col = "red")
+#plotVisium(spe, fill = "subsets_Mito_percent", highlight = "in_tissue",image = FALSE, pal = "darkred") + guides(fill = guide_colorbar(title = "Libsize"))
+
+#Plot library size vs. number of cells per spot
+#plotSpots(spe, type = "scatter",metric_x = "sum")
+
+```
+
+```{r }
+# select QC thresholds
+colData(spe)$qc.count_manual <- spe$sum < 200  
+colData(spe)$qc.genexp_manual <- spe$detected < 200 
+#qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
+
+
+# combined set of discarded spots
+colData(spe)$discard <- spe$qc.count_manual | spe$qc.genexp_manual #qc_mito 
+table(colData(spe)$discard)
+
+# QCplots
+print(plotQC(spe, type = "spot", discard = "qc.count_manual"))
+print(plotQC(spe, type = "spot", discard = "qc.genexp_manual"))
+print(plotQC(spe, type = "spot", discard = "discard"))
+```
+
+
+```{r }
+# filter low-quality spots
+spe <- spe[, !colData(spe)$discard]
+plotSpots(spe,size = 1)
+```
+
+
+```{r }
+# filter any new zeros created after filtering low-expressed genes
+
+# remove genes with zero expression
+spe <- spe[!rowSums(counts(spe)) == 0, ]
+dim(spe)
+
+# remove spots with zero expression
+spe <- spe[, !colSums(counts(spe)) == 0]
+dim(spe)
+```
+
+

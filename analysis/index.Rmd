@@ -19,3 +19,5 @@ Welcome to my Project.
 - [Clustering](05_Clustering.html)
 - [Annotation](06_CelltypeAnnotation.html)
 - [Subclustering](07_SubClustering.html)
+- [Subclustering Annotation](07_SubClustering_Annotation.html)
+- [Subclustering Merge](07_SubClustering_Merge.html)

@@ -1,0 +1,716 @@
+---
+title: "Spatial Analysis Knee"
+subtitle: "Spatial_knee"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Spatial Analysis Knee
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(ggspavis)
+library(bluster)
+library(SPOTlight)
+library(SpatialExperiment)
+library(ggcorrplot)
+library(NMF)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+### Load Data
+
+```{r }
+spe <- read10xVisium(paste0(path,'/data/spatial/A2_SHK166'), c("A2_SHK166"), type = "sparse", data = "filtered", images = "lowres", load = FALSE)
+
+#Edit Rownames
+rowData(spe)$ENSEMBL <- rownames(spe)
+rownames(spe) <- paste0(rowData(spe)$ENSEMBL, ".", rowData(spe)$symbol)
+spe
+```
+
+```{r }
+dim(spe)
+```
+
+```{r }
+#Inspect spe object
+head(colData(spe))
+head(rowData(spe))
+head(spatialCoords(spe))
+imgData(spe)
+```
+
+```{r }
+spi <- getImg(spe)
+
+#Plot H&E image
+plot(imgRaster(spi))
+
+#Plot spatial coordinates (spots)
+plotSpots(spe)
+```
+## Pre-processing
+
+
+```{r }
+# subset to keep only spots over tissue
+spe <- spe[, colData(spe)$in_tissue == 1]
+dim(spe)
+```
+
+ 
+
+```{r }
+# Indentify mitochondrial genes
+is_mito<- grepl("(^MT-)|(^mt-)", rowData(spe)$symbol)
+cat("Mitochondrial genes:", rowData(spe)$symbol[is_mito]) #Show the MT genes
+table(is_mito)
+```
+
+
+```{r }
+# calculate per-spot QC metrics and store in colData
+spe <- addPerCellQC(spe, subsets = list(mito = is_mito))
+head(colData(spe))
+```
+
+
+
+```{r }
+#Plot Library size
+hist(spe$sum,breaks = 100,main ="UMIs per spot",xlab ="UMI")
+abline(v = 750, col = "red")
+plotSpots(spe, annotate = "sum",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
+#Plot Genes detected
+hist(spe$detected,breaks = 100,main ="Genes per spot",xlab ="UMI")
+abline(v = 500, col = "red")
+plotSpots(spe, annotate = "detected",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
+
+#Plot Genes detected
+#hist(spe$subsets_Mito_percent,breaks = 100,main ="Genes per spot",xlab ="UMI")
+#abline(v = 400, col = "red")
+#plotVisium(spe, fill = "subsets_Mito_percent", highlight = "in_tissue",image = FALSE, pal = "darkred") + guides(fill = guide_colorbar(title = "Libsize"))
+
+#Plot library size vs. number of cells per spot
+#plotSpots(spe, type = "scatter",metric_x = "sum")
+
+```
+
+```{r }
+# select QC thresholds
+colData(spe)$qc.count_manual <- spe$sum < 200  
+colData(spe)$qc.genexp_manual <- spe$detected < 200 
+#qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
+
+
+# combined set of discarded spots
+colData(spe)$discard <- spe$qc.count_manual | spe$qc.genexp_manual #qc_mito 
+table(colData(spe)$discard)
+
+# QCplots
+print(plotQC(spe, type = "spot", discard = "qc.count_manual"))
+print(plotQC(spe, type = "spot", discard = "qc.genexp_manual"))
+print(plotQC(spe, type = "spot", discard = "discard"))
+```
+
+
+```{r }
+# filter low-quality spots
+spe <- spe[, !colData(spe)$discard]
+plotSpots(spe,size = 1)
+```
+```{r }
+# filter any new zeros created after filtering low-expressed genes
+
+# remove genes with zero expression
+spe <- spe[!rowSums(counts(spe)) == 0, ]
+dim(spe)
+
+# remove spots with zero expression
+spe <- spe[, !colSums(counts(spe)) == 0]
+dim(spe)
+```
+
+
+## Normalisation
+
+```{r }
+# normalise
+spe <- computeLibraryFactors(spe)
+
+ggplot(data.frame("log10libSf"=log10(sizeFactors(spe))), aes(x=log10libSf)) +
+  xlab("Log10 Library size factor") +
+  geom_histogram(bins=50)+
+  ggtitle("Distribution of Library size factors")+
+  theme_bw()+
+  theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())
+
+
+summary(sizeFactors(spe))
+```
+```{r }
+# normalise
+spe <- logNormCounts(spe)
+assayNames(spe)
+```
+
+
+```{r }
+dim(counts(spe))
+```
+
+
+#DimRed
+
+```{r }
+# fit mean-variance relationship
+#genes <- !grepl(pattern = "^RP[L|S]|MT", x = rownames(sce))
+dec <- modelGeneVar(spe, density.weights=FALSE)
+
+top.hvgs <- getTopHVGs(dec, n=2000)
+
+rowData(spe)$is_hvg <- rownames(spe) %in% top.hvgs
+
+#Plot
+fit <- metadata(dec)
+plot(fit$mean, fit$var, col= c("#F5953C","#7A95BD")[(names(fit$mean) %in% top.hvgs)+1], xlab="Mean log-expression", 
+        ylab="Variance")
+    curve(fit$trend(x), col="black", add=TRUE)
+    legend("topright", legend=c("Not HVG", "HVG"), col = c("#F5953C","#7A95BD"),bty="n",pch=10)
+```
+
+```{r }
+# PCA
+spe <- runPCA(spe, subset_row = top.hvgs)
+plotReducedDim(spe, dimred = "PCA",point_alpha=1,point_size=0.5)
+
+
+pca_pct_variance <- data.frame(variance = attr(reducedDim(spe, "PCA"), "percentVar"))
+pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
+
+ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color="grey") +geom_point() +labs(y = "Variance explained (%)")+ geom_vline(xintercept = 15,color="red")+theme_classic()+ ggtitle("Percentage variance explained by PCs")
+
+reducedDim(spe,"PCA") <- reducedDim(spe,"PCA")[,seq_len(15)]
+```
+
+```{r }
+# UMAP
+spe <- runUMAP(spe, dimred = "PCA")
+plotReducedDim(spe, dimred = "UMAP",point_alpha=1,point_size=0.5)
+```
+
+
+## Clustering with HVGs
+
+```{r }
+colData(spe)$leiden <- clusterCells(spe, use.dimred = "PCA", BLUSPARAM = SNNGraphParam(k=25,cluster.fun="leiden",BPPARAM =bpp))
+data.frame(as.list(table(colData(spe)$leiden)))
+
+```
+
+
+```{r }
+plotReducedDim(spe, dimred = "UMAP",colour_by ="leiden",point_alpha=1,point_size=0.5)
+
+# plot clusters in spatial x-y coordinates
+plotSpots(spe, annotate = "leiden",size = 1)
+plotVisium(spe, fill = "leiden")
+```
+
+## Deconvolution Annotation_L1
+
+```{r }
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+#exclude some celltypes
+#sce <- sce[,sce$celltype != "Mast cell"]
+#sce <- sce[,sce$celltype != "Smooth muscle cell"]
+
+```
+
+
+```{r }
+mgs <- scoreMarkers(sce, subset.row = rownames(sce)[rowData(sce)$hvg])
+mgs_fil <- lapply(names(mgs), function(i) {
+    x <- mgs[[i]]
+    # Filter and keep relevant marker genes, those with AUC > 0.8
+    x <- x[x$mean.AUC > 0.5, ]
+    # Sort the genes from highest to lowest weight
+    x <- x[order(x$mean.AUC, decreasing = TRUE), ]
+    # Add gene and cluster id to the dataframe
+    x$gene <- rownames(x)
+    x$cluster <- i
+    data.frame(x)
+})
+mgs_df <- do.call(rbind, mgs_fil)
+```
+
+```{r ChangeRownames}
+#Change to genesymbol whenever possible
+rowData(spe)$UniqID <-rownames(spe)
+rownames(spe) <- uniquifyFeatureNames(rowData(spe)$ENSEMBL, rowData(spe)$symbol)
+data.frame(rowData(spe))
+```
+
+```{r }
+#Downsample
+# split cell indices by identity
+idx <- split(seq(ncol(sce)), sce$celltype)
+# downsample to at most 20 per identity & subset
+# We are using 5 here to speed up the process but set to 75-100 for your real
+# life analysis
+n_cells <- 75
+cs_keep <- lapply(idx, function(i) {
+    n <- length(i)
+    if (n < n_cells)
+        n_cells <- n
+    sample(i, n_cells)
+})
+sce <- sce[, unlist(cs_keep)]
+```
+
+
+
+
+```{r }
+res <- SPOTlight(
+    x = sce,
+    y = spe,
+    groups = as.character(sce$celltype),
+    mgs = mgs_df,
+    hvg = rownames(sce)[rowData(sce)$is_hvg],
+    weight_id = "mean.AUC",
+    group_id = "cluster",
+    gene_id = "gene")
+
+head(mat <- res$mat)
+# Extract NMF model fit
+mod <- res$NMF
+```
+
+```{r }
+print(plotTopicProfiles(
+    x = mod,
+    y = sce$celltype,
+    facet = FALSE,
+    min_prop = 0.01,
+    ncol = 1) +
+    theme(aspect.ratio = 1))
+
+print(plotTopicProfiles(
+    x = mod,
+    y = sce$celltype,
+    facet = TRUE,
+    min_prop = 0.01,
+    ncol = 6))
+
+library(NMF)
+sign <- basis(mod)
+colnames(sign) <- paste0("Topic", seq_len(ncol(sign)))
+head(sign)
+
+```
+
+
+```{r,eval=FALSE}
+#look at which genes are the most important for each topic and therefore get an insight into which genes are driving them
+basis_spotlight <- data.frame(NMF::basis(mod[[1]]))
+
+colnames(basis_spotlight) <- unique(stringr::str_wrap(mod[[2]], width = 30))
+
+basis_spotlight %>%
+  dplyr::arrange(desc(Astro)) %>%
+  round(., 5) %>% 
+  DT::datatable(., filter = "top")
+```
+
+
+```{r }
+#Spatial Correlation Matrix
+plotCorrelationMatrix(mat,p.mat = TRUE, hc.order = TRUE,)
+
+#Custom Spatial Correlation Matrix
+decon_cor <- cor(mat)
+# Compute correlation P-value
+p.mat <- corrplot::cor.mtest(mat = mat, conf.level = 0.95)
+# Visualize
+ggcorrplot::ggcorrplot(
+  corr = decon_cor,
+  p.mat = p.mat[[1]],
+  hc.order = TRUE,
+  type = "full",
+  insig = "blank",
+  lab = TRUE,
+  outline.col = "lightgrey",
+  method = "square",
+  colors = c("#6D9EC1", "white", "#E46726"),
+  title = "Predicted cell-cell proportion correlation",
+  legend.title = "Correlation\n(Pearson)") +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 22, hjust = 0.5, face = "bold"),
+    legend.text = ggplot2::element_text(size = 12),
+    legend.title = ggplot2::element_text(size = 15),
+    axis.text.x = ggplot2::element_text(angle = 90),
+    axis.text = ggplot2::element_text(size = 18, vjust = 0.5))
+
+```
+
+### Co-localization
+Now that we know which cell types are found within each spot we can make a graph representing spatial interactions where cell types will have stronger edges between them the more often we find them within the same spot.
+
+```{r }
+ct <- colnames(mat)
+mat[mat < 0.1] <- 0
+```
+
+```{r }
+#Co-localization
+plotInteractions(mat, which = "heatmap", metric = "prop")+ 
+  labs(title = "Interaction heatmap proportion", fill = "proportion")#breaks = c(0, 5, 10, 15, 20),
+
+plotInteractions(mat, which = "heatmap", metric = "jaccard")
+
+
+plotInteractions(mat, which = "network",
+    vertex.color = "#cde394",
+     vertex.frame.color = "white",
+     vertex.label.color = "black",
+     vertex.label.family = "Helvetica",
+    min_prop = 0.1)
+```
+
+
+```{r }
+# Define color palette
+# (here we use 'paletteMartin' from the 'colorBlindness' package)
+paletteMartin <- c(
+    "#000000", "#004949", "#009292", "#ff6db6", "#ffb6db", 
+    "#490092", "#006ddb", "#b66dff", "#6db6ff", "#b6dbff", 
+    "#920000", "#924900", "#db6d00", "#24ff24", "#ffff6d")
+
+pal <- colorRampPalette(paletteMartin)(length(ct))
+names(pal) <- ct
+
+print(
+plotSpatialScatterpie(
+    x = spe,
+    y = mat,
+    cell_types = colnames(mat),
+    img = FALSE,
+    scatterpie_alpha = 1,
+    pie_scale = 0.4) +
+    scale_fill_manual(
+        values = pal,
+        breaks = names(pal))
+)
+#With the image underneath - we are rotating it 90 degrees counterclockwise and mirroring across the horizontal axis to show how to align if the spots don’t overlay the image.
+print(
+plotSpatialScatterpie(
+    x = spe,
+    y = mat,
+    cell_types = colnames(mat),
+    img = TRUE,
+    scatterpie_alpha = 1,
+    pie_scale = 0.4, 
+    degrees = -90,
+    axis = "h") +
+    scale_fill_manual(
+        values = pal,
+        breaks = names(pal))
+)
+```
+
+```{r }
+#Residuals
+spe$res_ss <- res[[2]][colnames(spe)]
+xy <- spatialCoords(spe)
+spe$x <- xy[, 1]
+spe$y <- xy[, 2]
+ggcells(spe, aes(x, y, color = res_ss)) +
+    geom_point() +
+    scale_color_viridis_c() +
+    coord_fixed() +
+    theme_bw()
+```
+
+```{r }
+library(viridis)
+
+for(i in colnames(mat)){
+  print(plotSpots(spe, annotate = mat[,colnames(mat)==i],size = 1.7)+labs(title=paste0("Spatial coordinates ",i, " proportion"))+
+  scale_color_viridis(option="magma")
+        )
+}
+
+```
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(mat, file =paste0(path,'/output/Spatial_knee_SC.rds'))
+saveRDS(spe, file =paste0(path,'/output/Spatial_knee.rds'))
+```
+
+
+## Deconvolution Annotation_L2
+
+```{r }
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+#exclude some celltypes
+sce <- sce[,sce$celltype != "Neutrophil"]
+
+
+#Create Annotation
+sce$SpatialAnno <- sce$Annotation_L2
+unique(sce$SpatialAnno)
+
+sce$SpatialAnno[sce$Annotation_L2 %in% c("CytotoxCD4 TC","Memory TC","Naive TC","CytotoxCD8 TC","NKTcell")] <- "T cell"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("TREM2+ MP","FOLR2+ MP")] <- "Tissue-resident Macrophage"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("S100A12+ MP","CD48+ MP")] <- "Macrophage"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("cDC","pDC")] <- "Dendritic cell"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("Arteriolar EC","Venular EC","Capillary EC")] <- "Endothelial"
+#sce$SpatialAnno[sce$Annotation_L2 %in% c("PRG4+ FIB","CHI3L2+ FIB")] <- "Lining Fibroblast"
+#sce$SpatialAnno[sce$Annotation_L2 %in% c("POSTN+ FIB","CXCL12+ FIB","MFAP5+ FIB")] <- "Sub-lining Fibroblast"
+unique(sce$SpatialAnno)
+
+```
+
+
+```{r }
+mgs <- scoreMarkers(sce,groups=sce$SpatialAnno, subset.row = rownames(sce)[rowData(sce)$hvg.sc])
+mgs_fil <- lapply(names(mgs), function(i) {
+    x <- mgs[[i]]
+    # Filter and keep relevant marker genes, those with AUC > 0.8
+    x <- x[x$mean.AUC > 0.5, ]
+    # Sort the genes from highest to lowest weight
+    x <- x[order(x$mean.AUC, decreasing = TRUE), ]
+    # Add gene and cluster id to the dataframe
+    x$gene <- rownames(x)
+    x$cluster <- i
+    data.frame(x)
+})
+mgs_df <- do.call(rbind, mgs_fil)
+```
+
+```{r ChangeRownames}
+#Change to genesymbol whenever possible
+rowData(spe)$UniqID <-rownames(spe)
+rownames(spe) <- uniquifyFeatureNames(rowData(spe)$ENSEMBL, rowData(spe)$symbol)
+data.frame(rowData(spe))
+```
+
+```{r }
+#Downsample
+# split cell indices by identity
+idx <- split(seq(ncol(sce)), sce$SpatialAnno)
+# downsample to at most 20 per identity & subset
+# We are using 5 here to speed up the process but set to 75-100 for your real
+# life analysis
+n_cells <- 100
+cs_keep <- lapply(idx, function(i) {
+    n <- length(i)
+    if (n < n_cells)
+        n_cells <- n
+    sample(i, n_cells)
+})
+sce <- sce[, unlist(cs_keep)]
+```
+
+
+
+
+```{r }
+res <- SPOTlight(
+    x = sce,
+    y = spe,
+    groups = as.character(sce$SpatialAnno),
+    mgs = mgs_df,
+    hvg = rownames(sce)[rowData(sce)$is_hvg_sc],
+    weight_id = "mean.AUC",
+    group_id = "cluster",
+    gene_id = "gene")
+
+head(mat <- res$mat)
+# Extract NMF model fit
+mod <- res$NMF
+```
+
+```{r }
+print(plotTopicProfiles(
+    x = mod,
+    y = sce$SpatialAnno,
+    facet = FALSE,
+    min_prop = 0.01,
+    ncol = 1) +
+    theme(aspect.ratio = 1))
+
+print(plotTopicProfiles(
+    x = mod,
+    y = sce$SpatialAnno,
+    facet = TRUE,
+    min_prop = 0.01,
+    ncol = 6))
+
+library(NMF)
+sign <- basis(mod)
+colnames(sign) <- paste0("Topic", seq_len(ncol(sign)))
+head(sign)
+
+```
+
+
+```{r,eval=FALSE}
+#look at which genes are the most important for each topic and therefore get an insight into which genes are driving them
+basis_spotlight <- data.frame(NMF::basis(mod[[1]]))
+
+colnames(basis_spotlight) <- unique(stringr::str_wrap(mod[[2]], width = 30))
+
+basis_spotlight %>%
+  dplyr::arrange(desc(Astro)) %>%
+  round(., 5) %>% 
+  DT::datatable(., filter = "top")
+```
+
+
+```{r }
+#Spatial Correlation Matrix
+plotCorrelationMatrix(mat)
+```
+
+### Co-localization
+Now that we know which cell types are found within each spot we can make a graph representing spatial interactions where cell types will have stronger edges between them the more often we find them within the same spot.
+
+```{r }
+ct <- colnames(mat)
+mat[mat < 0.1] <- 0
+```
+
+```{r }
+#Co-localization
+plotInteractions(mat, which = "heatmap", metric = "prop")+ 
+  labs(title = "Interaction heatmap proportion", fill = "proportion") #breaks = c(0, 5, 10, 15, 20),
+
+plotInteractions(mat, which = "heatmap", metric = "jaccard")+ 
+  labs(title = "Interaction heatmap", fill = "jaccard")+ 
+
+
+plotInteractions(mat, which = "network",
+    vertex.color = "#cde394",
+     vertex.frame.color = "white",
+     vertex.label.color = "black",
+     vertex.label.family = "Helvetica",
+    min_prop = 0.1)
+```
+
+
+```{r }
+# Define color palette
+# (here we use 'paletteMartin' from the 'colorBlindness' package)
+paletteMartin <- c(
+    "#000000", "#004949", "#009292", "#ff6db6", "#ffb6db", 
+    "#490092", "#006ddb", "#b66dff", "#6db6ff", "#b6dbff", 
+    "#920000", "#924900", "#db6d00", "#24ff24", "#ffff6d")
+
+pal <- colorRampPalette(paletteMartin)(length(ct))
+names(pal) <- ct
+
+print(
+plotSpatialScatterpie(
+    x = spe,
+    y = mat,
+    cell_types = colnames(mat),
+    img = FALSE,
+    scatterpie_alpha = 1,
+    pie_scale = 0.4) +
+    scale_fill_manual(
+        values = pal,
+        breaks = names(pal))
+)
+#With the image underneath - we are rotating it 90 degrees counterclockwise and mirroring across the horizontal axis to show how to align if the spots don’t overlay the image.
+print(
+plotSpatialScatterpie(
+    x = spe,
+    y = mat,
+    cell_types = colnames(mat),
+    img = TRUE,
+    scatterpie_alpha = 1,
+    pie_scale = 0.4, 
+    degrees = -90,
+    axis = "h") +
+    scale_fill_manual(
+        values = pal,
+        breaks = names(pal))
+)
+```
+
+```{r }
+#Residuals
+spe$res_ss <- res[[2]][colnames(spe)]
+xy <- spatialCoords(spe)
+spe$x <- xy[, 1]
+spe$y <- xy[, 2]
+ggcells(spe, aes(x, y, color = res_ss)) +
+    geom_point() +
+    scale_color_viridis_c() +
+    coord_fixed() +
+    theme_bw()
+```
+
+```{r }
+library(viridis)
+
+for(i in colnames(mat)){
+  print(plotSpots(spe, annotate = mat[,colnames(mat)==i],size = 1.7)+labs(title=paste0("Spatial coordinates ",i, " proportion"))+
+  scale_color_viridis(option="magma")
+        )
+}
+
+```
+
+## Save the dataset
+
+```{r SaveData}
+
+saveRDS(spe, file =paste0(path,'/output/Spatial_knee_SC.rds'))
+saveRDS(res, file =paste0(path,'/output/Spatial_knee_SC.rds'))
+```

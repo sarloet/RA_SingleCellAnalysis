@@ -1,0 +1,344 @@
+---
+title: "Subcluster Annotation"
+subtitle: "07_SubClustering_Merge"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Subcluster Annotation
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+
+```{r LoadAddPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(intrinsicDimension)
+library(patchwork)
+library(presto)
+library(xlsx)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+
+#Output path
+output_dir <- here("output","ScMergeAnnotation_output")
+if(!dir.exists(output_dir)) dir.create(output_dir)
+```
+
+
+
+### Load unnannotated SC data
+
+```{r initiateList}
+hvg_list<-c()
+```
+
+```{r LoadUnAnoSC}
+#Load sce set Annotation_L2 to clustername & remove hvg.sc
+sce.SMC <- readRDS(file = paste0(path,'/output/07_sce_SC_SmoothMuscle.rds'))
+sce.SMC$Annotation_L2 <- "Smooth muscle cell"
+hvg_list<-union(hvg_list, rownames(sce.SMC)[rowData(sce.SMC)$hvg.sc])
+rowData(sce.SMC)$hvg.sc <- NULL
+
+sce.Mast <- readRDS(file = paste0(path,'/output/07_sce_SC_Mast.rds'))
+sce.Mast$Annotation_L2 <- "Mast cell"
+hvg_list<-union(hvg_list, rownames(sce.Mast)[rowData(sce.Mast)$hvg.sc])
+rowData(sce.Mast)$hvg.sc <- NULL
+
+sce.Bcell <- readRDS(file = paste0(path,'/output/07_sce_SC_Bcell.rds'))
+sce.Bcell$Annotation_L2 <- "B cell"
+hvg_list<-union(hvg_list, rownames(sce.Bcell)[rowData(sce.Bcell)$hvg.sc])
+rowData(sce.Bcell)$hvg.sc <- NULL
+
+sce.Plasma <- readRDS(file = paste0(path,'/output/07_sce_SC_Plasma.rds'))
+sce.Plasma$Annotation_L2 <- "Plasma"
+hvg_list<-union(hvg_list, rownames(sce.Plasma)[rowData(sce.Plasma)$hvg.sc])
+rowData(sce.Plasma)$hvg.sc <- NULL
+
+sce.Neutrophil <- readRDS(file = paste0(path,'/output/07_sce_SC_Neutrophil.rds'))
+sce.Neutrophil$Annotation_L2 <- "Neutrophil"
+hvg_list<-union(hvg_list, rownames(sce.Neutrophil)[rowData(sce.Neutrophil)$hvg.sc])
+rowData(sce.Neutrophil)$hvg.sc <- NULL
+
+```
+
+
+### Load annotated SC data
+
+```{r LoadAnoSC}
+#Load sce & remove is_hvg_sc
+sce.Fibroblast <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
+hvg_list<-union(hvg_list, rownames(sce.Fibroblast)[rowData(sce.Fibroblast)$hvg.sc])
+rowData(sce.Fibroblast)$hvg.sc <- NULL
+
+sce.Macrophage <- readRDS(file = paste0(path,'/output/07_sce_SC_Macrophage_Anno.rds'))
+hvg_list<-union(hvg_list, rownames(sce.Macrophage)[rowData(sce.Macrophage)$hvg.sc])
+rowData(sce.Macrophage)$hvg.sc <- NULL
+
+sce.Tcell <- readRDS(file = paste0(path,'/output/07_sce_SC_Tcell_Anno.rds'))
+hvg_list<-union(hvg_list, rownames(sce.Tcell)[rowData(sce.Tcell)$hvg.sc])
+rowData(sce.Tcell)$hvg.sc <- NULL
+
+sce.Endothelial <- readRDS(file = paste0(path,'/output/07_sce_SC_Endothelial_Anno.rds'))
+hvg_list<-union(hvg_list, rownames(sce.Endothelial)[rowData(sce.Endothelial)$hvg.sc])
+rowData(sce.Endothelial)$hvg.sc <- NULL
+
+sce.Dendritic <- readRDS(file = paste0(path,'/output/07_sce_SC_Dendritic_Anno.rds'))
+hvg_list<-union(hvg_list, rownames(sce.Dendritic)[rowData(sce.Dendritic)$hvg.sc])
+rowData(sce.Dendritic)$hvg.sc <- NULL
+
+
+```
+
+
+
+
+### Merge Subclusters
+
+```{r MergeSC}
+
+#Indicate discarted cells
+#colData(sce)$subcluster <- "discard"
+sce.merged <- cbind(sce.SMC,sce.Mast,sce.Bcell,sce.Plasma,sce.Neutrophil,sce.Fibroblast, sce.Macrophage,sce.Tcell,sce.Endothelial,sce.Dendritic)
+#add hvgs for subclustering
+rowData(sce.merged)$hvg.sc <- rownames(sce.merged) %in% hvg_list
+
+rm(sce.SMC,sce.Mast,sce.Bcell,sce.Plasma,sce.Neutrophil,sce.Fibroblast, sce.Macrophage,sce.Tcell,sce.Endothelial,sce.Dendritic,hvg_list)
+gc()
+
+```
+
+
+
+## Realculate PCA and UMAP
+
+```{r ReProcess}
+
+#Get top HVG for subcluster
+dec <- modelGeneVar(sce.merged, block=sce.merged$Sample, density.weights=FALSE,BPPARAM=bpp)
+top.hvgs <- getTopHVGs(dec, n=3000)
+rowData(sce.merged)$is_hvg_merge <- rownames(sce.merged) %in% top.hvgs
+
+
+#Get recalculated PCA on Merge
+sce.merged<-runPCA(sce.merged,exprs_values ="reconstructed", subset_row = rowData(sce.merged)$is_hvg_merge, name = "MNN_merge")
+
+#Get PC elbow
+elbow <- ceiling(as.numeric(maxLikGlobalDimEst(as.matrix(reducedDim(sce.merged, "MNN_merge")), k=5)))
+cat(paste0("Elbow Point: ",elbow))
+
+reducedDim(sce.merged, 'MNN_merge_reduced') <- reducedDim(sce.merged, 'MNN_merge')[,seq_len(elbow)]
+  
+#Get recalculated UMAP on Merge
+sce.merged <- runUMAP(sce.merged,name = "MNN_merge_reduced_UMAP", dimred = 'MNN_merge_reduced',subset_row=rowData(sce.merged)$is_hvg_merge)
+```
+
+
+
+### Plot UMAP  {.tabset}
+
+#### Annotation Level 2
+
+```{r UMAPL2}
+plotReducedDim(sce.merged, dimred="MNN_merge_reduced_UMAP", colour_by="Annotation_L2",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+plotReducedDim(sce, dimred = "MNN_merge_reduced_UMAP", colour_by = "Annotation_L2",point_alpha=0.8,point_size=0.05)+ 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))],
+                         name = "Annotation_L2" ,breaks =names(meta_colors$Annotation_L2) ) +
+    labs( x='PCA 1', y='PCA 2' )+ 
+    guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+#### Annotation Level 1
+
+```{r UMAPL1}
+plotReducedDim(sce.merged, dimred="MNN_merge_reduced_UMAP", colour_by="Annotation_L1",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+#### Annotation Level 0
+
+```{r UMAPL0}
+plotReducedDim(sce.merged, dimred="MNN_merge_reduced_UMAP", colour_by="Annotation_L0",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+#### QC UMAP
+
+```{r UMAPL0}
+print(Plot_QC_dimred(sce.merged,dim="MNN_merge_reduced_UMAP"))
+```
+
+
+
+
+### Plot PCA  {.tabset}
+
+#### Annotation Level 2
+
+
+```{r PCAL2}
+plotReducedDim(sce.merged, dimred="MNN_merge", colour_by="Annotation_L2",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+#### Annotation Level 1
+
+```{r PCAL1}
+plotReducedDim(sce.merged, dimred="MNN_merge", colour_by="Annotation_L1",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+#### Annotation Level 0
+
+```{r PCAL0}
+plotReducedDim(sce.merged, dimred="MNN_merge", colour_by="Annotation_L0",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+
+
+## Save the dataset
+
+```{r SaveData}
+saveRDS(sce.merged, file =paste0(path,'/output/07_sce_SC_Merge.rds'))
+```
+
+## Wilcoxon rank-sum test on Annotation
+
+```{r WilcoxonLabel}
+for (labeling in c('Annotation_L0','Annotation_L1','Annotation_L2')){
+  #Wilcoxon rank-sum test
+  markers_wilcox <- wilcoxauc(sce.merged, group_by=labeling, assay = 'logcounts')
+  topDEgenes <- top_markers(markers_wilcox, n = 100, auc_min = 0.5, pval_max = 0.05)# filter for significant (p<0.05) and over-expressed (auc>0.5)
+  wb = createWorkbook()
+  for (i in unique(markers_wilcox$group) ){
+    #get genes for the Anno
+    markers<-topDEgenes[,paste0(i), drop=TRUE]
+    #Create table
+    tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
+    #Save table in Exelsheet
+    addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=FALSE,col.names = TRUE)
+  }
+  saveWorkbook(wb,paste0( output_dir , "/",paste0(labeling),"_Wilcoxon.xlsx"))  
+}
+
+```
+
+
+
+## Show removed subclusterss
+
+### Load Data before Subclustering
+
+```{r LoadsceDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/06_sce_CelltypeAnnotation.rds')) # 06
+
+```
+
+### Mark removed cells
+
+```{r MarkCells}
+# Get discarded cells
+discard <- !(colnames(sce) %in% colnames(sce.merged))
+# Add this as a new column to colData of sce1
+sce$discard <- discard
+
+```
+
+
+```{r Stats}
+#Give Stats
+cat("NR of Cells Before Subcluster QC: ", dim(sce)[2],"\n",
+    "NR of Cells After Subcluster QC: ", dim(sce.merged)[2],"\n",
+    "NR of Cells Filtered out: ", dim(sce)[2] - dim(sce.merged)[2],"\n",
+    "Cells Filtered out: [%]", (dim(sce)[2] - dim(sce.merged)[2])/dim(sce)[2]*100,"\n"
+    )
+```
+
+```{r QcPlots}
+p1<-plotColData(sce, x="discard", y="sum",other_fields="discard",colour_by = "discard") + 
+    facet_wrap(~discard, nrow=1, scales = "free_x") + 
+    scale_y_log10() + 
+    ggtitle("Total count")+
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+p2<-plotColData(sce, x="discard", y="detected",other_fields="discard",colour_by = "discard") + 
+    facet_wrap(~discard, nrow=1, scales = "free_x") + 
+    scale_y_log10() + 
+    ggtitle("Detected features")+
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+p3<-plotColData(sce, x="discard", y="subsets_Mito_percent",other_fields="discard",colour_by = "discard") + 
+    facet_wrap(~discard, nrow=1, scales = "free_x") + 
+    scale_y_log10() + 
+    ggtitle("Mito percent")+
+    guides(colour=guide_legend(title="Discarded"))+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+
+p1+p2+p3
+```
+
+
+
+```{r UMAPcopm}
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="discard",point_alpha=0.7,point_size=0.1)+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  guides(colour = guide_legend(override.aes = list(size=2)))
+```
+
+```{r UMAPOc, ,fig.height=10, fig.width=15}
+print(Plot_QC_dimred(sce,dim="MNN_UMAP_reduced"))
+```
+
+
+
+
+
+
+

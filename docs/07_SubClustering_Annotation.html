@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SarahL." />
+
+
+<title>Subcluster Annotation</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">RA SingleCellAnalysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Preprocessing</li>
+    <li>
+      <a href="00_DataPreparation.html">Data Preparation</a>
+    </li>
+    <li>
+      <a href="01_QualityControl.html">Quality Control</a>
+    </li>
+    <li>
+      <a href="02_DimensionalityReduction.html">Dimensionality Reduction</a>
+    </li>
+    <li>
+      <a href="03_Integration_Batchelor.html">Integration</a>
+    </li>
+    <li>
+      <a href="04_CellCycle.html">Cellcycle Assignement</a>
+    </li>
+    <li>
+      <a href="05_Clustering.html">Clustering</a>
+    </li>
+    <li>
+      <a href="06_CelltypeAnnotation.html">Annotation</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Subclustering</li>
+    <li>
+      <a href="07_Subclustering.html">Create Subclustering</a>
+    </li>
+    <li>
+      <a href="07_SubClustering_Annotation.html">Subclustering Annotation</a>
+    </li>
+    <li>
+      <a href="07_SubClustering_Merge.html">Merge Subclusters</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Analysis</li>
+    <li>
+      <a href="08_DifferentialAbundance.html">Differential Abundance</a>
+    </li>
+    <li>
+      <a href="09_SC_Fibroblast.html">Fibroblast Subcluster Profiling</a>
+    </li>
+    <li>
+      <a href="09_SC_Macrophage.html">Macrophage Subcluster Profiling</a>
+    </li>
+    <li>
+      <a href="10_DifferentialExpression_MAST.html">Differential Expression</a>
+    </li>
+    <li>
+      <a href="11_EnrichmentAnalysis.html">Enrichment Analysis</a>
+    </li>
+    <li>
+      <a href="11_EnrichmentAnalysis.html">Cell Cell Communication</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Spatial Transcriptomics</li>
+    <li>
+      <a href="Spatial_knee.html">Spatial Transcriptomics Knee</a>
+    </li>
+    <li>
+      <a href="Spatial_hand.html">Spatial Transcriptomics Hand</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/sarloet/RA_SingleCellAnalysis">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Subcluster Annotation</h1>
+<h3 class="subtitle">07_SubClustering_Annotation</h3>
+<h4 class="author">SarahL.</h4>
+<h4 class="date">Jun 27 2024 21:31:01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-06-27
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>RA_SingleCellAnalysis/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240328code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240328)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240328code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240328)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    data/cellbender_data_h5/
+    Ignored:    data/spatial/
+    Ignored:    output/00_DoubletDetection.rds
+    Ignored:    output/00_sce_DataPreparation.rds
+    Ignored:    output/01_sce_QualityControl.rds
+    Ignored:    output/01_sce_QualityControl_cellfiltered.rds
+    Ignored:    output/02_sce_DimensionalityReduction.rds
+    Ignored:    output/03_sce_Integration_Batchelor.rds
+    Ignored:    output/03_sce_Integration_Harmony.rds
+    Ignored:    output/04_sce_CellCycle.rds
+    Ignored:    output/05_sce_CelltypeAnnotation.rds
+    Ignored:    output/05_sce_Clustering.rds
+    Ignored:    output/06_sce_CelltypeAnnotation.rds
+    Ignored:    output/07_sce_SC_Bcell.rds
+    Ignored:    output/07_sce_SC_Dendritic.rds
+    Ignored:    output/07_sce_SC_Dendritic_Anno.rds
+    Ignored:    output/07_sce_SC_Endothelial.rds
+    Ignored:    output/07_sce_SC_Endothelial_Anno.rds
+    Ignored:    output/07_sce_SC_Fibroblast.rds
+    Ignored:    output/07_sce_SC_Fibroblast_Anno.rds
+    Ignored:    output/07_sce_SC_Macrophage.rds
+    Ignored:    output/07_sce_SC_Macrophage_Anno.rds
+    Ignored:    output/07_sce_SC_Mast.rds
+    Ignored:    output/07_sce_SC_Merge.rds
+    Ignored:    output/07_sce_SC_Neutrophil.rds
+    Ignored:    output/07_sce_SC_Plasma.rds
+    Ignored:    output/07_sce_SC_SmoothMuscle.rds
+    Ignored:    output/07_sce_SC_Tcell.rds
+    Ignored:    output/07_sce_SC_Tcell_Anno.rds
+    Ignored:    output/08_DifferentialAbundance_miloR.rds
+    Ignored:    output/10_sce_CellChat_Knee.rds
+    Ignored:    output/10_sce_CellChat_MCP.rds
+    Ignored:    output/10_sce_CellChat_Wrist.rds
+    Ignored:    output/Annotation_L0_Wilcoxon.xlsx
+    Ignored:    output/Annotation_L1_Wilcoxon.xlsx
+    Ignored:    output/Annotation_output/
+    Ignored:    output/Cluster_Marker_Genes.xlsx
+    Ignored:    output/Knee_KvM.csv
+    Ignored:    output/Knee_KvW.csv
+    Ignored:    output/MAST_output/
+    Ignored:    output/MCP_KvM.csv
+    Ignored:    output/MCP_MvW.csv
+    Ignored:    output/ManualAnno_L0_Wilcoxon.xlsx
+    Ignored:    output/ManualAnno_L1_Wilcoxon.xlsx
+    Ignored:    output/ScMergeAnnotation_output/
+    Ignored:    output/Spatial_knee.rds
+    Ignored:    output/Spatial_knee_SC.rds
+    Ignored:    output/Subcluster_Annotation_output/
+    Ignored:    output/Wrist_KvW.csv
+    Ignored:    output/Wrist_MvW.csv
+    Ignored:    renv/.DS_Store
+    Ignored:    renv/library/
+    Ignored:    renv/staging/
+
+Untracked files:
+    Untracked:  analysis/07_SubClustering_Merge.Rmd
+    Untracked:  analysis/08_DifferentialExpression_EdgeR.Rmd
+    Untracked:  analysis/08_DifferentialExpression_MAST.Rmd
+    Untracked:  analysis/08_DifferentialExpression_Pseudobulk.Rmd
+    Untracked:  analysis/08_DifferentialExpression_muscat.Rmd
+    Untracked:  analysis/09_DifferentialAbundance_miloR.Rmd
+    Untracked:  analysis/10_EnrichmentAnalysis.Rmd
+    Untracked:  analysis/11_CellChat.Rmd
+    Untracked:  analysis/99_Plotting.Rmd
+    Untracked:  analysis/Spatial_hand.Rmd
+    Untracked:  analysis/Spatial_knee.Rmd
+
+Unstaged changes:
+    Modified:   analysis/02_DimensionalityReduction.Rmd
+    Modified:   analysis/03_Integration_Batchelor.Rmd
+    Modified:   analysis/06_CelltypeAnnotation.Rmd
+    Modified:   analysis/06_SC_Fibroblast.Rmd
+    Deleted:    analysis/07_DifferentialExpression_EdgeR.Rmd
+    Deleted:    analysis/07_DifferentialExpression_MAST.Rmd
+    Deleted:    analysis/07_DifferentialExpression_Pseudobulk.Rmd
+    Deleted:    analysis/07_DifferentialExpression_muscat.Rmd
+    Modified:   analysis/07_SubClustering.Rmd
+    Modified:   analysis/07_SubClustering_Annotation.Rmd
+    Deleted:    analysis/08_DifferentialAbundance_miloR.Rmd
+    Deleted:    analysis/09_EnrichmentAnalysis.Rmd
+    Deleted:    analysis/10_Plotting.Rmd
+    Deleted:    analysis/Ege_06_SC_Fibroblast.Rmd
+    Deleted:    analysis/OLD06_SubClustering.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/index.Rmd
+    Modified:   code/standard_libraries.R
+    Modified:   renv.lock
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/07_SubClustering_Annotation.Rmd</code>) and HTML
+(<code>docs/07_SubClustering_Annotation.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/5887ab5acd04bce3d1a3c048b1b47c5817fd9520/analysis/07_SubClustering_Annotation.Rmd" target="_blank">5887ab5</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-20
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/ba195bc605e0eb9b5f59bbb4eff395f8fe034a2c/analysis/07_SubClustering_Annotation.Rmd" target="_blank">ba195bc</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-13
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/8be1325b4f1f68b038dda8cc4de3afa05defb4cc/analysis/07_SubClustering_Annotation.Rmd" target="_blank">8be1325</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-05
+</td>
+<td>
+renv
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="subcluster-annotation" class="section level1">
+<h1>Subcluster Annotation</h1>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div id="standard-packages" class="section level3">
+<h3>Standard packages</h3>
+<pre class="r"><code>library(here)
+source(here(&quot;code&quot;, &quot;standard_libraries.R&quot;))</code></pre>
+</div>
+<div id="additional-packages" class="section level3">
+<h3>Additional Packages</h3>
+<pre class="r"><code>#Load Packages
+
+suppressPackageStartupMessages({
+library(batchelor)
+library(bluster)
+library(presto)
+library(dittoSeq)
+library(gridExtra)
+library(UCell)
+library(xlsx)
+library(patchwork)
+})</code></pre>
+</div>
+<div id="set-parameter" class="section level3">
+<h3>Set Parameter</h3>
+<pre class="r"><code>set.seed(100)
+bpp &lt;- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path &lt;- here::here()
+
+#Output path
+output_dir &lt;- here(&quot;output&quot;,&quot;Subcluster_Annotation_output&quot;)
+if(!dir.exists(output_dir)) dir.create(output_dir)</code></pre>
+</div>
+<div id="set-function" class="section level3">
+<h3>Set Function</h3>
+<pre class="r"><code>#Function to visuaise gene Expression for vector of genes
+
+VizGenEx &lt;- function(sce.sc,markr){
+  for(i in markr){
+    
+    cat(paste0(&quot;\n##### &quot;, i, &quot;\n&quot;))
+    gridExtra::grid.arrange(
+      arrangeGrob(plotReducedDim(sce.sc, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = i, text_by = &quot;subcluster&quot;), 
+                  plotReducedDim(sce.sc, dimred = &quot;MNN_UMAP_SC_reduced&quot;, colour_by = i, order_by=i ) 
+                    +scale_colour_gradient(name = i,low = &quot;lightgrey&quot;, high = &quot;red&quot;), ncol = 2), 
+                  plotExpression(sce.sc, features = i, x = &quot;subcluster&quot;),nrow = 2)
+    cat(&#39; \n&#39;)
+  
+  }
+}</code></pre>
+<pre class="r"><code>Run_Wilcoxauc &lt;- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE){
+  #Wilcoxon rank-sum test
+  markers_wilcox &lt;- wilcoxauc(sce, group_by=label, assay = &#39;logcounts&#39;)
+  # Get the top markers for each Anno (save in excel file)
+  # filter for nominally significant (p&lt;0.05) and over-expressed (auc&gt;0.5)
+  topDEgenes &lt;- top_markers(markers_wilcox, n = n, auc_min = auc.min, pval_max = pval.max)
+  wb = createWorkbook()
+  if(Create.Table==TRUE){
+    for (i in unique(markers_wilcox$group)){
+      #get genes for the Anno
+      markers&lt;-topDEgenes[,paste0(i), drop=TRUE]
+      #Create table
+      tmp&lt;-markers_wilcox[markers_wilcox$feature %in% markers &amp; markers_wilcox$group == i,]
+      #Save table in Exelsheet
+      addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
+    }
+    saveWorkbook(wb,paste0( output_dir , &quot;/&quot;,&quot;SC_&quot;,paste0(celltype),&quot;_Wilcoxon.xlsx&quot;)) 
+  }
+  return(topDEgenes)
+}</code></pre>
+<hr />
+</div>
+</div>
+<div id="fibroblast" class="section level2">
+<h2>Fibroblast</h2>
+<div id="load-data" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce.sc &lt;- readRDS(file = paste0(path,&#39;/output/07_sce_SC_Fibroblast.rds&#39;))</code></pre>
+</div>
+<div id="explore-dataset" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce.sc)</code></pre>
+<pre><code>[1] 30488 13739</code></pre>
+</div>
+<div id="plot-annotation" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+<div id="plot-umap-of-subclusters" class="section level4">
+<h4>Plot UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=&quot;SubCluster&quot;,subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-recalculated-umap-of-subclusters" class="section level4">
+<h4>Plot Recalculated UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=&quot;SubCluster&quot;,subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterRecalcFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="annotate-subcluster" class="section level3">
+<h3>Annotate Subcluster</h3>
+<div id="identify-marker-genes-wilcoxon-rank-sum-test"
+class="section level4">
+<h4>Identify Marker Genes Wilcoxon rank-sum test</h4>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Fibroblast&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]},{"label":["5"],"name":[6],"type":["chr"],"align":["left"]},{"label":["6"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"POSTN","3":"GAPDH","4":"CXCL12","5":"CRTAC1","6":"CHI3L2","7":"MFAP5"},{"1":"2","2":"CTHRC1","3":"TGFBI","4":"VCAN","5":"FN1","6":"CRTAC1","7":"TNXB"},{"1":"3","2":"COL1A1","3":"PKM","4":"IGFBP4","5":"MMP3","6":"CFB","7":"IGFBP6"},{"1":"4","2":"SPON2","3":"LGALS1","4":"SELENOP","5":"ITGB8","6":"FTH1","7":"ADIRF"},{"1":"5","2":"COL1A2","3":"LOXL2","4":"GGT5","5":"TREM1","6":"MT2A","7":"GSN"},{"1":"6","2":"AEBP1","3":"ENO1","4":"DCLK1","5":"SOX5","6":"CLU","7":"DCN"},{"1":"7","2":"ADAM12","3":"COL5A1","4":"COL14A1","5":"HTRA1","6":"CA12","7":"CCN3"},{"1":"8","2":"SPARC","3":"P4HB","4":"RARRES2","5":"CLU","6":"C1R","7":"FBLN2"},{"1":"9","2":"RGS3","3":"SH3BGRL3","4":"ZFP36L1","5":"CAV1","6":"FN1","7":"AQP1"},{"1":"10","2":"TPM1","3":"NDUFA4L2","4":"BICC1","5":"PRG4","6":"SOD2","7":"ASPN"},{"1":"11","2":"ASPN","3":"VKORC1","4":"KAZN","5":"SH3BGRL3","6":"MT1E","7":"AHNAK"},{"1":"12","2":"PALLD","3":"SLC16A3","4":"PTGFR","5":"MT2A","6":"MT1F","7":"AHNAK2"},{"1":"13","2":"LGALS1","3":"S100A16","4":"FBLN1","5":"MT1G","6":"LUM","7":"ANGPTL1"},{"1":"14","2":"COL5A1","3":"TNFRSF12A","4":"NFIA","5":"UGP2","6":"CD82","7":"LTBP4"},{"1":"15","2":"COL6A2","3":"ANXA2","4":"EGR1","5":"BCAT1","6":"TIMP1","7":"ACKR3"},{"1":"16","2":"TUBA1A","3":"CALM1","4":"FOS","5":"AC025580.2","6":"CHI3L1","7":"PRELP"},{"1":"17","2":"MMP2","3":"CDH13","4":"EBF1","5":"CRIP1","6":"ITGB8","7":"CD9"},{"1":"18","2":"ARL4C","3":"TPI1","4":"ZFP36","5":"AK1","6":"MT1X","7":"FHL1"},{"1":"19","2":"BGN","3":"PGAM1","4":"PDGFRA","5":"SEMA3C","6":"TNFAIP6","7":"S100A6"},{"1":"20","2":"MFAP2","3":"ACTG1","4":"MTRNR2L12","5":"DEFB1","6":"SLC39A14","7":"GALNT15"},{"1":"21","2":"THBS2","3":"TAGLN2","4":"FGF7","5":"GABRA4","6":"TREM1","7":"DKK3"},{"1":"22","2":"GXYLT2","3":"LDHA","4":"EFEMP1","5":"VCAM1","6":"TNC","7":"S100A4"},{"1":"23","2":"FNDC1","3":"PPP1R14B","4":"SERPINF1","5":"NDUFA4L2","6":"ABI3BP","7":"C1QTNF3"},{"1":"24","2":"COL5A2","3":"CLIC1","4":"AHR","5":"TNFAIP6","6":"SLC2A5","7":"PLPP1"},{"1":"25","2":"CADM1","3":"C12orf75","4":"FOSB","5":"SLC39A14","6":"FAM20A","7":"CRIP1"},{"1":"26","2":"MMP14","3":"CAV1","4":"DCN","5":"MT1F","6":"SDK1","7":"ITGA11"},{"1":"27","2":"NBL1","3":"PLP2","4":"ID3","5":"S100A10","6":"MMP2","7":"FNDC1"},{"1":"28","2":"MICAL2","3":"PGK1","4":"CTSH","5":"SLC7A2","6":"SOX5","7":"PDGFRL"},{"1":"29","2":"PDGFRB","3":"MIF","4":"CFH","5":"EMP3","6":"APBB1IP","7":"FGFBP2"},{"1":"30","2":"KIAA1217","3":"TSPO","4":"EPHX1","5":"CD68","6":"VCAM1","7":"ANXA4"},{"1":"31","2":"ACTN1","3":"CTSZ","4":"APOE","5":"RGCC","6":"LTBP1","7":"ABLIM1"},{"1":"32","2":"ITGA11","3":"SERPINE1","4":"RBMS3","5":"MAGI2","6":"GPC6","7":"CFD"},{"1":"33","2":"COL3A1","3":"MYDGF","4":"CYGB","5":"MT1M","6":"C1GALT1","7":"TGFBR3"},{"1":"34","2":"FOXN3","3":"PFN1","4":"MTRNR2L8","5":"CD55","6":"G0S2","7":"ARL6IP5"},{"1":"35","2":"COL6A1","3":"ANPEP","4":"SSBP2","5":"MT1X","6":"ANGPTL4","7":"CRABP2"},{"1":"36","2":"LOXL1","3":"ARPC2","4":"CD302","5":"TIMP3","6":"SOD3","7":"FSTL1"},{"1":"37","2":"CALD1","3":"CAVIN3","4":"PCSK5","5":"MET","6":"CAV1","7":"PMP22"},{"1":"38","2":"NREP","3":"VIM","4":"RPL39","5":"ZNF385B","6":"MT1G","7":"KCNMA1"},{"1":"39","2":"HOMER3","3":"ACTN1","4":"AL357873.1","5":"SMIM14","6":"CADM3","7":"FBN1"},{"1":"40","2":"RAI14","3":"LOX","4":"SPRY1","5":"S100A4","6":"CP","7":"DDAH2"},{"1":"41","2":"SEPTIN11","3":"FKBP10","4":"PLPP1","5":"LDHA","6":"C15orf48","7":"TMSB4X"},{"1":"42","2":"COL12A1","3":"FXYD5","4":"JUNB","5":"SORBS2","6":"DEC1","7":"CLEC3B"},{"1":"43","2":"CSMD2","3":"TPM2","4":"GLIS3","5":"VKORC1","6":"SLC43A2","7":"HMCN2"},{"1":"44","2":"SYNDIG1","3":"S100A6","4":"IGF1","5":"CAPS","6":"C2","7":"DPP4"},{"1":"45","2":"RASAL2","3":"RCN3","4":"ID4","5":"TSPO","6":"SLC24A3","7":"THY1"},{"1":"46","2":"GAS6","3":"SPARC","4":"CCNL1","5":"OAZ1","6":"PGF","7":"C1orf21"},{"1":"47","2":"GJA1","3":"TGFB1","4":"MT-ND3","5":"UAP1","6":"MMP3","7":"ANGPTL5"},{"1":"48","2":"NT5DC2","3":"CFL1","4":"IL6ST","5":"ENO1","6":"VAV3","7":"CYBRD1"},{"1":"49","2":"CACNA1C","3":"BSG","4":"NR4A1","5":"MT1E","6":"PPA1","7":"VCAN"},{"1":"50","2":"MAP1B","3":"ACTB","4":"TGFBR2","5":"PCSK6","6":"RSPO3","7":"CST3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = &quot;subcluster&quot;,min.color=&quot;lightgrey&quot;, max.color=&quot;blue&quot;,min.percent=0.2,max.percent=1,scale = TRUE )</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/DotplotFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-known-fibroblast-marker" class="section level4">
+<h4>Test Known Fibroblast marker</h4>
+<pre class="r"><code>Fibroblast_signatures &lt;- list(
+    Lining = c(&quot;PRG4&quot;,&quot;CRTAC1&quot;, &quot;CLU&quot;,&quot;CLIC5&quot;),
+    SMC = c(&quot;ACTA2&quot;,&quot;MYL9&quot;, &quot;DES&quot;, &quot;MYH11&quot;),
+    FB_POSTN = c(&quot;POSTN&quot;,&quot;COL1A1&quot;, &quot;FNDC1&quot;),
+    FB_CXCL12 = c(&quot;CXCL12&quot;,&quot;CCL2&quot;,&quot;SFRP1&quot;),
+    FB_CHI3L2 = c(&quot;CHI3L2&quot;,&quot;SAA1&quot;, &quot;FN1&quot;),
+    FB_MFAP5 = c(&quot;MFAP5&quot;,&quot;IGFBP6&quot;,&quot;TNXB&quot;)
+)</code></pre>
+</div>
+</div>
+<div id="run-ucell-on-sce-object" class="section level3">
+<h3>Run UCell on sce object</h3>
+<div id="test-signatures" class="section level4">
+<h4>Test signatures</h4>
+<pre class="r"><code>sce.ucell &lt;- ScoreSignatures_UCell(sce.sc, features=Fibroblast_signatures, assay = &#39;counts&#39;, name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, &#39;UCell&#39;)</code></pre>
+<pre><code>class: SummarizedExperiment 
+dim: 6 13739 
+metadata(0):
+assays(1): UCell
+rownames(6): Lining SMC ... FB_CHI3L2 FB_MFAP5
+rowData names(0):
+colnames(13739): SynBio_028.AAACGAAGTAGTCCTA-1
+  SynBio_028.CCCGGAAAGTCTGCAT-1 ... SynBio_127.ATCGGATGTTAGGAGC-1
+  SynBio_127.CACGGGTGTCATAAAG-1
+colData names(0):</code></pre>
+<pre class="r"><code>pll &lt;- lapply(names(Fibroblast_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred=&quot;MNN_UMAP_SC_reduced&quot;, colour_by=paste(x),by_exprs_values = &quot;UCell&quot;,point_alpha=0.8,point_size=0.2) +
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)
+})
+wrap_plots(pll)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellUMAPFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pll &lt;- lapply(names(Fibroblast_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = &quot;subcluster&quot;,exprs_values = &quot;UCell&quot;)
+})
+wrap_plots(pll,ncol=2)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellExpressionFB-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="test-fibroblast-marker" class="section level3 tabset">
+<h3 class="tabset">Test Fibroblast marker</h3>
+<div id="lining-vs-sublining" class="section level4 tabset">
+<h4 class="tabset">Lining vs Sublining</h4>
+<pre class="r"><code>#Lining vs Sublining Fibroblst
+VizGenEx(sce.sc,c(&quot;PRG4&quot;,&quot;THY1&quot;))  </code></pre>
+<div id="prg4" class="section level5">
+<h5>PRG4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="thy1" class="section level5">
+<h5>THY1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="lining" class="section level4 tabset">
+<h4 class="tabset">Lining</h4>
+<pre class="r"><code>#Lining Fibroblst
+VizGenEx(sce.sc,Fibroblast_signatures$Lining)  </code></pre>
+<div id="prg4-1" class="section level5">
+<h5>PRG4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="crtac1" class="section level5">
+<h5>CRTAC1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="clu" class="section level5">
+<h5>CLU</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="clic5" class="section level5">
+<h5>CLIC5</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB2-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="smc" class="section level4 tabset">
+<h4 class="tabset">SMC</h4>
+<pre class="r"><code>#SMC
+VizGenEx(sce.sc,Fibroblast_signatures$SMC)  </code></pre>
+<div id="acta2" class="section level5">
+<h5>ACTA2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myl9" class="section level5">
+<h5>MYL9</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB3-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="des" class="section level5">
+<h5>DES</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB3-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="myh11" class="section level5">
+<h5>MYH11</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB3-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="fb-postn" class="section level4 tabset">
+<h4 class="tabset">FB POSTN+</h4>
+<pre class="r"><code>#Lining Fibroblst
+VizGenEx(sce.sc,Fibroblast_signatures$FB_POSTN)   </code></pre>
+<div id="postn" class="section level5">
+<h5>POSTN</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="col1a1" class="section level5">
+<h5>COL1A1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB4-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fndc1" class="section level5">
+<h5>FNDC1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB4-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="fb-cxcl12" class="section level4 tabset">
+<h4 class="tabset">FB CXCL12+</h4>
+<pre class="r"><code>#Lining Fibroblst
+VizGenEx(sce.sc,Fibroblast_signatures$FB_CXCL12)  </code></pre>
+<div id="cxcl12" class="section level5">
+<h5>CXCL12</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ccl2" class="section level5">
+<h5>CCL2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB5-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sfrp1" class="section level5">
+<h5>SFRP1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB5-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="fb-chi3l2" class="section level4 tabset">
+<h4 class="tabset">FB CHI3L2+</h4>
+<pre class="r"><code>#Lining Fibroblst
+VizGenEx(sce.sc,Fibroblast_signatures$FB_CHI3L2)  </code></pre>
+<div id="chi3l2" class="section level5">
+<h5>CHI3L2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB6-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="saa1" class="section level5">
+<h5>SAA1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB6-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fn1" class="section level5">
+<h5>FN1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB6-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="fb-mfap5" class="section level4 tabset">
+<h4 class="tabset">FB MFAP5+</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Fibroblast_signatures$FB_MFAP5)  </code></pre>
+<div id="mfap5" class="section level5">
+<h5>MFAP5</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB7-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="igfbp6" class="section level5">
+<h5>IGFBP6</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB7-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tnxb" class="section level5">
+<h5>TNXB</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpFB7-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="label-assignement" class="section level3">
+<h3>Label Assignement</h3>
+<pre class="r"><code># Annotation
+sce.sc$Annotation_L2 &lt;- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] 1 2 3 4 5 6</code></pre>
+<pre class="r"><code>#sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] &lt;- &quot;SMC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1,2)] &lt;- &quot;POSTN+ FIB&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(5)] &lt;- &quot;CHI3L2+ FIB&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] &lt;- &quot;PRG4+ FIB&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3,7)] &lt;- &quot;CXCL12+ FIB&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] &lt;- &quot;MFAP5+ FIB&quot;
+
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] &quot;POSTN+ FIB&quot;  &quot;CXCL12+ FIB&quot; &quot;PRG4+ FIB&quot;   &quot;CHI3L2+ FIB&quot; &quot;MFAP5+ FIB&quot; </code></pre>
+<div id="umap-assigned-celltypes" class="section level4">
+<h4>UMAP Assigned Celltypes</h4>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;,text_by=&quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedFB1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedFB2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-annotated-dataset" class="section level3">
+<h3>Save the Annotated dataset</h3>
+<pre class="r"><code>saveRDS(sce.sc, file =paste0(path,&#39;/output/07_sce_SC_Fibroblast_Anno.rds&#39;))</code></pre>
+</div>
+<div id="identify-marker-of-labels-with-genes-wilcoxon-rank-sum-test"
+class="section level3">
+<h3>Identify Marker of labels with Genes Wilcoxon rank-sum test</h3>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Fibroblast_Anno&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]},{"label":["5"],"name":[6],"type":["chr"],"align":["left"]},{"label":["6"],"name":[7],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"POSTN","3":"GAPDH","4":"CXCL12","5":"CRTAC1","6":"CHI3L2","7":"MFAP5"},{"1":"2","2":"CTHRC1","3":"TGFBI","4":"VCAN","5":"FN1","6":"CRTAC1","7":"TNXB"},{"1":"3","2":"COL1A1","3":"PKM","4":"IGFBP4","5":"MMP3","6":"CFB","7":"IGFBP6"},{"1":"4","2":"SPON2","3":"LGALS1","4":"SELENOP","5":"ITGB8","6":"FTH1","7":"ADIRF"},{"1":"5","2":"COL1A2","3":"LOXL2","4":"GGT5","5":"TREM1","6":"MT2A","7":"GSN"},{"1":"6","2":"AEBP1","3":"ENO1","4":"DCLK1","5":"SOX5","6":"CLU","7":"DCN"},{"1":"7","2":"ADAM12","3":"COL5A1","4":"COL14A1","5":"HTRA1","6":"CA12","7":"CCN3"},{"1":"8","2":"SPARC","3":"P4HB","4":"RARRES2","5":"CLU","6":"C1R","7":"FBLN2"},{"1":"9","2":"RGS3","3":"SH3BGRL3","4":"ZFP36L1","5":"CAV1","6":"FN1","7":"AQP1"},{"1":"10","2":"TPM1","3":"NDUFA4L2","4":"BICC1","5":"PRG4","6":"SOD2","7":"ASPN"},{"1":"11","2":"ASPN","3":"VKORC1","4":"KAZN","5":"SH3BGRL3","6":"MT1E","7":"AHNAK"},{"1":"12","2":"PALLD","3":"SLC16A3","4":"PTGFR","5":"MT2A","6":"MT1F","7":"AHNAK2"},{"1":"13","2":"LGALS1","3":"S100A16","4":"FBLN1","5":"MT1G","6":"LUM","7":"ANGPTL1"},{"1":"14","2":"COL5A1","3":"TNFRSF12A","4":"NFIA","5":"UGP2","6":"CD82","7":"LTBP4"},{"1":"15","2":"COL6A2","3":"ANXA2","4":"EGR1","5":"BCAT1","6":"TIMP1","7":"ACKR3"},{"1":"16","2":"TUBA1A","3":"CALM1","4":"FOS","5":"AC025580.2","6":"CHI3L1","7":"PRELP"},{"1":"17","2":"MMP2","3":"CDH13","4":"EBF1","5":"CRIP1","6":"ITGB8","7":"CD9"},{"1":"18","2":"ARL4C","3":"TPI1","4":"ZFP36","5":"AK1","6":"MT1X","7":"FHL1"},{"1":"19","2":"BGN","3":"PGAM1","4":"PDGFRA","5":"SEMA3C","6":"TNFAIP6","7":"S100A6"},{"1":"20","2":"MFAP2","3":"ACTG1","4":"MTRNR2L12","5":"DEFB1","6":"SLC39A14","7":"GALNT15"},{"1":"21","2":"THBS2","3":"TAGLN2","4":"FGF7","5":"GABRA4","6":"TREM1","7":"DKK3"},{"1":"22","2":"GXYLT2","3":"LDHA","4":"EFEMP1","5":"VCAM1","6":"TNC","7":"S100A4"},{"1":"23","2":"FNDC1","3":"PPP1R14B","4":"SERPINF1","5":"NDUFA4L2","6":"ABI3BP","7":"C1QTNF3"},{"1":"24","2":"COL5A2","3":"CLIC1","4":"AHR","5":"TNFAIP6","6":"SLC2A5","7":"PLPP1"},{"1":"25","2":"CADM1","3":"C12orf75","4":"FOSB","5":"SLC39A14","6":"FAM20A","7":"CRIP1"},{"1":"26","2":"MMP14","3":"CAV1","4":"DCN","5":"MT1F","6":"SDK1","7":"ITGA11"},{"1":"27","2":"NBL1","3":"PLP2","4":"ID3","5":"S100A10","6":"MMP2","7":"FNDC1"},{"1":"28","2":"MICAL2","3":"PGK1","4":"CTSH","5":"SLC7A2","6":"SOX5","7":"PDGFRL"},{"1":"29","2":"PDGFRB","3":"MIF","4":"CFH","5":"EMP3","6":"APBB1IP","7":"FGFBP2"},{"1":"30","2":"KIAA1217","3":"TSPO","4":"EPHX1","5":"CD68","6":"VCAM1","7":"ANXA4"},{"1":"31","2":"ACTN1","3":"CTSZ","4":"APOE","5":"RGCC","6":"LTBP1","7":"ABLIM1"},{"1":"32","2":"ITGA11","3":"SERPINE1","4":"RBMS3","5":"MAGI2","6":"GPC6","7":"CFD"},{"1":"33","2":"COL3A1","3":"MYDGF","4":"CYGB","5":"MT1M","6":"C1GALT1","7":"TGFBR3"},{"1":"34","2":"FOXN3","3":"PFN1","4":"MTRNR2L8","5":"CD55","6":"G0S2","7":"ARL6IP5"},{"1":"35","2":"COL6A1","3":"ANPEP","4":"SSBP2","5":"MT1X","6":"ANGPTL4","7":"CRABP2"},{"1":"36","2":"LOXL1","3":"ARPC2","4":"CD302","5":"TIMP3","6":"SOD3","7":"FSTL1"},{"1":"37","2":"CALD1","3":"CAVIN3","4":"PCSK5","5":"MET","6":"CAV1","7":"PMP22"},{"1":"38","2":"NREP","3":"VIM","4":"RPL39","5":"ZNF385B","6":"MT1G","7":"KCNMA1"},{"1":"39","2":"HOMER3","3":"ACTN1","4":"AL357873.1","5":"SMIM14","6":"CADM3","7":"FBN1"},{"1":"40","2":"RAI14","3":"LOX","4":"SPRY1","5":"S100A4","6":"CP","7":"DDAH2"},{"1":"41","2":"SEPTIN11","3":"FKBP10","4":"PLPP1","5":"LDHA","6":"C15orf48","7":"TMSB4X"},{"1":"42","2":"COL12A1","3":"FXYD5","4":"JUNB","5":"SORBS2","6":"DEC1","7":"CLEC3B"},{"1":"43","2":"CSMD2","3":"TPM2","4":"GLIS3","5":"VKORC1","6":"SLC43A2","7":"HMCN2"},{"1":"44","2":"SYNDIG1","3":"S100A6","4":"IGF1","5":"CAPS","6":"C2","7":"DPP4"},{"1":"45","2":"RASAL2","3":"RCN3","4":"ID4","5":"TSPO","6":"SLC24A3","7":"THY1"},{"1":"46","2":"GAS6","3":"SPARC","4":"CCNL1","5":"OAZ1","6":"PGF","7":"C1orf21"},{"1":"47","2":"GJA1","3":"TGFB1","4":"MT-ND3","5":"UAP1","6":"MMP3","7":"ANGPTL5"},{"1":"48","2":"NT5DC2","3":"CFL1","4":"IL6ST","5":"ENO1","6":"VAV3","7":"CYBRD1"},{"1":"49","2":"CACNA1C","3":"BSG","4":"NR4A1","5":"MT1E","6":"PPA1","7":"VCAN"},{"1":"50","2":"MAP1B","3":"ACTB","4":"TGFBR2","5":"PCSK6","6":"RSPO3","7":"CST3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+</div>
+</div>
+<div id="macrophage" class="section level2">
+<h2>Macrophage</h2>
+<div id="load-data-1" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce.sc &lt;- readRDS(file = paste0(path,&#39;/output/07_sce_SC_Macrophage.rds&#39;))</code></pre>
+</div>
+<div id="explore-dataset-1" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce.sc)</code></pre>
+<pre><code>[1] 30488 19510</code></pre>
+</div>
+<div id="plot-annotation-1" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+<div id="plot-umap-of-subclusters-1" class="section level4">
+<h4>Plot UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, paste0(&quot;MNN_UMAP_reduced&quot;),colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-recalculated-umap-of-subclusters-1"
+class="section level4">
+<h4>Plot Recalculated UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterRecalcMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="annotate-subcluster-1" class="section level3">
+<h3>Annotate Subcluster</h3>
+<div id="identify-marker-genes-wilcoxon-rank-sum-test-1"
+class="section level4">
+<h4>Identify Marker Genes Wilcoxon rank-sum test</h4>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Macrophage&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"FN1","3":"SELENOP","4":"PID1","5":"FCN1"},{"1":"2","2":"MARCO","3":"PLTP","4":"EREG","5":"S100A9"},{"1":"3","2":"PRDX1","3":"FRMD4A","4":"OLR1","5":"S100A8"},{"1":"4","2":"EMP3","3":"FOLR2","4":"C15orf48","5":"H3F3A"},{"1":"5","2":"HSPB1","3":"F13A1","4":"RALA","5":"SLC11A1"},{"1":"6","2":"NCF1","3":"C1QA","4":"VCAN","5":"S100A12"},{"1":"7","2":"ANXA4","3":"C1QC","4":"LSP1","5":"SRGN"},{"1":"8","2":"CSTB","3":"SLCO2B1","4":"TIMP1","5":"VCAN"},{"1":"9","2":"TXNIP","3":"C1QB","4":"FCN1","5":"TNFRSF1B"},{"1":"10","2":"S100A10","3":"CD74","4":"JARID2","5":"RPL39"},{"1":"11","2":"MT-ND5","3":"SLC9A9","4":"VEGFA","5":"EIF1"},{"1":"12","2":"MAP4","3":"MAF","4":"CXCR4","5":"ARHGAP26"},{"1":"13","2":"CRIP1","3":"STAB1","4":"BTBD11","5":"H3F3B"},{"1":"14","2":"GSN","3":"CTSC","4":"SH3BGRL3","5":"RPL34"},{"1":"15","2":"VSIG4","3":"SEMA4A","4":"PPIF","5":"RPL35A"},{"1":"16","2":"PDLIM1","3":"ME1","4":"ANPEP","5":"LYZ"},{"1":"17","2":"FABP5","3":"LGMN","4":"OXSR1","5":"PPIF"},{"1":"18","2":"TREM2","3":"RGS1","4":"FYN","5":"RPL37"},{"1":"19","2":"TNS1","3":"ITM2B","4":"AREG","5":"JARID2"},{"1":"20","2":"CTSB","3":"MS4A4A","4":"CD300E","5":"BCL2A1"},{"1":"21","2":"FBP1","3":"MS4A6A","4":"CD52","5":"CSF3R"},{"1":"22","2":"DENND4C","3":"CD163","4":"COTL1","5":"RILPL2"},{"1":"23","2":"S100A6","3":"RNASE1","4":"SULF2","5":"PLCB1"},{"1":"24","2":"FCGR3A","3":"MARCKS","4":"BTG1","5":"CD93"},{"1":"25","2":"GRN","3":"DTNB","4":"CDK14","5":"RPL41"},{"1":"26","2":"TUBB","3":"FRMD4B","4":"FCAR","5":"RPLP1"},{"1":"27","2":"TIMD4","3":"HLA-DQA1","4":"SEMA6B","5":"AQP9"},{"1":"28","2":"CLIC4","3":"DAB2","4":"FBP1","5":"RPS13"},{"1":"29","2":"PFKP","3":"MS4A7","4":"LDHA","5":"RPS8"},{"1":"30","2":"CDC42BPB","3":"GPR34","4":"UBE2R2","5":"RPL30"},{"1":"31","2":"MITF","3":"PDGFC","4":"GPAT3","5":"ITGAX"},{"1":"32","2":"AHNAK","3":"TCF4","4":"PTMA","5":"SAMSN1"},{"1":"33","2":"FMNL2","3":"ELMO1","4":"IFI30","5":"FCAR"},{"1":"34","2":"GPNMB","3":"EGR1","4":"FOSL2","5":"CSTA"},{"1":"35","2":"CTSZ","3":"CTSZ","4":"B4GALT5","5":"RPL28"},{"1":"36","2":"ACTG1","3":"HLA-DRA","4":"NR4A3","5":"SPAG9"},{"1":"37","2":"TXN","3":"TMEM176A","4":"MAP4K4","5":"RPS24"},{"1":"38","2":"ASAP2","3":"C2","4":"ENO1","5":"RPL21"},{"1":"39","2":"VAT1","3":"AL356124.1","4":"INPP5A","5":"DENND5A"},{"1":"40","2":"ECM1","3":"COLEC12","4":"TPI1","5":"RPS28"},{"1":"41","2":"RNASE1","3":"TMEM176B","4":"IL1RN","5":"SLC25A37"},{"1":"42","2":"ANXA2","3":"FCGRT","4":"H3F3B","5":"ATP13A3"},{"1":"43","2":"CRIP2","3":"AP2A2","4":"UBASH3B","5":"UBA52"},{"1":"44","2":"CD47","3":"TNS3","4":"GNA12","5":"COTL1"},{"1":"45","2":"MGST3","3":"CD14","4":"EIF1","5":"RPS27"},{"1":"46","2":"TPRG1","3":"SDC3","4":"MIF","5":"RPS9"},{"1":"47","2":"MYOF","3":"LILRB5","4":"RNF24","5":"IL1B"},{"1":"48","2":"CD9","3":"HLA-DPB1","4":"MAP4K3","5":"RPS11"},{"1":"49","2":"CALU","3":"EMB","4":"GPCPD1","5":"CUX1"},{"1":"50","2":"GBP1","3":"GAS6","4":"SLC11A1","5":"LCP1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = &quot;subcluster&quot;,min.color=&quot;lightgrey&quot;, max.color=&quot;blue&quot;,min.percent=0.2,max.percent=1,scale = TRUE )</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/DotplotMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-known-fibroblast-marker-1" class="section level4">
+<h4>Test Known Fibroblast marker</h4>
+<pre class="r"><code>Macrophage_signatures &lt;- list(
+    MP_TREM2 = c(&quot;MERTK&quot;,&quot;TREM2&quot;),#Tissue resident
+    MP_FOLR2 = c(&quot;MERTK&quot;,&quot;FOLR2&quot;,&quot;LYVE1&quot;,&quot;ID2&quot;,&quot;ICAM1&quot;),#Tissue resident
+    MP_CD48 = c(&quot;CD48&quot;,&quot;SPP1&quot;,&quot;ISG15&quot;,&quot;CLEC10A&quot;),#Tissue infiltrating
+    MP_S100A12 = c(&quot;S100A12&quot;,&quot;CD48&quot;,&quot;MRC1&quot;,&quot;FCGR3A&quot;)#Monocyte (Downregulated MRC1, FCGR3A)
+)</code></pre>
+</div>
+</div>
+<div id="run-ucell-on-sce-object-1" class="section level3">
+<h3>Run UCell on sce object</h3>
+<pre class="r"><code>sce.ucell &lt;- ScoreSignatures_UCell(sce.sc, features=Macrophage_signatures, assay = &#39;counts&#39;, name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, &#39;UCell&#39;)</code></pre>
+<pre><code>class: SummarizedExperiment 
+dim: 4 19510 
+metadata(0):
+assays(1): UCell
+rownames(4): MP_TREM2 MP_FOLR2 MP_CD48 MP_S100A12
+rowData names(0):
+colnames(19510): SynBio_028.TCAGTCCGTAATGATG-1
+  SynBio_028.GTTTGGATCTGAGAGG-1 ... SynBio_127.TTCTGTAGTTGGAGGT-1
+  SynBio_127.GAGGGATGTATATGGA-1
+colData names(0):</code></pre>
+<pre class="r"><code>#sce.ucell &lt;- SmoothKNN(sce.ucell, signature.names = names(Macrophage_signatures), reduction=&quot;MNN_SC_reduced&quot;)</code></pre>
+<pre class="r"><code>pll &lt;- lapply(names(Macrophage_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred=&quot;MNN_UMAP_SC_reduced&quot;, colour_by=paste(x) ,by_exprs_values = &quot;UCell&quot;,point_alpha=0.8,point_size=0.2) +
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )
+})
+wrap_plots(pll)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellUMAPMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pll &lt;- lapply(names(Macrophage_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = &quot;subcluster&quot;,exprs_values = &quot;UCell&quot;)
+})
+wrap_plots(pll,ncol=2)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellExpressionMP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-macrophage-marker" class="section level3 tabset">
+<h3 class="tabset">Test Macrophage marker</h3>
+<div id="trem2-mp" class="section level4 tabset">
+<h4 class="tabset">TREM2+ MP</h4>
+<pre class="r"><code>#Macrophage
+VizGenEx(sce.sc,Macrophage_signatures$TREM2)  </code></pre>
+</div>
+<div id="folr2-mp" class="section level4 tabset">
+<h4 class="tabset">FOLR2+ MP</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Macrophage_signatures$FOLR2)  </code></pre>
+</div>
+<div id="cd48-mp" class="section level4 tabset">
+<h4 class="tabset">CD48+ MP</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Macrophage_signatures$CD48)  </code></pre>
+</div>
+<div id="s100a12-mp" class="section level4 tabset">
+<h4 class="tabset">S100A12+ MP</h4>
+<pre class="r"><code>#monocyte
+VizGenEx(sce.sc,Macrophage_signatures$S100A12)  </code></pre>
+</div>
+</div>
+<div id="label-assignement-1" class="section level3">
+<h3>Label Assignement</h3>
+<pre class="r"><code># Annotation
+sce.sc$Annotation_L2 &lt;- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] 1 2 3 4</code></pre>
+<pre class="r"><code>#sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] &lt;- &quot;SMC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] &lt;- &quot;TREM2+ MP&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] &lt;- &quot;FOLR2+ MP&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] &lt;- &quot;CD48+ MP&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] &lt;- &quot;S100A12+ MP&quot;
+
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] &quot;TREM2+ MP&quot;   &quot;FOLR2+ MP&quot;   &quot;CD48+ MP&quot;    &quot;S100A12+ MP&quot;</code></pre>
+<div id="umap-assigned-celltypes-1" class="section level4">
+<h4>UMAP Assigned Celltypes</h4>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;,text_by=&quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedMP1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster&quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedMP2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-annotated-dataset-1" class="section level3">
+<h3>Save the Annotated dataset</h3>
+<pre class="r"><code>saveRDS(sce.sc, file =paste0(path,&#39;/output/07_sce_SC_Macrophage_Anno.rds&#39;))</code></pre>
+</div>
+<div id="identify-marker-of-labels-with-genes-wilcoxon-rank-sum-test-1"
+class="section level3">
+<h3>Identify Marker of labels with Genes Wilcoxon rank-sum test</h3>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Macrophage_Anno&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"FN1","3":"SELENOP","4":"PID1","5":"FCN1"},{"1":"2","2":"MARCO","3":"PLTP","4":"EREG","5":"S100A9"},{"1":"3","2":"PRDX1","3":"FRMD4A","4":"OLR1","5":"S100A8"},{"1":"4","2":"EMP3","3":"FOLR2","4":"C15orf48","5":"H3F3A"},{"1":"5","2":"HSPB1","3":"F13A1","4":"RALA","5":"SLC11A1"},{"1":"6","2":"NCF1","3":"C1QA","4":"VCAN","5":"S100A12"},{"1":"7","2":"ANXA4","3":"C1QC","4":"LSP1","5":"SRGN"},{"1":"8","2":"CSTB","3":"SLCO2B1","4":"TIMP1","5":"VCAN"},{"1":"9","2":"TXNIP","3":"C1QB","4":"FCN1","5":"TNFRSF1B"},{"1":"10","2":"S100A10","3":"CD74","4":"JARID2","5":"RPL39"},{"1":"11","2":"MT-ND5","3":"SLC9A9","4":"VEGFA","5":"EIF1"},{"1":"12","2":"MAP4","3":"MAF","4":"CXCR4","5":"ARHGAP26"},{"1":"13","2":"CRIP1","3":"STAB1","4":"BTBD11","5":"H3F3B"},{"1":"14","2":"GSN","3":"CTSC","4":"SH3BGRL3","5":"RPL34"},{"1":"15","2":"VSIG4","3":"SEMA4A","4":"PPIF","5":"RPL35A"},{"1":"16","2":"PDLIM1","3":"ME1","4":"ANPEP","5":"LYZ"},{"1":"17","2":"FABP5","3":"LGMN","4":"OXSR1","5":"PPIF"},{"1":"18","2":"TREM2","3":"RGS1","4":"FYN","5":"RPL37"},{"1":"19","2":"TNS1","3":"ITM2B","4":"AREG","5":"JARID2"},{"1":"20","2":"CTSB","3":"MS4A4A","4":"CD300E","5":"BCL2A1"},{"1":"21","2":"FBP1","3":"MS4A6A","4":"CD52","5":"CSF3R"},{"1":"22","2":"DENND4C","3":"CD163","4":"COTL1","5":"RILPL2"},{"1":"23","2":"S100A6","3":"RNASE1","4":"SULF2","5":"PLCB1"},{"1":"24","2":"FCGR3A","3":"MARCKS","4":"BTG1","5":"CD93"},{"1":"25","2":"GRN","3":"DTNB","4":"CDK14","5":"RPL41"},{"1":"26","2":"TUBB","3":"FRMD4B","4":"FCAR","5":"RPLP1"},{"1":"27","2":"TIMD4","3":"HLA-DQA1","4":"SEMA6B","5":"AQP9"},{"1":"28","2":"CLIC4","3":"DAB2","4":"FBP1","5":"RPS13"},{"1":"29","2":"PFKP","3":"MS4A7","4":"LDHA","5":"RPS8"},{"1":"30","2":"CDC42BPB","3":"GPR34","4":"UBE2R2","5":"RPL30"},{"1":"31","2":"MITF","3":"PDGFC","4":"GPAT3","5":"ITGAX"},{"1":"32","2":"AHNAK","3":"TCF4","4":"PTMA","5":"SAMSN1"},{"1":"33","2":"FMNL2","3":"ELMO1","4":"IFI30","5":"FCAR"},{"1":"34","2":"GPNMB","3":"EGR1","4":"FOSL2","5":"CSTA"},{"1":"35","2":"CTSZ","3":"CTSZ","4":"B4GALT5","5":"RPL28"},{"1":"36","2":"ACTG1","3":"HLA-DRA","4":"NR4A3","5":"SPAG9"},{"1":"37","2":"TXN","3":"TMEM176A","4":"MAP4K4","5":"RPS24"},{"1":"38","2":"ASAP2","3":"C2","4":"ENO1","5":"RPL21"},{"1":"39","2":"VAT1","3":"AL356124.1","4":"INPP5A","5":"DENND5A"},{"1":"40","2":"ECM1","3":"COLEC12","4":"TPI1","5":"RPS28"},{"1":"41","2":"RNASE1","3":"TMEM176B","4":"IL1RN","5":"SLC25A37"},{"1":"42","2":"ANXA2","3":"FCGRT","4":"H3F3B","5":"ATP13A3"},{"1":"43","2":"CRIP2","3":"AP2A2","4":"UBASH3B","5":"UBA52"},{"1":"44","2":"CD47","3":"TNS3","4":"GNA12","5":"COTL1"},{"1":"45","2":"MGST3","3":"CD14","4":"EIF1","5":"RPS27"},{"1":"46","2":"TPRG1","3":"SDC3","4":"MIF","5":"RPS9"},{"1":"47","2":"MYOF","3":"LILRB5","4":"RNF24","5":"IL1B"},{"1":"48","2":"CD9","3":"HLA-DPB1","4":"MAP4K3","5":"RPS11"},{"1":"49","2":"CALU","3":"EMB","4":"GPCPD1","5":"CUX1"},{"1":"50","2":"GBP1","3":"GAS6","4":"SLC11A1","5":"LCP1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+</div>
+</div>
+<div id="tcells" class="section level2">
+<h2>Tcells</h2>
+<div id="load-data-2" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce.sc &lt;- readRDS(file = paste0(path,&#39;/output/07_sce_SC_Tcell.rds&#39;))</code></pre>
+</div>
+<div id="explore-dataset-2" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce.sc)</code></pre>
+<pre><code>[1] 30488 17094</code></pre>
+</div>
+<div id="plot-annotation-2" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+<div id="plot-umap-of-subclusters-2" class="section level4">
+<h4>Plot UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, paste0(&quot;MNN_UMAP_reduced&quot;),colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterTC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-recalculated-umap-of-subclusters-2"
+class="section level4">
+<h4>Plot Recalculated UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterRecalcTC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="annotate-subcluster-2" class="section level3">
+<h3>Annotate Subcluster</h3>
+<div id="identify-marker-genes-wilcoxon-rank-sum-test-2"
+class="section level4">
+<h4>Identify Marker Genes Wilcoxon rank-sum test</h4>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Tcell&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]},{"label":["5"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"CCL5","3":"TPT1","4":"MALAT1","5":"TYROBP","6":"LDLRAD4"},{"1":"2","2":"NKG7","3":"EEF1A1","4":"ARHGAP15","5":"GNLY","6":"TSHZ2"},{"1":"3","2":"CST7","3":"RPS16","4":"MT-ATP6","5":"KLRD1","6":"TNFRSF18"},{"1":"4","2":"GZMA","3":"RPS12","4":"MT-ND2","5":"MCTP2","6":"TOX"},{"1":"5","2":"GZMK","3":"RPL34","4":"MT-ND1","5":"CTSW","6":"TOX2"},{"1":"6","2":"AOAH","3":"RPL9","4":"MT-ND5","5":"NKG7","6":"SNX9"},{"1":"7","2":"ZEB2","3":"RPL13","4":"MT-CO3","5":"GZMB","6":"CTLA4"},{"1":"8","2":"CCL4","3":"RPS18","4":"SYNE2","5":"RIN3","6":"GK"},{"1":"9","2":"CD8A","3":"RPS8","4":"MT-CYB","5":"LYN","6":"TNFRSF4"},{"1":"10","2":"GZMH","3":"RPLP0","4":"ELMO1","5":"FCER1G","6":"CD4"},{"1":"11","2":"AKNA","3":"RPL32","4":"MT-CO1","5":"NCAM1","6":"NDUFV2"},{"1":"12","2":"KLRK1","3":"RPS20","4":"MBNL1","5":"MAP3K8","6":"BATF"},{"1":"13","2":"APOBEC3G","3":"RPS6","4":"MT-ND3","5":"CD63","6":"CORO1B"},{"1":"14","2":"GZMB","3":"RPLP2","4":"ANKRD44","5":"IL2RB","6":"DUSP4"},{"1":"15","2":"CTSW","3":"RPS3A","4":"LRBA","5":"PRF1","6":"THADA"},{"1":"16","2":"HCST","3":"RPL23","4":"MT-ATP8","5":"TRDC","6":"TBC1D4"},{"1":"17","2":"GZMM","3":"RPL39","4":"MT-CO2","5":"ATP8B4","6":"GEM"},{"1":"18","2":"ARHGAP26","3":"RPL11","4":"ATXN1","5":"AUTS2","6":"PELI1"},{"1":"19","2":"GGA2","3":"RPL22","4":"ZBTB20","5":"KLRF1","6":"MAF"},{"1":"20","2":"CD74","3":"RPL7","4":"MTRNR2L12","5":"GAS7","6":"BACH1"},{"1":"21","2":"DUSP2","3":"RPL18A","4":"PCNX1","5":"MATK","6":"SOD1"},{"1":"22","2":"HLA-DPB1","3":"RPS13","4":"MT-ND4","5":"HOPX","6":"TSPAN5"},{"1":"23","2":"CD8B","3":"RPS23","4":"RABGAP1L","5":"C1orf21","6":"LAIR2"},{"1":"24","2":"HLA-DRB1","3":"RPL13A","4":"CHST11","5":"EFHD2","6":"OAZ1"},{"1":"25","2":"RUNX3","3":"RPL21","4":"FOXN3","5":"XCL2","6":"TRPS1"},{"1":"26","2":"CMIP","3":"RPL5","4":"FTX","5":"PLCB1","6":"LIMS1"},{"1":"27","2":"ENC1","3":"RPS17","4":"MACF1","5":"FNDC3B","6":"IL6ST"},{"1":"28","2":"C12orf75","3":"RPL36A","4":"CYTH1","5":"KLRB1","6":"YWHAB"},{"1":"29","2":"ATP8A1","3":"RPL3","4":"UTRN","5":"XCL1","6":"RAB11FIP1"},{"1":"30","2":"SYNE1","3":"RPS14","4":"ARID1B","5":"AOAH","6":"TIGIT"},{"1":"31","2":"CRTAM","3":"RPL18","4":"ANKRD11","5":"CD7","6":"NR3C1"},{"1":"32","2":"SAMD3","3":"RPS11","4":"PRKCH","5":"KLRC1","6":"RBPJ"},{"1":"33","2":"C1orf21","3":"RPS21","4":"SKAP1","5":"CNOT2","6":"NAB1"},{"1":"34","2":"HLA-C","3":"RPS4X","4":"FOXP1","5":"MAFF","6":"PKM"},{"1":"35","2":"NAA50","3":"RPL37","4":"INPP4B","5":"IFITM2","6":"AL109930.1"},{"1":"36","2":"LITAF","3":"EEF1B2","4":"TNRC6B","5":"NFKB1","6":"ZNRF1"},{"1":"37","2":"TUBA4A","3":"EEF1G","4":"IQGAP2","5":"BHLHE40","6":"GNG4"},{"1":"38","2":"CYBA","3":"RPS2","4":"EML4","5":"REL","6":"CYTOR"},{"1":"39","2":"LCP1","3":"RPS5","4":"VPS13B","5":"GSTP1","6":"RNASET2"},{"1":"40","2":"SLA2","3":"RPS28","4":"KLF12","5":"METRNL","6":"PRDX1"},{"1":"41","2":"AUTS2","3":"RPL19","4":"DOCK2","5":"B3GNT7","6":"FILIP1L"},{"1":"42","2":"HLA-B","3":"RPLP1","4":"USP34","5":"IER2","6":"ARPC1B"},{"1":"43","2":"MCOLN2","3":"RPL36","4":"MSI2","5":"CDC42SE1","6":"PHACTR2"},{"1":"44","2":"PLAAT4","3":"RPL37A","4":"SMCHD1","5":"NCALD","6":"MYL6"},{"1":"45","2":"PIK3R1","3":"RPS27A","4":"FOXO1","5":"IL12RB2","6":"MIR4435-2HG"},{"1":"46","2":"SEPTIN7","3":"RPL30","4":"ANK3","5":"TXK","6":"ARID5B"},{"1":"47","2":"PRF1","3":"RPL38","4":"CBLB","5":"PTPN12","6":"PGM2L1"},{"1":"48","2":"GALNT11","3":"RPL27A","4":"NEAT1","5":"LAT2","6":"CMSS1"},{"1":"49","2":"PPP1R16B","3":"RPS25","4":"CASK","5":"CLIC3","6":"TRAC"},{"1":"50","2":"PTPRC","3":"RPL29","4":"CELF2","5":"CTBP2","6":"CD3D"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = &quot;subcluster&quot;,min.color=&quot;lightgrey&quot;, max.color=&quot;blue&quot;,min.percent=0.2,max.percent=1,scale = TRUE )</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/DotplotTC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-known-fibroblast-marker-2" class="section level4">
+<h4>Test Known Fibroblast marker</h4>
+<pre class="r"><code>Tcell_signatures &lt;- list(
+    CD4Tcell = c(&quot;CD4&quot;,&quot;TRAT1&quot;,&quot;CD40LG&quot;,&quot;LEF1&quot;,&quot;TNFRSF4&quot;),
+    CD8Tcell = c(&quot;CD8A&quot;,&quot;CD8B&quot;),
+    NKcell = c(&quot;NKG7&quot;,&quot;GNLY&quot;,&quot;NCAM1&quot;),
+    ProlifTcell = c(&quot;MKI67&quot;,&quot;PCNA&quot;,&quot;STMN1&quot;,&quot;HMGB2&quot;),
+    TReg = c(&quot;FOXP3&quot;,&quot;CCR8&quot;,&quot;PMCH&quot;,&quot;CCR4&quot;,&quot;RTKN2&quot;),
+    Memory = c(&quot;CCR7&quot;,&quot;IL7R&quot;,&quot;TCF7&quot;,&quot;SELL&quot;,&quot;SATB1&quot;,&quot;GPR183&quot;,&quot;LTB&quot;,&quot;LEF1&quot;),
+    Cytotoxic = c(&quot;GZMA&quot;,&quot;GZMK&quot;,&quot;NKG7&quot;)
+)</code></pre>
+</div>
+</div>
+<div id="run-ucell-on-sce-object-2" class="section level3">
+<h3>Run UCell on sce object</h3>
+<div id="test-signatures-signatures" class="section level4">
+<h4>Test signatures signatures</h4>
+<pre class="r"><code>sce.ucell &lt;- ScoreSignatures_UCell(sce.sc, features=Tcell_signatures, assay = &#39;counts&#39;, name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, &#39;UCell&#39;)</code></pre>
+<pre><code>class: SummarizedExperiment 
+dim: 7 17094 
+metadata(0):
+assays(1): UCell
+rownames(7): CD4Tcell CD8Tcell ... Memory Cytotoxic
+rowData names(0):
+colnames(17094): SynBio_028.TTGATGGTCGGCTGGT-1
+  SynBio_028.GTTACCCTCTCTCCGA-1 ... SynBio_127.CATCCCAGTACTAAGA-1
+  SynBio_127.GGAGCAAAGGTACCTT-1
+colData names(0):</code></pre>
+<pre class="r"><code>pll &lt;- lapply(names(Tcell_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred=&quot;MNN_UMAP_SC_reduced&quot;, colour_by=paste(x),by_exprs_values = &quot;UCell&quot;,point_alpha=0.8,point_size=0.2) +
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )
+})
+wrap_plots(pll)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellUMAPTC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pll &lt;- lapply(names(Tcell_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = &quot;subcluster&quot;,exprs_values = &quot;UCell&quot;)
+})
+wrap_plots(pll,ncol=2)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellExpressionTC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="test-tcells-marker" class="section level3 tabset">
+<h3 class="tabset">Test Tcells marker</h3>
+<div id="cd4tcell" class="section level4 tabset">
+<h4 class="tabset">CD4Tcell</h4>
+<pre class="r"><code>#CD4Tcell
+VizGenEx(sce.sc,Tcell_signatures$CD4Tcell)</code></pre>
+<div id="cd4" class="section level5">
+<h5>CD4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="trat1" class="section level5">
+<h5>TRAT1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cd40lg" class="section level5">
+<h5>CD40LG</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lef1" class="section level5">
+<h5>LEF1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tnfrsf4" class="section level5">
+<h5>TNFRSF4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC1-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cd8tcell" class="section level4 tabset">
+<h4 class="tabset">CD8Tcell</h4>
+<pre class="r"><code>#CD8Tcell
+VizGenEx(sce.sc,Tcell_signatures$CD8Tcell)</code></pre>
+<div id="cd8a" class="section level5">
+<h5>CD8A</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cd8b" class="section level5">
+<h5>CD8B</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="nkcell" class="section level4 tabset">
+<h4 class="tabset">NKcell</h4>
+<pre class="r"><code>#NKcell
+VizGenEx(sce.sc,Tcell_signatures$NKcell) </code></pre>
+<div id="nkg7" class="section level5">
+<h5>NKG7</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gnly" class="section level5">
+<h5>GNLY</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC3-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ncam1" class="section level5">
+<h5>NCAM1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC3-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="proliftcell" class="section level4 tabset">
+<h4 class="tabset">ProlifTcell</h4>
+<pre class="r"><code>#ProlifTcell
+VizGenEx(sce.sc,Tcell_signatures$ProlifTcell)</code></pre>
+<div id="mki67" class="section level5">
+<h5>MKI67</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pcna" class="section level5">
+<h5>PCNA</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC4-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stmn1" class="section level5">
+<h5>STMN1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC4-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hmgb2" class="section level5">
+<h5>HMGB2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC4-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="treg" class="section level4 tabset">
+<h4 class="tabset">TReg</h4>
+<pre class="r"><code>#ProlifTcell
+VizGenEx(sce.sc,Tcell_signatures$TReg)</code></pre>
+<div id="foxp3" class="section level5">
+<h5>FOXP3</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ccr8" class="section level5">
+<h5>CCR8</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC5-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pmch" class="section level5">
+<h5>PMCH</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC5-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ccr4" class="section level5">
+<h5>CCR4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC5-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="rtkn2" class="section level5">
+<h5>RTKN2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC5-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="memory" class="section level4 tabset">
+<h4 class="tabset">Memory</h4>
+<pre class="r"><code>#ProlifTcell
+VizGenEx(sce.sc,Tcell_signatures$Memory)</code></pre>
+<div id="ccr7" class="section level5">
+<h5>CCR7</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="il7r" class="section level5">
+<h5>IL7R</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tcf7" class="section level5">
+<h5>TCF7</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sell" class="section level5">
+<h5>SELL</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="satb1" class="section level5">
+<h5>SATB1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gpr183" class="section level5">
+<h5>GPR183</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-6.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ltb" class="section level5">
+<h5>LTB</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-7.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lef1-1" class="section level5">
+<h5>LEF1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC6-8.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cytotoxic" class="section level4 tabset">
+<h4 class="tabset">Cytotoxic</h4>
+<pre class="r"><code>#ProlifTcell
+VizGenEx(sce.sc,Tcell_signatures$Cytotoxic)</code></pre>
+<div id="gzma" class="section level5">
+<h5>GZMA</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC7-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gzmk" class="section level5">
+<h5>GZMK</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC7-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="nkg7-1" class="section level5">
+<h5>NKG7</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpTC7-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Manual Annotation
+
+sce.sc$Annotation_L2 &lt;- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] &lt;- &quot;NKTcell&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(5)] &lt;- &quot;CytotoxCD4 TC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] &lt;- &quot;CytotoxCD8 TC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] &lt;- &quot;Naive TC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] &lt;- &quot;Memory TC&quot;
+
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] &quot;CytotoxCD8 TC&quot; &quot;Memory TC&quot;     &quot;Naive TC&quot;      &quot;NKTcell&quot;      
+[5] &quot;CytotoxCD4 TC&quot;</code></pre>
+</div>
+</div>
+<div id="umap-assigned-celltypes-2" class="section level4">
+<h4>UMAP Assigned Celltypes</h4>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;,text_by=&quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedTC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster&quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedTC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-annotated-dataset-2" class="section level3">
+<h3>Save the Annotated dataset</h3>
+<pre class="r"><code>saveRDS(sce.sc, file =paste0(path,&#39;/output/07_sce_SC_Tcell_Anno.rds&#39;))</code></pre>
+</div>
+<div id="identify-marker-of-labels-with-genes-wilcoxon-rank-sum-test-2"
+class="section level3">
+<h3>Identify Marker of labels with Genes Wilcoxon rank-sum test</h3>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Fibroblast_Anno&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]},{"label":["5"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"CCL5","3":"TPT1","4":"MALAT1","5":"TYROBP","6":"LDLRAD4"},{"1":"2","2":"NKG7","3":"EEF1A1","4":"ARHGAP15","5":"GNLY","6":"TSHZ2"},{"1":"3","2":"CST7","3":"RPS16","4":"MT-ATP6","5":"KLRD1","6":"TNFRSF18"},{"1":"4","2":"GZMA","3":"RPS12","4":"MT-ND2","5":"MCTP2","6":"TOX"},{"1":"5","2":"GZMK","3":"RPL34","4":"MT-ND1","5":"CTSW","6":"TOX2"},{"1":"6","2":"AOAH","3":"RPL9","4":"MT-ND5","5":"NKG7","6":"SNX9"},{"1":"7","2":"ZEB2","3":"RPL13","4":"MT-CO3","5":"GZMB","6":"CTLA4"},{"1":"8","2":"CCL4","3":"RPS18","4":"SYNE2","5":"RIN3","6":"GK"},{"1":"9","2":"CD8A","3":"RPS8","4":"MT-CYB","5":"LYN","6":"TNFRSF4"},{"1":"10","2":"GZMH","3":"RPLP0","4":"ELMO1","5":"FCER1G","6":"CD4"},{"1":"11","2":"AKNA","3":"RPL32","4":"MT-CO1","5":"NCAM1","6":"NDUFV2"},{"1":"12","2":"KLRK1","3":"RPS20","4":"MBNL1","5":"MAP3K8","6":"BATF"},{"1":"13","2":"APOBEC3G","3":"RPS6","4":"MT-ND3","5":"CD63","6":"CORO1B"},{"1":"14","2":"GZMB","3":"RPLP2","4":"ANKRD44","5":"IL2RB","6":"DUSP4"},{"1":"15","2":"CTSW","3":"RPS3A","4":"LRBA","5":"PRF1","6":"THADA"},{"1":"16","2":"HCST","3":"RPL23","4":"MT-ATP8","5":"TRDC","6":"TBC1D4"},{"1":"17","2":"GZMM","3":"RPL39","4":"MT-CO2","5":"ATP8B4","6":"GEM"},{"1":"18","2":"ARHGAP26","3":"RPL11","4":"ATXN1","5":"AUTS2","6":"PELI1"},{"1":"19","2":"GGA2","3":"RPL22","4":"ZBTB20","5":"KLRF1","6":"MAF"},{"1":"20","2":"CD74","3":"RPL7","4":"MTRNR2L12","5":"GAS7","6":"BACH1"},{"1":"21","2":"DUSP2","3":"RPL18A","4":"PCNX1","5":"MATK","6":"SOD1"},{"1":"22","2":"HLA-DPB1","3":"RPS13","4":"MT-ND4","5":"HOPX","6":"TSPAN5"},{"1":"23","2":"CD8B","3":"RPS23","4":"RABGAP1L","5":"C1orf21","6":"LAIR2"},{"1":"24","2":"HLA-DRB1","3":"RPL13A","4":"CHST11","5":"EFHD2","6":"OAZ1"},{"1":"25","2":"RUNX3","3":"RPL21","4":"FOXN3","5":"XCL2","6":"TRPS1"},{"1":"26","2":"CMIP","3":"RPL5","4":"FTX","5":"PLCB1","6":"LIMS1"},{"1":"27","2":"ENC1","3":"RPS17","4":"MACF1","5":"FNDC3B","6":"IL6ST"},{"1":"28","2":"C12orf75","3":"RPL36A","4":"CYTH1","5":"KLRB1","6":"YWHAB"},{"1":"29","2":"ATP8A1","3":"RPL3","4":"UTRN","5":"XCL1","6":"RAB11FIP1"},{"1":"30","2":"SYNE1","3":"RPS14","4":"ARID1B","5":"AOAH","6":"TIGIT"},{"1":"31","2":"CRTAM","3":"RPL18","4":"ANKRD11","5":"CD7","6":"NR3C1"},{"1":"32","2":"SAMD3","3":"RPS11","4":"PRKCH","5":"KLRC1","6":"RBPJ"},{"1":"33","2":"C1orf21","3":"RPS21","4":"SKAP1","5":"CNOT2","6":"NAB1"},{"1":"34","2":"HLA-C","3":"RPS4X","4":"FOXP1","5":"MAFF","6":"PKM"},{"1":"35","2":"NAA50","3":"RPL37","4":"INPP4B","5":"IFITM2","6":"AL109930.1"},{"1":"36","2":"LITAF","3":"EEF1B2","4":"TNRC6B","5":"NFKB1","6":"ZNRF1"},{"1":"37","2":"TUBA4A","3":"EEF1G","4":"IQGAP2","5":"BHLHE40","6":"GNG4"},{"1":"38","2":"CYBA","3":"RPS2","4":"EML4","5":"REL","6":"CYTOR"},{"1":"39","2":"LCP1","3":"RPS5","4":"VPS13B","5":"GSTP1","6":"RNASET2"},{"1":"40","2":"SLA2","3":"RPS28","4":"KLF12","5":"METRNL","6":"PRDX1"},{"1":"41","2":"AUTS2","3":"RPL19","4":"DOCK2","5":"B3GNT7","6":"FILIP1L"},{"1":"42","2":"HLA-B","3":"RPLP1","4":"USP34","5":"IER2","6":"ARPC1B"},{"1":"43","2":"MCOLN2","3":"RPL36","4":"MSI2","5":"CDC42SE1","6":"PHACTR2"},{"1":"44","2":"PLAAT4","3":"RPL37A","4":"SMCHD1","5":"NCALD","6":"MYL6"},{"1":"45","2":"PIK3R1","3":"RPS27A","4":"FOXO1","5":"IL12RB2","6":"MIR4435-2HG"},{"1":"46","2":"SEPTIN7","3":"RPL30","4":"ANK3","5":"TXK","6":"ARID5B"},{"1":"47","2":"PRF1","3":"RPL38","4":"CBLB","5":"PTPN12","6":"PGM2L1"},{"1":"48","2":"GALNT11","3":"RPL27A","4":"NEAT1","5":"LAT2","6":"CMSS1"},{"1":"49","2":"PPP1R16B","3":"RPS25","4":"CASK","5":"CLIC3","6":"TRAC"},{"1":"50","2":"PTPRC","3":"RPL29","4":"CELF2","5":"CTBP2","6":"CD3D"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+</div>
+</div>
+<div id="endothelial" class="section level2">
+<h2>Endothelial</h2>
+<div id="load-data-3" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce.sc &lt;- readRDS(file = paste0(path,&#39;/output/07_sce_SC_Endothelial.rds&#39;))</code></pre>
+</div>
+<div id="explore-dataset-3" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce.sc)</code></pre>
+<pre><code>[1] 30488  5012</code></pre>
+</div>
+<div id="plot-annotation-3" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+<div id="plot-umap-of-subclusters-3" class="section level4">
+<h4>Plot UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, paste0(&quot;MNN_UMAP_reduced&quot;),colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterEC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-recalculated-umap-of-subclusters-3"
+class="section level4">
+<h4>Plot Recalculated UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterRecalcEC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="annotate-subcluster-3" class="section level3">
+<h3>Annotate Subcluster</h3>
+<div id="identify-marker-genes-wilcoxon-rank-sum-test-3"
+class="section level4">
+<h4>Identify Marker Genes Wilcoxon rank-sum test</h4>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Endothelial&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"ARL15","3":"ACKR1","4":"COL4A1","5":"RPS23"},{"1":"2","2":"CXCL12","3":"CLU","4":"RGCC","5":"RPS12"},{"1":"3","2":"SLC9A3R2","3":"ADIRF","4":"SPARC","5":"RPLP2"},{"1":"4","2":"PODXL","3":"VWF","4":"DYSF","5":"RPL28"},{"1":"5","2":"SRP14","3":"IL1R1","4":"COL4A2","5":"RPS24"},{"1":"6","2":"SRGN","3":"CCL14","4":"RFLNB","5":"RPL32"},{"1":"7","2":"SEMA3G","3":"TGFBR2","4":"COL15A1","5":"RPL12"},{"1":"8","2":"PLPP1","3":"MYRIP","4":"INSR","5":"RPS18"},{"1":"9","2":"GJA4","3":"CD74","4":"MYO1B","5":"FAU"},{"1":"10","2":"EFNB2","3":"HLA-DRA","4":"CACNA1C","5":"RPLP1"},{"1":"11","2":"PPA1","3":"LIFR","4":"EDIL3","5":"TPT1"},{"1":"12","2":"ADGRF5","3":"DAAM1","4":"RASGRP3","5":"RPS14"},{"1":"13","2":"UTRN","3":"POSTN","4":"PTPRK","5":"RPS9"},{"1":"14","2":"NEBL","3":"HLA-DPB1","4":"COL13A1","5":"RPL19"},{"1":"15","2":"A2M","3":"TGFBR3","4":"IQSEC1","5":"RPL35A"},{"1":"16","2":"GLUL","3":"SELP","4":"KDR","5":"RPL13"},{"1":"17","2":"NOTCH4","3":"HLA-DPA1","4":"PLCB1","5":"RPS15"},{"1":"18","2":"ICAM2","3":"EPB41L3","4":"RCAN2","5":"EEF1A1"},{"1":"19","2":"DST","3":"SNCG","4":"LAMB1","5":"TMSB10"},{"1":"20","2":"PCSK5","3":"HLA-DRB1","4":"SPRY4","5":"RPL37A"},{"1":"21","2":"HEY1","3":"ABLIM1","4":"AC119674.1","5":"RPL26"},{"1":"22","2":"RHOB","3":"NR2F2","4":"PLVAP","5":"RPS15A"},{"1":"23","2":"ADAMTS6","3":"CST3","4":"MLEC","5":"RPL18"},{"1":"24","2":"MAST4","3":"ITM2B","4":"CALCRL","5":"RPL37"},{"1":"25","2":"CDH5","3":"PLSCR4","4":"MYO1D","5":"RPS7"},{"1":"26","2":"PIK3R3","3":"MMRN1","4":"DGKD","5":"RPL7A"},{"1":"27","2":"FBLN5","3":"LRRC1","4":"EXOC3L2","5":"RPS28"},{"1":"28","2":"VEGFC","3":"NPC2","4":"COL6A2","5":"RPL15"},{"1":"29","2":"CLDN5","3":"IL33","4":"ITIH5","5":"RPL10"},{"1":"30","2":"IGFBP3","3":"SOD2","4":"HECW2","5":"RPL23A"},{"1":"31","2":"JAG2","3":"NAMPT","4":"APLNR","5":"RPS19"},{"1":"32","2":"TSPAN2","3":"AQP1","4":"LYN","5":"RPS6"},{"1":"33","2":"LTBP4","3":"FBLN2","4":"INPP5A","5":"RPL41"},{"1":"34","2":"RAMP2","3":"CD59","4":"MAP1B","5":"RPS27A"},{"1":"35","2":"PREX1","3":"NNMT","4":"CD276","5":"RPL24"},{"1":"36","2":"ATP2A3","3":"FOXP1","4":"VWA1","5":"RPL10A"},{"1":"37","2":"MMP2","3":"ST6GAL1","4":"ST8SIA4","5":"RPS3A"},{"1":"38","2":"DLL4","3":"RPL34","4":"IVNS1ABP","5":"RPL36"},{"1":"39","2":"ACE","3":"ZNF385D","4":"RAB31","5":"UBA52"},{"1":"40","2":"CRYBG3","3":"CNKSR3","4":"C1orf54","5":"RPS4X"},{"1":"41","2":"THSD7A","3":"ACTN1","4":"CCDC80","5":"RPL13A"},{"1":"42","2":"CD46","3":"TFPI","4":"FAM171B","5":"RPS3"},{"1":"43","2":"IFI27","3":"SOCS3","4":"EXT1","5":"RPL34"},{"1":"44","2":"ATP13A3","3":"CAVIN2","4":"ARHGAP29","5":"RPL30"},{"1":"45","2":"MRPL33","3":"PLEKHA7","4":"ANGPTL2","5":"RPL17"},{"1":"46","2":"OCIAD2","3":"TSPAN7","4":"AFAP1L1","5":"RPL22"},{"1":"47","2":"LPCAT2","3":"NCOA7","4":"BTBD9","5":"RPL18A"},{"1":"48","2":"CCDC3","3":"CEBPD","4":"CSGALNACT1","5":"RPL8"},{"1":"49","2":"ASS1","3":"PGM5","4":"GBE1","5":"RPL11"},{"1":"50","2":"CALM1","3":"PLCB4","4":"ST3GAL6","5":"RPS5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = &quot;subcluster&quot;,min.color=&quot;lightgrey&quot;, max.color=&quot;blue&quot;,min.percent=0.2,max.percent=1,scale = TRUE )</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/DotplotEC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-known-marker" class="section level4">
+<h4>Test Known marker</h4>
+<pre class="r"><code>Endothelial_signatures &lt;- list(
+    Arterial = c(&quot;GJA5&quot;,&quot;NOTCH4&quot;, &quot;EFNB2&quot;,&quot;HEY1&quot;),
+    Venous = c(&quot;NR2F2&quot;,&quot;ACKR1&quot;, &quot;LIFR&quot;, &quot;ICAM1&quot;,&quot;CLU&quot;),
+    Capillary = c(&quot;SPARC&quot;,&quot;ESAM&quot;),
+    Lymphatic = c(&quot;PROX1&quot;,&quot;PDPN&quot;,&quot;FLT4&quot;,&quot;LYVE1&quot;)
+)</code></pre>
+</div>
+</div>
+<div id="run-ucell-on-sce-object-3" class="section level3">
+<h3>Run UCell on sce object</h3>
+<div id="test-signatures-signatures-1" class="section level4">
+<h4>Test signatures signatures</h4>
+<pre class="r"><code>sce.ucell &lt;- ScoreSignatures_UCell(sce.sc, features=Endothelial_signatures, assay = &#39;counts&#39;, name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, &#39;UCell&#39;)</code></pre>
+<pre><code>class: SummarizedExperiment 
+dim: 4 5012 
+metadata(0):
+assays(1): UCell
+rownames(4): Arterial Venous Capillary Lymphatic
+rowData names(0):
+colnames(5012): SynBio_028.GACTCTCAGGTAACTA-1
+  SynBio_028.TACCGGGAGTAGGATT-1 ... SynBio_127.ACGTACAGTGACAGGT-1
+  SynBio_127.GTAGATCGTTCGTGCG-1
+colData names(0):</code></pre>
+<pre class="r"><code>pll &lt;- lapply(names(Endothelial_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred=&quot;MNN_UMAP_SC_reduced&quot;, colour_by=paste(x),by_exprs_values = &quot;UCell&quot;,point_alpha=0.8,point_size=0.2) +
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )
+})
+wrap_plots(pll)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellUMAPEC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pll &lt;- lapply(names(Endothelial_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = &quot;subcluster&quot;,exprs_values = &quot;UCell&quot;)
+})
+wrap_plots(pll,ncol=2)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellExpressionEC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="test-tcells-marker-1" class="section level3 tabset">
+<h3 class="tabset">Test Tcells marker</h3>
+<div id="arterial" class="section level4 tabset">
+<h4 class="tabset">Arterial</h4>
+<pre class="r"><code>#Capillary
+VizGenEx(sce.sc,Endothelial_signatures$Arterial)</code></pre>
+<div id="gja5" class="section level5">
+<h5>GJA5</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="notch4" class="section level5">
+<h5>NOTCH4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="efnb2" class="section level5">
+<h5>EFNB2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="hey1" class="section level5">
+<h5>HEY1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="venous" class="section level4 tabset">
+<h4 class="tabset">Venous</h4>
+<pre class="r"><code>#Venular
+VizGenEx(sce.sc,Endothelial_signatures$Venous)</code></pre>
+<div id="nr2f2" class="section level5">
+<h5>NR2F2</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ackr1" class="section level5">
+<h5>ACKR1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lifr" class="section level5">
+<h5>LIFR</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="icam1" class="section level5">
+<h5>ICAM1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC2-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="clu-1" class="section level5">
+<h5>CLU</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC2-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="capillary" class="section level4 tabset">
+<h4 class="tabset">Capillary</h4>
+<pre class="r"><code>#Arteriolar
+VizGenEx(sce.sc,Endothelial_signatures$Capillary)</code></pre>
+<div id="sparc" class="section level5">
+<h5>SPARC</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="esam" class="section level5">
+<h5>ESAM</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC3-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="lymphatic" class="section level4 tabset">
+<h4 class="tabset">Lymphatic</h4>
+<pre class="r"><code>#lymphatic
+VizGenEx(sce.sc,Endothelial_signatures$Lymphatic)  </code></pre>
+<div id="prox1" class="section level5">
+<h5>PROX1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pdpn" class="section level5">
+<h5>PDPN</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC4-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="flt4" class="section level5">
+<h5>FLT4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC4-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lyve1" class="section level5">
+<h5>LYVE1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpEC4-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="label-assignement-2" class="section level3">
+<h3>Label Assignement</h3>
+<pre class="r"><code>#Manual Annotation
+
+sce.sc$Annotation_L2 &lt;- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] 1 2 3 4</code></pre>
+<pre class="r"><code>sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] &lt;- &quot;Arteriolar EC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2,4)] &lt;- &quot;Venular EC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] &lt;- &quot;Capillary EC&quot;
+#sce$Annotation_L2[sce$subcluster %in% c(1)] &lt;- &quot;Lymphatic&quot;
+
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] &quot;Arteriolar EC&quot; &quot;Venular EC&quot;    &quot;Capillary EC&quot; </code></pre>
+<div id="umap-assigned-celltypes-3" class="section level4">
+<h4>UMAP Assigned Celltypes</h4>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;,text_by=&quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedEC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster&quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedEC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-annotated-dataset-3" class="section level3">
+<h3>Save the Annotated dataset</h3>
+<pre class="r"><code>saveRDS(sce.sc, file =paste0(path,&#39;/output/07_sce_SC_Endothelial_Anno.rds&#39;))</code></pre>
+</div>
+<div id="identify-marker-of-labels-with-genes-wilcoxon-rank-sum-test-3"
+class="section level3">
+<h3>Identify Marker of labels with Genes Wilcoxon rank-sum test</h3>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Endothelial_Anno&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]},{"label":["3"],"name":[4],"type":["chr"],"align":["left"]},{"label":["4"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"ARL15","3":"ACKR1","4":"COL4A1","5":"RPS23"},{"1":"2","2":"CXCL12","3":"CLU","4":"RGCC","5":"RPS12"},{"1":"3","2":"SLC9A3R2","3":"ADIRF","4":"SPARC","5":"RPLP2"},{"1":"4","2":"PODXL","3":"VWF","4":"DYSF","5":"RPL28"},{"1":"5","2":"SRP14","3":"IL1R1","4":"COL4A2","5":"RPS24"},{"1":"6","2":"SRGN","3":"CCL14","4":"RFLNB","5":"RPL32"},{"1":"7","2":"SEMA3G","3":"TGFBR2","4":"COL15A1","5":"RPL12"},{"1":"8","2":"PLPP1","3":"MYRIP","4":"INSR","5":"RPS18"},{"1":"9","2":"GJA4","3":"CD74","4":"MYO1B","5":"FAU"},{"1":"10","2":"EFNB2","3":"HLA-DRA","4":"CACNA1C","5":"RPLP1"},{"1":"11","2":"PPA1","3":"LIFR","4":"EDIL3","5":"TPT1"},{"1":"12","2":"ADGRF5","3":"DAAM1","4":"RASGRP3","5":"RPS14"},{"1":"13","2":"UTRN","3":"POSTN","4":"PTPRK","5":"RPS9"},{"1":"14","2":"NEBL","3":"HLA-DPB1","4":"COL13A1","5":"RPL19"},{"1":"15","2":"A2M","3":"TGFBR3","4":"IQSEC1","5":"RPL35A"},{"1":"16","2":"GLUL","3":"SELP","4":"KDR","5":"RPL13"},{"1":"17","2":"NOTCH4","3":"HLA-DPA1","4":"PLCB1","5":"RPS15"},{"1":"18","2":"ICAM2","3":"EPB41L3","4":"RCAN2","5":"EEF1A1"},{"1":"19","2":"DST","3":"SNCG","4":"LAMB1","5":"TMSB10"},{"1":"20","2":"PCSK5","3":"HLA-DRB1","4":"SPRY4","5":"RPL37A"},{"1":"21","2":"HEY1","3":"ABLIM1","4":"AC119674.1","5":"RPL26"},{"1":"22","2":"RHOB","3":"NR2F2","4":"PLVAP","5":"RPS15A"},{"1":"23","2":"ADAMTS6","3":"CST3","4":"MLEC","5":"RPL18"},{"1":"24","2":"MAST4","3":"ITM2B","4":"CALCRL","5":"RPL37"},{"1":"25","2":"CDH5","3":"PLSCR4","4":"MYO1D","5":"RPS7"},{"1":"26","2":"PIK3R3","3":"MMRN1","4":"DGKD","5":"RPL7A"},{"1":"27","2":"FBLN5","3":"LRRC1","4":"EXOC3L2","5":"RPS28"},{"1":"28","2":"VEGFC","3":"NPC2","4":"COL6A2","5":"RPL15"},{"1":"29","2":"CLDN5","3":"IL33","4":"ITIH5","5":"RPL10"},{"1":"30","2":"IGFBP3","3":"SOD2","4":"HECW2","5":"RPL23A"},{"1":"31","2":"JAG2","3":"NAMPT","4":"APLNR","5":"RPS19"},{"1":"32","2":"TSPAN2","3":"AQP1","4":"LYN","5":"RPS6"},{"1":"33","2":"LTBP4","3":"FBLN2","4":"INPP5A","5":"RPL41"},{"1":"34","2":"RAMP2","3":"CD59","4":"MAP1B","5":"RPS27A"},{"1":"35","2":"PREX1","3":"NNMT","4":"CD276","5":"RPL24"},{"1":"36","2":"ATP2A3","3":"FOXP1","4":"VWA1","5":"RPL10A"},{"1":"37","2":"MMP2","3":"ST6GAL1","4":"ST8SIA4","5":"RPS3A"},{"1":"38","2":"DLL4","3":"RPL34","4":"IVNS1ABP","5":"RPL36"},{"1":"39","2":"ACE","3":"ZNF385D","4":"RAB31","5":"UBA52"},{"1":"40","2":"CRYBG3","3":"CNKSR3","4":"C1orf54","5":"RPS4X"},{"1":"41","2":"THSD7A","3":"ACTN1","4":"CCDC80","5":"RPL13A"},{"1":"42","2":"CD46","3":"TFPI","4":"FAM171B","5":"RPS3"},{"1":"43","2":"IFI27","3":"SOCS3","4":"EXT1","5":"RPL34"},{"1":"44","2":"ATP13A3","3":"CAVIN2","4":"ARHGAP29","5":"RPL30"},{"1":"45","2":"MRPL33","3":"PLEKHA7","4":"ANGPTL2","5":"RPL17"},{"1":"46","2":"OCIAD2","3":"TSPAN7","4":"AFAP1L1","5":"RPL22"},{"1":"47","2":"LPCAT2","3":"NCOA7","4":"BTBD9","5":"RPL18A"},{"1":"48","2":"CCDC3","3":"CEBPD","4":"CSGALNACT1","5":"RPL8"},{"1":"49","2":"ASS1","3":"PGM5","4":"GBE1","5":"RPL11"},{"1":"50","2":"CALM1","3":"PLCB4","4":"ST3GAL6","5":"RPS5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+</div>
+</div>
+<div id="dendritic" class="section level2">
+<h2>Dendritic</h2>
+<div id="load-data-4" class="section level3">
+<h3>Load Data</h3>
+<pre class="r"><code>## RA DATASET
+sce.sc &lt;- readRDS(file = paste0(path,&#39;/output/07_sce_SC_Dendritic.rds&#39;))</code></pre>
+</div>
+<div id="explore-dataset-4" class="section level3">
+<h3>Explore Dataset</h3>
+<pre class="r"><code>#Dimensions of count matrix
+dim(sce.sc)</code></pre>
+<pre><code>[1] 30488  1103</code></pre>
+</div>
+<div id="plot-annotation-4" class="section level3 tabset">
+<h3 class="tabset">Plot Annotation</h3>
+<div id="plot-umap-of-subclusters-4" class="section level4">
+<h4>Plot UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, paste0(&quot;MNN_UMAP_reduced&quot;),colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterDC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="plot-recalculated-umap-of-subclusters-4"
+class="section level4">
+<h4>Plot Recalculated UMAP of Subclusters</h4>
+<pre class="r"><code>#cluster
+plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;subcluster&quot;, text_by=&quot;subcluster&quot;) +labs(title=paste0(&quot;SubCluster&quot;),subtitle=&quot;Colored by clustering&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPSubclusterRecalcDC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="annotate-subcluster-4" class="section level3">
+<h3>Annotate Subcluster</h3>
+<div id="identify-marker-genes-wilcoxon-rank-sum-test-4"
+class="section level4">
+<h4>Identify Marker Genes Wilcoxon rank-sum test</h4>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Fibroblast&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"LYZ","3":"PTPRS"},{"1":"2","2":"S100A10","3":"RUBCN"},{"1":"3","2":"IFI30","3":"GZMB"},{"1":"4","2":"COTL1","3":"FCHSD2"},{"1":"5","2":"TIMP1","3":"SEL1L3"},{"1":"6","2":"HLA-DQB1","3":"C12orf75"},{"1":"7","2":"ANXA2","3":"JCHAIN"},{"1":"8","2":"HLA-DPB1","3":"IRF4"},{"1":"9","2":"S100A11","3":"TCF4"},{"1":"10","2":"LGALS3","3":"SLC15A4"},{"1":"11","2":"ANXA5","3":"ITM2C"},{"1":"12","2":"ACTB","3":"INPP4A"},{"1":"13","2":"HLA-DPA1","3":"RHEX"},{"1":"14","2":"CSTB","3":"APP"},{"1":"15","2":"SPI1","3":"AC023590.1"},{"1":"16","2":"VIM","3":"PLAC8"},{"1":"17","2":"SLC8A1","3":"COBLL1"},{"1":"18","2":"PLXDC2","3":"ZFAT"},{"1":"19","2":"SGK1","3":"POLB"},{"1":"20","2":"NAMPT","3":"FYTTD1"},{"1":"21","2":"LMNA","3":"IGF2R"},{"1":"22","2":"HLA-DRA","3":"NR3C1"},{"1":"23","2":"ANXA1","3":"CD2AP"},{"1":"24","2":"LGALS2","3":"TSPAN13"},{"1":"25","2":"SLCO3A1","3":"ALOX5AP"},{"1":"26","2":"RAB31","3":"PHEX"},{"1":"27","2":"TMSB10","3":"PLD4"},{"1":"28","2":"FGL2","3":"IL3RA"},{"1":"29","2":"GAPDH","3":"TRAF4"},{"1":"30","2":"SAT1","3":"PDE4B"},{"1":"31","2":"CEBPD","3":"SEC61B"},{"1":"32","2":"ITGB2","3":"PPP1R16B"},{"1":"33","2":"EPB41L3","3":"SETBP1"},{"1":"34","2":"AIF1","3":"MZB1"},{"1":"35","2":"HLA-DQA1","3":"LINC01374"},{"1":"36","2":"LGALS1","3":"PMEPA1"},{"1":"37","2":"TMSB4X","3":"LILRA4"},{"1":"38","2":"HLA-DRB1","3":"GLT1D1"},{"1":"39","2":"ATP2B1","3":"NIBAN3"},{"1":"40","2":"CD63","3":"LRRC26"},{"1":"41","2":"GLIPR2","3":"SMPD3"},{"1":"42","2":"CD44","3":"FAM160A1"},{"1":"43","2":"CLEC7A","3":"FAM53B"},{"1":"44","2":"PKM","3":"CORO7"},{"1":"45","2":"TYMP","3":"CLIC3"},{"1":"46","2":"CD58","3":"LIME1"},{"1":"47","2":"BASP1","3":"RABGAP1L"},{"1":"48","2":"CAPN2","3":"CYB561A3"},{"1":"49","2":"CPVL","3":"CCDC50"},{"1":"50","2":"PPA1","3":"RELL1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = &quot;subcluster&quot;,min.color=&quot;lightgrey&quot;, max.color=&quot;blue&quot;,min.percent=0.2,max.percent=1,scale = TRUE )</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/DotplotDC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="test-known-marker-1" class="section level4">
+<h4>Test Known marker</h4>
+<pre class="r"><code>Dendrittic_signatures &lt;- list(
+    pDC = c(&quot;CLEC4C&quot;,&quot;LILRA4&quot;, &quot;LRRC26&quot;,&quot;SCT&quot;),
+    cDC1 = c(&quot;CLEC9A&quot;,&quot;THBD&quot;, &quot;XCR1&quot;, &quot;CLNK&quot;),
+    cDC2 = c(&quot;CLEC10A&quot;,&quot;ENHO&quot;,&quot;CD1C&quot;)
+)</code></pre>
+</div>
+</div>
+<div id="run-ucell-on-sce-object-4" class="section level3">
+<h3>Run UCell on sce object</h3>
+<div id="test-signatures-signatures-2" class="section level4">
+<h4>Test signatures signatures</h4>
+<pre class="r"><code>sce.ucell &lt;- ScoreSignatures_UCell(sce.sc, features=Dendrittic_signatures, assay = &#39;counts&#39;, name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, &#39;UCell&#39;)</code></pre>
+<pre><code>class: SummarizedExperiment 
+dim: 3 1103 
+metadata(0):
+assays(1): UCell
+rownames(3): pDC cDC1 cDC2
+rowData names(0):
+colnames(1103): SynBio_028.TGAGACTCATCTGGGC-1
+  SynBio_028.TTTCACAGTGCAGTGA-1 ... SynBio_127.CAGGCCAAGAAGGCTC-1
+  SynBio_127.AAGCGTTGTCCTGTTC-1
+colData names(0):</code></pre>
+<pre class="r"><code>pll &lt;- lapply(names(Dendrittic_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred=&quot;MNN_UMAP_SC_reduced&quot;, colour_by=paste(x),by_exprs_values = &quot;UCell&quot;,point_alpha=0.8,point_size=0.2) +
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )
+})
+wrap_plots(pll)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellUMAPDC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pll &lt;- lapply(names(Dendrittic_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = &quot;subcluster&quot;,exprs_values = &quot;UCell&quot;)
+})
+wrap_plots(pll,ncol=2)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UCellExpressionDC-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="test-tcells-marker-2" class="section level3 tabset">
+<h3 class="tabset">Test Tcells marker</h3>
+<div id="pdc" class="section level4 tabset">
+<h4 class="tabset">pDC</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Dendrittic_signatures$pDC)</code></pre>
+<div id="clec4c" class="section level5">
+<h5>CLEC4C</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lilra4" class="section level5">
+<h5>LILRA4</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lrrc26" class="section level5">
+<h5>LRRC26</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sct" class="section level5">
+<h5>SCT</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cdc1" class="section level4 tabset">
+<h4 class="tabset">cDC1</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Dendrittic_signatures$cDC1)</code></pre>
+<div id="clec9a" class="section level5">
+<h5>CLEC9A</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="thbd" class="section level5">
+<h5>THBD</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="xcr1" class="section level5">
+<h5>XCR1</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="clnk" class="section level5">
+<h5>CLNK</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC2-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="cdc2" class="section level4 tabset">
+<h4 class="tabset">cDC2</h4>
+<pre class="r"><code>VizGenEx(sce.sc,Dendrittic_signatures$cDC2)</code></pre>
+<div id="clec10a" class="section level5">
+<h5>CLEC10A</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC3-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="enho" class="section level5">
+<h5>ENHO</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC3-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cd1c" class="section level5">
+<h5>CD1C</h5>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/GexpDC3-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="label-assignement-3" class="section level4">
+<h4>Label Assignement</h4>
+<pre class="r"><code># Annotation
+sce.sc$Annotation_L2 &lt;- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] 1 2</code></pre>
+<pre class="r"><code>sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] &lt;- &quot;pDC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] &lt;- &quot;cDC&quot;
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] &lt;- &quot;cDC2&quot;
+
+unique(sce.sc$Annotation_L2)</code></pre>
+<pre><code>[1] &quot;cDC&quot; &quot;pDC&quot;</code></pre>
+</div>
+<div id="umap-assigned-celltypes-4" class="section level4">
+<h4>UMAP Assigned Celltypes</h4>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;,text_by=&quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster &quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedDC1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plotReducedDim(sce.sc, &quot;MNN_UMAP_SC_reduced&quot;,colour_by = &quot;Annotation_L2&quot;) +
+          labs(title=&quot;Recalculated UMAP for Subcluster&quot;,subtitle=&quot;Colored by Celltype&quot;)</code></pre>
+<p><img src="figure/07_SubClustering_Annotation.Rmd/UMAPAssignedDC2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-the-annotated-dataset-4" class="section level3">
+<h3>Save the Annotated dataset</h3>
+<pre class="r"><code>saveRDS(sce.sc, file =paste0(path,&#39;/output/07_sce_SC_Dendritic_Anno.rds&#39;))</code></pre>
+</div>
+<div id="identify-marker-of-labels-with-genes-wilcoxon-rank-sum-test-4"
+class="section level3">
+<h3>Identify Marker of labels with Genes Wilcoxon rank-sum test</h3>
+<pre class="r"><code>DE_genes &lt;- Run_Wilcoxauc(sce.sc,&#39;subcluster&#39;,&#39;Dendritic_Anno&#39;,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["1"],"name":[2],"type":["chr"],"align":["left"]},{"label":["2"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"LYZ","3":"PTPRS"},{"1":"2","2":"S100A10","3":"RUBCN"},{"1":"3","2":"IFI30","3":"GZMB"},{"1":"4","2":"COTL1","3":"FCHSD2"},{"1":"5","2":"TIMP1","3":"SEL1L3"},{"1":"6","2":"HLA-DQB1","3":"C12orf75"},{"1":"7","2":"ANXA2","3":"JCHAIN"},{"1":"8","2":"HLA-DPB1","3":"IRF4"},{"1":"9","2":"S100A11","3":"TCF4"},{"1":"10","2":"LGALS3","3":"SLC15A4"},{"1":"11","2":"ANXA5","3":"ITM2C"},{"1":"12","2":"ACTB","3":"INPP4A"},{"1":"13","2":"HLA-DPA1","3":"RHEX"},{"1":"14","2":"CSTB","3":"APP"},{"1":"15","2":"SPI1","3":"AC023590.1"},{"1":"16","2":"VIM","3":"PLAC8"},{"1":"17","2":"SLC8A1","3":"COBLL1"},{"1":"18","2":"PLXDC2","3":"ZFAT"},{"1":"19","2":"SGK1","3":"POLB"},{"1":"20","2":"NAMPT","3":"FYTTD1"},{"1":"21","2":"LMNA","3":"IGF2R"},{"1":"22","2":"HLA-DRA","3":"NR3C1"},{"1":"23","2":"ANXA1","3":"CD2AP"},{"1":"24","2":"LGALS2","3":"TSPAN13"},{"1":"25","2":"SLCO3A1","3":"ALOX5AP"},{"1":"26","2":"RAB31","3":"PHEX"},{"1":"27","2":"TMSB10","3":"PLD4"},{"1":"28","2":"FGL2","3":"IL3RA"},{"1":"29","2":"GAPDH","3":"TRAF4"},{"1":"30","2":"SAT1","3":"PDE4B"},{"1":"31","2":"CEBPD","3":"SEC61B"},{"1":"32","2":"ITGB2","3":"PPP1R16B"},{"1":"33","2":"EPB41L3","3":"SETBP1"},{"1":"34","2":"AIF1","3":"MZB1"},{"1":"35","2":"HLA-DQA1","3":"LINC01374"},{"1":"36","2":"LGALS1","3":"PMEPA1"},{"1":"37","2":"TMSB4X","3":"LILRA4"},{"1":"38","2":"HLA-DRB1","3":"GLT1D1"},{"1":"39","2":"ATP2B1","3":"NIBAN3"},{"1":"40","2":"CD63","3":"LRRC26"},{"1":"41","2":"GLIPR2","3":"SMPD3"},{"1":"42","2":"CD44","3":"FAM160A1"},{"1":"43","2":"CLEC7A","3":"FAM53B"},{"1":"44","2":"PKM","3":"CORO7"},{"1":"45","2":"TYMP","3":"CLIC3"},{"1":"46","2":"CD58","3":"LIME1"},{"1":"47","2":"BASP1","3":"RABGAP1L"},{"1":"48","2":"CAPN2","3":"CYB561A3"},{"1":"49","2":"CPVL","3":"CCDC50"},{"1":"50","2":"PPA1","3":"RELL1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.3 (2024-02-29)
+Platform: x86_64-apple-darwin20 (64-bit)
+Running under: macOS Sonoma 14.4.1
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: Europe/Warsaw
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices datasets  utils     methods  
+[8] base     
+
+other attached packages:
+ [1] patchwork_1.2.0             xlsx_0.6.5                 
+ [3] UCell_2.6.2                 dittoSeq_1.14.3            
+ [5] presto_1.0.0                data.table_1.15.4          
+ [7] Rcpp_1.0.12                 bluster_1.12.0             
+ [9] batchelor_1.18.1            tidyr_1.3.1                
+[11] org.Hs.eg.db_3.18.0         AnnotationDbi_1.64.1       
+[13] clusterProfiler_4.10.1      viridis_0.6.5              
+[15] viridisLite_0.4.2           gridExtra_2.3              
+[17] scran_1.30.2                scater_1.30.1              
+[19] scuttle_1.12.0              SingleCellExperiment_1.24.0
+[21] SummarizedExperiment_1.32.0 Biobase_2.62.0             
+[23] GenomicRanges_1.54.1        GenomeInfoDb_1.38.8        
+[25] IRanges_2.36.0              S4Vectors_0.40.2           
+[27] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
+[29] matrixStats_1.3.0           dplyr_1.1.4                
+[31] ggplot2_3.5.1               BiocParallel_1.36.0        
+[33] here_1.0.1                  workflowr_1.7.1            
+
+loaded via a namespace (and not attached):
+  [1] splines_4.3.3             later_1.3.2              
+  [3] bitops_1.0-7              ggplotify_0.1.2          
+  [5] tibble_3.2.1              polyclip_1.10-6          
+  [7] lifecycle_1.0.4           edgeR_4.0.16             
+  [9] rprojroot_2.0.4           processx_3.8.4           
+ [11] lattice_0.22-6            MASS_7.3-60.0.1          
+ [13] magrittr_2.0.3            limma_3.58.1             
+ [15] sass_0.4.9                rmarkdown_2.27           
+ [17] jquerylib_0.1.4           yaml_2.3.8               
+ [19] metapod_1.10.1            httpuv_1.6.15            
+ [21] cowplot_1.1.3             DBI_1.2.3                
+ [23] RColorBrewer_1.1-3        ResidualMatrix_1.12.0    
+ [25] abind_1.4-5               zlibbioc_1.48.2          
+ [27] purrr_1.0.2               ggraph_2.2.1             
+ [29] RCurl_1.98-1.14           yulab.utils_0.1.4        
+ [31] xlsxjars_0.6.1            tweenr_2.0.3             
+ [33] git2r_0.33.0              GenomeInfoDbData_1.2.11  
+ [35] enrichplot_1.22.0         ggrepel_0.9.5            
+ [37] irlba_2.3.5.1             tidytree_0.4.6           
+ [39] pheatmap_1.0.12           dqrng_0.4.1              
+ [41] DelayedMatrixStats_1.24.0 codetools_0.2-20         
+ [43] DelayedArray_0.28.0       DOSE_3.28.2              
+ [45] ggforce_0.4.2             tidyselect_1.2.1         
+ [47] aplot_0.2.3               farver_2.1.2             
+ [49] ScaledMatrix_1.10.0       jsonlite_1.8.8           
+ [51] BiocNeighbors_1.20.2      tidygraph_1.3.1          
+ [53] ggridges_0.5.6            tools_4.3.3              
+ [55] treeio_1.26.0             glue_1.7.0               
+ [57] SparseArray_1.2.4         xfun_0.45                
+ [59] qvalue_2.34.0             withr_3.0.0              
+ [61] BiocManager_1.30.23       fastmap_1.2.0            
+ [63] fansi_1.0.6               callr_3.7.6              
+ [65] digest_0.6.36             rsvd_1.0.5               
+ [67] R6_2.5.1                  gridGraphics_0.5-1       
+ [69] colorspace_2.1-0          GO.db_3.18.0             
+ [71] RSQLite_2.3.7             utf8_1.2.4               
+ [73] generics_0.1.3            renv_1.0.7               
+ [75] graphlayouts_1.1.1        httr_1.4.7               
+ [77] S4Arrays_1.2.1            scatterpie_0.2.3         
+ [79] whisker_0.4.1             pkgconfig_2.0.3          
+ [81] rJava_1.0-11              gtable_0.3.5             
+ [83] blob_1.2.4                XVector_0.42.0           
+ [85] shadowtext_0.1.3          htmltools_0.5.8.1        
+ [87] fgsea_1.28.0              scales_1.3.0             
+ [89] png_0.1-8                 ggfun_0.1.5              
+ [91] knitr_1.47                rstudioapi_0.16.0        
+ [93] reshape2_1.4.4            nlme_3.1-165             
+ [95] cachem_1.1.0              stringr_1.5.1            
+ [97] parallel_4.3.3            vipor_0.4.7              
+ [99] HDO.db_0.99.1             pillar_1.9.0             
+[101] grid_4.3.3                vctrs_0.6.5              
+[103] promises_1.3.0            BiocSingular_1.18.0      
+[105] beachmat_2.18.1           cluster_2.1.6            
+[107] beeswarm_0.4.0            evaluate_0.24.0          
+[109] cli_3.6.3                 locfit_1.5-9.10          
+[111] compiler_4.3.3            rlang_1.1.4              
+[113] crayon_1.5.3              labeling_0.4.3           
+[115] ps_1.7.6                  getPass_0.2-4            
+[117] plyr_1.8.9                fs_1.6.4                 
+[119] ggbeeswarm_0.7.2          stringi_1.8.4            
+[121] munsell_0.5.1             Biostrings_2.70.3        
+[123] lazyeval_0.2.2            GOSemSim_2.28.1          
+[125] Matrix_1.6-5              sparseMatrixStats_1.14.0 
+[127] bit64_4.0.5               KEGGREST_1.42.0          
+[129] statmod_1.5.0             highr_0.11               
+[131] igraph_2.0.3              memoise_2.0.1            
+[133] bslib_0.7.0               ggtree_3.10.1            
+[135] fastmatch_1.1-4           bit_4.0.5                
+[137] gson_0.1.0                ape_5.8                  </code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

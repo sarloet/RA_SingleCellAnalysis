@@ -118,7 +118,7 @@ length(top.hvgs)#Check HVG amount
 Plot variance vs mean for each gene and visualise the limit of technical variance according to the fitted trend line. We would regard those features below the trend line as technical noise.
 ```{r VariationPlot}
 # Mark HVGs in sce
-rowData(sce)$is_hvg <- rownames(sce) %in% top.hvgs
+rowData(sce)$hvg <- rownames(sce) %in% top.hvgs
 
 # Plot per-gene variation
 per.block <- dec$per.block
@@ -339,9 +339,21 @@ plotReducedDim(sce, dimred="UMAP", colour_by="sum", order_by = "sum",point_alpha
   scale_color_viridis(option="magma")
 ```
 
-##### Colored by Ubi Markergene
+##### Colored by Ribosomal Genes
 
 ```{r PlotQcUMAP4}
+#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce, dimred="UMAP", colour_by="subsets_Ribo_percent",order_by="subsets_Ribo_percent",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Ribosomal Genes")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
+```
+
+
+##### Colored by Ubi Markergene
+
+```{r PlotQcUMAP5}
 #Plot UMAP colored by Ubi Markergene expression
 plotReducedDim(sce, dimred="UMAP", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.1)+ 
   ggtitle("Expression of some Ubi Markergene")+

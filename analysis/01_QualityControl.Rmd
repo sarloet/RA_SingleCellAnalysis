@@ -266,7 +266,7 @@ plotColData(sce, x="Sample", y="subsets_Mito_percent", other_fields="Sample",col
 ##### HBB percentage
 
 ```{r QcPlotshbb}
-#Plot Mito percent
+#Plot HBB percent
 plotColData(sce, x="Sample", y="subsets_Hbb_percent", other_fields="Sample",colour_by = data.frame(factor(sce$qc.hbb_manual,levels=c(FALSE,TRUE)))) + 
     facet_wrap(~Sample, nrow=1, scales = "free_x") +
     ggtitle("HBB percent")+

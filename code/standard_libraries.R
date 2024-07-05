@@ -28,37 +28,52 @@ meta_colors = list(
     "Knee" = "#7BAFDE"
   ),
 
-  "celltype_level0" = c(
+  "Annotation_L0" = c(
     "Lymphocyte" = "#DC050C",
     "Myeloid" = "#FB8072",
     "Stromal" = "#B17BA6",
     "Endothelial" = "#7BAFDE"
   ),
 
-  "celltype_level1" = c(
+  "Annotation_L1" = c(
     "B cell" = "#DC050C",
     "Dendritic cell" = "#FB8072",
     "Endothelial cell" = "#1965B0",
     "Fibroblast" = "#7BAFDE",
     "Mast cell" = "#882E72",
-    "Myeloid" = "#B17BA6",
+    "Macrophage" = "#B17BA6",
     "Neutrophil" = "#FF7F00",
     "Plasma" = "#FDB462",
     "Smooth muscle cell" = "#E7298A",
     "T cell" = "#E78AC3"
   ),
 
-  "celltype_level2" = c(
-    "B cell" = "#DC050C",
-    "Dendritic cell" = "#FB8072",
-    "Endothelial cell" = "#1965B0",
-    "Fibroblast" = "#7BAFDE",
+  "Annotation_L2" = c(
+    "CytotoxCD4 TC" = "#6ECE56",
+    "CytotoxCD8 TC" = "#BCE52D",
+    "Memory TC" = "#56ff0d",
+    "Naive TC" = "#E6F598",
+    "NKTcell" = "#238B45",
+    "TREM2+ MP" = "#A6C2CC",
+    "FOLR2+ MP" = "#CCECE6",
+    "S100A12+ MP" = "#218A9D",
+    "CD48+ MP" ="#73ABA6",
+    "cDC" = "#1965B0",
+    "pDC" = "#1e90ff",
+    "Neutrophil" = "#433C84",
     "Mast cell" = "#882E72",
-    "Myeloid" = "#B17BA6",
-    "Neutrophil" = "#FF7F00",
-    "Plasma" = "#FDB462",
-    "Smooth muscle cell" = "#E7298A",
-    "T cell" = "#E78AC3"
+    "B cell" = "#471064",
+    "Plasma" = "#7556CF",
+    "PRG4+ FIB" = "#945cb4",
+    "CHI3L2+ FIB" = "#B17BA6",
+    "POSTN+ FIB" = "#E7298A",
+    "CXCL12+ FIB" = "#E78AC3",
+    "MFAP5+ FIB" = "#FCCDE5",
+    "Smooth muscle cell" = "#FB8072",
+    "Arteriolar EC" = "#FFC88D",
+    "Venular EC" = "#fde724",
+    "Capillary EC" = "#FFFDA4"
+
   ),
 
 
@@ -217,38 +232,36 @@ Plot_QC_dimred <- function(sce, dim) {
     labs( x='UMAP 1', y='UMAP 2' )+
     scale_color_viridis(option="magma")
 
-  plot<-grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
+  #plot<-grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
 
-  return(plot)
+  grid.arrange(p_mito, p_detected, p_sum, p_sample, p_ribo, p_cellcycle, nrow = 2, ncol = 3)
 }
 
 
 Plot_QC_violin <- function(sce,label) {
 
   p_mito <- plotColData(sce, x=label, y="subsets_Mito_percent", other_fields=label) +
-    facet_wrap(~label, nrow=1, scales = "free_x") +
     ggtitle("Mito percent")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())+
+    labs(y= "Mito Content")
 
   p_detected <- plotColData(sce, x=label, y="detected", other_fields=label) +
-    facet_wrap(~label, nrow=1, scales = "free_x") +
     ggtitle("Detected Genes")+
     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 
   p_sum <- plotColData(sce, x=label, y="sum", other_fields=label) +
-    facet_wrap(~label, nrow=1, scales = "free_x") +
     ggtitle("Total Counts")+
     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
 
   p_ribo <- plotColData(sce, x=label, y="subsets_Ribo_percent", other_fields=label) +
-    facet_wrap(~label, nrow=1, scales = "free_x") +
     ggtitle("Ribo percent")+
-    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+    theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())+
+    labs(y= "Ribo Content")
 
 
-  plot<-grid.arrange(p_mito, p_detected, p_sum, p_ribo, nrow = 4, ncol = 1)
+  #plot<-grid.arrange(p_mito, p_detected, p_sum, p_ribo, nrow = 4, ncol = 1)
 
-  return(plot)
+  grid.arrange(p_mito, p_detected, p_sum, p_ribo, nrow = 4, ncol = 1)
 }
 
 

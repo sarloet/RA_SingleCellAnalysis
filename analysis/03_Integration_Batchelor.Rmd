@@ -99,32 +99,25 @@ The Mutual Nearest Neighbours (MNN) algorithm works by determining if pairs of c
 
 ### Run Batchelor 
 
-```{r RunBatchelor}
-#Perform scaling normalization within each batch
-sce.Batchelor <-multiBatchNorm(sce, batch=sce$Sample, subset.row = rownames(sce)[rowData(sce)[["is_hvg"]]], normalize.all=TRUE, BPPARAM = bpp)
-
-#Show size factors
-summary(sizeFactors(sce.Batchelor))
-
-```
-
 Batches are merged in a pairwise manner (first two batches are merged to create a new cohort, then the next batch is merged with this new cohort, and so on until all batches have been integrated). Batch correction will work more effectively between batches with large number of cells and between batches that have many cells of the same cell type. As a result it is often beneficial to specify the order in which batches should be combined.
 
-```{r MergeOrder}
+
+```{r MergeOrdern}
 #Set manual merge_order
-merge_order <- list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee 
-          list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"),#Wrist
-          list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"))#MCP,"SynBio_130", 
+merge_order <- list(
+            list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"),#MCP
+            list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee 
+            list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"))#Wrist
 
-
+sce.Batchelor <- sce
 ```
 
 
 ```{r  FastMNN, warning=FALSE}
 #Perform fastMNN
-bpstart(bpp)
-sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]],prop.k=0.01, merge.order = merge_order,  correct.all=TRUE, BPPARAM = bpp)#auto.merge =TRUE
-bpstop(bpp)
+#bpstart(bpp)
+sce.Batchelor <- fastMNN(sce.Batchelor, batch=sce.Batchelor$Sample, subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["hvg"]]],prop.k=0.025, merge.order = merge_order,  correct.all=TRUE, BPPARAM = bpp)#auto.merge =TRUE
+#bpstop(bpp)
 
 
 #Save to BatchR sce object
@@ -301,9 +294,20 @@ plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="sum", order_by = "sum"
   scale_color_viridis(option="magma")
 ```
 
-### Colored by Ubi Markergene
+##### Colored by Ribosomal Genes
 
 ```{r PlotQcUMAP4}
+#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="subsets_Ribo_percent",order_by="subsets_Ribo_percent",point_alpha=0.8,point_size=0.5) + 
+  ggtitle("Ribosomal Genes")+
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+
+```
+
+### Colored by Ubi Markergene
+
+```{r PlotQcUMAP5}
 #Plot UMAP colored by Ubi Markergene expression
 plotReducedDim(sce, dimred="MNN_UMAP_reduced", by_exprs_values = "logcounts", colour_by= rownames(sce)[grepl("(^B2M)", rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.5)+ 
   ggtitle("Expression of some Ubi Markergene")+

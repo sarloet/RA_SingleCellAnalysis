@@ -1,0 +1,370 @@
+---
+title: "Subcluster Annotation"
+subtitle: "10_CellChat"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Subcluster Annotation
+
+## Setup
+
+### Standard packages
+
+```{r LoadPackages, warning=FALSE}
+library(here)
+source(here("code", "standard_libraries.R"))
+```
+
+### Additional Packages
+
+
+```{r LoadPackages, warning=FALSE}
+#Load Packages
+
+suppressPackageStartupMessages({
+library(CellChat)
+library(patchwork)
+})
+
+```
+
+### Set Parameter
+
+```{r Setup}
+set.seed(100)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
+path <- here::here()
+```
+
+
+
+### Load Data
+
+```{r LoadDataset}
+## RA DATASET
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+
+```
+
+### Explore Dataset
+
+```{r ShowDim}
+#Dimensions of count matrix
+dim(sce)
+```
+
+
+### Plot Annotation {.tabset}
+
+#### Annotation L2
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, "MNN_merge_reduced_UMAP", colour_by="Annotation_L2") +labs(title="UMAP colored by clusters",subtitle = "UMAP of integrated dataset")
+
+```
+
+#### Annotation L1
+
+```{r UMAPCluster}
+#cluster
+plotReducedDim(sce, "MNN_merge_reduced_UMAP", colour_by="Annotation_L1", text_by="Annotation_L1") +labs(title="UMAP colored by clusters",subtitle = "UMAP of integrated dataset")
+
+```
+
+#### Annotation L0
+
+```{r UMAPAnnotation}
+#cell type
+plotReducedDim(sce, "MNN_merge_reduced_UMAP", colour_by="Annotation_L0", text_by="Annotation_L0") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of integrated dataset")
+
+```
+
+
+## Setup
+
+```{r}
+
+#Create Annotation
+sce$CellChatAnno <- sce$Annotation_L2
+unique(sce$CellChatAnno)
+
+sce$CellChatAnno[sce$Annotation_L2 %in% c("CytotoxCD4 TC","Memory TC","Naive TC","CytotoxCD8 TC","NKTcell")] <- "T cell"
+sce$CellChatAnno[sce$Annotation_L2 %in% c("TREM2+ MP","FOLR2+ MP")] <- "Tissue-resident Macrophage"
+sce$CellChatAnno[sce$Annotation_L2 %in% c("S100A12+ MP","CD48+ MP")] <- "Macrophage"
+sce$CellChatAnno[sce$Annotation_L2 %in% c("cDC","pDC")] <- "Dendritic cell"
+sce$CellChatAnno[sce$Annotation_L2 %in% c("Arteriolar EC","Venular EC","Capillary EC")] <- "Endothelial"
+
+#Create a CellChat object
+cellChat.MCP <- createCellChat(object = sce[,sce$Joint.Location == "MCP"], group.by = "CellChatAnno")
+cellChat.Knee <- createCellChat(object = sce[,sce$Joint.Location == "Knee"], group.by = "CellChatAnno")
+cellChat.Wrist <- createCellChat(object = sce[,sce$Joint.Location == "Wrist"], group.by = "CellChatAnno")
+```
+
+## Set the ligand-receptor interaction database
+
+```{r}
+CellChatDB <- CellChatDB.human 
+showDatabaseCategory(CellChatDB)
+
+# use all CellChatDB for cell-cell communication analysis
+CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "annotation") # use Secreted Signaling
+#CellChatDB.use <- subsetDB(CellChatDB) # use all Signaling
+
+
+# use all CellChatDB except for "Non-protein Signaling" for cell-cell communication analysis
+# CellChatDB.use <- subsetDB(CellChatDB)
+
+# set the used database in the object
+cellChat.MCP@DB <- CellChatDB.use
+cellChat.Knee@DB <- CellChatDB.use
+cellChat.Wrist@DB <- CellChatDB.use
+```
+
+## Preprocessing expression data for cell-cell communication analysis
+
+```{r}
+# subset the expression data of signaling genes for saving computation cost
+cellChat.MCP <- subsetData(cellChat.MCP) # This step is necessary even if using the whole database
+cellChat.Knee <- subsetData(cellChat.Knee)
+cellChat.Wrist <- subsetData(cellChat.Wrist)
+
+future::plan("multisession", workers = 4) # do parallel
+
+cellChat.MCP <- identifyOverExpressedGenes(cellChat.MCP)
+cellChat.Knee <- identifyOverExpressedGenes(cellChat.Knee)
+cellChat.Wrist <- identifyOverExpressedGenes(cellChat.Wrist)
+
+cellChat.MCP <- identifyOverExpressedInteractions(cellChat.MCP)
+cellChat.Knee <- identifyOverExpressedInteractions(cellChat.Knee)
+cellChat.Wrist <- identifyOverExpressedInteractions(cellChat.Wrist)
+
+#cellChat.MCP <- projectData(cellChat.MCP, PPI.human)
+#cellChat.Knee <- projectData(cellChat.Knee, PPI.human)
+#cellChat.Wrist <- projectData(cellChat.Wrist, PPI.human)
+```
+
+
+## Inference of cell-cell communication network
+
+```{r}
+cellChat.MCP <- computeCommunProb(cellChat.MCP, type = "triMean")
+cellChat.Knee <- computeCommunProb(cellChat.Knee, type = "triMean")
+cellChat.Wrist <- computeCommunProb(cellChat.Wrist, type = "triMean")
+```
+
+```{r}
+cellChat.MCP <- filterCommunication(cellChat.MCP, min.cells = 10)
+cellChat.Knee <- filterCommunication(cellChat.Knee, min.cells = 10)
+cellChat.Wrist <- filterCommunication(cellChat.Wrist, min.cells = 10)
+```
+
+## Infer the cell-cell communication at a signaling pathway level
+
+```{r}
+cellChat.MCP <- computeCommunProbPathway(cellChat.MCP)
+cellChat.Knee <- computeCommunProbPathway(cellChat.Knee)
+cellChat.Wrist <- computeCommunProbPathway(cellChat.Wrist)
+
+cellChat.MCP <- aggregateNet(cellChat.MCP)
+cellChat.Knee <- aggregateNet(cellChat.Knee)
+cellChat.Wrist <- aggregateNet(cellChat.Wrist)
+
+cellChat.MCP<-netAnalysis_computeCentrality(cellChat.MCP)
+cellChat.Knee<-netAnalysis_computeCentrality(cellChat.Knee)
+cellChat.Wrist<-netAnalysis_computeCentrality(cellChat.Wrist)
+```
+
+## Save the datasets
+
+```{r SaveData}
+saveRDS(cellChat.MCP, file =paste0(path,'/output/10_sce_CellChat_MCP.rds'))
+saveRDS(cellChat.Knee, file =paste0(path,'/output/10_sce_CellChat_Knee.rds'))
+saveRDS(cellChat.Wrist, file =paste0(path,'/output/10_sce_CellChat_Wrist.rds'))
+```
+
+
+
+## Load CellChat object of each dataset and merge them together
+
+### Load CellChat
+```{r}
+cellChat.MCP <- readRDS(file =paste0(path,'/output/10_sce_CellChat_MCP.rds'))
+cellChat.Knee <- readRDS(file =paste0(path,'/output/10_sce_CellChat_Knee.rds'))
+cellChat.Wrist <- readRDS(file =paste0(path,'/output/10_sce_CellChat_Wrist.rds'))
+```
+
+
+### Merge CellChat objects
+
+```{r}
+cellChat.MCP<-updateCellChat(cellChat.MCP)
+cellChat.Knee<-updateCellChat(cellChat.Knee)
+cellChat.Wrist<-updateCellChat(cellChat.Wrist)
+
+object.list <- list(MCP = cellChat.MCP, Knee = cellChat.Knee, Wrist = cellChat.Wrist)#list(MCP = cellChat.MCP, Knee = cellChat.Knee, Wrist = cellChat.Wrist)
+cellchat <- mergeCellChat(object.list, add.names = names(object.list),cell.prefix = TRUE)
+cellchat
+```
+
+
+## Comparison Analysis
+
+### Compare the total number of interactions and interaction strength
+```{r}
+gg1 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"))
+gg2 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"), measure = "weight")
+gg1 + gg2
+```
+
+
+```{r}
+# Extract differential interactions
+interaction_diff <- cellchat@net$compare$result
+head(interaction_diff)
+```
+
+
+### Differential number of interactions or interaction strength among coarse cell types
+```{r}
+#levels(cellchat@idents)
+group.cellType <- c(rep("FIB", 4), rep("DC", 4), rep("TC", 4))
+group.cellType <- factor(group.cellType, levels = c("FIB", "DC", "TC"))
+object.list <- lapply(object.list, function(x) {mergeInteractions(x, group.cellType)})
+cellchat <- mergeCellChat(object.list, add.names = names(object.list))
+
+
+
+par(mfrow = c(1,2), xpd=TRUE)
+for (i in 1:length(object.list)) {
+  netVisual_circle(object.list[[i]]@net$count.merged, weight.scale = T, label.edge= T, edge.weight.max = weight.max[3], edge.width.max = 12, title.name = paste0("Number of interactions - ", names(object.list)[i]))
+}
+```
+
+
+
+
+### Compare the number of interactions and interaction strength among different cell populations
+```{r}
+#sources.use =c("CHI3L2+ FIB","CXCL12+ FIB","MFAP5+ FIB","POSTN+ FIB","PRG4+ FIB")
+#targets.use = c("FOLR2+ MP","TREM2+ MP")
+
+#KneeVsMCP
+gg1 <- netVisual_heatmap(cellchat,comparison = c("Knee","MCP"),title.name = "Knee Vs MCP")
+gg2 <- netVisual_heatmap(cellchat,comparison = c("Knee","MCP"), measure = "weight",title.name = "Knee Vs MCP")
+gg1 + gg2
+
+#KneeVsWrist
+gg1 <- netVisual_heatmap(cellchat,comparison = c("Knee","Wrist"),title.name = "Knee Vs Wrist")
+gg2 <- netVisual_heatmap(cellchat,comparison = c("Knee","Wrist"), measure = "weight",title.name = "Knee Vs Wrist")
+gg1 + gg2
+
+#WRISTVsMCP
+gg1 <- netVisual_heatmap(cellchat,comparison = c("MCP","Wrist"),title.name = "MCP Vs Wrist")
+gg2 <- netVisual_heatmap(cellchat, comparison = c("MCP","Wrist"), measure = "weight",title.name = "MCP Vs Wrist")
+gg1 + gg2
+```
+### Identify cell populations with significant changes in sending or receiving signals
+
+```{r}
+
+num.link <- sapply(object.list, function(x) {rowSums(x@net$count) + colSums(x@net$count)-diag(x@net$count)})
+weight.MinMax <- c(min(num.link), max(num.link)) # control the dot size in the different datasets
+gg <- list()
+for (i in 1:length(object.list)) {
+  gg[[i]] <- netAnalysis_signalingRole_scatter(object.list[[i]], title = names(object.list)[i], weight.MinMax = weight.MinMax)
+}
+#> Signaling role analysis on the aggregated cell-cell communication network from all signaling pathways
+#> Signaling role analysis on the aggregated cell-cell communication network from all signaling pathways
+patchwork::wrap_plots(plots = gg)
+```
+
+```{r}
+#POSTN+ FIB
+gg1 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 1), idents.use = "PRG4+ FIB", signaling.exclude = c("MIF"))
+gg2 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 3), idents.use = "PRG4+ FIB", signaling.exclude = c("MIF"))
+gg3 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(1, 3), idents.use = "PRG4+ FIB", signaling.exclude = c("MIF"))
+
+
+patchwork::wrap_plots(plots = list(gg1,gg2,gg3))
+
+
+#Tissue-resident Macrophage 
+gg1 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 1), idents.use = "Tissue-resident Macrophage", signaling.exclude = c("MIF"))
+gg2 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 3), idents.use = "Tissue-resident Macrophage", signaling.exclude = c("MIF"))
+gg3 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(1, 3), idents.use = "Tissue-resident Macrophage", signaling.exclude = c("MIF"))
+
+
+patchwork::wrap_plots(plots = list(gg1,gg2,gg3))
+
+
+#CHI3L2+ FIB
+gg1 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 1), idents.use = "CHI3L2+ FIB", signaling.exclude = c("MIF"))
+gg2 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 3), idents.use = "CHI3L2+ FIB", signaling.exclude = c("MIF"))
+gg3 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(1, 3), idents.use = "CHI3L2+ FIB", signaling.exclude = c("MIF"))
+
+
+patchwork::wrap_plots(plots = list(gg1,gg2,gg3))
+
+```
+
+### Identify cell populations with significant changes in sending or receiving signals
+
+```{r}
+pathways.show <- c("SEMA3") 
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+  ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+```
+
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE)
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = F, do.stat = TRUE)
+
+gg1 + gg2
+
+
+
+### Identify cell populations with significant changes in sending or receiving signals
+
+```{r}
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(1, 2))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = F, do.stat = TRUE,comparison = c(1, 2))
+
+gg1 + gg2
+
+
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(1, 3))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = F, do.stat = TRUE,comparison = c(1, 3))
+
+gg1 + gg2
+
+
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(3, 2))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = F, do.stat = TRUE,comparison = c(3, 2))
+
+gg1 + gg2
+```

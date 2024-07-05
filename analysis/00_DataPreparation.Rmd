@@ -158,8 +158,7 @@ colData(sce) <- dplyr::left_join(as.data.frame(colData(sce)),
                                    metadata_df, 
                                    by= c("Sample" = "Sample"),
                                    suffix=c(".x",".y")) %>% 
-      #dplyr::select(Sample, Barcode, Diagnosis, sex, Age, Joint.Location, protocol, Pathotype,Krenn total score,) %>% 
-      dplyr::select(-one_of("Comments")) %>% #select all except
+      dplyr::select(-one_of("Comments")) %>% #select all except Comments
       DataFrame(row.names=colnames(sce))
 
 #Set Sample names
@@ -212,6 +211,8 @@ data.frame(rowData(sce))
 ```
 
 ### Exclude Samples
+
+Exclude samples due to low quality from the sequencing metrics
 
 ```{r ExcludeSamples}
 sce <- sce[,sce$Sample != "SynBio_130"]

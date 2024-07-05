@@ -418,7 +418,7 @@ div.tocify {
 <h1 class="title toc-ignore">Dimensionality Reduction</h1>
 <h3 class="subtitle">02_DimensionalityReduction</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Jun 5 2024 20:46:21</h4>
+<h4 class="date">Jun 26 2024 08:55:12</h4>
 
 </div>
 
@@ -447,7 +447,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-06-05
+<strong>Last updated:</strong> 2024-06-26
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -581,15 +581,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree8be1325b4f1f68b038dda8cc4de3afa05defb4cctargetblank8be1325a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/8be1325b4f1f68b038dda8cc4de3afa05defb4cc" target="_blank">8be1325</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree8be1325b4f1f68b038dda8cc4de3afa05defb4cctargetblank8be1325a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree5887ab5acd04bce3d1a3c048b1b47c5817fd9520targetblank5887ab5a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -599,7 +599,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/8be1325b4f1f68b038dda8cc4de3afa05defb4cc" target="_blank">8be1325</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/5887ab5acd04bce3d1a3c048b1b47c5817fd9520" target="_blank">5887ab5</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -620,11 +620,7 @@ Ignored files:
     Ignored:    analysis/.DS_Store
     Ignored:    data/.DS_Store
     Ignored:    data/cellbender_data_h5/
-    Ignored:    data/cellranger_data_h5/.DS_Store
-    Ignored:    data/cellranger_data_h5/SynBio028_10000_w_introns/.DS_Store
-    Ignored:    data/cellranger_data_h5/SynBio074_w_introns/.DS_Store
-    Ignored:    data/cellranger_data_h5/SynBio076_w_introns/.DS_Store
-    Ignored:    data/cellranger_data_h5/SynBio130_w_introns/.DS_Store
+    Ignored:    data/spatial/
     Ignored:    output/00_DoubletDetection.rds
     Ignored:    output/00_sce_DataPreparation.rds
     Ignored:    output/01_sce_QualityControl.rds
@@ -633,29 +629,73 @@ Ignored files:
     Ignored:    output/03_sce_Integration_Batchelor.rds
     Ignored:    output/03_sce_Integration_Harmony.rds
     Ignored:    output/04_sce_CellCycle.rds
+    Ignored:    output/05_sce_CelltypeAnnotation.rds
     Ignored:    output/05_sce_Clustering.rds
     Ignored:    output/06_sce_CelltypeAnnotation.rds
+    Ignored:    output/07_sce_SC_Bcell.rds
+    Ignored:    output/07_sce_SC_Dendritic.rds
+    Ignored:    output/07_sce_SC_Dendritic_Anno.rds
     Ignored:    output/07_sce_SC_Endothelial.rds
+    Ignored:    output/07_sce_SC_Endothelial_Anno.rds
     Ignored:    output/07_sce_SC_Fibroblast.rds
     Ignored:    output/07_sce_SC_Fibroblast_Anno.rds
-    Ignored:    output/07_sce_SC_Myeloid.rds
+    Ignored:    output/07_sce_SC_Macrophage.rds
+    Ignored:    output/07_sce_SC_Macrophage_Anno.rds
+    Ignored:    output/07_sce_SC_Mast.rds
+    Ignored:    output/07_sce_SC_Merge.rds
+    Ignored:    output/07_sce_SC_Neutrophil.rds
+    Ignored:    output/07_sce_SC_Plasma.rds
+    Ignored:    output/07_sce_SC_SmoothMuscle.rds
     Ignored:    output/07_sce_SC_Tcell.rds
+    Ignored:    output/07_sce_SC_Tcell_Anno.rds
     Ignored:    output/08_DifferentialAbundance_miloR.rds
+    Ignored:    output/10_sce_CellChat_Knee.rds
+    Ignored:    output/10_sce_CellChat_MCP.rds
+    Ignored:    output/10_sce_CellChat_Wrist.rds
     Ignored:    output/Cluster_Marker_Genes.xlsx
     Ignored:    output/Knee_KvM.csv
     Ignored:    output/Knee_KvW.csv
-    Ignored:    output/MAST_KneeVsMCP.csv
-    Ignored:    output/MAST_KneeVsWrist.csv
-    Ignored:    output/MAST_MCPVsWrist.csv
+    Ignored:    output/MAST_output/
     Ignored:    output/MCP_KvM.csv
     Ignored:    output/MCP_MvW.csv
+    Ignored:    output/ManualAnno_L0_Wilcoxon.xlsx
+    Ignored:    output/ManualAnno_L1_Wilcoxon.xlsx
     Ignored:    output/Wrist_KvW.csv
     Ignored:    output/Wrist_MvW.csv
+    Ignored:    renv/.DS_Store
     Ignored:    renv/library/
+    Ignored:    renv/staging/
+
+Untracked files:
+    Untracked:  analysis/07_SubClustering_Merge.Rmd
+    Untracked:  analysis/08_DifferentialExpression_EdgeR.Rmd
+    Untracked:  analysis/08_DifferentialExpression_MAST.Rmd
+    Untracked:  analysis/08_DifferentialExpression_Pseudobulk.Rmd
+    Untracked:  analysis/08_DifferentialExpression_muscat.Rmd
+    Untracked:  analysis/09_DifferentialAbundance_miloR.Rmd
+    Untracked:  analysis/10_EnrichmentAnalysis.Rmd
+    Untracked:  analysis/11_CellChat.Rmd
+    Untracked:  analysis/99_Plotting.Rmd
+    Untracked:  analysis/Spatial_hand.Rmd
+    Untracked:  analysis/Spatial_knee.Rmd
 
 Unstaged changes:
-    Modified:   analysis/01_QualityControl.Rmd
     Modified:   analysis/02_DimensionalityReduction.Rmd
+    Modified:   analysis/03_Integration_Batchelor.Rmd
+    Modified:   analysis/06_CelltypeAnnotation.Rmd
+    Deleted:    analysis/07_DifferentialExpression_EdgeR.Rmd
+    Deleted:    analysis/07_DifferentialExpression_MAST.Rmd
+    Deleted:    analysis/07_DifferentialExpression_Pseudobulk.Rmd
+    Deleted:    analysis/07_DifferentialExpression_muscat.Rmd
+    Modified:   analysis/07_SubClustering.Rmd
+    Modified:   analysis/07_SubClustering_Annotation.Rmd
+    Deleted:    analysis/08_DifferentialAbundance_miloR.Rmd
+    Deleted:    analysis/09_EnrichmentAnalysis.Rmd
+    Deleted:    analysis/10_Plotting.Rmd
+    Deleted:    analysis/Ege_06_SC_Fibroblast.Rmd
+    Deleted:    analysis/OLD06_SubClustering.Rmd
+    Modified:   code/standard_libraries.R
+    Modified:   renv.lock
 
 </code></pre>
 <p>
@@ -702,6 +742,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/analysis/02_DimensionalityReduction.Rmd" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+<td>
+fix
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/02_DimensionalityReduction.html" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+<td>
+fix
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1646,7 +1720,7 @@ length(top.hvgs)#Check HVG amount</code></pre>
 technical variance according to the fitted trend line. We would regard
 those features below the trend line as technical noise.</p>
 <pre class="r"><code># Mark HVGs in sce
-rowData(sce)$is_hvg &lt;- rownames(sce) %in% top.hvgs
+rowData(sce)$hvg &lt;- rownames(sce) %in% top.hvgs
 
 # Plot per-gene variation
 per.block &lt;- dec$per.block
@@ -1681,6 +1755,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-1.png" target="_blank">e3ca53c</a>
@@ -1985,6 +2070,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-2.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -2287,6 +2383,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-3.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -2587,6 +2694,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/VariationPlot-4.png" target="_blank">e3ca53c</a>
@@ -2924,6 +3042,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PCvsVariance-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -3256,6 +3385,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA2-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -3564,6 +3704,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotPCA3-1.png" target="_blank">e3ca53c</a>
@@ -3881,6 +4032,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA1-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -4190,6 +4352,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetPCA2-1.png" target="_blank">e3ca53c</a>
@@ -4827,6 +5000,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP1-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -5145,6 +5329,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotUMAP2-1.png" target="_blank">e3ca53c</a>
@@ -5472,6 +5667,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP1-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -5791,6 +5997,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotFacetUMAP2-1.png" target="_blank">e3ca53c</a>
@@ -6120,6 +6337,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP1-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -6439,6 +6667,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP2-1.png" target="_blank">e3ca53c</a>
@@ -6762,6 +7001,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP3-1.png" target="_blank">e3ca53c</a>
 </td>
 <td>
@@ -7051,11 +7301,11 @@ sarloet
 </div>
 </div>
 </div>
-<div id="colored-by-ubi-markergene" class="section level5">
-<h5>Colored by Ubi Markergene</h5>
-<pre class="r"><code>#Plot UMAP colored by Ubi Markergene expression
-plotReducedDim(sce, dimred=&quot;UMAP&quot;, by_exprs_values = &quot;logcounts&quot;, colour_by= rownames(sce)[grepl(&quot;(^B2M)&quot;, rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.1)+ 
-  ggtitle(&quot;Expression of some Ubi Markergene&quot;)+
+<div id="colored-by-ribosomal-genes" class="section level5">
+<h5>Colored by Ribosomal Genes</h5>
+<pre class="r"><code>#Plot UMAP colored by subsets_Mito_percent
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, colour_by=&quot;subsets_Ribo_percent&quot;,order_by=&quot;subsets_Ribo_percent&quot;,point_alpha=0.8,point_size=0.5) + 
+  ggtitle(&quot;Ribosomal Genes&quot;)+
   labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
   scale_color_viridis(option=&quot;magma&quot;)</code></pre>
 <p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
@@ -7081,6 +7331,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/299e5e46be9c85e7a67149b098d473ca3e97a6b2/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">299e5e4</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/e3ca53ccc86eb864a5c6696758e6c9b4f08bc31a/docs/figure/02_DimensionalityReduction.Rmd/PlotQcUMAP4-1.png" target="_blank">e3ca53c</a>
@@ -7371,6 +7632,15 @@ sarloet
 </table>
 </div>
 </div>
+</div>
+<div id="colored-by-ubi-markergene" class="section level5">
+<h5>Colored by Ubi Markergene</h5>
+<pre class="r"><code>#Plot UMAP colored by Ubi Markergene expression
+plotReducedDim(sce, dimred=&quot;UMAP&quot;, by_exprs_values = &quot;logcounts&quot;, colour_by= rownames(sce)[grepl(&quot;(^B2M)&quot;, rowData(sce)$Symbol)],point_alpha=0.8,point_size=0.1)+ 
+  ggtitle(&quot;Expression of some Ubi Markergene&quot;)+
+  labs( x=&#39;UMAP 1&#39;, y=&#39;UMAP 2&#39; )+
+  scale_color_viridis(option=&quot;magma&quot;)</code></pre>
+<p><img src="figure/02_DimensionalityReduction.Rmd/PlotQcUMAP5-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 </div>

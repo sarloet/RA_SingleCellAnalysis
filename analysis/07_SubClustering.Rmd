@@ -35,7 +35,7 @@ source(here("code", "standard_libraries.R"))
 
 ### Additional Packages
 
-```{r LoadPackages, warning=FALSE,eval=FALSE}
+```{r LoadAddPackages, warning=FALSE,eval=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
@@ -63,7 +63,7 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/06_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/06_sce_CelltypeAnnotation.rds')) # 06
 
 ```
 
@@ -81,17 +81,17 @@ https://mperalc.gitlab.io/scRNA-seq_workshop_2021/additional-resources.html## UM
 
 ### Annotation L1
 
-```{r UMAPCluster}
+```{r UMAPAnnotationL1}
 #cluster
-plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="ManualAnno_L1", text_by="ManualAnno_L1") +labs(title="UMAP colored by clusters",subtitle = "UMAP of integrated dataset")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="Annotation_L1", text_by="Annotation_L1") +labs(title="UMAP colored by clusters",subtitle = "UMAP of integrated dataset")
 
 ```
 
 ### Annotation L0
 
-```{r UMAPAnnotation}
+```{r UMAPAnnotationL0}
 #cell type
-plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="ManualAnno_L0", text_by="ManualAnno_L0") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of integrated dataset")
+plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="Annotation_L0", text_by="Annotation_L0") +labs(title="UMAP colored by Cell type ",subtitle = "UMAP of integrated dataset")
 
 ```
 
@@ -100,65 +100,49 @@ plotReducedDim(sce, "MNN_UMAP_reduced", colour_by="ManualAnno_L0", text_by="Manu
 ```{r SubclusteringFunction}
 # Create Subclustering function
 
-SUBCLUSTER <- function(sce.sc, SC_celltype, clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE){
+SUBCLUSTER <- function(sce.sc, sc_celltype, clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE){
 set.seed(123)
 
 #Subset sce object for ce scelltype
-sce.subset <- sce.sc[,sce.sc$celltype == SC_celltype]
+sce.subset <- sce.sc[,sce.sc$celltype == sc_celltype]
     
 #Get top HVG for subcluster
 dec <- modelGeneVar(sce.subset, block=sce.subset$Sample, density.weights=FALSE,BPPARAM=bpp)
 top.hvgs <- getTopHVGs(dec, n=2000)
-rowData(sce.subset)$is_hvg <- rownames(sce.subset) %in% top.hvgs
+rowData(sce.subset)$hvg.sc <- rownames(sce.subset) %in% top.hvgs
 
 
 
 if(batchcorr==TRUE){
   #Batch correction on subcluster
-  sce.Batchelor <-multiBatchNorm(sce.subset, 
-                                  batch=sce.subset$Sample, 
-                                  subset.row = rownames(sce.subset)[rowData(sce.subset)[["is_hvg"]]], 
-                                  normalize.all=TRUE, BPPARAM = bpp)
-      
-  bpstart(bpp)
   sce.Batchelor <- fastMNN(sce.Batchelor, 
                             batch=sce.Batchelor$Sample, 
                             prop.k=0.05,  
-                            subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["is_hvg"]]], 
+                            subset.row = rownames(sce.Batchelor)[rowData(sce.Batchelor)[["hvg.sc"]]], 
                             correct.all=TRUE, merge.order = merge_order, BPPARAM = bpp)
-  bpstop(bpp)
       
   assay(sce.subset, "reconstructed") <- assay(sce.Batchelor, "reconstructed")
   reducedDim(sce.subset, 'MNN_SC') <- reducedDim(sce.Batchelor, 'corrected')
   reducedDim(sce.subset, 'MNN_SC_reduced') <- reducedDim(sce.Batchelor, 'corrected')[,seq_len(15)]
-      
-  
-  #Get UMAP on subset
-  sce.subset <- runUMAP(sce.subset,name = "MNN_UMAP_SC_reduced", dimred = 'MNN_SC_reduced',subset_row=rowData(sce.subset)$is_hvg)
-  #Recluster the cells 
-  set.seed(123)
-  cluster <- clusterCells(sce.subset, use.dimred = "MNN_SC_reduced", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param, BPPARAM =bpp))
          
   }else{
-  #Copy over the unintegrated reduced dim
-  #reducedDim(sce.subset,"MNN_SC_reduced")<-reducedDim(sce.subset,"MNN_reduced")
-  sce.subset<-runPCA(sce.subset,exprs_values ="reconstructed", subset_row = rowData(sce.subset)$is_hvg, name = "MNN_SC")
-  reducedDim(sce.subset, 'MNN_SC_reduced') <- reducedDim(sce.subset, 'MNN_SC')[,seq_len(20)]
+  #Re run PCA on subset
+  sce.subset<-runPCA(sce.subset,exprs_values ="reconstructed", subset_row = rowData(sce.subset)$hvg.sc, name = "MNN_SC")
+  reducedDim(sce.subset, 'MNN_SC_reduced') <- reducedDim(sce.subset, 'MNN_SC')[,seq_len(15)]
   
   }
 
 #Get recalculated UMAP on subset
-sce.subset <- runUMAP(sce.subset,name = "MNN_UMAP_SC_reduced", dimred = 'MNN_SC_reduced',subset_row=rowData(sce.subset)$is_hvg)
+sce.subset <- runUMAP(sce.subset,name = "MNN_UMAP_SC_reduced", dimred = 'MNN_SC_reduced',subset_row=rowData(sce.subset)$hvg.sc)
+
 #Recluster the cells 
 set.seed(123)
-cluster <- clusterCells(sce.subset, use.dimred = "MNN_SC_reduced", BLUSPARAM = SNNGraphParam(k= k_param,cluster.fun= clust_param, BPPARAM =bpp))
+cluster <- clusterCells(sce.subset, use.dimred = "MNN_SC_reduced", BLUSPARAM = bluster::SNNGraphParam(k= k_param,cluster.fun=clust_param, BPPARAM =bpp))
 
 #Add Subcluster label to sce
 colData(sce.subset)$subcluster <- cluster
 sce.subset$subcluster <- factor(sce.subset$subcluster)
     
-#attr(sce.subset, "MNN_UMAP_SC_reduced")<-attr(reducedDim(sce.subset, "MNN_UMAP_SC_reduced"), "scaled:center") 
-  
 return(sce.subset)
 }
 ```
@@ -166,9 +150,10 @@ return(sce.subset)
 
 ```{r MergeOrder}
 #Set manual merge_order
-merge_order <- list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee 
-          list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"),#Wrist
-          list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"))#MCP,"SynBio_130", 
+merge_order <- list(
+            list("SynBio_028", "SynBio_049", "SynBio_076", "SynBio_081", "SynBio_087"),#MCP
+            list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a", "SynBio_127"),#Knee 
+            list("SynBio_050", "SynBio_074", "SynBio_077b","SynBio_083","SynBio_084","SynBio_098b"))#Wrist
 
 
 ```
@@ -180,334 +165,315 @@ merge_order <- list(list("SynBio_077a","SynBio_093", "SynBio_096","SynBio_098a",
 
 ### Run Subclustering
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterFB, warning=FALSE}
 
 #get correct parent label to subcluster
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
-sce.Fibroblast<-SUBCLUSTER(sce, "Fibroblast", clust_param="leiden", k_param=45, merge_order, batchcorr=TRUE)
+sce.Fibroblast<-SUBCLUSTER(sce, "Fibroblast", clust_param="leiden", k_param=45, merge_order, batchcorr=FALSE)
   
 ```
 
-```{r RunSubcluster, warning=FALSE}
+```{r dimFB, warning=FALSE}
 dim(sce.Fibroblast)
 ```
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterFB1C , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
 
+#### Colored by Sample
+```{r UMAPSubclusterFB1S , results='asis'}    
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
 ```
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+### Plot Recalculated UMAP of Subcluster  {.tabset}
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering"))
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcFB1C , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Sample
+```{r UMAPSubclusterRecalcFB1S , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
+### Plot QC UMAP of Subcluster 
 
-## Plot QC UMAP of Fibroblast Subclusters  {.tabset}
-
-```{r UMAPSubclusterRecalc , results='asis'}
+```{r UMAPSubclusterOC1 , results='asis',fig.height=10, fig.width=15}
 
 print(Plot_QC_dimred(sce.Fibroblast,dim="MNN_UMAP_SC_reduced"))
-```
-
-```{r UMAPSubclusterRecalc , results='asis'}
-
 print(Plot_QC_violin(sce.Fibroblast,label="subcluster"))
 ```
 
-```{r UMAPSubclusterRecalc , results='asis'}
+### Remove bad quality subcluster
 
-library(viridis)
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))+ scale_fill_viridis_c(option="magma")
+```{r RmSCFB}
+dim(sce.Fibroblast)
+sce.Fibroblast <- sce.Fibroblast[,sce.Fibroblast$subcluster != 7]
+sce.Fibroblast <- sce.Fibroblast[,sce.Fibroblast$subcluster != 8]
+sce.Fibroblast <- sce.Fibroblast[,sce.Fibroblast$subcluster != 9]
+dim(sce.Fibroblast)
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-scale_fill_viridis(option="magma")
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-scale_fill_viridis(option="magma")
+# Re-Run Subcluster Function
+sce.Fibroblast<-SUBCLUSTER(sce.Fibroblast, "Fibroblast", clust_param="leiden", k_param=45, merge_order, batchcorr=FALSE)
+```
 
 
+### Plot UMAP of Subclusters  {.tabset}
 
+#### Colored by Clustering
+```{r UMAPSubclusterFB2C , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterFB2S , results='asis'}    
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcFB2C , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcFB2S , results='asis'}
+plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
+
+```
+
+
+
+
+
+```{r , results='asis'}
 
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "POSTN" , order_by="POSTN" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "POSTN",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "CXCL12" , order_by="CXCL12" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "CXCL12",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "PRG4" , order_by="PRG4" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "PRG4",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "COMP" , order_by="COMP" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "COMP",low = "lightgrey", high = "red")
-plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "MFAP5" , order_by="COMP" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "MFAP5",low = "lightgrey", high = "red")
+plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "MFAP5" , order_by="MFAP5" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "MFAP5",low = "lightgrey", high = "red")
 plotReducedDim(sce.Fibroblast, dimred = "MNN_UMAP_SC_reduced", colour_by = "ACTA2" , order_by="ACTA2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "ACTA2",low = "lightgrey", high = "red")
 
 
-plotColData(sce.Fibroblast, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Fibroblast, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Fibroblast, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-```
-
-
-
-### Remove bad quality subcluster
-
-```{r SaveData}
-sce.Fibroblast <- sce.Fibroblast[,sce.Fibroblast$subcluster != 7]
-dim(sce.Fibroblast)
 ```
 
 
 ### Subcluster UMAP
 
-```{r SaveData}
+```{r FinalUMAPFB}
 plotReducedDim(sce.Fibroblast, "MNN_UMAP_SC_reduced",colour_by = "subcluster") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by subcluster")
 ```
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataFB}
 saveRDS(sce.Fibroblast, file =paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
+rm(sce.Fibroblast)
+gc()
 ```
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Subcluster Myeloid
+## Subcluster Macrophage
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterMP, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
-sce.Myeloid<-SUBCLUSTER(sce, "Myeloid", clust_param="leiden", k_param=65, merge_order, batchcorr=FALSE)
+sce.Macrophage<-SUBCLUSTER(sce, "Macrophage", clust_param="leiden", k_param=65, merge_order, batchcorr=FALSE)
 ```
 
 
-```{r RunSubcluster, warning=FALSE}
-dim(sce.Myeloid)
+```{r dimMP, warning=FALSE}
+dim(sce.Macrophage)
 ```
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterMP1C , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterMP1S , results='asis'}    
+plotReducedDim(sce.Macrophage, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcMP1C , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcMP1S , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
-## Plot Recalculated UMAP of Myeloid Subclusters  {.tabset}
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster "),subtitle="Colored by clustering"))
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title=paste0("Recalculated UMAP for Subcluster "),subtitle="Colored by Sample"))
 
+```{r UMAPSubclusterOCMP1 , results='asis',fig.height=10, fig.width=15}
+
+Plot_QC_dimred(sce.Macrophage,"MNN_UMAP_SC_reduced")
+print(Plot_QC_violin(sce.Macrophage,label="subcluster"))
 ```
-
-
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-
-Plot_QC_dimred(sce.Myeloid,"MNN_UMAP_SC_reduced")
-
-```
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-
-
-plotColData(sce.Myeloid, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Myeloid, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Myeloid, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotReducedDim(sce.Myeloid, dimred = "MNN_UMAP_SC_reduced", colour_by = "FOLR2" , order_by="FOLR2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "HLA-DR",low = "lightgrey", high = "red")
-
-```
-
-
 
 ### Remove bad quality subcluster
 
-```{r SaveData}
-#sce.Myeloid <- sce.Myeloid[,sce.Myeloid$subcluster != 4]
-#dim(sce.Myeloid)
+```{r RmSCMP}
+dim(sce.Macrophage)
+sce.Macrophage <- sce.Macrophage[,sce.Macrophage$subcluster != 3]
+sce.Macrophage <- sce.Macrophage[,sce.Macrophage$subcluster != 4]
+dim(sce.Macrophage)
+
+# Re-Run Subcluster Function
+sce.Macrophage<-SUBCLUSTER(sce.Macrophage, "Macrophage", clust_param="leiden", k_param=55, merge_order, batchcorr=FALSE)
+```
+
+
+### Plot UMAP of Subclusters  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterMC2C , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterMC2S , results='asis'}    
+plotReducedDim(sce.Macrophage, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcMC2C , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcMC2S , results='asis'}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
+
 ```
 
 
 ### Subcluster UMAP
 
-```{r SaveData}
-plotReducedDim(sce.Myeloid, "MNN_UMAP_SC_reduced",colour_by = "subcluster") +
+```{r FinalUMAPMP}
+plotReducedDim(sce.Macrophage, "MNN_UMAP_SC_reduced",colour_by = "subcluster") +
           labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by subcluster")
 ```
 
 ### Save the dataset
 
-```{r SaveData}
-saveRDS(sce.Myeloid, file =paste0(path,'/output/07_sce_SC_Myeloid.rds'))
+```{r SaveDataMP}
+saveRDS(sce.Macrophage, file =paste0(path,'/output/07_sce_SC_Macrophage.rds'))
+rm(sce.Macrophage)
+gc()
 ```
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Subcluster T cell
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterTC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
-sce.Tcell<-SUBCLUSTER(sce, "T cell", clust_param="leiden", k_param=50, merge_order,batchcorr=FALSE) #55
+sce.Tcell<-SUBCLUSTER(sce, "T cell", clust_param="leiden", k_param=55, merge_order,batchcorr=FALSE) #55
   
 ```
 
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterTC1C , results='asis'}
+plotReducedDim(sce.Tcell, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterTC1S , results='asis'}    
+plotReducedDim(sce.Tcell, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcTC1C , results='asis'}
+plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcTC1S , results='asis'}
+plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
-## Plot Recalculated UMAP of T cell Subclusters  {.tabset}
+### Plot QC UMAP of Subcluster 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+```{r UMAPSubclusterQcTC1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
+print(Plot_QC_dimred(sce.Tcell,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Tcell,label="subcluster"))
 ```
-
-```{r UMAPSubclusterRecalc , results='asis'}
-
-#Plot_QC_dimred(sce.Tcell,"MNN_UMAP_SC_reduced")
-
-
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Tcell, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-
-
-plotColData(sce.Tcell, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Tcell, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Tcell, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotReducedDim(sce.Tcell, dimred = "MNN_UMAP_SC_reduced", colour_by = "FOLR2" , order_by="FOLR2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "HLA-DR",low = "lightgrey", high = "red")
-
-
-
-```
-
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataTC}
 saveRDS(sce.Tcell, file =paste0(path,'/output/07_sce_SC_Tcell.rds'))
+rm(sce.Tcell)
+gc()
 ```
-
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Subcluster Endothelial
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterc, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
 sce.Endothelial<-SUBCLUSTER(sce, "Endothelial cell", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
@@ -516,201 +482,210 @@ sce.Endothelial<-SUBCLUSTER(sce, "Endothelial cell", clust_param="leiden", k_par
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterEC1C , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterEC1S , results='asis'}    
+plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcEC1C , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcEC1S , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
-## Plot Recalculated UMAP of T cell Subclusters  {.tabset}
+### Plot QC UMAP of Subcluster
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+```{r UMAPSubclusterQc1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
+Plot_QC_dimred(sce.Endothelial,dim="MNN_UMAP_SC_reduced")
+Plot_QC_violin(sce.Endothelial,label="subcluster")
 ```
 
-```{r RunSubcluster, warning=FALSE}
+
+```{r RmScEc, warning=FALSE}
 
 #remove bad subcluster
 dim(sce.Endothelial)
-sce.Endothelial <- sce[,sce$subcluster != 4]
 sce.Endothelial <- sce.Endothelial[,sce.Endothelial$subcluster != 3]
 dim(sce.Endothelial)
 
 # Run Subcluster Function
-sce.Endothelial<-SUBCLUSTER(sce.Endothelial, "Endothelial cell", clust_param="leiden", k_param=43, merge_order, batchcorr=FALSE)
+sce.Endothelial<-SUBCLUSTER(sce.Endothelial, "Endothelial cell", clust_param="leiden", k_param=39, merge_order, batchcorr=FALSE)
   
 ```
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterEC2C , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
 
+#### Colored by Sample
+```{r UMAPSubclusterEC2S , results='asis'}    
+plotReducedDim(sce.Endothelial, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
 ```
 
 
-## Plot Recalculated UMAP of T cell Subclusters  {.tabset}
+### Plot Recalculated UMAP of Subcluster  {.tabset}
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcEC2C , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
+#### Colored by Sample
+```{r UMAPSubclusterRecalcEC2S , results='asis'}
+plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
-
-
-
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Endothelial, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-
-
-plotColData(sce.Endothelial, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Endothelial, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Endothelial, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotReducedDim(sce.Endothelial, dimred = "MNN_UMAP_SC_reduced", colour_by = "FOLR2" , order_by="FOLR2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "HLA-DR",low = "lightgrey", high = "red")
-
-```
 
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataEc}
 saveRDS(sce.Endothelial, file =paste0(path,'/output/07_sce_SC_Endothelial.rds'))
+rm(sce.Endothelial)
+gc()
 ```
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Subcluster SMC
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterSMC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
-sce.SmoothMuscle<-SUBCLUSTER(sce, "Smooth muscle cell", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
+sce.SmoothMuscle<-SUBCLUSTER(sce, "Smooth muscle cell", clust_param="leiden", k_param=40, merge_order, batchcorr=FALSE)
   
 ```
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterSMC1C , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterSMC1S , results='asis'}    
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcSMC1C , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcSMC1S , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+### Plot QC UMAP of Subcluster 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+```{r UMAPSubclusterQcSMC1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
-```
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
+print(Plot_QC_dimred(sce.SmoothMuscle,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.SmoothMuscle,label="subcluster"))
 
 plotReducedDim(sce.SmoothMuscle, dimred = "MNN_UMAP_SC_reduced", colour_by = "ACTA2" , order_by="ACTA2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "ACTA2",low = "lightgrey", high = "red")
 
-plotColData(sce.SmoothMuscle, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.SmoothMuscle, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.SmoothMuscle, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
 ```
 
-```{r RunSubcluster, warning=FALSE}
+
+
+```{r RmSCSMC, warning=FALSE}
 #remove bad subcluster
 dim(sce.SmoothMuscle)
-sce.SmoothMuscle <- sce[,sce$subcluster != 2]
+sce.SmoothMuscle <- sce.SmoothMuscle[,sce.SmoothMuscle$subcluster != 2]
 dim(sce.SmoothMuscle)
+
+# Run Subcluster Function
+#sce.SmoothMuscle<-SUBCLUSTER(sce.SmoothMuscle, "Endothelial cell", clust_param="leiden", k_param=40, merge_order, batchcorr=FALSE)
+  
 ```
+
+### Plot UMAP of Subclusters  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterSMC2C , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterSMC2S , results='asis'}    
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcSMC2C , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcSMC2S , results='asis'}
+plotReducedDim(sce.SmoothMuscle, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
+
+```
+
+### Plot QC UMAP of Subcluster 
+
+```{r UMAPSubclusterQcSMC2,results='asis',fig.height=10, fig.width=15}
+
+print(Plot_QC_dimred(sce.SmoothMuscle,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.SmoothMuscle,label="subcluster"))
+
+plotReducedDim(sce.SmoothMuscle, dimred = "MNN_UMAP_SC_reduced", colour_by = "ACTA2" , order_by="ACTA2" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "ACTA2",low = "lightgrey", high = "red")
+
+```
+
+
 
 
 ### Save the dataset
 
-```{r SaveData}
-saveRDS(sce.SmoothMuscle, file =paste0(path,'/output/07_sce_SC_Endothelial.rds'))
+```{r SaveDataSMC}
+saveRDS(sce.SmoothMuscle, file =paste0(path,'/output/07_sce_SC_SmoothMuscle.rds'))
+rm(sce.SmoothMuscle)
+gc()
 ```
 
 
@@ -718,88 +693,72 @@ saveRDS(sce.SmoothMuscle, file =paste0(path,'/output/07_sce_SC_Endothelial.rds')
 
 ## Subcluster Dendrittic Cells
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterDC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
-sce.Dendritic<-SUBCLUSTER(sce, "Dendritic cell", clust_param="leiden", k_param=60, merge_order, batchcorr=FALSE)
+sce.Dendritic<-SUBCLUSTER(sce, "Dendritic cell", clust_param="leiden", k_param=45, merge_order, batchcorr=FALSE)
   
 ```
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterDC1C , results='asis'}
+plotReducedDim(sce.Dendritic, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterDC1S , results='asis'}    
+plotReducedDim(sce.Dendritic, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcDC1C , results='asis'}
+plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcDC1S , results='asis'}
+plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+### Plot QC UMAP of Subcluster 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+```{r UMAPSubclusterQcDC1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
-
+print(Plot_QC_dimred(sce.Dendritic,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Dendritic,label="subcluster"))
 ```
 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Dendritic, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-plotColData(sce.SmoothMuscle, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.SmoothMuscle, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.SmoothMuscle, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-```
 
 
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataDC}
 saveRDS(sce.Dendritic, file =paste0(path,'/output/07_sce_SC_Dendritic.rds'))
+rm(sce.Dendritic)
+gc()
 ```
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Subcluster Mast Cells
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterMC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
 sce.Mast<-SUBCLUSTER(sce, "Mast cell", clust_param="leiden", k_param=20, merge_order, batchcorr=FALSE)
@@ -808,77 +767,59 @@ sce.Mast<-SUBCLUSTER(sce, "Mast cell", clust_param="leiden", k_param=20, merge_o
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterMC1C , results='asis'}
+plotReducedDim(sce.Mast, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
 
+#### Colored by Sample
+```{r UMAPSubclusterMC1S , results='asis'}    
+plotReducedDim(sce.Mast, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcMC1C , results='asis'}
+plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcMC1S , results='asis'}
+plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
+
+```
+
+### Plot QC UMAP of Subclusters 
+
+```{r UMAPSubclusterQcMC1 , results='asis',fig.height=10, fig.width=15}
+
+print(Plot_QC_dimred(sce.Mast,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Mast,label="subcluster"))
+
+plotReducedDim(sce.Mast, dimred = "MNN_UMAP_SC_reduced", colour_by = "TPSAB1" , order_by="TPSAB1" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "TPSAB1",low = "lightgrey", high = "red")
 ```
 
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
-
-```
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Mast, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-plotReducedDim(sce.Mast, dimred = "MNN_UMAP_SC_reduced", colour_by = "TPSAB1" , order_by="TPSAB1" ,point_alpha=1,point_size=0.5) +scale_colour_gradient(name = "ACTA2",low = "lightgrey", high = "red")
-
-plotColData(sce.Mast, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Mast, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Mast, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-```
-
-```{r RunSubcluster, warning=FALSE}
+```{r RmSCMC, warning=FALSE}
 #remove bad subcluster
 dim(sce.Mast)
-sce.Mast <- sce[,sce$subcluster == 2]
+sce.Mast <- sce.Mast[,sce.Mast$subcluster == 2]
 dim(sce.Mast)
 ```
 
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataMC}
 saveRDS(sce.Mast, file =paste0(path,'/output/07_sce_SC_Mast.rds'))
+rm(sce.Mast)
+gc()
 ```
 
 
@@ -886,9 +827,9 @@ saveRDS(sce.Mast, file =paste0(path,'/output/07_sce_SC_Mast.rds'))
 
 ## Subcluster B cell
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterBC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
 sce.Bcell<-SUBCLUSTER(sce, "B cell", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
@@ -897,68 +838,50 @@ sce.Bcell<-SUBCLUSTER(sce, "B cell", clust_param="leiden", k_param=50, merge_ord
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterBC1C , results='asis'}
+plotReducedDim(sce.Bcell, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterBC1S , results='asis'}    
+plotReducedDim(sce.Bcell, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcBC1C , results='asis'}
+plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcBC1S , results='asis'}
+plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+### Plot QC UMAP of Subclusters 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
+```{r UMAPSubclusterQcBC1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
+print(Plot_QC_dimred(sce.Bcell,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Bcell,label="subcluster"))
 
 ```
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Bcell, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-plotColData(sce.Bcell, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Bcell, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Bcell, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-```
-
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataC}
 saveRDS(sce.Bcell, file =paste0(path,'/output/07_sce_SC_Bcell.rds'))
+rm(sce.Bcell)
+gc()
 ```
 
 
@@ -967,9 +890,9 @@ saveRDS(sce.Bcell, file =paste0(path,'/output/07_sce_SC_Bcell.rds'))
 
 ## Subcluster Plasma cell
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterPC, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
 sce.Plasma<-SUBCLUSTER(sce, "Plasma", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
@@ -978,68 +901,50 @@ sce.Plasma<-SUBCLUSTER(sce, "Plasma", clust_param="leiden", k_param=50, merge_or
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterPC1C , results='asis'}
+plotReducedDim(sce.Plasma, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterPC1S , results='asis'}    
+plotReducedDim(sce.Plasma, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
+```
+
+
+### Plot Recalculated UMAP of Subcluster  {.tabset}
+
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcPC1C , results='asis'}
+plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
+
+#### Colored by Sample
+```{r UMAPSubclusterRecalcPC1S , results='asis'}
+plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
 
+### Plot QC UMAP of Subclusters 
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+```{r UMAPSubclusterQcPC1 , results='asis',fig.height=10, fig.width=15}
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
-
-```
-
-
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Plasma, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-plotColData(sce.Plasma, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Plasma, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Plasma, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+print(Plot_QC_dimred(sce.Plasma,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Plasma,label="subcluster"))
 
 ```
 
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataPc}
 saveRDS(sce.Plasma, file =paste0(path,'/output/07_sce_SC_Plasma.rds'))
+rm(sce.Plasma)
+gc()
 ```
 
 
@@ -1050,9 +955,9 @@ saveRDS(sce.Plasma, file =paste0(path,'/output/07_sce_SC_Plasma.rds'))
 
 ## Subcluster Neutrophil
 
-```{r RunSubcluster, warning=FALSE}
+```{r RunSubclusterNP, warning=FALSE}
 
-sce$celltype <- colData(sce)$ManualAnno_L1
+sce$celltype <- colData(sce)$Annotation_L1
 
 # Run Subcluster Function
 sce.Neutrophil<-SUBCLUSTER(sce, "Neutrophil", clust_param="leiden", k_param=50, merge_order, batchcorr=FALSE)
@@ -1061,68 +966,48 @@ sce.Neutrophil<-SUBCLUSTER(sce, "Neutrophil", clust_param="leiden", k_param=50, 
 
 ### Plot UMAP of Subclusters  {.tabset}
 
-```{r UMAPSubcluster , results='asis'}
-cat(paste0("##### Colored by Clustering\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
-          labs(title="SubCluster ",subtitle="Colored by clustering"))
-    
-cat(paste0("##### Colored by Sample\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_reduced",colour_by = "Sample") +
-          labs(title="SubCluster ",subtitle="Colored by Sample"))
+#### Colored by Clustering
+```{r UMAPSubclusterNP1C , results='asis'}
+plotReducedDim(sce.Neutrophil, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by clustering")
+```
 
+#### Colored by Sample
+```{r UMAPSubclusterNP1S , results='asis'}    
+plotReducedDim(sce.Neutrophil, "MNN_UMAP_reduced",colour_by = "Sample") +
+          labs(title=paste0("UMAP of Subcluster"),subtitle="Colored by Sample")
 ```
 
 
+### Plot Recalculated UMAP of Subcluster  {.tabset}
 
-## Plot Recalculated UMAP of Fibroblast Subclusters  {.tabset}
+#### Colored by Clustering
+```{r UMAPSubclusterRecalcNP1C , results='asis'}
+plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by clustering")
+```
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Clustering\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "subcluster",text_by="subcluster") +labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Sample"))
-
+#### Colored by Sample
+```{r UMAPSubclusterRecalcNP1S , results='asis'}
+plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "Sample") +
+          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sample")
 
 ```
 
+### Plot QC UMAP of Subclusters 
 
-```{r UMAPSubclusterRecalc , results='asis'}
-cat(paste0("#### Colored by Mitochondrial Genes\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "subsets_Mito_percent",order_by="subsets_Mito_percent") +labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Mitochondrial Genes"))
+```{r UMAPSubclusterQcNP1 , results='asis',fig.height=10, fig.width=15}
 
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "detected",order_by="detected") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Number of detected Genes"))
-
-cat(paste0("#### Colored by Sample\n"))
-print(plotReducedDim(sce.Neutrophil, "MNN_UMAP_SC_reduced",colour_by = "sum",order_by="sum") +
-          labs(title=paste0("Recalculated UMAP for Subcluster"),subtitle="Colored by Sum of UMI Counts in Cell"))
-
-plotColData(sce.Neutrophil, x="subcluster", y="subsets_Mito_percent", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Mito percent")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-plotColData(sce.Neutrophil, x="subcluster", y="detected", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Detected Genes")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
-
-
-plotColData(sce.Neutrophil, x="subcluster", y="sum", other_fields="subcluster") + 
-     facet_wrap(~subcluster, nrow=1, scales = "free_x") +
-     ggtitle("Total Counts")+
-     theme(axis.text.x = element_text(angle = 45,hjust=1,), axis.ticks.x=element_blank(),strip.text.x = element_blank())
+print(Plot_QC_dimred(sce.Neutrophil,dim="MNN_UMAP_SC_reduced"))
+print(Plot_QC_violin(sce.Neutrophil,label="subcluster"))
 
 ```
-
 
 ### Save the dataset
 
-```{r SaveData}
+```{r SaveDataNP}
 saveRDS(sce.Neutrophil, file =paste0(path,'/output/07_sce_SC_Neutrophil.rds'))
+rm(sce.Neutrophil)
+gc()
 ```
 
 

@@ -36,7 +36,7 @@ source(here("code", "standard_libraries.R"))
 ### Additional Packages
 
 
-```{r LoadPackages, warning=FALSE,eval=FALSE}
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
@@ -46,6 +46,8 @@ library(presto)
 library(dittoSeq)
 library(gridExtra)
 library(UCell)
+library(xlsx)
+library(patchwork)
 })
 
 ```
@@ -56,6 +58,11 @@ library(UCell)
 set.seed(100)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=100)
 path <- here::here()
+
+#Output path
+output_dir <- here("output","Subcluster_Annotation_output")
+if(!dir.exists(output_dir)) dir.create(output_dir)
+
 ```
 
 
@@ -67,7 +74,7 @@ path <- here::here()
 VizGenEx <- function(sce.sc,markr){
   for(i in markr){
     
-    cat(paste0("#### ", i, "\n"))
+    cat(paste0("\n##### ", i, "\n"))
     gridExtra::grid.arrange(
       arrangeGrob(plotReducedDim(sce.sc, dimred = "MNN_UMAP_SC_reduced", colour_by = i, text_by = "subcluster"), 
                   plotReducedDim(sce.sc, dimred = "MNN_UMAP_SC_reduced", colour_by = i, order_by=i ) 
@@ -83,7 +90,7 @@ VizGenEx <- function(sce.sc,markr){
 
 ```{r WilcoxaucFunction}
 
-Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE){
+Run_Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE){
   #Wilcoxon rank-sum test
   markers_wilcox <- wilcoxauc(sce, group_by=label, assay = 'logcounts')
   # Get the top markers for each Anno (save in excel file)
@@ -95,12 +102,13 @@ Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, 
       #get genes for the Anno
       markers<-topDEgenes[,paste0(i), drop=TRUE]
       #Create table
-      tmp<-markers_wilcox[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
+      tmp<-markers_wilcox[markers_wilcox$feature %in% markers & markers_wilcox$group == i,]
       #Save table in Exelsheet
       addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
     }
-    saveWorkbook(wb,paste0( path , "/output/","SC_",paste0(celltype),"_Wilcoxon.xlsx")) 
+    saveWorkbook(wb,paste0( output_dir , "/","SC_",paste0(celltype),"_Wilcoxon.xlsx")) 
   }
+  return(topDEgenes)
 }
 
 ```
@@ -112,16 +120,15 @@ Wilcoxauc <- function(sce,label,celltype,n = 50,auc.min = 0.5, pval.max = 0.05, 
 
 ### Load Data
 
-```{r LoadDataset}
+```{r LoadDatasetFB}
 ## RA DATASET
 sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Fibroblast.rds'))
-cell_type<- "Fibroblast"
 
 ```
 
 ### Explore Dataset
 
-```{r ShowDim}
+```{r ShowDimFB}
 #Dimensions of count matrix
 dim(sce.sc)
 ```
@@ -130,16 +137,16 @@ dim(sce.sc)
 
 #### Plot UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterFB}
 #cluster
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", cell_type),subtitle="Colored by clustering")
+plotReducedDim(sce.sc, "MNN_UMAP_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title="SubCluster",subtitle="Colored by clustering")
 ```
 
 #### Plot Recalculated UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterRecalcFB}
 #cluster
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster ", cell_type),subtitle="Colored by clustering")
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title="SubCluster",subtitle="Colored by clustering")
 ```
 
 
@@ -147,32 +154,30 @@ plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="
 
 #### Identify Marker Genes Wilcoxon rank-sum test
 
-```{r FibroblastsIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce.sc, 'subcluster', assay = 'logcounts')
-data.frame(markers_wilcox)
-```
 
-```{r FibroblastsPlotMarker}
-tmp <-top_markers(markers_wilcox, n = 4)
-
-tail(unlist(unname(as.list(tmp))),-4)
-
-dittoDotPlot(sce.sc, vars = unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
-#dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+```{r IdentifyMarkerFB}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Fibroblast',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
 ```
 
 
-#### Test Known Fibroblast marker {.tabset}
+```{r DotplotFB}
+dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
 
-```{r MarkerGenesFibroblast}
+```
+
+
+#### Test Known Fibroblast marker
+
+```{r MarkerGenesFB}
 
 Fibroblast_signatures <- list(
     Lining = c("PRG4","CRTAC1", "CLU","CLIC5"),
     SMC = c("ACTA2","MYL9", "DES", "MYH11"),
-    POSTN = c("POSTN","COL1A1", "FNDC1"),
-    CXCL12 = c("CXCL12","CCL2","SFRP1"),
-    CHI3L2 = c("CHI3L2","SAA1", "FN1"),
-    MFAP5 = c("MFAP5")
+    FB_POSTN = c("POSTN","COL1A1", "FNDC1"),
+    FB_CXCL12 = c("CXCL12","CCL2","SFRP1"),
+    FB_CHI3L2 = c("CHI3L2","SAA1", "FN1"),
+    FB_MFAP5 = c("MFAP5","IGFBP6","TNXB")
 )
 ```
 
@@ -180,21 +185,22 @@ Fibroblast_signatures <- list(
 
 ### Run UCell on sce object
 
-#### Coarse signatures
-```{r UCellCoarse}
-sce.ucell <- ScoreSignatures_UCell(sce, features=Fibroblast_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+#### Test signatures
+```{r UCellFB}
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Fibroblast_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
 altExp(sce.ucell, 'UCell')
 ```
 
-```{r UCellCoarseUMAP,fig.height=10, fig.width=15}
+```{r UCellUMAPFB,fig.height=5, fig.width=15}
 pll <- lapply(names(Fibroblast_signatures), function(x) {
-  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
-  labs( x='UMAP 1', y='UMAP 2' )
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 })
 wrap_plots(pll)
 ```
 
-```{r UCellCoarseExpression,fig.height=10, fig.width=15}
+```{r UCellExpressionFB,fig.height=10, fig.width=15}
 pll <- lapply(names(Fibroblast_signatures), function(x) {
   plotExpression(sce.ucell, features = x, x = "subcluster",exprs_values = "UCell")
 })
@@ -202,153 +208,125 @@ wrap_plots(pll,ncol=2)
 ```
 
 
+### Test Fibroblast marker {.tabset}
 
+#### Lining vs Sublining {.tabset}
 
-Lining vs Sublining
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB1, results='asis'}
 #Lining vs Sublining Fibroblst
-VizGenEx(sce.sc,c("PRG4","THY1"),"Fibroblast")  
+VizGenEx(sce.sc,c("PRG4","THY1"))  
 
 ```
 
-##### Lining {.tabset}
+#### Lining {.tabset}
 
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB2, results='asis'}
 #Lining Fibroblst
 VizGenEx(sce.sc,Fibroblast_signatures$Lining)  
 
 ```
 
-##### SMC {.tabset}
+#### SMC {.tabset}
 
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB3, results='asis'}
 #SMC
 VizGenEx(sce.sc,Fibroblast_signatures$SMC)  
 
 ```
 
-##### POSTN {.tabset}
+#### FB POSTN+ {.tabset}
 
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB4, results='asis'}
 #Lining Fibroblst
-VizGenEx(sce.sc,Fibroblast_signatures$POSTN)   
+VizGenEx(sce.sc,Fibroblast_signatures$FB_POSTN)   
 
 ```
 
-##### CXCL12 {.tabset}
+#### FB CXCL12+ {.tabset}
 
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB5, results='asis'}
 #Lining Fibroblst
-VizGenEx(sce.sc,Fibroblast_signatures$CXCL12)  
+VizGenEx(sce.sc,Fibroblast_signatures$FB_CXCL12)  
 
 ```
 
-##### CHI3L2 {.tabset}
+#### FB CHI3L2+ {.tabset}
 
-```{r FibroblastsL2, results='asis'}
+```{r GexpFB6, results='asis'}
 #Lining Fibroblst
-VizGenEx(sce.sc,Fibroblast_signatures$CHI3L2)  
+VizGenEx(sce.sc,Fibroblast_signatures$FB_CHI3L2)  
 
 ```
 
-##### MFAP5 {.tabset}
+#### FB MFAP5+ {.tabset}
 
-```{r FibroblastsL2, results='asis'}
-VizGenEx(sce.sc,Fibroblast_signatures$MFAP5)  
-
-```
-
-##### Other {.tabset}
-
-```{r FibroblastsL2, results='asis'}
-
-VizGenEx(sce.sc,c("TRPS1","FTX","NEAT1","MALAT1"),"Fibroblast")  
+```{r GexpFB7, results='asis'}
+VizGenEx(sce.sc,Fibroblast_signatures$FB_MFAP5)  
 
 ```
 
-#### Label Assignement
 
-```{r FibroblastsAssignementL2}
+### Label Assignement
+
+```{r AssignementL2FB}
 # Annotation
-sce.sc$ManualAnno_L2 <- as.integer(sce.sc$subcluster)
-unique(sce.sc$ManualAnno_L2)
+sce.sc$Annotation_L2 <- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)
 
-#sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1,2)] <- "POSTN+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "CHI3L2+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(5)] <- "PRG4+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(4)] <- "CXCL12+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "MFAP5+"
+#sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1,2)] <- "POSTN+ FIB"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(5)] <- "CHI3L2+ FIB"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] <- "PRG4+ FIB"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3,7)] <- "CXCL12+ FIB"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] <- "MFAP5+ FIB"
 
-unique(sce.sc$ManualAnno_L2)
+unique(sce.sc$Annotation_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
-```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
-          labs(title=paste0("Recalculated UMAP for Subcluster ", cell_type),subtitle="Colored by Celltype")
+```{r UMAPAssignedFB1}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2",text_by="Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
 ```
 
-```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
-          labs(title=paste0("Recalculated UMAP for Subcluster ", cell_type),subtitle="Colored by Celltype")
+```{r UMAPAssignedFB2}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
 ```
 
 
 ### Save the Annotated dataset
 
-```{r SaveData}
+```{r SaveDataFB}
 saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 ```
 
 
 ### Identify Marker of labels with Genes Wilcoxon rank-sum test
 
-```{r FibroblastsIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
-data.frame(markers_wilcox)
+```{r IdentifyMarkerFinalFB}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Fibroblast_Anno',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
 ```
 
-```{r FibroblastsSaveMarker}
-
-#Wilcoxon rank-sum test
-markers_wilcox <- wilcoxauc(sce, group_by=labeling, assay = 'logcounts')
-# Get the top 50 markers for each Anno (save in excel file)
-# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-topDEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
-  
-wb = createWorkbook()
-for (i in 1:max(as.integer(levels(sce$paste0(labeling))))){
-  #get genes for the Anno
-  markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
-  #Create table
-  tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
-    
-  #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
-}
-saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx"))  
-
-
-```
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Myeloid
+## Macrophage
 
 ### Load Data
 
-```{r LoadDataset}
+```{r LoadDatasetMP}
 ## RA DATASET
-sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Myeloid.rds'))
+sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Macrophage.rds'))
 
 ```
 
 ### Explore Dataset
 
-```{r ShowDim}
+```{r ShowDimMP}
 #Dimensions of count matrix
 dim(sce.sc)
 ```
@@ -359,7 +337,7 @@ dim(sce.sc)
 
 #### Plot UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterMP}
 #cluster
 plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
@@ -367,40 +345,60 @@ plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text
 
 #### Plot Recalculated UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterRecalcMP}
 #cluster
 plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
-```{r MarkerGenesFibroblast}
 
-Myeloid_signatures <- list(
-    TREM2 = c("MERTK","TREM2"),#Tissue resident
-    FOLR2 = c("MERTK","FOLR2","LYVE1","ID2","ICAM1"),#Tissue resident
-    CD48 = c("CD48","SPP1","ISG15","CLEC10A"),#Tissue infiltrating
-    S100A12 = c("S100A12","CD48","MRC1","FCGR3A")#Monocyte (Downregulated MRC1, FCGR3A)
+
+### Annotate Subcluster
+
+#### Identify Marker Genes Wilcoxon rank-sum test
+
+```{r IdentifyMarkerMP}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Macrophage',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
+
+```{r DotplotMP}
+dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+
+```
+
+
+#### Test Known Fibroblast marker
+```{r MarkerGenesMP}
+
+Macrophage_signatures <- list(
+    MP_TREM2 = c("MERTK","TREM2"),#Tissue resident
+    MP_FOLR2 = c("MERTK","FOLR2","LYVE1","ID2","ICAM1"),#Tissue resident
+    MP_CD48 = c("CD48","SPP1","ISG15","CLEC10A"),#Tissue infiltrating
+    MP_S100A12 = c("S100A12","CD48","MRC1","FCGR3A")#Monocyte (Downregulated MRC1, FCGR3A)
 )
 ```
 
 
 ### Run UCell on sce object
 
-```{r UCellCoarse}
-sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Myeloid_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+```{r UCellMP}
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Macrophage_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
 altExp(sce.ucell, 'UCell')
 
-#sce.ucell <- SmoothKNN(sce.ucell, signature.names = names(Myeloid_signatures), reduction="MNN_SC_reduced")
+#sce.ucell <- SmoothKNN(sce.ucell, signature.names = names(Macrophage_signatures), reduction="MNN_SC_reduced")
 ```
 
-```{r UCellCoarseUMAP,fig.height=10, fig.width=15}
-pll <- lapply(names(Myeloid_signatures), function(x) {
-  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
-  labs( x='UMAP 1', y='UMAP 2' )
+```{r UCellUMAPMP,fig.height=10, fig.width=15}
+pll <- lapply(names(Macrophage_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x) ,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
 })
 wrap_plots(pll)
 ```
 
-```{r UCellCoarseExpression,fig.height=10, fig.width=15}
-pll <- lapply(names(Myeloid_signatures), function(x) {
+```{r UCellExpressionMP,fig.height=10, fig.width=15}
+pll <- lapply(names(Macrophage_signatures), function(x) {
   plotExpression(sce.ucell, features = x, x = "subcluster",exprs_values = "UCell")
 })
 wrap_plots(pll,ncol=2)
@@ -412,96 +410,76 @@ wrap_plots(pll,ncol=2)
 
 
 
-### Annotate Subcluster
+### Test Macrophage marker {.tabset}
 
-```{r TcellL2, results='asis'}
+#### TREM2+ MP {.tabset}
+
+```{r GexpMP1, results='asis'}
 #Macrophage
-VizGenEx(sce.sc,Myeloid_signatures$TREM2)  
+VizGenEx(sce.sc,Macrophage_signatures$TREM2)  
 ```
+#### FOLR2+ MP {.tabset}
 
-
-```{r TcellL2, results='asis'}
-VizGenEx(sce.sc,Myeloid_signatures$FOLR2)  
+```{r GexpMP2, results='asis'}
+VizGenEx(sce.sc,Macrophage_signatures$FOLR2)  
 ```
+#### CD48+ MP {.tabset}
 
-
-```{r TcellL2, results='asis'}
-VizGenEx(sce.sc,Myeloid_signatures$CD48)  
+```{r GexpMP3, results='asis'}
+VizGenEx(sce.sc,Macrophage_signatures$CD48)  
 ```
+#### S100A12+ MP {.tabset}
 
-```{r TcellL2, results='asis'}
+```{r GexpMP4, results='asis'}
 #monocyte
-VizGenEx(sce.sc,Myeloid_signatures$S100A12)  
+VizGenEx(sce.sc,Macrophage_signatures$S100A12)  
 
 ```
 
-#### Label Assignement
+### Label Assignement
 
-```{r FibroblastsAssignementL2}
+```{r FibroblastsAssignementL2MP}
 # Annotation
-sce.sc$ManualAnno_L2 <- as.integer(sce.sc$subcluster)
-unique(sce.sc$ManualAnno_L2)
+sce.sc$Annotation_L2 <- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)
 
-#sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1)] <- "TREM2+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(2)] <- "FOLR2+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "CD48+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(5)] <- "S100A12+"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(4)] <- "Dying"
+#sce.sc$Annotation_L2[sce.sc$subcluster %in% c(6)] <- "SMC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] <- "TREM2+ MP"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] <- "FOLR2+ MP"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] <- "CD48+ MP"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] <- "S100A12+ MP"
 
-unique(sce.sc$ManualAnno_L2)
+unique(sce.sc$Annotation_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
-```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+```{r UMAPAssignedMP1}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2",text_by="Annotation_L2") +
           labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
 ```
 
-```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
+```{r UMAPAssignedMP2}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2") +
           labs(title="Recalculated UMAP for Subcluster",subtitle="Colored by Celltype")
 ```
 
 
 ### Save the Annotated dataset
 
-```{r SaveData}
-saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
+```{r SaveDataMP}
+saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Macrophage_Anno.rds'))
 ```
 
 
 ### Identify Marker of labels with Genes Wilcoxon rank-sum test
 
-```{r FibroblastsIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce.sc[,sce.sc$celltype == "Fibroblast"], 'subcluster', assay = 'logcounts')
-data.frame(markers_wilcox)
+```{r IdentifyMarkerAnnoMP}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Macrophage_Anno',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
 ```
 
-```{r FibroblastsSaveMarker}
 
-#Wilcoxon rank-sum test
-markers_wilcox <- wilcoxauc(sce, group_by=labeling, assay = 'logcounts')
-# Get the top 50 markers for each Anno (save in excel file)
-# filter for nominally significant (p<0.05) and over-expressed (auc>0.5)
-topDEgenes <- top_markers(markers_wilcox, n = 50, auc_min = 0.5, pval_max = 0.05)
-  
-wb = createWorkbook()
-for (i in 1:max(as.integer(levels(sce$paste0(labeling))))){
-  #get genes for the Anno
-  markers<-topDEgenes_L0[,paste0(i), drop=TRUE]
-  #Create table
-  tmp<-markers_wilcox_L0[markers_wilcox_L0$feature %in% markers & markers_wilcox_L0$group == i,]
-    
-  #Save table in Exelsheet
-  addDataFrame(tmp, sheet=createSheet(wb, paste0(i)), startColumn=1, row.names=TRUE,col.names = TRUE)
-}
-saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx"))  
-
-#sce.sc[rowData(sce.sc)[["is_hvg"]]]
-
-```
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -509,7 +487,7 @@ saveWorkbook(wb,paste0( path , "/output/","SC_Fibroblast_Wilcoxon.xlsx"))
 
 ### Load Data
 
-```{r LoadDataset}
+```{r LoadDatasetTC}
 ## RA DATASET
 sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Tcell.rds'))
 
@@ -517,7 +495,7 @@ sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Tcell.rds'))
 
 ### Explore Dataset
 
-```{r ShowDim}
+```{r ShowDimTC}
 #Dimensions of count matrix
 dim(sce.sc)
 ```
@@ -527,7 +505,7 @@ dim(sce.sc)
 
 #### Plot UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterTC}
 #cluster
 plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
@@ -535,14 +513,31 @@ plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text
 
 #### Plot Recalculated UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterRecalcTC}
 #cluster
 plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
 
+### Annotate Subcluster
+
+#### Identify Marker Genes Wilcoxon rank-sum test
 
 
-```{r MarkerGenesFibroblast}
+```{r IdentifyMarkerTC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Tcell',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
+
+```{r DotplotTC}
+dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+
+```
+
+
+#### Test Known Fibroblast marker
+
+```{r MarkerGenesTC}
 Tcell_signatures <- list(
     CD4Tcell = c("CD4","TRAT1","CD40LG","LEF1","TNFRSF4"),
     CD8Tcell = c("CD8A","CD8B"),
@@ -555,96 +550,127 @@ Tcell_signatures <- list(
 
 ```
 
-### Annotate Subcluster
 
+### Run UCell on sce object
 
-```{r TcellUMAP}
-#Plot the UMAp
-plotReducedDim(sce.sc, "SC_UMAP_Tcell" ,colour_by = "subcluster",text_by="subcluster") +
-          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by clustering")
+#### Test signatures signatures
+```{r UCellTC}
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Tcell_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
 ```
 
-#### Identify Marker Genes Wilcoxon rank-sum test
-
-```{r TcellIdentifyMarker}
-markers_wilcox <- wilcoxauc(sce.sc, 'subcluster', assay = 'logcounts')
-data.frame(markers_wilcox)
+```{r UCellUMAPTC,fig.height=5, fig.width=15}
+pll <- lapply(names(Tcell_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+})
+wrap_plots(pll)
 ```
 
-```{r TcellPlotMarker}
-tmp <-top_markers(markers_wilcox, n = 4)
-
-tail(unlist(unname(as.list(tmp))),-4)
-
-dittoDotPlot(sce.sc[,sce.sc$celltype == "Fibroblast"], vars =unique(tail(unlist(unname(as.list(tmp))),-4)) , group.by = "subcluster", min.color="white", max.color="red")
+```{r UCellExpressionTC,fig.height=10, fig.width=15}
+pll <- lapply(names(Tcell_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = "subcluster",exprs_values = "UCell")
+})
+wrap_plots(pll,ncol=2)
 ```
 
 
+### Test Tcells marker {.tabset}
 
+#### CD4Tcell {.tabset}
 
-#### Test Tcells marker {.tabset}
-
-```{r TcellL2, results='asis'}
-#CD8Tcell
-#VizGenEx(c("CD4","TRAT1", "CD40LG", "TNFRSF4"),"Tcell")  
-
+```{r GexpTC1, results='asis'}
+#CD4Tcell
 VizGenEx(sce.sc,Tcell_signatures$CD4Tcell)
+```
+
+#### CD8Tcell {.tabset}
+
+```{r GexpTC2, results='asis'}
+#CD8Tcell
 VizGenEx(sce.sc,Tcell_signatures$CD8Tcell)
-VizGenEx(sce.sc,Tcell_signatures$NKcell)
+```
+
+#### NKcell {.tabset}
+
+```{r GexpTC3, results='asis'}
+#NKcell
+VizGenEx(sce.sc,Tcell_signatures$NKcell) 
+```
+
+#### ProlifTcell {.tabset}
+
+```{r GexpTC4, results='asis'}
+#ProlifTcell
 VizGenEx(sce.sc,Tcell_signatures$ProlifTcell)
+```
+
+#### TReg {.tabset}
+
+```{r GexpTC5, results='asis'}
+#ProlifTcell
 VizGenEx(sce.sc,Tcell_signatures$TReg)
 ```
 
+#### Memory {.tabset}
 
-
-```{r TcellL2, results='asis'}
-#CD4Tcell
-VizGenEx(c("CD8A","CD8B"),"Tcell")  
-
-
-```
-
-```{r TcellL2, results='asis'}
-#NKcell
-VizGenEx(c("NKG7","GNLY","NCAM1"),"Tcell")  
-
-
-```
-```{r TcellL2, results='asis'}
+```{r GexpTC6, results='asis'}
 #ProlifTcell
-VizGenEx(c("MKI67","PCNA","STMN1"),"Tcell")  
-
-
+VizGenEx(sce.sc,Tcell_signatures$Memory)
 ```
 
-```{r TcellAssignementL2}
+#### Cytotoxic {.tabset}
+
+```{r GexpTC7, results='asis'}
+#ProlifTcell
+VizGenEx(sce.sc,Tcell_signatures$Cytotoxic)
+```
+
+
+
+```{r AssignementL2TC}
 #Manual Annotation
 
-sce$ManualAnno_L2 <- as.integer(sce$subcluster)
-unique(sce$ManualAnno_L2)
+sce.sc$Annotation_L2 <- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)
 
-sce$ManualAnno_L2[sce$subcluster %in% c(4)] <- "NKTcell"
-sce$ManualAnno_L2[sce$subcluster %in% c(3)] <- "CytotoxCD4Tcell"
-sce$ManualAnno_L2[sce$subcluster %in% c(1)] <- "CytotoxCD8Tcell"
-sce$ManualAnno_L2[sce$subcluster %in% c(1)] <- "NaiveTcell"
-sce$ManualAnno_L2[sce$subcluster %in% c(1)] <- "MemoryTcell"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(4)] <- "NKTcell"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(5)] <- "CytotoxCD4 TC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] <- "CytotoxCD8 TC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] <- "Naive TC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] <- "Memory TC"
 
+unique(sce.sc$Annotation_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
-```{r TcellUMAPAssigned}
-plotReducedDim(sce.sc[,sce.sc$celltype == name], column_name,colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
-          labs(title=paste0("Recalculated UMAP for Subcluster ", name),subtitle="Colored by Celltype")
+```{r UMAPAssignedTC1}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2",text_by="Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
 ```
 
+```{r UMAPAssignedTC2}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster",subtitle="Colored by Celltype")
+```
 
 
 ### Save the Annotated dataset
 
-```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
+```{r SaveDataTC}
+saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Tcell_Anno.rds'))
 ```
+
+
+### Identify Marker of labels with Genes Wilcoxon rank-sum test
+
+```{r IdentifyMarkerFinalTC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Fibroblast_Anno',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -653,7 +679,7 @@ saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
 
 ### Load Data
 
-```{r LoadDataset}
+```{r LoadDatasetEC}
 ## RA DATASET
 sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Endothelial.rds'))
 
@@ -661,7 +687,7 @@ sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Endothelial.rds'))
 
 ### Explore Dataset
 
-```{r ShowDim}
+```{r ShowDimEC}
 #Dimensions of count matrix
 dim(sce.sc)
 ```
@@ -670,7 +696,7 @@ dim(sce.sc)
 
 #### Plot UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterEC}
 #cluster
 plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
@@ -678,16 +704,31 @@ plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text
 
 #### Plot Recalculated UMAP of Subclusters 
 
-```{r UMAPCluster}
+```{r UMAPSubclusterRecalcEC}
 #cluster
 plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
 ```
 
+### Annotate Subcluster
+
+#### Identify Marker Genes Wilcoxon rank-sum test
 
 
-#### Test Known Endothelial marker {.tabset}
+```{r IdentifyMarkerEC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Endothelial',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
 
-```{r MarkerGenesFibroblast}
+
+```{r DotplotEC}
+dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+
+```
+
+
+#### Test Known marker
+
+```{r MarkerGenesEC}
 
 Endothelial_signatures <- list(
     Arterial = c("GJA5","NOTCH4", "EFNB2","HEY1"),
@@ -697,58 +738,89 @@ Endothelial_signatures <- list(
 )
 ```
 
+### Run UCell on sce object
 
-### Annotate Subcluster
+#### Test signatures signatures
+```{r UCellEC}
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Endothelial_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+```
 
-```{r TcellL2, results='asis'}
+```{r UCellUMAPEC,fig.height=5, fig.width=15}
+pll <- lapply(names(Endothelial_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+})
+wrap_plots(pll)
+```
+
+```{r UCellExpressionEC,fig.height=10, fig.width=15}
+pll <- lapply(names(Endothelial_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = "subcluster",exprs_values = "UCell")
+})
+wrap_plots(pll,ncol=2)
+```
+
+
+### Test Tcells marker {.tabset}
+
+#### Arterial {.tabset}
+
+```{r GexpEC1, results='asis'}
 #Capillary
 VizGenEx(sce.sc,Endothelial_signatures$Arterial)
-VizGenEx(sce.sc,Endothelial_signatures$Venous)
-VizGenEx(sce.sc,Endothelial_signatures$Capillary)
-VizGenEx(sce.sc,Endothelial_signatures$Lymphatic)
 ```
 
+#### Venous {.tabset}
 
-```{r TcellL2, results='asis'}
+```{r GexpEC2, results='asis'}
 #Venular
-VizGenEx(c("LIFR","ICAM"),"Endothelial")  
+VizGenEx(sce.sc,Endothelial_signatures$Venous)
 
 ```
 
+#### Capillary {.tabset}
 
-```{r TcellL2, results='asis'}
+```{r GexpEC3, results='asis'}
 #Arteriolar
-VizGenEx(c("NOTCH","GAJ5","B2MX"),"Endothelial")  
+VizGenEx(sce.sc,Endothelial_signatures$Capillary)
 
 ```
 
+#### Lymphatic {.tabset}
 
-```{r TcellL2, results='asis'}
+```{r GexpEC4, results='asis'}
 #lymphatic
-VizGenEx(c("PROX1","LYVE1", "CCL21"),"Endothelial")  
+VizGenEx(sce.sc,Endothelial_signatures$Lymphatic)  
 
 ```
 
+### Label Assignement
 
-```{r TcellAssignementL2}
+```{r AssignementL2EC}
 #Manual Annotation
 
-sce.sc$ManualAnno_L2 <- as.integer(sce.sc$subcluster)
-unique(sce.sc$ManualAnno_L2)
+sce.sc$Annotation_L2 <- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)
 
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(1)] <- "Arteriolar"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(2)] <- "Venular"
-sce.sc$ManualAnno_L2[sce.sc$subcluster %in% c(3)] <- "Capillary"
-#sce$ManualAnno_L2[sce$subcluster %in% c(1)] <- "Lymphatic"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] <- "Arteriolar EC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2,4)] <- "Venular EC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] <- "Capillary EC"
+#sce$Annotation_L2[sce$subcluster %in% c(1)] <- "Lymphatic"
+
+unique(sce.sc$Annotation_L2)
 ```
 
 #### UMAP Assigned Celltypes 
 
-```{r FibroblastsUMAPAssigned}
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2",text_by="ManualAnno_L2") +
+```{r UMAPAssignedEC1}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2",text_by="Annotation_L2") +
           labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
+```
 
-plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
+```{r UMAPAssignedEC2}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2") +
           labs(title="Recalculated UMAP for Subcluster",subtitle="Colored by Celltype")
 ```
 
@@ -756,8 +828,182 @@ plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "ManualAnno_L2") +
 
 ### Save the Annotated dataset
 
-```{r SaveData}
-saveRDS(sce, file =paste0(path,'/output/07_sce_SC_Fibroblast_Anno.rds'))
+```{r SaveDataEC}
+saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Endothelial_Anno.rds'))
 ```
+
+
+### Identify Marker of labels with Genes Wilcoxon rank-sum test
+
+```{r IdentifyMarkerFinalEC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Endothelial_Anno',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Dendritic
+
+### Load Data
+
+```{r LoadDatasetDC}
+## RA DATASET
+sce.sc <- readRDS(file = paste0(path,'/output/07_sce_SC_Dendritic.rds'))
+
+```
+
+### Explore Dataset
+
+```{r ShowDimDC}
+#Dimensions of count matrix
+dim(sce.sc)
+```
+
+### Plot Annotation {.tabset}
+
+#### Plot UMAP of Subclusters 
+
+```{r UMAPSubclusterDC}
+#cluster
+plotReducedDim(sce.sc, paste0("MNN_UMAP_reduced"),colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
+```
+
+
+#### Plot Recalculated UMAP of Subclusters 
+
+```{r UMAPSubclusterRecalcDC}
+#cluster
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "subcluster", text_by="subcluster") +labs(title=paste0("SubCluster"),subtitle="Colored by clustering")
+```
+
+
+### Annotate Subcluster
+
+#### Identify Marker Genes Wilcoxon rank-sum test
+
+
+```{r IdentifyMarkerDC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Fibroblast',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
+
+```{r DotplotDC}
+dittoDotPlot(sce.sc, vars = unique(as.vector(as.matrix(DE_genes[1:2, -1]))) , group.by = "subcluster",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE )
+
+```
+
+
+#### Test Known marker
+
+```{r MarkerGenesDC}
+
+Dendrittic_signatures <- list(
+    pDC = c("CLEC4C","LILRA4", "LRRC26","SCT"),
+    cDC1 = c("CLEC9A","THBD", "XCR1", "CLNK"),
+    cDC2 = c("CLEC10A","ENHO","CD1C")
+)
+```
+
+
+### Run UCell on sce object
+
+#### Test signatures signatures
+```{r UCellDC}
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Dendrittic_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+```
+
+```{r UCellUMAPDC,fig.height=5, fig.width=15}
+pll <- lapply(names(Dendrittic_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma")
+})
+wrap_plots(pll)
+```
+
+```{r UCellExpressionDC,fig.height=10, fig.width=15}
+pll <- lapply(names(Dendrittic_signatures), function(x) {
+  plotExpression(sce.ucell, features = x, x = "subcluster",exprs_values = "UCell")
+})
+wrap_plots(pll,ncol=2)
+```
+
+### Test Tcells marker {.tabset}
+
+#### pDC {.tabset}
+
+```{r GexpDC1, results='asis'}
+
+VizGenEx(sce.sc,Dendrittic_signatures$pDC)
+```
+
+#### cDC1 {.tabset}
+
+```{r GexpDC2, results='asis'}
+
+VizGenEx(sce.sc,Dendrittic_signatures$cDC1)
+```
+
+#### cDC2 {.tabset}
+
+```{r GexpDC3, results='asis'}
+VizGenEx(sce.sc,Dendrittic_signatures$cDC2)
+```
+
+
+#### Label Assignement
+
+```{r AssignementL2DC}
+# Annotation
+sce.sc$Annotation_L2 <- as.integer(sce.sc$subcluster)
+unique(sce.sc$Annotation_L2)
+
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(2)] <- "pDC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(1)] <- "cDC"
+sce.sc$Annotation_L2[sce.sc$subcluster %in% c(3)] <- "cDC2"
+
+unique(sce.sc$Annotation_L2)
+```
+
+#### UMAP Assigned Celltypes 
+
+```{r UMAPAssignedDC1}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2",text_by="Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster ",subtitle="Colored by Celltype")
+```
+
+```{r UMAPAssignedDC2}
+plotReducedDim(sce.sc, "MNN_UMAP_SC_reduced",colour_by = "Annotation_L2") +
+          labs(title="Recalculated UMAP for Subcluster",subtitle="Colored by Celltype")
+```
+
+### Save the Annotated dataset
+
+```{r SaveDataDC}
+saveRDS(sce.sc, file =paste0(path,'/output/07_sce_SC_Dendritic_Anno.rds'))
+```
+
+
+### Identify Marker of labels with Genes Wilcoxon rank-sum test
+
+```{r IdentifyMarkerFinalDC}
+DE_genes <- Run_Wilcoxauc(sce.sc,'subcluster','Dendritic_Anno',n = 50,auc.min = 0.5, pval.max = 0.05, Create.Table=TRUE)
+DE_genes
+```
+
+
+
+
+
+
+
+
+
 
 
