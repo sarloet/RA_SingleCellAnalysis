@@ -49,7 +49,6 @@ path <- here::here()
 ```
 
 ## Load Data
-
 ```{r LoadDataset}
 ## Load the RA DATASET
 sce <- readRDS(file = paste0(path,'/output/00_sce_DataPreparation.rds'))
@@ -95,13 +94,13 @@ data.frame(as.list(table(colData(sce)$Joint.Location)))
 
 ## Filter Cells
 
-The main goal of quality control is to remove low-quality reads from the dataset. When a cell has a low number of detected genes, a low count depth and a high fraction of mitochondrial counts it might have a broken membrane which can indicate a dying cell. 
+The main goal of quality control is to remove low-quality reads from the dataset. When a cell has a low number of detected genes, a low count depth and a high fraction of mitochondrial counts it might have a broken membrane which can indicate a dying cell. \n
 
-We filter for:
-- Low and high number of counts per barcode (count depth)
-- Low and high number of genes per barcode
-- High fraction of counts from mitochondrial genes per barcode
-- High fraction of counts from HBB genes per barcode (erythrocytes)
+We filter for:\n
+- Low and high number of counts per barcode (count depth) \n
+- Low and high number of genes per barcode \n
+- High fraction of counts from mitochondrial genes per barcode \n
+- High fraction of counts from HBB genes per barcode (erythrocytes) \n
 
 ```{r CalcQcMetrics}
 # Indentify mitochondrial genes
@@ -127,7 +126,7 @@ sce <- addPerCellQC(sce, subsets=list(Mito=is_mito, Hbb=is_hbb, Ribo=is_ribo))
 colData(sce)$qc.count_manual <- sce$sum < 400 |sce$sum > 100000 # Cells have at least a count of 400 |sce$sum > 100000
 colData(sce)$qc.genexp_manual <- sce$detected < 300 | sce$detected > 10000  # Cells have at least 300 genes expressed 
 colData(sce)$qc.mito_manual <- sce$subsets_Mito_percent > 15 #Mitochondrial contamination has to be lower than 15%
-colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells expressing HBB (erythrocytes)
+colData(sce)$qc.hbb_manual <- sce$subsets_Hbb_percent > 5 #Remove cells with ore than 5% HBB content (erythrocytes)
 
 ```
 
@@ -153,20 +152,19 @@ abline(v = 10000, col = "red")
 
 # Detect cells with very low number of counts
 colData(sce)$qc.count <- isOutlier(sce$sum,nmads=3, log=TRUE, type="both",batch =sce$Sample )
-data.frame(t(attr(colData(sce)$qc.count, "thresholds")))
+data.frame(t(attr(colData(sce)$qc.count, "thresholds"))) #show thresholds
 
 # Detect cells with very low number of genes
 colData(sce)$qc.genexp <- isOutlier(sce$detected,nmads=3, log=TRUE, type="both",batch =sce$Sample)
-data.frame(t(attr(colData(sce)$qc.genexp, "thresholds")))
+data.frame(t(attr(colData(sce)$qc.genexp, "thresholds"))) #show thresholds
 
 # Detect cells with high mitochondrial content
 colData(sce)$qc.mito <- isOutlier(sce$subsets_Mito_percent,nmads=3, type="higher",batch =sce$Sample)
-data.frame(t(attr(colData(sce)$qc.mito, "thresholds"))) 
+data.frame(t(attr(colData(sce)$qc.mito, "thresholds"))) #show thresholds
 
 
 # Mark all Cells to be Discarted
 colData(sce)$discard <- sce$qc.count | sce$qc.count_manual | sce$qc.genexp | sce$qc.genexp_manual | sce$qc.mito | sce$qc.mito_manual | sce$qc.hbb_manual
-
 
 ```
 
@@ -334,12 +332,6 @@ cat(
     )
 ```
 
-#### Save cell filtered Data
-```{r SaveDataFiltered}
-saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl_cellfiltered.rds'))
-```
-
-
 ## Filter Genes
 
 Additionally, perform some filtering by prevalence. If a gene is only expressed in a handful of cells, it is not particularly meaningful as it still brings down the averages for all other cells it is not expressed in. For this dataset we choose to keep only genes which are expressed in 10 or more cells. This should be performed after filtering out for low quality cells.
@@ -479,7 +471,7 @@ Deconvolution size factor for each cell in the dataset, compared to the equivale
 
  data.frame(LibrarySizeFactors = unname(sizeFactors(sce.lib)), DeconvolutionSizeFactors = sizeFactors(sce.deconv),Cluster = as.integer(clust.filtered)) %>%
      ggplot(aes(x=LibrarySizeFactors, y=DeconvolutionSizeFactors)) +
-     geom_point(aes(col=factor(Cluster))) +
+     geom_point(aes(col=factor(Cluster)), size=0.5) +
      geom_abline(slope = 1, intercept = 0) + theme_classic() + theme(legend.key.size = unit(0.5, 'cm'))
 
 ```
@@ -490,7 +482,7 @@ Deconvolution size factor for each cell in the dataset, compared to the equivale
 #Color by sample
 data.frame(LibrarySizeFactors = unname(sizeFactors(sce.lib)), DeconvolutionSizeFactors = sizeFactors(sce.deconv),Sample = sce.filtered$Sample) %>%
      ggplot(aes(x=LibrarySizeFactors, y=DeconvolutionSizeFactors)) +
-     geom_point(aes(col=Sample)) +
+     geom_point(aes(col=Sample), size=0.5) +
      geom_abline(slope = 1, intercept = 0) + theme_classic() + theme(legend.key.size = unit(0.5, 'cm'))
 ```
 
@@ -525,10 +517,7 @@ plotExplanatoryVariables(vars)
 
 ## Save Dataset
 
-```{r Checkdim}
-dim(sce.filtered)
-```
-
 ```{r SaveData}
 saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl.rds'))
+dim(sce.filtered) # show sce dim
 ```

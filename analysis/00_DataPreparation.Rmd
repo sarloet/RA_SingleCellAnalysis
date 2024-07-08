@@ -27,14 +27,12 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ## Setup
 
 ### Standard packages
-
 ```{r LoadPackages, warning=FALSE}
 library(here)
 source(here("code", "standard_libraries.R"))
 ```
 
 ### Additional Packages
-
 ```{r LoadAddPackages, warning=FALSE}
 suppressPackageStartupMessages({
 library(DropletUtils)
@@ -44,7 +42,6 @@ library(scDblFinder)
 ```
 
 ### Set parameter
-
 ```{r Setup}
 set.seed(123)
 bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
@@ -98,15 +95,17 @@ View the CellBender html report output for each sample
 
 ## Cellranger Sample Metrics
 
-### Read in the cellranger sample metrics csv files
+### Display the cellranger sample metrics csv files
+Load the metrics summary csv files from Cellranger of each sample and display them
 
-```{r CRSampleMetrics}
+```{r CRSampleMetrics,rows.print=20}
+# get foldernames in dir
 foldernames <- list.dirs(paste0(path,"/data/cellranger_data_h5") ,recursive = F, full.names = T)
 
 CR.metrics <- lapply(foldernames, function(i){
-  # remove _Counts is if names don't include them
   metrics <- read.csv(file.path(paste0(i),"metrics_summary.csv"), colClasses = "character")
 })
+
 experiment.metrics <- do.call("rbind", CR.metrics)
 rownames(experiment.metrics) <- list.dirs(paste0(path,"/data/cellranger_data_h5") ,recursive = F, full.names = F)
 
@@ -121,11 +120,10 @@ experiment.metrics
 ## Load Data
 
 ### Load Cellbender output matrices
-
 Load in the filtered feature barcode matrices from Cellbender of each sample and save them as sce object.
 
 ```{r LoadDataset}
-#Load Dataset
+#Set Path to input data
 rawdata_folder <- paste0(path,"/data/cellbender_data_h5/")
 
 #Get file names
@@ -138,14 +136,14 @@ sce<-read10xCounts(samples = filepaths, sample.names = filenames,col.names=T,typ
 #Edit Filenames 
 colData(sce)$Sample = sub("\\_w_introns.*", "", sub("cellbender_output_", "", as.character(colData(sce)$Sample)))
 
-
+#Show sce
 sce
 
 ```
 
 ### Load and add Metadata
 
-```{r LoadMetadata}
+```{r LoadMetadata,rows.print=20}
 #Metadata path
 metadata_folder <- paste0(path,"/data/metadata/Metadata_Master.csv")
 
@@ -173,7 +171,6 @@ colnames(sce) <- paste0(sce$Sample, ".", sce$Barcode)
 ```
 
 
-
 ### Annotate and Update genes
 
 ```{r,UpdateGenes}
@@ -185,20 +182,18 @@ AnnoGene <- annotate_genes(data.frame(rowData(sce)), gene_col = "Symbol")
 #Add Annotated and Updated genes
 rowData(sce) <- AnnoGene
 
-#Make row and col names unique
+#Make row names unique
 rownames(sce) <- paste0(rowData(sce)$ENSEMBL, ".", rowData(sce)$Symbol)
 
 ```
 
-Dimensions of the count matrix
+## Explore dataset
 
 ```{r ShowDim}
 #Dimensions of count matrix
 dim(sce)
 
 ```
-
-## Explore dataset
 
 ```{r ShowColData}
 #Feautures/row data
@@ -257,12 +252,9 @@ data.frame(as.list(table(colData(sce)$Joint.Location)))
 This plot shows cell counts per sample / count occurrence
 
 ```{r PlotDetectedPerCell}
-#Number of genes detected per cell
-#Total UMI for a gene versus the number of times detected
+#Number of genes detected per cell / Total UMI for a gene versus the number of times detected
 genesPerCell <- colSums(counts(sce) > 0)
-plot(density(genesPerCell), 
-     xlab="Genes per cell", 
-     main="Number of genes detected per cell")
+plot(density(genesPerCell), xlab="Genes per cell", main="Number of genes detected per cell")
 
 ```
 ### Plot transcript capture efficiency
@@ -285,14 +277,13 @@ plot(rowSums(tmpCounts),
 
 ## Initial Filtering
 
-Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <200 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
+Initial filtering to remove unexpressed genes and cells with very low number of counts. The input to scDblFinder should not include empty droplets, and it might be necessary to remove cells with a very low coverage (e.g. <150 reads) to avoid errors. Further quality filtering should be performed downstream of doublet detection.
 
 ```{r InitialFiltering}
 #Initial filtering before droplet removal
 dim_before_filtering <- dim(sce)
 
-#Get only the detected Genes
-#Remove Cells with very low counts of less than 150 and genes not expressed 
+#Remove Cells with very low counts of less than 150 and genes not expressed & get only the detected Genes
 sce <- sce[rowSums(counts(sce)> 0) > 0, colSums(counts(sce)> 0) > 150]
 
 
@@ -317,7 +308,6 @@ cat("NR of Cells Before Initial Filtering: ", dim_before_filtering[2],"\n",
 ## Doublet Detection
 
 Doublets are defined as two cells that are sequenced under the same cellular barcode, which happens if they were captured in the same droplet. The scDblFinder method combines the strengths of various doublet detection approaches, training an iterative classifier on the neighborhood of real cells and artificial doublets. Doublet removal is performed on feature-barcode matrix after a initial filtering to remove Cells with very low counts of less than 200 counts and genes not expressed to ensure no potential empty droplets.
-
 
 
 ### Detection
@@ -400,14 +390,12 @@ colData(sce) %>%
 
 ```{r DoubletRemoval}
 #Doublet Removal
-
 dim_before_doublet <- dim(sce)
 
 #Apply Doublet Removal
 sce <- sce[ ,sce$scDblFinder.class == "singlet"]
 
 dim_after_doublet <- dim(sce)
-
 
 #Give Stats
 cat("NR of Cells Before Doublet Removal: ", dim_before_doublet[2],"\n",

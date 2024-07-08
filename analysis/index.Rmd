@@ -10,6 +10,7 @@ editor_options:
 
 Welcome to my Project.
 
+Single Cell Data:
 
 - [Data Preparation](00_DataPreparation.html)
 - [Quality Control](01_QualityControl.html)
@@ -21,3 +22,9 @@ Welcome to my Project.
 - [Subclustering](07_SubClustering.html)
 - [Subclustering Annotation](07_SubClustering_Annotation.html)
 - [Subclustering Merge](07_SubClustering_Merge.html)
+
+
+Spatial Transcriptomics Data:
+
+- [Spatial Knee](Spatial_Knee.html)
+- [Spatial Hand](Spatial_Hand.html)

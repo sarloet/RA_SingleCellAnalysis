@@ -22,7 +22,7 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 ```
 
 
-# Spatial Analysis Knee
+# Spatial Analysis MCP 
 
 ## Setup
 
@@ -35,7 +35,7 @@ source(here("code", "standard_libraries.R"))
 
 ### Additional Packages
 
-```{r LoadPackages, warning=FALSE}
+```{r LoadAddPackages, warning=FALSE}
 #Load Packages
 
 suppressPackageStartupMessages({
@@ -61,8 +61,7 @@ path <- here::here()
 
 ### Load Data
 
-```{r }
-#C1_OA488_Hand D_RA_MCP
+```{r LoadSpatialData}
 spe <- read10xVisium(paste0(path,'/data/spatial/D_RA_MCP'), c("D_RA_MCP"), type = "sparse", data = "filtered", images = "lowres", load = FALSE)
 
 #Edit Rownames
@@ -71,11 +70,11 @@ rownames(spe) <- paste0(rowData(spe)$ENSEMBL, ".", rowData(spe)$symbol)
 spe
 ```
 
-```{r }
+```{r dim}
 dim(spe)
 ```
 
-```{r }
+```{r showData}
 #Inspect spe object
 head(colData(spe))
 head(rowData(spe))
@@ -84,7 +83,7 @@ imgData(spe)
 ```
 
 
-```{r }
+```{r GetImage}
 spi <- getImg(spe)
 
 #Plot H&E image
@@ -94,16 +93,16 @@ plot(imgRaster(spi))
 plotSpots(spe)
 ```
 
-```{r }
+## Pre-processing
+
+```{r GetTissueSpots}
 # subset to keep only spots over tissue
 spe <- spe[, colData(spe)$in_tissue == 1]
 dim(spe)
 ```
 
 
-## Pre-processing
-
-```{r }
+```{r GetMitoGenes}
 # Indentify mitochondrial genes
 is_mito<- grepl("(^MT-)|(^mt-)", rowData(spe)$symbol)
 cat("Mitochondrial genes:", rowData(spe)$symbol[is_mito]) #Show the MT genes
@@ -111,7 +110,7 @@ table(is_mito)
 ```
 
 
-```{r }
+```{r SpotQC}
 # calculate per-spot QC metrics and store in colData
 spe <- addPerCellQC(spe, subsets = list(mito = is_mito))
 head(colData(spe))
@@ -119,26 +118,23 @@ head(colData(spe))
 
 
 
-```{r }
+```{r LibrarySize}
 #Plot Library size
 hist(spe$sum,breaks = 100,main ="UMIs per spot",xlab ="UMI")
 abline(v = 750, col = "red")
 plotSpots(spe, annotate = "sum",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
+
+```
+```{r GenesDetected, warning=FALSE}
 #Plot Genes detected
 hist(spe$detected,breaks = 100,main ="Genes per spot",xlab ="UMI")
 abline(v = 500, col = "red")
 plotSpots(spe, annotate = "detected",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
-#Plot Genes detected
-#hist(spe$subsets_Mito_percent,breaks = 100,main ="Genes per spot",xlab ="UMI")
-#abline(v = 400, col = "red")
-#plotVisium(spe, fill = "subsets_Mito_percent", highlight = "in_tissue",image = FALSE, pal = "darkred") + guides(fill = guide_colorbar(title = "Libsize"))
 
-#Plot library size vs. number of cells per spot
-#plotSpots(spe, type = "scatter",metric_x = "sum")
 
 ```
 
-```{r }
+```{r SetThreshold}
 # select QC thresholds
 colData(spe)$qc.count_manual <- spe$sum < 200  
 colData(spe)$qc.genexp_manual <- spe$detected < 200 
@@ -156,23 +152,40 @@ print(plotQC(spe, type = "spot", discard = "discard"))
 ```
 
 
-```{r }
+```{r FilterSpots}
 # filter low-quality spots
+dim_before_filtering <- dim(spe)
+
 spe <- spe[, !colData(spe)$discard]
+
 plotSpots(spe,size = 1)
+dim_after_filtering <- dim(spe)
+
+cat(
+    "NR of Spots Before Filtering ", dim_before_filtering[2],
+    "\nNR of Spots After Filtering ", dim_after_filtering[2],
+    "\nNR of Spots Filtered out ", dim_before_filtering[2] - dim_after_filtering[2],
+    "\nSpots Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100
+    )
 ```
 
-
-```{r }
+```{r FilterGenesSpots}
 # filter any new zeros created after filtering low-expressed genes
+dim_before_filtering <- dim(spe)
 
 # remove genes with zero expression
 spe <- spe[!rowSums(counts(spe)) == 0, ]
-dim(spe)
 
-# remove spots with zero expression
-spe <- spe[, !colSums(counts(spe)) == 0]
-dim(spe)
+dim_after_filtering <- dim(spe)
+
+
+cat(
+    "NR of Genes Before Filtering ", dim_before_filtering[1],
+    "\nNR of Genes After Filtering ", dim_after_filtering[1],
+    "\nNR of Genes Filtered out ", dim_before_filtering[1] - dim_after_filtering[1],
+    "\nGenes Filtered out: [%]", (dim_before_filtering[1] - dim_after_filtering[1])/dim_before_filtering[1]*100
+    )
 ```
 
 
+### This Sample excluded -> QC failure
