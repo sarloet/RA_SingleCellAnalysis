@@ -28,16 +28,15 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Load Packages
+### Load packages
 
 ```{r LoadPackages, warning=FALSE}
-#Load Packages
+#Standard Packages
+library(here)
+source(here("code", "standard_libraries.R"))
 
+#Additional Packages
 suppressPackageStartupMessages({
-library(BiocParallel)
-library(ggplot2)
-library(dplyr)
-library(scran)
 library(muscat)
 library(limma)
 library(EnhancedVolcano)

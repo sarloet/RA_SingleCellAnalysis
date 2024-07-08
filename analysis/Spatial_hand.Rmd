@@ -26,18 +26,14 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Standard packages
+### Load packages
 
 ```{r LoadPackages, warning=FALSE}
+#Standard Packages
 library(here)
 source(here("code", "standard_libraries.R"))
-```
 
-### Additional Packages
-
-```{r LoadAddPackages, warning=FALSE}
-#Load Packages
-
+#Additional Packages
 suppressPackageStartupMessages({
 library(ggspavis)
 library(bluster)
@@ -94,6 +90,8 @@ plotSpots(spe)
 ```
 
 ## Pre-processing
+
+### Spot Filtering
 
 ```{r GetTissueSpots}
 # subset to keep only spots over tissue
@@ -168,6 +166,8 @@ cat(
     "\nSpots Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100
     )
 ```
+
+### Gene Filtering
 
 ```{r FilterGenesSpots}
 # filter any new zeros created after filtering low-expressed genes

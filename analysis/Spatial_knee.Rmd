@@ -26,18 +26,14 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Standard packages
+### Load packages
 
 ```{r LoadPackages, warning=FALSE}
+#Standard Packages
 library(here)
 source(here("code", "standard_libraries.R"))
-```
 
-### Additional Packages
-
-```{r LoadAddPackages, warning=FALSE}
-#Load Packages
-
+#Additional Packages
 suppressPackageStartupMessages({
 library(ggspavis)
 library(bluster)
@@ -70,6 +66,8 @@ rownames(spe) <- paste0(rowData(spe)$ENSEMBL, ".", rowData(spe)$symbol)
 spe
 ```
 
+### Inspect Data
+
 ```{r dim}
 dim(spe)
 ```
@@ -93,6 +91,8 @@ plotSpots(spe)
 ```
 
 ## Pre-processing
+
+### Spot Filtering
 
 ```{r GetTissueSpots}
 # subset to keep only spots over tissue
@@ -134,6 +134,8 @@ plotSpots(spe, annotate = "detected",size = 1.7)+  scale_colour_gradient(low = "
 
 ```
 
+
+
 ```{r SetThreshold}
 # select QC thresholds
 colData(spe)$qc.count_manual <- spe$sum < 200  
@@ -168,6 +170,9 @@ cat(
     "\nSpots Filtered out: [%]", (dim_before_filtering[2] - dim_after_filtering[2])/dim_before_filtering[2]*100
     )
 ```
+
+### Gene Filtering
+
 ```{r FilterGenesSpots}
 # filter any new zeros created after filtering low-expressed genes
 dim_before_filtering <- dim(spe)
@@ -218,6 +223,7 @@ dim(counts(spe))
 ## Dimensionality Reduction
 
 ### Select Highly Variable Genes
+
 ```{r DimRed}
 # fit mean-variance relationship
 #genes <- !grepl(pattern = "^RP[L|S]|MT", x = rownames(sce))
@@ -236,12 +242,13 @@ plot(fit$mean, fit$var, col= c("#F5953C","#7A95BD")[(names(fit$mean) %in% top.hv
 ```
 
 ### Principal Components Analysis
+
 ```{r PCA}
 # PCA
 spe <- runPCA(spe, subset_row = top.hvgs)
 plotReducedDim(spe, dimred = "PCA",point_alpha=1,point_size=0.5)
 
-
+# Chosing the number of PCs
 pca_pct_variance <- data.frame(variance = attr(reducedDim(spe, "PCA"), "percentVar"))
 pca_pct_variance$PC <- 1:nrow(pca_pct_variance)
 
@@ -260,12 +267,16 @@ plotReducedDim(spe, dimred = "UMAP",point_alpha=1,point_size=0.5)
 
 ## Clustering with HVGs
 
+### Leiden Clustering
+
 ```{r Clustering}
+# Leiden Clustering
 colData(spe)$leiden <- clusterCells(spe, use.dimred = "PCA", BLUSPARAM = SNNGraphParam(k=25,cluster.fun="leiden",BPPARAM =bpp))
 data.frame(as.list(table(colData(spe)$leiden)))
 
 ```
 
+### Show Clustering
 
 ```{r ShowCluster}
 plotReducedDim(spe, dimred = "UMAP",colour_by ="leiden",point_alpha=1,point_size=0.5)
@@ -277,6 +288,8 @@ plotVisium(spe, fill = "leiden")
 
 ## Deconvolution Annotation_L1
 
+### Load Data
+
 ```{r LoadSceL1}
 sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
 #exclude some celltypes
@@ -285,12 +298,13 @@ sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
 
 ```
 
+### Select Relevant Genes
 
 ```{r GetMarkerL1}
 mgs <- scoreMarkers(sce, subset.row = rownames(sce)[rowData(sce)$hvg])
 mgs_fil <- lapply(names(mgs), function(i) {
     x <- mgs[[i]]
-    # Filter and keep relevant marker genes, those with AUC > 0.8
+    # Filter and keep relevant marker genes, those with AUC > 0.5
     x <- x[x$mean.AUC > 0.5, ]
     # Sort the genes from highest to lowest weight
     x <- x[order(x$mean.AUC, decreasing = TRUE), ]
@@ -309,13 +323,12 @@ rownames(spe) <- uniquifyFeatureNames(rowData(spe)$ENSEMBL, rowData(spe)$symbol)
 data.frame(rowData(spe))
 ```
 
+### Downsample
+
 ```{r DownsampleL1}
 #Downsample
-# split cell indices by identity
+
 idx <- split(seq(ncol(sce)), sce$celltype)
-# downsample to at most 20 per identity & subset
-# We are using 5 here to speed up the process but set to 75-100 for your real
-# life analysis
 n_cells <- 75
 cs_keep <- lapply(idx, function(i) {
     n <- length(i)
@@ -327,7 +340,7 @@ sce <- sce[, unlist(cs_keep)]
 ```
 
 
-
+### Deconvolution
 
 ```{r DeconvolutionL1}
 res <- SPOTlight(
@@ -340,10 +353,13 @@ res <- SPOTlight(
     group_id = "cluster",
     gene_id = "gene")
 
-head(mat <- res$mat)
+mat <- res$mat
+as.data.frame(mat)
 # Extract NMF model fit
 mod <- res$NMF
 ```
+
+### Topic Profiles
 
 ```{r TopicProfilesL1}
 print(plotTopicProfiles(
@@ -381,6 +397,9 @@ basis_spotlight %>%
   DT::datatable(., filter = "top")
 ```
 
+
+
+### Spatial Correlation
 
 ```{r CorrmatL1 ,fig.height=10, fig.width=15}
 #Spatial Correlation Matrix
@@ -435,7 +454,7 @@ plotInteractions(mat, which = "network",
      vertex.label.family = "Helvetica",
     min_prop = 0.1)
 ```
-
+### Plot Celltypes
 
 ```{r PlotPiesL1}
 # Define color palette
@@ -501,7 +520,7 @@ for(i in colnames(mat)){
 
 ```
 
-## Save the dataset
+### Save the dataset
 
 ```{r SaveDataL1}
 saveRDS(mat, file =paste0(path,'/output/Spatial_knee_SC.rds'))
@@ -510,6 +529,8 @@ saveRDS(spe, file =paste0(path,'/output/Spatial_knee.rds'))
 
 
 ## Deconvolution Annotation_L2
+
+### Load Data
 
 ```{r LoadSceL2}
 sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
@@ -532,7 +553,7 @@ sce$SpatialAnno[sce$Annotation_L2 %in% c("Arteriolar EC","Venular EC","Capillary
 unique(sce$SpatialAnno)
 
 ```
-
+### Select Relevant Genes
 
 ```{r GetMarkerL2}
 mgs <- scoreMarkers(sce,groups=sce$SpatialAnno, subset.row = rownames(sce)[rowData(sce)$hvg.sc])
@@ -557,13 +578,12 @@ rownames(spe) <- uniquifyFeatureNames(rowData(spe)$ENSEMBL, rowData(spe)$symbol)
 data.frame(rowData(spe))
 ```
 
+### Downsample
+
 ```{r DownsampleL2}
 #Downsample
 # split cell indices by identity
 idx <- split(seq(ncol(sce)), sce$SpatialAnno)
-# downsample to at most 20 per identity & subset
-# We are using 5 here to speed up the process but set to 75-100 for your real
-# life analysis
 n_cells <- 100
 cs_keep <- lapply(idx, function(i) {
     n <- length(i)
@@ -574,8 +594,7 @@ cs_keep <- lapply(idx, function(i) {
 sce <- sce[, unlist(cs_keep)]
 ```
 
-
-
+### Deconvolution
 
 ```{r DeconvolutionL2}
 res <- SPOTlight(
@@ -588,10 +607,13 @@ res <- SPOTlight(
     group_id = "cluster",
     gene_id = "gene")
 
-head(mat <- res$mat)
+mat <- res$mat
+as.data.frame(mat)
 # Extract NMF model fit
 mod <- res$NMF
 ```
+
+### TopicProfile
 
 ```{r TopicProfilesL2}
 print(plotTopicProfiles(
@@ -612,7 +634,7 @@ print(plotTopicProfiles(
 library(NMF)
 sign <- basis(mod)
 colnames(sign) <- paste0("Topic", seq_len(ncol(sign)))
-head(sign)
+head(as.data.frame(sign))
 
 ```
 
@@ -630,8 +652,9 @@ basis_spotlight %>%
 ```
 
 
+### Spatial Correlation
+
 ```{r CorrMatL2,fig.height=10, fig.width=15}
-#Spatial Correlation Matrix
 #Spatial Correlation Matrix
 plotCorrelationMatrix(mat,p.mat = TRUE, hc.order = TRUE,)
 
@@ -685,6 +708,7 @@ plotInteractions(mat, which = "network",
     min_prop = 0.1)
 ```
 
+### Plot Celltypes
 
 ```{r PlotPiesL2}
 # Define color palette
@@ -739,6 +763,9 @@ ggcells(spe, aes(x, y, color = res_ss)) +
     theme_bw()
 ```
 
+
+
+
 ```{r PlotCelltypesL2}
 
 for(i in colnames(mat)){
@@ -749,7 +776,9 @@ for(i in colnames(mat)){
 
 ```
 
-## Save the dataset
+
+
+### Save the dataset
 
 ```{r SaveDataL2}
 

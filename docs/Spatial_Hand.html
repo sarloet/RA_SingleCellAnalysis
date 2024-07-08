@@ -455,7 +455,7 @@ div.tocify {
 <h1 class="title toc-ignore">Spatial Analysis Hand</h1>
 <h3 class="subtitle">Spatial_hand</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Jul 8 2024 10:54:33</h4>
+<h4 class="date">Jul 8 2024 11:32:22</h4>
 
 </div>
 
@@ -615,15 +615,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9cac662ee8287de91e4741883f6f36e90c559854targetblank9cac662a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9cac662ee8287de91e4741883f6f36e90c559854" target="_blank">9cac662</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9cac662ee8287de91e4741883f6f36e90c559854targetblank9cac662a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -633,7 +633,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9cac662ee8287de91e4741883f6f36e90c559854" target="_blank">9cac662</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -709,10 +709,6 @@ Ignored files:
     Ignored:    renv/staging/
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
-    Modified:   analysis/01_QualityControl.Rmd
-    Modified:   analysis/Spatial_hand.Rmd
-    Modified:   analysis/Spatial_knee.Rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -728,10 +724,57 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/Spatial_Hand.Rmd</code>) and HTML
+(<code>docs/Spatial_Hand.html</code>) files. If you’ve configured a
+remote Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/9cac662ee8287de91e4741883f6f36e90c559854/docs/Spatial_Hand.html" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+<td>
+Add Spatial
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -828,10 +871,87 @@ AACGGCCATCTCCGGT-1               2810               4793</code></pre>
 #Plot H&amp;E image
 plot(imgRaster(spi))</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/GetImage-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GetImage-1">
+Past versions of GetImage-1.png
+</button>
+</p>
+<div id="fig-GetImage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/GetImage-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Plot spatial coordinates (spots)
 plotSpots(spe)</code></pre>
-<p><img src="figure/Spatial_Hand.Rmd/GetImage-2.png" width="100%" height="100%" style="display: block; margin: auto;" />
-## Pre-processing</p>
+<p><img src="figure/Spatial_Hand.Rmd/GetImage-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GetImage-2">
+Past versions of GetImage-2.png
+</button>
+</p>
+<div id="fig-GetImage-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/GetImage-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="pre-processing" class="section level2">
+<h2>Pre-processing</h2>
 <pre class="r"><code># subset to keep only spots over tissue
 spe &lt;- spe[, colData(spe)$in_tissue == 1]
 dim(spe)</code></pre>
@@ -876,14 +996,162 @@ AACGGCCATCTCCGGT-1                  NaN         0</code></pre>
 hist(spe$sum,breaks = 100,main =&quot;UMIs per spot&quot;,xlab =&quot;UMI&quot;)
 abline(v = 750, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/LibrarySize-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibrarySize-1">
+Past versions of LibrarySize-1.png
+</button>
+</p>
+<div id="fig-LibrarySize-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/LibrarySize-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotSpots(spe, annotate = &quot;sum&quot;,size = 1.7)+  scale_colour_gradient(low = &quot;lightgrey&quot;, high = &quot;blue&quot;)+labs(title=&quot;Libsize&quot;)</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/LibrarySize-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibrarySize-2">
+Past versions of LibrarySize-2.png
+</button>
+</p>
+<div id="fig-LibrarySize-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/LibrarySize-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Plot Genes detected
 hist(spe$detected,breaks = 100,main =&quot;Genes per spot&quot;,xlab =&quot;UMI&quot;)
 abline(v = 500, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/GenesDetected-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GenesDetected-1">
+Past versions of GenesDetected-1.png
+</button>
+</p>
+<div id="fig-GenesDetected-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/GenesDetected-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotSpots(spe, annotate = &quot;detected&quot;,size = 1.7)+  scale_colour_gradient(low = &quot;lightgrey&quot;, high = &quot;blue&quot;)+labs(title=&quot;Libsize&quot;)</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/GenesDetected-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GenesDetected-2">
+Past versions of GenesDetected-2.png
+</button>
+</p>
+<div id="fig-GenesDetected-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/GenesDetected-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># select QC thresholds
 colData(spe)$qc.count_manual &lt;- spe$sum &lt; 200  
 colData(spe)$qc.genexp_manual &lt;- spe$detected &lt; 200 
@@ -899,10 +1167,121 @@ TRUE
 <pre class="r"><code># QCplots
 print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;qc.count_manual&quot;))</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/SetThreshold-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-1">
+Past versions of SetThreshold-1.png
+</button>
+</p>
+<div id="fig-SetThreshold-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/SetThreshold-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;qc.genexp_manual&quot;))</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/SetThreshold-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-2">
+Past versions of SetThreshold-2.png
+</button>
+</p>
+<div id="fig-SetThreshold-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/SetThreshold-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;discard&quot;))</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/SetThreshold-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-3">
+Past versions of SetThreshold-3.png
+</button>
+</p>
+<div id="fig-SetThreshold-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/SetThreshold-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># filter low-quality spots
 dim_before_filtering &lt;- dim(spe)
 
@@ -910,6 +1289,43 @@ spe &lt;- spe[, !colData(spe)$discard]
 
 plotSpots(spe,size = 1)</code></pre>
 <p><img src="figure/Spatial_Hand.Rmd/FilterSpots-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FilterSpots-1">
+Past versions of FilterSpots-1.png
+</button>
+</p>
+<div id="fig-FilterSpots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Hand.Rmd/FilterSpots-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dim_after_filtering &lt;- dim(spe)
 
 cat(
@@ -941,7 +1357,6 @@ cat(
 NR of Genes After Filtering  0 
 NR of Genes Filtered out  17943 
 Genes Filtered out: [%] 100</code></pre>
-</div>
 <div id="this-sample-excluded---qc-failure" class="section level3">
 <h3>This Sample excluded -&gt; QC failure</h3>
 <br>

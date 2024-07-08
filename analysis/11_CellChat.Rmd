@@ -26,19 +26,14 @@ knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
 
 ## Setup
 
-### Standard packages
+### Load packages
 
 ```{r LoadPackages, warning=FALSE}
+#Standard Packages
 library(here)
 source(here("code", "standard_libraries.R"))
-```
 
-### Additional Packages
-
-
-```{r LoadPackages, warning=FALSE}
-#Load Packages
-
+#Additional Packages
 suppressPackageStartupMessages({
 library(CellChat)
 library(patchwork)
@@ -324,6 +319,15 @@ gg3 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(1, 3), iden
 
 patchwork::wrap_plots(plots = list(gg1,gg2,gg3))
 
+
+#CHI3L2+ FIB
+gg1 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 1), idents.use = "Neutrophil", signaling.exclude = c("MIF"))
+gg2 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(2, 3), idents.use = "Neutrophil", signaling.exclude = c("MIF"))
+gg3 <- netAnalysis_signalingChanges_scatter(cellchat, comparison = c(1, 3), idents.use = "Neutrophil", signaling.exclude = c("MIF"))
+
+
+patchwork::wrap_plots(plots = list(gg1,gg2,gg3))
+
 ```
 
 ### Identify cell populations with significant changes in sending or receiving signals
@@ -340,12 +344,6 @@ for (i in 1:length(object.list)) {
 #> Do heatmap based on a single object
 ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
 ```
-
-gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE)
-gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = F, do.stat = TRUE)
-
-gg1 + gg2
-
 
 
 ### Identify cell populations with significant changes in sending or receiving signals
@@ -368,3 +366,67 @@ gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = 
 
 gg1 + gg2
 ```
+
+
+```{r}
+#cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("NL", "LS")) # set factor level
+plotGeneExpression(cellchat, signaling = "ANGPTL", split.by = "datasets", colors.ggplot = T, type = "violin")
+
+#try SMAD3
+```
+
+
+
+
+
+```{r}
+library(Seurat)
+library(scDiffCom)
+#library(data.table)
+
+sce.sc<-sce[,sce$Joint.Location != "Wrist"]
+
+so <- as.Seurat(sce.sc, counts = "counts", data = "logcounts" )
+#so[['RNA']] = so[['originalexp']]
+so
+
+scdiffcom_object <- run_interaction_analysis(
+  seurat_object = so,
+  LRI_species = "human",
+  seurat_assay = "originalexp",
+  seurat_slot = "data",
+  seurat_celltype_id = "Annotation_L2",
+  seurat_condition_id = list(
+    column_name = "Joint.Location",
+    cond1_name = "MCP",
+    cond2_name = "Knee"
+  )
+)
+
+
+```
+
+```{r}
+
+scdiffcom_object
+
+CCI_detected <- GetTableCCI(scdiffcom_object, type = "detected", simplified = TRUE)
+table(CCI_detected$REGULATION)
+
+ORA_results <- GetTableORA(scdiffcom_object, categories = "all", simplified = TRUE)
+names(ORA_results)
+
+
+ggplot(CCI_detected,aes(x = LOGFC,y = -log10(BH_P_VALUE_DE + 1E-2),colour = REGULATION)) + 
+  geom_point() + 
+  scale_colour_manual(values = c("UP" = "red", "DOWN" = "blue", "FLAT" = "green", "NSC" = "grey"))+ 
+  xlab("log(FC)") + 
+  ylab("-log10(Adj. p-value)")
+
+PlotORA(object = scdiffcom_object,category = "LRI",regulation = "UP") + 
+  theme(legend.position = c(0.85, 0.4),legend.key.size = unit(0.4, "cm"))
+
+
+```
+
+

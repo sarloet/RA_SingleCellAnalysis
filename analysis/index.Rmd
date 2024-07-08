@@ -19,9 +19,15 @@ Single Cell Data:
 - [Cellcycle Check](04_CellCycle.html)
 - [Clustering](05_Clustering.html)
 - [Annotation](06_CelltypeAnnotation.html)
+
 - [Subclustering](07_SubClustering.html)
 - [Subclustering Annotation](07_SubClustering_Annotation.html)
 - [Subclustering Merge](07_SubClustering_Merge.html)
+
+- [Differential Abundance](09_DifferentialAbundance_miloR.html)
+- [Differential Expression](08_DifferentialExpression_MAST.html)
+- [Enrichmennt Analysis](10_EnrichmentAnalysis.html)
+- [Cell-Cell Communication](11_CellChat.html)
 
 
 Spatial Transcriptomics Data:

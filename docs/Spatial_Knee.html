@@ -455,7 +455,7 @@ div.tocify {
 <h1 class="title toc-ignore">Spatial Analysis Knee</h1>
 <h3 class="subtitle">Spatial_knee</h3>
 <h4 class="author">SarahL.</h4>
-<h4 class="date">Jul 8 2024 10:24:52</h4>
+<h4 class="date">Jul 8 2024 11:03:21</h4>
 
 </div>
 
@@ -615,15 +615,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9cac662ee8287de91e4741883f6f36e90c559854targetblank9cac662a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9cac662ee8287de91e4741883f6f36e90c559854" target="_blank">9cac662</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree9cac662ee8287de91e4741883f6f36e90c559854targetblank9cac662a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -633,7 +633,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/9cac662ee8287de91e4741883f6f36e90c559854" target="_blank">9cac662</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -709,10 +709,6 @@ Ignored files:
     Ignored:    renv/staging/
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
-    Modified:   analysis/01_QualityControl.Rmd
-    Modified:   analysis/Spatial_hand.Rmd
-    Modified:   analysis/Spatial_knee.Rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -728,10 +724,57 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/Spatial_Knee.Rmd</code>) and HTML
+(<code>docs/Spatial_Knee.html</code>) files. If you’ve configured a
+remote Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/9cac662ee8287de91e4741883f6f36e90c559854/docs/Spatial_Knee.html" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+<td>
+Add Spatial
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -829,10 +872,87 @@ AAACATTTCCCGGATT-1               5832               2342</code></pre>
 #Plot H&amp;E image
 plot(imgRaster(spi))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/GetImage-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GetImage-1">
+Past versions of GetImage-1.png
+</button>
+</p>
+<div id="fig-GetImage-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/GetImage-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Plot spatial coordinates (spots)
 plotSpots(spe)</code></pre>
-<p><img src="figure/Spatial_Knee.Rmd/GetImage-2.png" width="100%" height="100%" style="display: block; margin: auto;" />
-## Pre-processing</p>
+<p><img src="figure/Spatial_Knee.Rmd/GetImage-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GetImage-2">
+Past versions of GetImage-2.png
+</button>
+</p>
+<div id="fig-GetImage-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/GetImage-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="pre-processing" class="section level2">
+<h2>Pre-processing</h2>
 <pre class="r"><code># subset to keep only spots over tissue
 spe &lt;- spe[, colData(spe)$in_tissue == 1]
 dim(spe)</code></pre>
@@ -877,14 +997,162 @@ AAACATTTCCCGGATT-1                    0      5306</code></pre>
 hist(spe$sum,breaks = 100,main =&quot;UMIs per spot&quot;,xlab =&quot;UMI&quot;)
 abline(v = 750, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/LibrarySize-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibrarySize-1">
+Past versions of LibrarySize-1.png
+</button>
+</p>
+<div id="fig-LibrarySize-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/LibrarySize-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotSpots(spe, annotate = &quot;sum&quot;,size = 1.7)+  scale_colour_gradient(low = &quot;lightgrey&quot;, high = &quot;blue&quot;)+labs(title=&quot;Libsize&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/LibrarySize-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibrarySize-2">
+Past versions of LibrarySize-2.png
+</button>
+</p>
+<div id="fig-LibrarySize-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/LibrarySize-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Plot Genes detected
 hist(spe$detected,breaks = 100,main =&quot;Genes per spot&quot;,xlab =&quot;UMI&quot;)
 abline(v = 500, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/GenesDetected-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GenesDetected-1">
+Past versions of GenesDetected-1.png
+</button>
+</p>
+<div id="fig-GenesDetected-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/GenesDetected-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotSpots(spe, annotate = &quot;detected&quot;,size = 1.7)+  scale_colour_gradient(low = &quot;lightgrey&quot;, high = &quot;blue&quot;)+labs(title=&quot;Libsize&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/GenesDetected-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-GenesDetected-2">
+Past versions of GenesDetected-2.png
+</button>
+</p>
+<div id="fig-GenesDetected-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/GenesDetected-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># select QC thresholds
 colData(spe)$qc.count_manual &lt;- spe$sum &lt; 200  
 colData(spe)$qc.genexp_manual &lt;- spe$detected &lt; 200 
@@ -900,10 +1168,121 @@ FALSE  TRUE
 <pre class="r"><code># QCplots
 print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;qc.count_manual&quot;))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/SetThreshold-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-1">
+Past versions of SetThreshold-1.png
+</button>
+</p>
+<div id="fig-SetThreshold-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/SetThreshold-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;qc.genexp_manual&quot;))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/SetThreshold-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-2">
+Past versions of SetThreshold-2.png
+</button>
+</p>
+<div id="fig-SetThreshold-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/SetThreshold-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotQC(spe, type = &quot;spot&quot;, discard = &quot;discard&quot;))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/SetThreshold-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-SetThreshold-3">
+Past versions of SetThreshold-3.png
+</button>
+</p>
+<div id="fig-SetThreshold-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/SetThreshold-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># filter low-quality spots
 dim_before_filtering &lt;- dim(spe)
 
@@ -911,6 +1290,43 @@ spe &lt;- spe[, !colData(spe)$discard]
 
 plotSpots(spe,size = 1)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/FilterSpots-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-FilterSpots-1">
+Past versions of FilterSpots-1.png
+</button>
+</p>
+<div id="fig-FilterSpots-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/FilterSpots-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dim_after_filtering &lt;- dim(spe)
 
 cat(
@@ -943,7 +1359,6 @@ NR of Genes After Filtering  17390
 NR of Genes Filtered out  553 
 Genes Filtered out: [%] 3.081982</code></pre>
 </div>
-</div>
 <div id="normalisation" class="section level2">
 <h2>Normalisation</h2>
 <pre class="r"><code># normalise
@@ -956,6 +1371,43 @@ ggplot(data.frame(&quot;log10libSf&quot;=log10(sizeFactors(spe))), aes(x=log10li
   theme_bw()+
   theme(panel.grid.major.y = element_blank(),panel.grid.minor.y = element_blank())</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/LibraryFactors-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-LibraryFactors-1">
+Past versions of LibraryFactors-1.png
+</button>
+</p>
+<div id="fig-LibraryFactors-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/LibraryFactors-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>summary(sizeFactors(spe))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 0.03508 0.59196 0.94714 1.00000 1.33076 3.74328 </code></pre>
@@ -985,6 +1437,43 @@ plot(fit$mean, fit$var, col= c(&quot;#F5953C&quot;,&quot;#7A95BD&quot;)[(names(f
     curve(fit$trend(x), col=&quot;black&quot;, add=TRUE)
     legend(&quot;topright&quot;, legend=c(&quot;Not HVG&quot;, &quot;HVG&quot;), col = c(&quot;#F5953C&quot;,&quot;#7A95BD&quot;),bty=&quot;n&quot;,pch=10)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/DimRed-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-DimRed-1">
+Past versions of DimRed-1.png
+</button>
+</p>
+<div id="fig-DimRed-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/DimRed-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="principal-components-analysis" class="section level3">
 <h3>Principal Components Analysis</h3>
@@ -992,11 +1481,85 @@ plot(fit$mean, fit$var, col= c(&quot;#F5953C&quot;,&quot;#7A95BD&quot;)[(names(f
 spe &lt;- runPCA(spe, subset_row = top.hvgs)
 plotReducedDim(spe, dimred = &quot;PCA&quot;,point_alpha=1,point_size=0.5)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PCA-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCA-1">
+Past versions of PCA-1.png
+</button>
+</p>
+<div id="fig-PCA-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PCA-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>pca_pct_variance &lt;- data.frame(variance = attr(reducedDim(spe, &quot;PCA&quot;), &quot;percentVar&quot;))
 pca_pct_variance$PC &lt;- 1:nrow(pca_pct_variance)
 
 ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color=&quot;grey&quot;) +geom_point() +labs(y = &quot;Variance explained (%)&quot;)+ geom_vline(xintercept = 15,color=&quot;red&quot;)+theme_classic()+ ggtitle(&quot;Percentage variance explained by PCs&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PCA-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PCA-2">
+Past versions of PCA-2.png
+</button>
+</p>
+<div id="fig-PCA-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PCA-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>reducedDim(spe,&quot;PCA&quot;) &lt;- reducedDim(spe,&quot;PCA&quot;)[,seq_len(15)]</code></pre>
 </div>
 <div id="uniform-manifold-approximation" class="section level3">
@@ -1005,6 +1568,43 @@ ggplot(pca_pct_variance,aes(PC, variance)) +geom_line(color=&quot;grey&quot;) +g
 spe &lt;- runUMAP(spe, dimred = &quot;PCA&quot;)
 plotReducedDim(spe, dimred = &quot;UMAP&quot;,point_alpha=1,point_size=0.5)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/UMAP-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-UMAP-1">
+Past versions of UMAP-1.png
+</button>
+</p>
+<div id="fig-UMAP-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/UMAP-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="clustering-with-hvgs" class="section level2">
@@ -1018,11 +1618,122 @@ data.frame(as.list(table(colData(spe)$leiden)))</code></pre>
 </div>
 <pre class="r"><code>plotReducedDim(spe, dimred = &quot;UMAP&quot;,colour_by =&quot;leiden&quot;,point_alpha=1,point_size=0.5)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ShowCluster-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ShowCluster-1">
+Past versions of ShowCluster-1.png
+</button>
+</p>
+<div id="fig-ShowCluster-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ShowCluster-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># plot clusters in spatial x-y coordinates
 plotSpots(spe, annotate = &quot;leiden&quot;,size = 1)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ShowCluster-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ShowCluster-2">
+Past versions of ShowCluster-2.png
+</button>
+</p>
+<div id="fig-ShowCluster-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ShowCluster-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotVisium(spe, fill = &quot;leiden&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ShowCluster-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ShowCluster-3">
+Past versions of ShowCluster-3.png
+</button>
+</p>
+<div id="fig-ShowCluster-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ShowCluster-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="deconvolution-annotation_l1" class="section level2">
 <h2>Deconvolution Annotation_L1</h2>
@@ -1108,6 +1819,43 @@ mod &lt;- res$NMF</code></pre>
     ncol = 1) +
     theme(aspect.ratio = 1))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/TopicProfilesL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TopicProfilesL1-1">
+Past versions of TopicProfilesL1-1.png
+</button>
+</p>
+<div id="fig-TopicProfilesL1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/TopicProfilesL1-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotTopicProfiles(
     x = mod,
     y = sce$celltype,
@@ -1115,6 +1863,43 @@ mod &lt;- res$NMF</code></pre>
     min_prop = 0.01,
     ncol = 6))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/TopicProfilesL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TopicProfilesL1-2">
+Past versions of TopicProfilesL1-2.png
+</button>
+</p>
+<div id="fig-TopicProfilesL1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/TopicProfilesL1-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>library(NMF)
 sign &lt;- basis(mod)
 colnames(sign) &lt;- paste0(&quot;Topic&quot;, seq_len(ncol(sign)))
@@ -1145,6 +1930,43 @@ basis_spotlight %&gt;%
 <pre class="r"><code>#Spatial Correlation Matrix
 plotCorrelationMatrix(mat,p.mat = TRUE, hc.order = TRUE,)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/CorrmatL1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-CorrmatL1--1">
+Past versions of "CorrmatL1 -1.png"
+</button>
+</p>
+<div id="fig-no-spaces-CorrmatL1--1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/CorrmatL1 -1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Custom Spatial Correlation Matrix
 decon_cor &lt;- cor(mat)
 # Compute correlation P-value
@@ -1169,6 +1991,43 @@ ggcorrplot::ggcorrplot(
     axis.text.x = ggplot2::element_text(angle = 90),
     axis.text = ggplot2::element_text(size = 18, vjust = 0.5))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/CorrmatL1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-CorrmatL1--2">
+Past versions of "CorrmatL1 -2.png"
+</button>
+</p>
+<div id="fig-no-spaces-CorrmatL1--2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/CorrmatL1 -2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="co-localization" class="section level3">
 <h3>Co-localization</h3>
 <p>Now that we know which cell types are found within each spot we can
@@ -1181,8 +2040,82 @@ mat[mat &lt; 0.1] &lt;- 0</code></pre>
 plotInteractions(mat, which = &quot;heatmap&quot;, metric = &quot;prop&quot;)+ 
   labs(title = &quot;Interaction heatmap proportion&quot;, fill = &quot;proportion&quot;)#breaks = c(0, 5, 10, 15, 20),</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ColocalizationL1%20-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-ColocalizationL1--1">
+Past versions of "ColocalizationL1 -1.png"
+</button>
+</p>
+<div id="fig-no-spaces-ColocalizationL1--1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL1 -1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotInteractions(mat, which = &quot;heatmap&quot;, metric = &quot;jaccard&quot;)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ColocalizationL1%20-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-ColocalizationL1--2">
+Past versions of "ColocalizationL1 -2.png"
+</button>
+</p>
+<div id="fig-no-spaces-ColocalizationL1--2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL1 -2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotInteractions(mat, which = &quot;network&quot;,
     vertex.color = &quot;#cde394&quot;,
      vertex.frame.color = &quot;white&quot;,
@@ -1190,6 +2123,43 @@ plotInteractions(mat, which = &quot;heatmap&quot;, metric = &quot;prop&quot;)+
      vertex.label.family = &quot;Helvetica&quot;,
     min_prop = 0.1)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ColocalizationL1%20-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-no-spaces-ColocalizationL1--3">
+Past versions of "ColocalizationL1 -3.png"
+</button>
+</p>
+<div id="fig-no-spaces-ColocalizationL1--3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL1 -3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Define color palette
 # (here we use &#39;paletteMartin&#39; from the &#39;colorBlindness&#39; package)
 paletteMartin &lt;- c(
@@ -1213,6 +2183,43 @@ plotSpatialScatterpie(
         breaks = names(pal))
 )</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlotPiesL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPiesL1-1">
+Past versions of PlotPiesL1-1.png
+</button>
+</p>
+<div id="fig-PlotPiesL1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotPiesL1-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#With the image underneath - we are rotating it 90 degrees counterclockwise and mirroring across the horizontal axis to show how to align if the spots don’t overlay the image.
 print(
 plotSpatialScatterpie(
@@ -1229,6 +2236,43 @@ plotSpatialScatterpie(
         breaks = names(pal))
 )</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlotPiesL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPiesL1-2">
+Past versions of PlotPiesL1-2.png
+</button>
+</p>
+<div id="fig-PlotPiesL1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotPiesL1-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Residuals
 spe$res_ss &lt;- res[[2]][colnames(spe)]
 xy &lt;- spatialCoords(spe)
@@ -1240,6 +2284,43 @@ ggcells(spe, aes(x, y, color = res_ss)) +
     coord_fixed() +
     theme_bw()</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlotResidualsL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotResidualsL1-1">
+Past versions of PlotResidualsL1-1.png
+</button>
+</p>
+<div id="fig-PlotResidualsL1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotResidualsL1-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>library(viridis)
 
 for(i in colnames(mat)){
@@ -1247,7 +2328,386 @@ for(i in colnames(mat)){
   scale_color_viridis(option=&quot;magma&quot;)
         )
 }</code></pre>
-<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-5.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-6.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-7.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-8.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-9.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-10.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-1">
+Past versions of PlotCelltypesL1-1.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-2">
+Past versions of PlotCelltypesL1-2.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-3">
+Past versions of PlotCelltypesL1-3.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-4">
+Past versions of PlotCelltypesL1-4.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-4.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-5">
+Past versions of PlotCelltypesL1-5.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-5.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-6.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-6">
+Past versions of PlotCelltypesL1-6.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-6.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-7.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-7">
+Past versions of PlotCelltypesL1-7.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-7.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-8.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-8">
+Past versions of PlotCelltypesL1-8.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-8.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-9.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-9">
+Past versions of PlotCelltypesL1-9.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-9.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL1-10.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL1-10">
+Past versions of PlotCelltypesL1-10.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL1-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL1-10.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="save-the-dataset" class="section level2">
@@ -1374,6 +2834,43 @@ mod &lt;- res$NMF</code></pre>
     ncol = 1) +
     theme(aspect.ratio = 1))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/TopicProfilesL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TopicProfilesL2-1">
+Past versions of TopicProfilesL2-1.png
+</button>
+</p>
+<div id="fig-TopicProfilesL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/TopicProfilesL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>print(plotTopicProfiles(
     x = mod,
     y = sce$SpatialAnno,
@@ -1381,6 +2878,43 @@ mod &lt;- res$NMF</code></pre>
     min_prop = 0.01,
     ncol = 6))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/TopicProfilesL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-TopicProfilesL2-2">
+Past versions of TopicProfilesL2-2.png
+</button>
+</p>
+<div id="fig-TopicProfilesL2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/TopicProfilesL2-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>library(NMF)
 sign &lt;- basis(mod)
 colnames(sign) &lt;- paste0(&quot;Topic&quot;, seq_len(ncol(sign)))
@@ -1419,6 +2953,43 @@ basis_spotlight %&gt;%
 #Spatial Correlation Matrix
 plotCorrelationMatrix(mat,p.mat = TRUE, hc.order = TRUE,)</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/CorrMatL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-CorrMatL2-1">
+Past versions of CorrMatL2-1.png
+</button>
+</p>
+<div id="fig-CorrMatL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/CorrMatL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Custom Spatial Correlation Matrix
 decon_cor &lt;- cor(mat)
 # Compute correlation P-value
@@ -1443,6 +3014,43 @@ ggcorrplot::ggcorrplot(
     axis.text.x = ggplot2::element_text(angle = 90),
     axis.text = ggplot2::element_text(size = 18, vjust = 0.5))</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/CorrMatL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-CorrMatL2-2">
+Past versions of CorrMatL2-2.png
+</button>
+</p>
+<div id="fig-CorrMatL2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/CorrMatL2-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="co-localization-1" class="section level3">
 <h3>Co-localization</h3>
 <p>Now that we know which cell types are found within each spot we can
@@ -1455,17 +3063,127 @@ mat[mat &lt; 0.1] &lt;- 0</code></pre>
 plotInteractions(mat, which = &quot;heatmap&quot;, metric = &quot;prop&quot;)+ 
   labs(title = &quot;Interaction heatmap proportion&quot;, fill = &quot;proportion&quot;) #breaks = c(0, 5, 10, 15, 20),</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/ColocalizationL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ColocalizationL2-1">
+Past versions of ColocalizationL2-1.png
+</button>
+</p>
+<div id="fig-ColocalizationL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plotInteractions(mat, which = &quot;heatmap&quot;, metric = &quot;jaccard&quot;)+ 
-  labs(title = &quot;Interaction heatmap&quot;, fill = &quot;jaccard&quot;)+ 
-
-
-plotInteractions(mat, which = &quot;network&quot;,
+  labs(title = &quot;Interaction heatmap&quot;, fill = &quot;jaccard&quot;)</code></pre>
+<p><img src="figure/Spatial_Knee.Rmd/ColocalizationL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ColocalizationL2-2">
+Past versions of ColocalizationL2-2.png
+</button>
+</p>
+<div id="fig-ColocalizationL2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL2-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>plotInteractions(mat, which = &quot;network&quot;,
     vertex.color = &quot;#cde394&quot;,
      vertex.frame.color = &quot;white&quot;,
      vertex.label.color = &quot;black&quot;,
      vertex.label.family = &quot;Helvetica&quot;,
     min_prop = 0.1)</code></pre>
-<p><img src="figure/Spatial_Knee.Rmd/ColocalizationL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/ColocalizationL2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Spatial_Knee.Rmd/ColocalizationL2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-ColocalizationL2-3">
+Past versions of ColocalizationL2-3.png
+</button>
+</p>
+<div id="fig-ColocalizationL2-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/ColocalizationL2-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Define color palette
 # (here we use &#39;paletteMartin&#39; from the &#39;colorBlindness&#39; package)
 paletteMartin &lt;- c(
@@ -1489,6 +3207,43 @@ plotSpatialScatterpie(
         breaks = names(pal))
 )</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlotPiesL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPiesL2-1">
+Past versions of PlotPiesL2-1.png
+</button>
+</p>
+<div id="fig-PlotPiesL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotPiesL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#With the image underneath - we are rotating it 90 degrees counterclockwise and mirroring across the horizontal axis to show how to align if the spots don’t overlay the image.
 print(
 plotSpatialScatterpie(
@@ -1505,6 +3260,43 @@ plotSpatialScatterpie(
         breaks = names(pal))
 )</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlotPiesL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotPiesL2-2">
+Past versions of PlotPiesL2-2.png
+</button>
+</p>
+<div id="fig-PlotPiesL2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotPiesL2-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#Residuals
 spe$res_ss &lt;- res[[2]][colnames(spe)]
 xy &lt;- spatialCoords(spe)
@@ -1516,12 +3308,580 @@ ggcells(spe, aes(x, y, color = res_ss)) +
     coord_fixed() +
     theme_bw()</code></pre>
 <p><img src="figure/Spatial_Knee.Rmd/PlorResidualsL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlorResidualsL2-1">
+Past versions of PlorResidualsL2-1.png
+</button>
+</p>
+<div id="fig-PlorResidualsL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlorResidualsL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>for(i in colnames(mat)){
   print(plotSpots(spe, annotate = mat[,colnames(mat)==i],size = 1.7)+labs(title=paste0(&quot;Spatial coordinates &quot;,i, &quot; proportion&quot;))+
   scale_color_viridis(option=&quot;magma&quot;)
         )
 }</code></pre>
-<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-4.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-5.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-6.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-7.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-8.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-9.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-10.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-11.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-12.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-13.png" width="100%" height="100%" style="display: block; margin: auto;" /><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-14.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-1.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-1">
+Past versions of PlotCelltypesL2-1.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-1.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-2.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-2">
+Past versions of PlotCelltypesL2-2.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-2.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-3.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-3">
+Past versions of PlotCelltypesL2-3.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-3.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-4.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-4">
+Past versions of PlotCelltypesL2-4.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-4.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-5.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-5">
+Past versions of PlotCelltypesL2-5.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-5.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-6.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-6">
+Past versions of PlotCelltypesL2-6.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-6.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-7.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-7">
+Past versions of PlotCelltypesL2-7.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-7.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-8.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-8">
+Past versions of PlotCelltypesL2-8.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-8.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-9.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-9">
+Past versions of PlotCelltypesL2-9.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-9.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-10.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-10">
+Past versions of PlotCelltypesL2-10.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-10.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-11.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-11">
+Past versions of PlotCelltypesL2-11.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-11" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-11.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-12.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-12">
+Past versions of PlotCelltypesL2-12.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-12" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-12.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-13.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-13">
+Past versions of PlotCelltypesL2-13.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-13" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-13.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/Spatial_Knee.Rmd/PlotCelltypesL2-14.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-PlotCelltypesL2-14">
+Past versions of PlotCelltypesL2-14.png
+</button>
+</p>
+<div id="fig-PlotCelltypesL2-14" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/docs/figure/Spatial_Knee.Rmd/PlotCelltypesL2-14.png" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="save-the-dataset-1" class="section level2">
