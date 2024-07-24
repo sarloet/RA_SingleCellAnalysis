@@ -355,7 +355,7 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
   volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'PValue',
                   pCutoff = 0.05, FCcutoff = 0.5,
                   title = paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
-                  subtitle = paste0("Fibroblast"," cluster (MAST)"),
+                  subtitle = paste0("Macrophage"," cluster (MAST)"),
                   pointSize = 1.0, colAlpha = 1,
                   legendPosition = 'right',
                   gridlines.major = FALSE,
