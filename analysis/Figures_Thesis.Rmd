@@ -1,0 +1,1914 @@
+---
+title: "Clustering"
+subtitle: "Figures_Thesis"
+author: "SarahL."
+date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
+output: 
+  html_document:
+    toc: true
+    number_sections: true   
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(cache = FALSE, cache.lazy = FALSE)
+knitr::opts_chunk$set(dpi = 300, fig.align = "center")
+knitr::opts_chunk$set(out.width = "100%", out.height = "100%")
+```
+
+
+# Plotting
+
+## Setup
+
+### Load packages
+
+```{r LoadPackages, warning=FALSE}
+#Standard Packages
+library(here)
+source(here("code", "standard_libraries.R"))
+
+#Additional Packages
+suppressPackageStartupMessages({
+library(gridExtra)
+library(dittoSeq)
+library(ggpubr)
+library(patchwork)
+})
+
+```
+
+
+### Set Parameter
+
+```{r Setup}
+set.seed(123)
+bpp <- BiocParallel::MulticoreParam(parallel::detectCores()-1, RNGseed=123)
+path <- here::here()
+```
+
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+```
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Figure 1 Single cell map
+
+```{r}
+#NR of cells per condition
+
+ggplot(as.data.frame(colData(sce)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  labs(x="Joint Location")+
+  scale_y_continuous(expand = c(0,0))
+
+```
+
+```{r SampleMetricsTranspose}
+
+#UMAPS L1 and L2
+
+#sce$MNN_merge_reduced_UMAP[,1]
+#sce$MNN_merge_reduced_UMAP[,2]
+
+#plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="label",order_by="label",point_alpha=1,point_size=1)
+
+#Level1
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce,"MNN_merge_reduced_UMAP")[,2], colour = Annotation_L1, point_alpha=0.1) + 
+    geom_point( size=0.1 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+#Level0
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce,"MNN_merge_reduced_UMAP")[,2], colour = Annotation_L0, point_alpha=0.1) + 
+    geom_point( size=0.1 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L0[seq.int(length(unique(sce$Annotation_L0)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5 ,shape=15),title = "Annotation"))
+
+
+#factor(label, levels = c("Mast cell","Smooth muscle cell","Dendritic cell","Fibroblast","Endothelial cell","T cell","B cel","Neutrophil","Plasma"))
+
+#Sample
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce,"MNN_merge_reduced_UMAP")[,2], colour = Sample, point_alpha=0.1) + 
+    geom_point( size=0.1 ) + 
+    scale_colour_manual( values=meta_colors$nice_cols[seq.int(length(unique(sce$Sample)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5 ,shape=15),title = "Annotation"))
+
+
+
+```
+
+```{r SampleMetricsTranspose}
+
+# UMAPS of Subset condition
+
+sce.subset <- sce[,sce$Joint.Location == "MCP"]
+
+ggplot(as.data.frame(colData(sce.subset))) + 
+    aes(x = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,2], point_alpha=0.7, colour = Joint.Location) + 
+    geom_point( size=0.1 ) + 
+    scale_colour_manual( values=meta_colors$Joint.Location[seq.int(length(unique(sce$Joint.Location)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right') +
+    labs( x='UMAP1', y='UMAP2' )+ theme_classic()+
+     guides(colour = guide_legend(override.aes = list(size=4 ,shape=15),title = "Joint Location"))
+
+
+
+sce.subset <- sce[,sce$Joint.Location == "Wrist"]
+
+ggplot(as.data.frame(colData(sce.subset))) + 
+    aes(x = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,2], point_alpha=0.7, colour = Joint.Location) + 
+    geom_point( size=0.1 ) + 
+    scale_colour_manual( values=meta_colors$Joint.Location[seq.int(length(unique(sce$Joint.Location)))] ) + theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ theme_classic()+
+    guides(colour = guide_legend(override.aes = list(size=4 ,shape=15),title = "Joint Location"))
+
+
+
+sce.subset <- sce[,sce$Joint.Location == "Knee"]
+
+ggplot(as.data.frame(colData(sce.subset))) + 
+    aes(x = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce.subset,"MNN_merge_reduced_UMAP")[,2], point_alpha=0.7, colour = Joint.Location) + 
+    geom_point( size=0.1) + 
+    scale_colour_manual( values=meta_colors$Joint.Location[seq.int(length(unique(sce$Joint.Location)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right',aspect.ratio = 1/1 ) +
+    labs( x='UMAP1', y='UMAP2' )+ theme_classic()+
+    guides(colour = guide_legend(override.aes = list(size=4 ,shape=15),title = "Joint Location"))
+
+
+
+```
+
+
+```{r ClusterInfo,out.width = '30%',fig.height = 7}
+# Sample abundances
+
+
+#Annotation_L0
+
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L0, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L0)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L0[seq.int(length(unique(sce$Sample)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L0)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L0[seq.int(length(unique(sce$Sample)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+#Annotation_L1
+
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L1, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Sample)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Sample)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+```
+
+
+
+```{r WilcoxonLabel}
+# Dotplot of Annotation
+
+markers <- c("PDGFRB","COL1A1","ACTA2","MYH11","VWF","CDH5","CD14","FCGR3A","CSF3R","S100A8","FLT3","CD1C","TPSAB1","CPA3","MS4A2","CD19","MS4A1","CD79A","SDC1","MZB1","CD3E", "CD3G")
+
+order=c("Fibroblast","Smooth muscle cell","Endothelial cell","Macrophage","Neutrophil","Dendritic cell","Mast cell","B cell","Plasma","T cell")
+
+#Heatmap
+sce.plot <- sce[unique(markers), seq(1, dim(sce)[2], 10)]# Subsample only keep every 20th cell
+#dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("Annotation_L1"),scaled.to.max = TRUE,cluster_rows=TRUE,cluster_cols=TRUE)
+sce.plot$Annotation_L1 <- factor(sce.plot$Annotation_L1, levels = order)
+
+dittoHeatmap(sce.plot, genes = unique(markers), annot.by = c("Annotation_L1") ,order.by="Annotation_L1" ,scaled.to.max = FALSE,cluster_rows=FALSE,cluster_cols=FALSE,breaks=seq(-2,2,length.out=(40+1)),heatmap.colors = colorRampPalette(c("blue", "white", "red"))(40), complex = TRUE,annotation_colors = list(Annotation_L1 = meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))]))
+
+dittoHeatmap(sce.plot, vars = unique(markers), annot.by = c("Annotation_L1"),scaled.to.max = FALSE,cluster_rows=FALSE,cluster_cols=FALSE,breaks=seq(-2,2,length.out=(40+1)),heatmap.colors = colorRampPalette(c("blue", "white", "red"))(40))
+
+
+#Dotplot
+dittoDotPlot(sce, vars = markers , group.by = "Annotation_L1",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = FALSE, y.reorder=c(4,9,3,5,7,2,6,1,8,10),ylab ="Annotation")
+
+#Better Dotplot
+dittoDotPlot(sce, vars = markers , group.by = "Annotation_L1",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = FALSE, y.reorder=c(4,9,3,5,7,2,6,1,8,10),ylab ="Annotation")+scale_color_gradientn(colours=c("lightgrey","blue"),limits=c(0,4),oob=scales::squish,name = "average\nexpression")
+
+dittoDotPlot(sce, vars = markers , group.by = "Annotation_L1",min.color="lightgrey", max.color="blue",min.percent=0.2,max.percent=1,scale = TRUE, y.reorder=c(4,9,3,5,7,2,6,1,8,10),ylab ="Annotation")+scale_color_gradientn(colours=c("blue","white","red"),limits=c(-1,1),oob=scales::squish,name = "scaled expression")#scaled
+
+#order=c("Fibroblast","Smooth muscle cell","Endothelial cell","Myeloid","Neutrophil","Dendritic cell","Mast cell","B cell","Plasma","T cell")
+
+rm(sce.plot)
+gc()
+
+```
+
+
+## Plot marker gene signatures
+
+```{r MarkerGenes}
+#Function to visuaise gene Expression for vector of genes
+library(UCell)
+
+
+Coarse_signatures <- list(
+    Immune = c("PTPRC","CORO1A","RAC2"),
+    Myeloid = c("CSF3R","MS4A6A","MS4A7"),
+    Stromal = c("PDGFRB","DCN","PCOLCE","ACTA2"),
+    Endothelial = c("CDH5","ECSCR","CCL14")
+)
+
+Fine_signatures<- list(
+    Fibroblast = c("PDGFRB","DCN","COL1A1","PRG4"),
+    Smooth_muscle_cell = c("ACTA2","MYL9","DES","MYH11"),
+    Endothelial_cell = c("CDH5","VWF", "PECAM1","CCL14"),
+    Tcell = c("CD3E","CD3D", "CD3G","TRAC"),
+    Bcell = c("CD19","MS4A1","CD79A","TNFRSF13C"),
+    Neutrophil = c("CSF3R","S100A8","TREM1","NAMPT"),
+    Mast_cell = c("TPSAB1","CPA3","HPGDS"),
+    Macrophage = c("MARCO","LYZ","MSR1","CD14","FCGR3A"),
+    Plasma = c("JSRP1","DERL3", "JCHAIN","SDC1","MZB1"),
+    Dendritic_cell = c("FLT3","BTLA","CD86","CLEC9A","CCL22","CD1C")
+)   
+    
+
+#Coarse_signatures
+sce.ucell <- ScoreSignatures_UCell(sce, features=Coarse_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+
+pll.coarse <- lapply(names(Coarse_signatures), function(x) {
+    plotReducedDim(sce.ucell, dimred="MNN_merge_reduced_UMAP", colour_by=x,order_by = x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
+        labs( x='UMAP 1', y='UMAP 2',title=paste0(x))+
+        scale_color_gradientn(colours=c("black","#1e90ff"),oob=scales::squish,name = "signature\nexpression",breaks=c(0,0.75),labels=c("Min","Max"),limits=c(0,0.75))
+    #+scale_color_viridis(option="magma")
+})
+#wrap_plots(pll)
+for (i in seq_along(pll.coarse)) {
+    print(pll.coarse[[i]])
+}
+
+
+#Fine_signatures
+sce.ucell <- ScoreSignatures_UCell(sce, features=Fine_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+
+
+pll.fine <- lapply(names(Fine_signatures), function(x) {
+    plotReducedDim(sce.ucell, dimred="MNN_merge_reduced_UMAP", colour_by=x,order_by = x,by_exprs_values = "UCell",point_alpha=0.8,point_size=0.2) +
+        labs( x='UMAP 1', y='UMAP 2',title=paste0(x))+
+        scale_color_gradientn(colours=c("black","#1e90ff"),oob=scales::squish,name = "signature\nexpression",breaks=c(0,0.75),labels=c("Min","Max"),limits=c(0,0.75))
+        #scale_color_viridis(option="magma",oob=scales::squish,name = "signature\nexpression",breaks=c(0,0.75),labels=c("Min","Max"),limits=c(0,0.75))
+})
+
+for (i in seq_along(pll.fine)) {
+    print(pll.fine[[i]])
+}
+
+```
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Figure 2 Subclusters
+
+```{r }
+sce
+
+order=c("PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","POSTN+ FIB","CXCL12+ FIB","TREM2+ MP","FOLR2+ MP","CD48+ MP","S100A12+ MP","cDC","pDC","Neutrophil","Mast cell","B cell","Plasma","CytotoxCD8 TC","Memory TC","Naive TC","NKTcell","CytotoxCD4 TC","Venular EC","Capillary EC","Arteriolar EC","Smooth muscle cell")
+#sce.plot$Annotation_L1 <- factor(sce.plot$Annotation_L1, levels = order)
+
+```
+
+
+```{r }
+
+#UMAPS  L2
+
+#sce.plot$Annotation_L1 <- factor(sce.plot$Annotation_L1, levels = order)
+
+#Level2
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_merge_reduced_UMAP")[,1], y = reducedDim(sce,"MNN_merge_reduced_UMAP")[,2], colour = Annotation_L2) + 
+    geom_point( size=0.1,alpha=0.2 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))],breaks=order) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15,alpha = 1),title = "Annotation"))
+
+```
+
+
+
+
+```{r ClusterInfo,out.width = '30%',fig.height = 7}
+# Sample abundances of subcluster
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+```
+
+
+
+```{r ClusterInfo}
+# Fibroblast
+sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+#MNN_UMAP_SC_reduced
+
+##UMAP
+ggplot(as.data.frame(colData(sce.sc))) + 
+    aes(x = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,1], y = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,2], colour = Annotation_L2, point_alpha=0.5) + 
+    geom_point( size=0.8 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+
+
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+###Condition
+
+#NR of cells per condition
+ggplot(as.data.frame(colData(sce.sc)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  scale_y_continuous(expand = c(0,0))
+
+
+
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+#Signatures
+Fibroblast_signatures <- list(
+    FB_PRG4 = c("PRG4","CRTAC1", "CLU","CLIC5"),
+    FB_POSTN = c("POSTN","COL1A1", "FNDC1"),
+    FB_CXCL12 = c("CXCL12","CCL2","SFRP1"),
+    FB_CHI3L2 = c("CHI3L2","SAA1", "FN1"),
+    FB_MFAP5 = c("MFAP5","IGFBP6","TNXB")
+)
+
+
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Fibroblast_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+pll <- lapply(names(Fibroblast_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma",name =paste(x) )
+})
+#wrap_plots(pll)
+for (i in seq_along(pll)) {
+    print(pll[[i]])
+}
+
+```
+
+
+```{r ClusterInfo}
+# Macrophage
+sce.sc<-sce[,sce$Annotation_L1 == "Macrophage"]
+#MNN_UMAP_SC_reduced
+
+##UMAP
+ggplot(as.data.frame(colData(sce.sc))) + 
+    aes(x = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,1], y = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,2], colour = Annotation_L2, point_alpha=0.5) + 
+    geom_point( size=0.8 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+
+
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+
+
+
+## Condition
+
+#NR of cells per condition
+ggplot(as.data.frame(colData(sce.sc)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  scale_y_continuous(expand = c(0,0))
+
+
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+#Signatures
+Macrophage_signatures <- list(
+    MP_TREM2 = c("MERTK","TREM2"),#Tissue resident
+    MP_FOLR2 = c("MERTK","FOLR2","LYVE1","ID2","ICAM1"),#Tissue resident
+    MP_CD48 = c("CD48","SPP1","ISG15","CLEC10A"),#Tissue infiltrating
+    MP_S100A12 = c("S100A12","CD48","MRC1","FCGR3A")#Monocyte (Downregulated MRC1, FCGR3A)
+)
+
+
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Macrophage_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+pll <- lapply(names(Macrophage_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma",name =paste(x) )
+})
+#wrap_plots(pll)
+for (i in seq_along(pll)) {
+    print(pll[[i]])
+}
+
+```
+
+```{r ClusterInfo}
+# T cell
+sce.sc<-sce[,sce$Annotation_L1 == "T cell"]
+#MNN_UMAP_SC_reduced
+
+##UMAP
+ggplot(as.data.frame(colData(sce.sc))) + 
+    aes(x = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,1], y = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,2], colour = Annotation_L2, point_alpha=0.5) + 
+    geom_point( size=0.8 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+
+
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+##Condition
+
+#NR of cells per condition
+ggplot(as.data.frame(colData(sce.sc)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  scale_y_continuous(expand = c(0,0))
+
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+#Signatures
+Tcell_signatures <- list(
+    CD4Tcell = c("CD4","TRAT1","CD40LG","LEF1","TNFRSF4"),
+    CD8Tcell = c("CD8A","CD8B"),
+    NKcell = c("NKG7","GNLY","NCAM1"),
+    ProlifTcell = c("MKI67","PCNA","STMN1","HMGB2"),
+    TReg = c("FOXP3","CCR8","PMCH","CCR4","RTKN2"),
+    Memory = c("CCR7","IL7R","TCF7","SELL","SATB1","GPR183","LTB","LEF1"),
+    Cytotoxic = c("GZMA","GZMK","NKG7")
+)
+
+
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Tcell_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+pll <- lapply(names(Tcell_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma",name =paste(x) )
+})
+#wrap_plots(pll)
+for (i in seq_along(pll)) {
+    print(pll[[i]])
+}
+
+
+```
+```{r ClusterInfo}
+# Endothelial
+sce.sc<-sce[,sce$Annotation_L1 == "Endothelial cell"]
+#MNN_UMAP_SC_reduced
+
+##UMAP
+ggplot(as.data.frame(colData(sce.sc))) + 
+    aes(x = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,1], y = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,2], colour = Annotation_L2, point_alpha=0.5) + 
+    geom_point( size=0.8 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+
+
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+##Condition
+
+#NR of cells per condition
+ggplot(as.data.frame(colData(sce.sc)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  scale_y_continuous(expand = c(0,0))
+
+
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+#Signatures
+Endothelial_signatures <- list(
+    Arterial = c("GJA5","NOTCH4", "EFNB2","HEY1"),
+    Venous = c("NR2F2","ACKR1", "LIFR", "ICAM1","CLU"),
+    Capillary = c("SPARC","ESAM"),
+    Lymphatic = c("PROX1","PDPN","FLT4","LYVE1")
+)
+
+
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Endothelial_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+pll <- lapply(names(Endothelial_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma",name =paste(x) )
+})
+#wrap_plots(pll)
+for (i in seq_along(pll)) {
+    print(pll[[i]])
+}
+
+
+```
+
+```{r ClusterInfo}
+# Dendritic
+sce.sc<-sce[,sce$Annotation_L1 == "Dendritic cell"]
+#MNN_UMAP_SC_reduced
+
+##UMAP
+ggplot(as.data.frame(colData(sce.sc))) + 
+    aes(x = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,1], y = reducedDim(sce.sc,"MNN_UMAP_SC_reduced")[,2], colour = Annotation_L2, point_alpha=0.5) + 
+    geom_point( size=0.8 ) + 
+    scale_colour_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) + 
+    theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ 
+    theme_classic()+ 
+    guides(colour = guide_legend(override.aes = list(size=5,shape=15),title = "Annotation"))
+
+
+
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+### Condition
+
+#NR of cells per condition
+ggplot(as.data.frame(colData(sce.sc)), aes(x=Joint.Location))+geom_bar()+ coord_flip()+ggtitle("Number of cells per Joint Location") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        aspect.ratio = 2/6)+
+  scale_y_continuous(expand = c(0,0))
+
+
+
+ClusterInfo <- as.data.frame(colData(sce.sc)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 4/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+#Signatures
+Dendrittic_signatures <- list(
+    pDC = c("CLEC4C","LILRA4", "LRRC26","SCT"),
+    cDC1 = c("CLEC9A","THBD", "XCR1", "CLNK"),
+    cDC2 = c("CLEC10A","ENHO","CD1C")
+)
+
+
+sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Dendrittic_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
+altExp(sce.ucell, 'UCell')
+pll <- lapply(names(Dendrittic_signatures), function(x) {
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  labs( x='UMAP 1', y='UMAP 2' )+
+  scale_color_viridis(option="magma",name =paste(x) )
+})
+#wrap_plots(pll)
+for (i in seq_along(pll)) {
+    print(pll[[i]])
+}
+
+```
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Figure 3 Abundances
+
+
+```{r ClusterInfo,out.width = '30%',fig.height = 7}
+#Abundance Barplot per condition
+
+#Annotation_L1
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L1, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 6/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 6/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+#Annotation_L2
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L2, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+order=c("PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","POSTN+ FIB","CXCL12+ FIB","TREM2+ MP","FOLR2+ MP","CD48+ MP","S100A12+ MP","cDC","pDC","Neutrophil","Mast cell","B cell","Plasma","CytotoxCD8 TC","Memory TC","Naive TC","NKTcell","CytotoxCD4 TC","Venular EC","Capillary EC","Arteriolar EC","Smooth muscle cell")
+ClusterInfo$Annotation_L2 <-factor(ClusterInfo$Annotation_L2, levels=order)
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="stack") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint Location",x="",y="Number of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 6/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L2)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L2[seq.int(length(unique(sce$Annotation_L2)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint Location",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank(),aspect.ratio = 6/2)+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+# Fraction of cells [%] from total cells in that celltype
+Totaljoint <- as.data.frame(colData(sce)) %>% 
+     group_by(Joint.Location) %>%
+     summarise(totalcellsjoint = n(),.groups = 'drop')
+
+Totalcelltype <- as.data.frame(colData(sce)) %>% 
+    group_by(Joint.Location,Annotation_L2) %>%
+    summarise(totalcells = n(),.groups = 'drop') %>% 
+    left_join(Totaljoint, Totalcelltype,by ="Joint.Location") %>%
+    mutate(freq = totalcells / totalcellsjoint * 100)
+
+
+ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=Annotation_L2)) + 
+    geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
+    scale_fill_manual( values=meta_colors$Joint.Location[seq.int(length(unique(ClusterInfo$Joint.Location)))] )+
+    theme_classic()+
+    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
+
+
+
+```
+
+
+
+
+```{r ClusterInfo}
+#SCproportion
+
+library(scProportionTest)
+library(SeuratObject)
+
+so <- as.Seurat(sce)
+
+prop_test <- sc_utils(so)
+
+
+
+#Knee vs MCP
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "Annotation_L2",
+	sample_1 = "Knee", sample_2 = "MCP",
+	sample_identity = "Joint.Location"
+)
+
+p1<-permutation_plot(prop_test,order_clusters = FALSE,log2FD_threshold = 1.5, FDR_threshold = 0.01)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p1
+
+#Knee vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "Annotation_L2",
+	sample_1 = "Knee", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+
+p2<-permutation_plot(prop_test,order_clusters = FALSE,log2FD_threshold = 1.5, FDR_threshold = 0.01)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p2
+
+#MCP vs Wrist
+
+prop_test <- permutation_test(
+	prop_test, cluster_identity = "Annotation_L2",
+	sample_1 = "MCP", sample_2 = "Wrist",
+	sample_identity = "Joint.Location"
+)
+
+p3<-permutation_plot(prop_test,order_clusters = FALSE,log2FD_threshold = 1.5, FDR_threshold = 0.01)+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+p3
+
+
+
+p1.1<- p1+theme(legend.position="none")+ ylab("log2FC") + xlab("Cell Type")#
+p2.1<- p2+theme(legend.position="none",axis.title.y=element_blank(),axis.text.y=element_blank())+ ylab("log2FC")
+p3.1<- p3+theme(legend.position="none",axis.title.y=element_blank(),axis.text.y=element_blank())+ ylab("log2FC")
+  
+grid.arrange(p1.1,p2.1,p3.1, nrow=1,widths = c(3/7, 2/7, 2/7))
+
+
+
+#rm(so)
+#gc()
+
+```
+```{r ClusterInfo}
+
+p1.1<- p1+theme(legend.position="none")+ ylab("log2FC") + xlab("Cell Type")#+scale_colour_manual( values= c("#FB8072","#B2DF8A" ) 
+p2.1<- p2+theme(legend.position="none",axis.title.y=element_blank(),axis.text.y=element_blank())+ ylab("log2FC")
+p3.1<- p3+theme(legend.position="none",axis.title.y=element_blank(),axis.text.y=element_blank())+ ylab("log2FC")
+  
+grid.arrange(p1.1,p2.1,p3.1, nrow=1,widths = c(3/7, 2/7, 2/7))
+
+
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Batchelor.rds'))#03_sce_Integration_Batchelor.rds
+#sce <- readRDS(file = paste0(path,'/output/03_sce_Integration_Harmony.rds'))#03_sce_Integration_Batchelor.rds
+
+#Change to genesymbol whenever possible
+rowData(sce)$UniqID <-rownames(sce)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ENSEMBL, rowData(sce)$Symbol)
+```
+
+```{r}
+#Heatmap of Marker Gened used for Annotation
+#Endo "PECAM1", "CDH5"
+#Myeloid "CD14","FCGR3A"
+#Bcell "CD19","MS4A1","CD79A"
+#Plasma "SDC1","MZB1"
+#Tcell "CD3E", "CD3G"
+#Mast "KIT","IL1RL1","MS4A2"
+#Fibroblast "PDGFRB","DCN","COL1A1"
+#Neutrophil "CSF3R","S100A8","TREM1"
+#pDC
+#SMC
+markr<-c("CDH5","CD14","CD19","SDC1","CD3E","KIT","COL1A1","CSF3R","ACTA2","CLEC4C","UPK3A","CLEC9A","CCL22","PROX1","LYVE1")
+
+```
+
+
+```{r}
+# RA DATASET
+for(i in markr){
+  print(plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by = i, order_by=i,point_alpha=1,point_size=0.5 )+scale_colour_gradient(name = i,low = "lightgrey", high = "red"))#harmony_reduced_UMAP
+  }
+
+
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## UMAP
+
+### Load Data
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+
+```
+
+```{r SampleMetricsTranspose}
+  umap_dt = data.table(
+    cell_id   = rownames(umap_x),
+    idv_umap1 = umap_x[, 1],
+    idv_umap2 = umap_x[, 2]
+    )
+
+nice_cols   = c(
+    "#DC050C", "#FB8072", "#1965B0", "#7BAFDE", "#882E72", "#B17BA6",
+    "#FF7F00", "#FDB462", "#E7298A", "#E78AC3", "#33A02C", "#B2DF8A",
+    "#55A1B1", "#8DD3C7", "#A6761D", "#E6AB02", "#7570B3", "#BEAED4",
+    "#666666", "#999999", "#aa8282", "#d4b7b7", "#8600bf", "#ba5ce3",
+    "#808000", "#aeae5c", "#1e90ff", "#00bfff", "#56ff0d", "#ffff00"
+    )
+
+sce$MNN_UMAP_reduced[,1]
+sce$MNN_UMAP_reduced[,2]
+
+plotReducedDim(sce, dimred="MNN_UMAP_reduced", colour_by="label",order_by="label",point_alpha=1,point_size=1)
+ 
+ggplot(as.data.frame(colData(sce))) + 
+    aes(x = reducedDim(sce,"MNN_UMAP_reduced")[,1], y = reducedDim(sce,"MNN_UMAP_reduced")[,2], colour = label) + 
+    geom_point( size=1.5 ) + 
+    scale_colour_manual( values=nice_cols[seq.int(length(unique(sce$label)))] ) + theme( axis.text=element_blank(), legend.position='right' ) +
+    labs( x='UMAP1', y='UMAP2' )+ theme_classic()
+
+
+
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Figure 4 DEG
+
+
+```{r }
+## RA DATASET
+res_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+res_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+res_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
+
+```
+
+
+### Volcano plot {.tabset}
+
+```{r SaveData,  results='asis', out.width = '30%',fig.height = 7}
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  #Create dd for plotting function
+  res_plot<-eval(parse(text = paste0("res_",comp)))
+  
+  row.names(res_plot)<- res_plot$primerid
+  res_plot <- res_plot[,c("PValue","log2FoldChange")]
+    
+  strspl<-strsplit(comp, split = "Vs")#
+  
+  #Create dd for plotting function
+  volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'PValue',
+                  pCutoff = 0.05, FCcutoff = 0.5,
+                  title = paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
+                  subtitle = paste0("Fibroblast"," cluster (MAST)"),
+                  pointSize = 1.0, colAlpha = 1,
+                  legendPosition = 'right',
+                  gridlines.major = FALSE,
+                  gridlines.minor = FALSE)+
+                  scale_y_continuous(expand = c(0,0))+
+                  scale_x_continuous(expand = c(0.1,0))
+    
+  print(volcano_plot)
+  cat(' \n')
+}
+
+```
+
+### Heatmap {.tabset}
+
+```{r SaveData, results='asis'}
+
+library(ComplexHeatmap)
+#select top denes
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res <- get(paste0("res_",comp))
+  
+  # Get top significant marker genes
+  res_sig <- res[res$PValue<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
+  data.table::setorder(res_sig, PValue)
+  res_sig<-head(res_sig,n=25)
+  
+  # Subset sce to keep the tested conditions
+  strspl<-strsplit(comp, split = "Vs")#
+  sce.subset.Joint<-sce.subset[,sce.subset$Joint.Location == c(strspl[[1]][1], strspl[[1]][2])]
+  
+  # Aggregate cells by sample and subset for significant genes
+  sce.subset.aggr <- aggregateAcrossCells(sce.subset.Joint,  ids = sce.subset.Joint$Sample, statistics = "mean",use.assay.type = "logcounts", subset.row = res_sig$primerid)
+  
+  # Create Z-score
+  mat<-logcounts(sce.subset.aggr)
+  mat.z <- t(apply(mat,1,scale))
+  # Add colnames for Heatmap
+  colnames(mat.z) <- unique(paste0(sce.subset.aggr$Sample,":",sce.subset.aggr$Joint.Location))
+  
+  # Plot heatmap
+  heatmap_plot <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 1),#colnames(mat.z),
+    name="Z-score",
+    column_title=paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
+    top_annotation = HeatmapAnnotation(Joint.Location = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 2),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+  print(heatmap_plot)
+   
+   cat(' \n')
+}
+ 
+```
+
+
+### Venn diagramm
+```{r SaveData, results='asis'}
+library(VennDiagram)
+
+set1 <-res_KneeVsMCP[res_KneeVsMCP$FDR<0.1 & abs(res_KneeVsMCP$log2FoldChange)> 0.1,, drop=F]$primerid
+set2 <-res_KneeVsWrist[res_KneeVsWrist$FDR<0.1 & abs(res_KneeVsWrist$log2FoldChange)> 0.1,, drop=F]$primerid
+set3 <-res_MCPVsWrist[res_MCPVsWrist$FDR<0.1 & abs(res_MCPVsWrist$log2FoldChange)> 0.1,, drop=F]$primerid
+
+
+venn.diagram(
+  x=list(set1,set2,set3),
+  category.names=c("KneeVsMCP","KneeVsWrist","MCPVsWrist"),
+  filename="venn.png",
+  lwd=2,
+  Ity='blank',
+  fill=c("#B17BA6","#A6C2CC","#E78AC3"),
+  cex=0.6,
+  fontface='bold',
+  fontfamily='sans'
+)
+ 
+
+#saves in dir
+```
+
+
+```{r WilcoxonLabel}
+# Heatmap of DEGS
+
+library(ComplexHeatmap)
+
+set1 <-res_KneeVsMCP[res_KneeVsMCP$FDR<0.1 & abs(res_KneeVsMCP$log2FoldChange)> 0.1,, drop=F]
+data.table::setorder(set1, FDR)
+set1<-head(set1,n=25)
+
+set2 <-res_KneeVsWrist[res_KneeVsWrist$FDR<0.1 & abs(res_KneeVsWrist$log2FoldChange)> 0.1,, drop=F]
+data.table::setorder(set2, FDR)
+set2<-head(set2,n=25)
+
+set3 <-res_MCPVsWrist[res_MCPVsWrist$FDR<0.1 & abs(res_MCPVsWrist$log2FoldChange)> 0.1,, drop=F]
+data.table::setorder(set3, FDR)
+set3<-head(set3,n=25)
+
+DEGS <- c(set1$primerid,set2$primerid,set3$primerid)
+
+DEGS<-unique(DEGS)
+
+order=c("MCP","Wrist","Knee")
+
+
+sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+
+
+
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Joint.Location, statistics = "mean",use.assay.type = "logcounts", subset.row = DEGS)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+  
+# Plot heatmap
+heatmap_plot <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  heatmap_legend_param = list(at = c(-1.5,-1,-0.5, 0, 0.5, 1, 1.5)),
+  col = circlize::colorRamp2(c(-1.5, 0, 1.5), c("#4393C3", "white", "#B2182B")),
+  top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot)
+
+
+
+#rm(sce.plot)
+gc()
+
+```
+
+
+
+# HOX genes plots
+
+### Load Data
+
+```{r}
+# RA DATASET
+#sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+
+sce$label[sce$label %in% c("Smooth muscle cell")] <- "Smooth muscle" #change SCM to fit plot
+sce$label[sce$label %in% c("Endothelial cell")] <- "Endothelial"
+sce$label[sce$label %in% c("Myeloid")] <- "Macrophage"
+
+Marker <- c("HOXD13","HOXD11","HOXD10","HOXD-AS2","HOXD9","HOXD8","HOXD3","HOXD4","HOXD1","HOXA1","HOXA2","HOXA3","HOXA-AS2","HOXA4","HOXA-AS3","HOXA5","HOXA6","HOXA7","HOXA9","HOXA10-AS","HOXA10","HOXA11","HOXA11-AS","HOXA13","HOXC13","HOXC11","HOXC-AS3" ,"HOXC10","HOXC6","HOXC-AS2","HOXC9","HOXC-AS1","HOXC8","HOXC4","HOXC5","HOXB2","HOXB-AS1","HOXB3","HOXB-AS3","HOXB4","HOXB5","HOXB6","HOXB7","HOXB8","HOXB9","HOXB13")
+
+```
+
+### Dotplot
+
+```{r }
+
+Dotplot_facet_absolute <- function(sce, Marker, label, condition) {
+  p <- list() 
+  for (c_type in label){
+
+    p[[c_type]]<-dittoDotPlot(sce[,sce$label == c_type], vars = Marker , group.by = "Joint.Location",min.color="lightgrey",max.color="blue",min.percent=0.1,max.percent=1,scale = FALSE ,max=2)+ theme(axis.title.x=element_blank())+
+      coord_flip() + ggtitle(c_type)+ theme(plot.title = element_text(hjust = 0.5)) +scale_color_gradientn(colours=c("lightgrey","blue"),limits=c(0,2),oob=scales::squish,name = "average\nexpression")
+}
+  return(p) 
+}
+
+Dotplot_facet_relative <- function(sce, Marker, label, condition) {
+  p <- list() 
+  for (c_type in label){
+
+    p[[c_type]]<-dittoDotPlot(sce[,sce$label == c_type], vars = Marker , group.by = "Joint.Location",min.percent=0.1,max.percent=1,scale = TRUE ,max=2,min=-2)+ theme(axis.title.x=element_blank())+
+      coord_flip() + ggtitle(c_type)+ theme(plot.title = element_text(hjust = 0.5)) +
+      scale_color_gradientn(colours=c("blue","white","red"),limits=c(-1,1),oob=scales::squish,name = "relative\nexpression") +
+      theme(legend.position = "right")
+}
+  return(p) 
+}
+```
+
+
+```{r , fig.width=15}
+
+p<- Dotplot_facet_absolute(sce, Marker, unique(sce$label), condition="Joint.Location")
+```
+
+```{r , fig.width=15}
+
+grid.arrange(p$`Endothelial` + theme(legend.position="none"), 
+             p$Fibroblast + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Macrophage + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$`Smooth muscle` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Plasma + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$`T cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()),
+             p$`Mast cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()),
+             p$`Dendritic cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()),
+             p$`B cell` + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             p$Neutrophil + theme(axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()), 
+             ncol = 10, widths = c(1.4/12, 1/12, 1/12, 1/12, 1/12, 1/12, 1/12, 1/12, 1/12, 1.6/12))
+
+
+#p[[1]] <- p[[1]]+ theme(legend.position="none")
+#p[seq(2,length(p)-1)]<-lapply(p[seq(2,length(p)-1)], function(x) x<- x + theme(legend.position="none",axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank()))
+#p[[length(p)]] <-p[[length(p)]]+ theme(axis.line.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+#do.call("grid.arrange", c(p, ncol=length(p), widths = c(1.5/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1.5/8)))
+
+
+#add lines between plots
+x = x = c(1.6/12, 1.6/12, 2.6/12, 2.6/12, 3.7/12, 3.7/12, 4.8/12, 4.8/12, 5.9/12,5.9/12, 7/12, 7/12, 8.1/12, 8.1/12, 9.2/12, 9.2/12, 10.3/12, 10.3/12)
+y = rep(c(0.1, 0.92),times=9)
+id = c(1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9)
+grid::grid.polygon(x,y,id)
+```
+
+### Histogramm
+
+```{r }
+
+Histplot_facet <- function(sce, Marker, condition) {
+  p <- list() 
+  for (m in Marker){
+    p[[m]] <- dittoPlot(sce, m, group.by = condition, split.by = 'label' ,split.ncol = 7,max=2)+
+      theme(axis.title.x=element_blank(),plot.title=element_blank(),legend.position="none",strip.background = element_blank(),strip.text.x = element_blank(), axis.text.x=element_blank())
+      
+}
+  return(p) 
+}
+
+
+```
+
+```{r }
+
+p<- Histplot_facet(sce, Marker, condition="Joint.Location")
+
+
+do.call("grid.arrange", c(p, nrow=length(p)))
+#ggarrange(plotlist=p,
+          
+```
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Sample distances
+
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+```
+
+
+A useful first step in an RNA-seq analysis is often to assess overall similarity between samples: Which samples are similar to each other, which are different? Does this fit to the expectation from the experiment’s design? We use the R function dist to calculate the Euclidean distance between samples.
+
+```{r SampleMetricsTranspose}
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+
+plot_dist_heatmap <- function(sce, sampleDists) {
+  
+  sampleDistMatrix <- as.matrix(sampleDists)
+  rownames(sampleDistMatrix) <- unique(paste( sce$Joint.Location, sce$Sample, sep = ":" ))
+  colnames(sampleDistMatrix) <- NULL
+  colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+  dist_heatmap<-pheatmap(sampleDistMatrix,
+           clustering_distance_rows = sampleDists,
+           clustering_distance_cols = sampleDists,
+           col = colors)
+
+  return(dist_heatmap) 
+}
+
+```
+
+
+```{r VariableMetrics}
+
+#sce.subset <- sce[rowData(sce)$is_hvg== "TRUE",sce$celltype == "Fibroblast"]
+sce.subset.aggr <- aggregateAcrossCells(sce,  ids = sce$Sample, statistics = "mean",use.assay.type = "logcounts")
+
+sampleDists <- dist(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,sampleDists))
+
+poisd <- PoissonDistance(t(assay(sce.subset.aggr)))
+print(plot_dist_heatmap(sce.subset,poisd$dd))
+
+
+library("dendextend")
+
+# Perform hierarchical clustering
+hc <- hclust(sampleDists)
+dend<-as.dendrogram(hc)
+
+colors<-c(SynBio_028="#FB8072",SynBio_049="#FB8072",SynBio_050="#B2DF8A",SynBio_074="#B2DF8A",SynBio_076="#FB8072",SynBio_077a="#7BAFDE",SynBio_077b='#B2DF8A',SynBio_081='#FB8072',SynBio_083='#B2DF8A',SynBio_084='#B2DF8A',SynBio_087='#FB8072',SynBio_093='#7BAFDE',SynBio_096='#7BAFDE',SynBio_098a='#7BAFDE',SynBio_098b='#B2DF8A',SynBio_127='#7BAFDE')
+
+
+labels_colors(dend)<-colors[order.dendrogram(dend)]
+
+# Plot the dendrogram
+plot(dend, main = "Hierarchical Clustering of Samples", xlab = "", sub = "", ylab = "Height")
+
+
+```
+
+
+
+## Variable-Level Metrics
+
+
+```{r VariableMetrics}
+
+#Variable-level metrics are computed by the getVarianceExplained() function. This calculates the percentage of variance of each gene’s expression that is explained by each variable in the colData of the SingleCellExperiment object. We can then use this to determine which experimental factors are contributing most to the variance in expression. This is useful for diagnosing batch effects or to quickly verify that a treatment has an effect.
+
+
+vars <- getVarianceExplained(sce,assay.type="logcounts",
+    variables=c("Sample", "Joint.Location", "Pathotype","Seropositivity","GCTreatment","Protocol","Sex","Age"))
+data.frame(head(vars))
+
+#Most variable genes in Joint location
+data.frame(vars) %>% arrange(desc(Joint.Location))
+
+plotExplanatoryVariables(vars)
+```
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Enrichement Plots
+
+```{r}
+# Run enrichGO
+run_enrichGO <- function(gene_list, background) {
+  enrichGO_res <- enrichGO(
+    gene = gene_list,
+    universe =background,
+    OrgDb = org.Hs.eg.db,
+    keyType = 'SYMBOL',
+    ont = "all",
+    pAdjustMethod = "BH",
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05,
+    readable = TRUE)
+  return(enrichGO_res) 
+}
+```
+
+```{r LoadDataset}
+## RA DATASET
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
+geneList_KneeVsMCP$updated<- gene_List$updated
+geneList_KneeVsMCP$entrez<- gene_List$entrez
+
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
+geneList_KneeVsWrist$updated<- gene_List$updated
+geneList_KneeVsWrist$entrez<- gene_List$entrez
+
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
+geneList_MCPVsWrist$updated<- gene_List$updated
+geneList_MCPVsWrist$entrez<- gene_List$entrez
+```
+
+
+
+```{r LoadDataset}
+## RA DATASET
+gene_List_Knee_KvM <- geneList_KneeVsMCP[geneList_KneeVsMCP$FDR<0.2 & geneList_KneeVsMCP$log2FoldChange< -0.1,, drop=F] 
+gene_List_MCP_KvM <- geneList_KneeVsMCP[geneList_KneeVsMCP$FDR<0.2 & geneList_KneeVsMCP$log2FoldChange> 0.1,, drop=F] 
+ego_Knee_KvM <- run_enrichGO(gene_List_Knee_KvM$updated,gene_List$updated)
+ego_MCP_KvM <- run_enrichGO(gene_List_MCP_KvM$updated,gene_List$updated)
+
+gene_List_Knee_KvW <- geneList_KneeVsWrist[geneList_KneeVsWrist$FDR<0.2 & geneList_KneeVsWrist$log2FoldChange< -0.1,, drop=F] 
+gene_List_Wrist_KvW <- geneList_KneeVsWrist[geneList_KneeVsWrist$FDR<0.2 & geneList_KneeVsWrist$log2FoldChange> 0.1,, drop=F] 
+ego_Knee_KvW<- run_enrichGO(gene_List_Knee_KvW$updated,gene_List$updated)
+ego_Wrist_KvW <- run_enrichGO(gene_List_Wrist_KvW$updated,gene_List$updated)
+
+gene_List_MCP_MvW <- geneList_MCPVsWrist[geneList_MCPVsWrist$FDR<0.2 & geneList_MCPVsWrist$log2FoldChange< -0.1,, drop=F] 
+gene_List_Wrist_MvW <- geneList_MCPVsWrist[geneList_MCPVsWrist$FDR<0.2 & geneList_MCPVsWrist$log2FoldChange> 0.1,, drop=F] 
+ego_MCP_MvW <- run_enrichGO(gene_List_MCP_MvW$updated,gene_List$updated)
+ego_Wrist_MvW <- run_enrichGO(gene_List_Wrist_MvW$updated,gene_List$updated)
+
+```
+
+
+## Knee vs MCP
+
+```{r LoadDataset}
+#Plot
+
+# Dot plot
+#sample(ego_Knee_KvM$Description)
+#selected=ego_Knee_KvM$Description[][c(20,42,)]
+selected=c("cilium","motile cilium","9+0 non-motile cilium","purine ribonucleoside triphosphate metabolic process" ,"purine ribonucleoside triphosphate biosynthetic process","purine nucleoside triphosphate biosynthetic process", "purine nucleoside triphosphate metabolic process","monoatomic ion transmembrane transporteractivity","proton-transporting two-sector ATPase complex, proton-transporting domain","inorganic cation transmembrane transporter activity")
+mutate(ego_Knee_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+     barplot(x="qscore", showCategory=selected)+
+     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+treeplot(pairwise_termsim(simplify(ego_Knee_KvM)))
+
+#simplify(ego_MCP_KvM)$Description[][]
+
+selected=c("bone development", "response to growth factor","actin filament-based process","actomyosin structure organization","regulation of actin filament organization","transforming growth factor beta binding","SMAD binding","extracellular matrix structural constituent","actin filament bundle","collagen-containing extracellular matrix","focal adhesion","cell body","microfibril","positive regulation of cellular component biogenesis")#"microfibril"
+
+mutate(ego_MCP_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+     barplot(x="qscore", showCategory=selected)+
+     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+treeplot(pairwise_termsim(simplify(ego_MCP_KvM)))
+
+termsex=simplify(ego_MCP_KvM)$ID[! simplify(ego_MCP_KvM)$Description %in% c("muscle structure development","muscle organ development","muscle cell differentiation") ]
+dotplot(simplify(ego_MCP_KvM), showCategory=30,term=termsex) + ggtitle("Dotplot for ORA in MCP from MCPvsKnee Comparison")
+
+```
+
+
+```{r LoadDataset}
+# Plot genes in terms
+
+###Knee KvM
+
+#Plot cilium associated genes
+#selected=ego_Knee_KvM$Description[][c(20,42,)]
+selected=c("cilium","motile cilium","9+0 non-motile cilium")
+
+h1<-heatplot(ego_Knee_KvM, showCategory = selected)
+h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+#Plot ribonucleoside associated genes
+#selected=ego_Knee_KvM$Description[][c(20,42,)]
+selected=c("purine ribonucleoside triphosphate metabolic process" ,"purine ribonucleoside triphosphate biosynthetic process","purine nucleoside triphosphate biosynthetic process", "purine nucleoside triphosphate metabolic process")
+
+h1<-heatplot(ego_Knee_KvM, showCategory = selected)
+h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+selected=c("monoatomic ion transmembrane transporter activity","proton-transporting two-sector ATPase complex", "proton-transporting domain","inorganic cation transmembrane transporter activity" )
+
+h1<-heatplot(ego_Knee_KvM, showCategory = selected)
+h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+#emapplot(pairwise_termsim(ego_Knee_KvM))
+
+
+###MCP KvM
+
+#Plot focal cell-substrate adhesion process associated genes
+#simplify(ego_MCP_KvM)$Description[][]
+selected=c("actin filament-based process","actin cytoskeleton organization","focal adhesion","cell-substrate junction")
+
+h1<-heatplot(ego_MCP_KvM, showCategory = selected)
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+#Plot focal cell-substrate adhesion process associated genes
+#simplify(ego_MCP_KvM)$Description[][]
+selected=c("bone development","embryonic morphogenesis" )
+
+h1<-heatplot(ego_MCP_KvM, showCategory = selected)
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+#Plot Cell migration associated genes
+selected=c("positive regulation of locomotion","positive regulation of cell migration"   )
+
+h1<-heatplot(ego_MCP_KvM, showCategory = selected)
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+#Plot Signalling associated genes
+selected=c("SMAD binding","transforming growth factor beta binding","response to growth factor","cellular response to transforming growth factor beta stimulus" ,"positive regulation of canonical Wnt signaling pathway"   )
+
+h1<-heatplot(ego_MCP_KvM, showCategory = selected)
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+```
+
+
+## Knee vs Wrist
+
+```{r LoadDataset}
+#Plot
+
+
+#ego_Knee_KvW -> 0 enriched terms found
+
+
+
+# Dot plot
+#sample(ego_Wrist_KvW$Description)
+#selected=ego_Wrist_KvW$Description[][c(20,42,)]
+mutate(ego_Wrist_KvW, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+     barplot(x="qscore",)+
+     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+treeplot(pairwise_termsim(simplify(ego_Wrist_KvW)))
+
+
+
+
+h1<-heatplot(ego_Wrist_KvW)
+h2<-heatplot(ego_Wrist_KvW, foldChange=setNames(abs(geneList_KneeVsWrist$log2FoldChange),geneList_KneeVsWrist$primerid))+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+
+```
+
+
+
+
+
+
+
+## MCP vs Wrist
+
+```{r LoadDataset}
+#Plot
+
+#MCP
+
+# Dot plot
+#sample(ego_MCP_MvW$Description)
+#selected=ego_MCP_MvW$Description[][c(20,42,)]
+#selected=c("cilium","motile cilium","9+0 non-motile cilium","purine ribonucleoside triphosphate metabolic process" ,"purine ribonucleoside triphosphate biosynthetic process","purine nucleoside triphosphate biosynthetic process", "purine nucleoside triphosphate metabolic process","monoatomic ion transmembrane transporteractivity","proton-transporting two-sector ATPase complex, proton-transporting domain","inorganic cation transmembrane transporter activity")
+mutate(simplify(ego_MCP_MvW), qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+     barplot(x="qscore")+
+     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+treeplot(pairwise_termsim(simplify(ego_MCP_MvW)))
+
+dotplot(simplify(ego_MCP_MvW),showCategory=20)
+#simplify(ego_MCP_MvW)$Description[][]
+
+
+
+#Wrist
+
+mutate(ego_Wrist_MvW, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+    barplot(x="qscore")+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+treeplot(pairwise_termsim(simplify(ego_Wrist_MvW)))
+
+termsex=simplify(ego_Wrist_MvW)$ID[! simplify(ego_Wrist_MvW)$Description %in% c("muscle structure development","muscle organ development","muscle cell differentiation") ]
+dotplot(simplify(ego_Wrist_MvW), showCategory=30,term=termsex) + ggtitle("Dotplot for ORA in MCP from MCPvsKnee Comparison")
+
+
+treeplot(pairwise_termsim(simplify(ego_Wrist_MvW)))
+
+```
+
+
+```{r LoadDataset}
+# Plot genes in terms
+
+###MCP MvW
+#Plot cell-substrate adhesion associated genes -->simplify(ego_MCP_MvW)$Description[][]
+selected=c("external encapsulating structure", "extracellular matrix","extracellular matrix structural constituent"  )
+
+h1<-heatplot(ego_MCP_MvW, showCategory = selected)
+h2<-heatplot(ego_MCP_MvW, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+#Plot Cell migration associated genes
+selected=c("cell-substrate adhesion","cell-substrate junction", "focal adhesion","actin filament-based process","actin cytoskeleton organization","regulation of actin cytoskeleton organization" ,"regulation of actin filament-based process","integrin binding","myofibril")
+
+h1<-heatplot(ego_MCP_MvW, showCategory = selected)
+h2<-heatplot(ego_MCP_MvW, foldChange=setNames(abs(geneList_MCPVsWrist$log2FoldChange),geneList_MCPVsWrist$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+
+###Wrist MvW
+#Plot cell-substrate adhesion associated genes -->simplify(ego_Wrist_MvW)$Description[][]
+selected=c("motile cilium","protein folding")
+
+h1<-heatplot(ego_Wrist_MvW,showCategory = selected)
+h2<-heatplot(ego_Wrist_MvW, foldChange=setNames(abs(geneList_MCPVsWrist$log2FoldChange),geneList_MCPVsWrist$primerid),showCategory = selected )+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+
+
+
+
+```
+
+
+
+
+
+
+
+# Gene heatmap
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+```
+
+```{r}
+#NR of cells per condition
+library(ComplexHeatmap)
+
+# Get genes
+genelist <-c("HOXD10","HOXD11")
+
+library(org.Hs.eg.db)
+genelist <- AnnotationDbi::select(org.Hs.eg.db, keytype="GOALL", keys="GO:0005929", columns="SYMBOL")#Go term"cilium"
+genelist <- AnnotationDbi::select(org.Hs.eg.db, keytype="GOALL", keys="GO:0005929", columns="SYMBOL")#Go term"cell-matrix adhesion"
+genelist <-genelist$SYMBOL[genelist$SYMBOL %in% rownames(sce)]
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce,  ids = sce$Joint.Location, statistics = "mean",use.assay.type = "logcounts", subset.row = genelist)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+  
+# Plot heatmap
+heatmap_plot <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot)
+
+
+```

@@ -100,12 +100,25 @@ run_enrichGO <- function(gene_list, background) {
     universe =background,
     OrgDb = org.Hs.eg.db,
     keyType = 'SYMBOL',
-    ont = "CC",
+    ont = "all",
     pAdjustMethod = "BH",
     pvalueCutoff = 0.05,
     qvalueCutoff = 0.05,
     readable = TRUE)
   return(enrichGO_res) 
+}
+
+# Run enrichKEGG
+run_enrichKEGG <- function(gene_list, background) {
+  enrichKEGG_res <- enrichKEGG(
+    gene = gene_list,
+    universe =background,
+    organism = "hsa",
+    keyType = 'ncbi-geneid',
+    pAdjustMethod = "BH",
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05)
+  return(enrichKEGG_res) 
 }
 
 # Run enrichr
@@ -115,8 +128,8 @@ run_enrichr <- function(gene_list, gene_sets, background) {
     gene_list,
     TERM2GENE = gene_sets,
     universe = background,
-    pvalueCutoff = 1,
-    qvalueCutoff = 1,
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05,
     pAdjustMethod = "BH",
     minGSSize = 1, 
     maxGSSize = 5000)
@@ -124,20 +137,35 @@ run_enrichr <- function(gene_list, gene_sets, background) {
 }
 
 
-# Run enrichGO
+# Run gseGO
 run_gseGO <- function(gene_list) {
   
   gseGO_res <- gseGO(
     gene = gene_list,
     OrgDb = org.Hs.eg.db,
     keyType = 'SYMBOL',
-    ont = "CC",
+    ont = "all",
     pAdjustMethod = "BH",
     minGSSize    = 1,
     maxGSSize    = 5000,
     pvalueCutoff = 0.05,
     verbose      = FALSE)
   return(gseGO_res) 
+}
+
+# Run gseKEGG
+run_gseKEGG <- function(gene_list) {
+  
+  gseKEGG_res <- gseKEGG(
+    gene = gene_list,
+    organism = "hsa",
+    keyType = 'ncbi-geneid',
+    pAdjustMethod = "BH",
+    minGSSize    = 1,
+    maxGSSize    = 5000,
+    pvalueCutoff = 0.05,
+    verbose      = FALSE)
+  return(gseKEGG_res) 
 }
 
 
@@ -175,7 +203,7 @@ Update Genesymbols
 # Get names for all genes for the background/universe & update the gene symbols 
 gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
 geneList_KneeVsMCP$updated<- gene_List$updated
-
+geneList_KneeVsMCP$entrez<- gene_List$entrez
 ```
 
 
@@ -202,7 +230,18 @@ ego_MCP <- run_enrichGO(gene_List_MCP$updated,gene_List$updated)
 ego_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F]# Show enriched terms
 ```
 
+#### Run KEGG over-representation analysis
 
+Run over-representation analysis on set of genes of the KEGG collection
+```{r DE}
+#Convert Genesymbold to IDS
+KEGG_Knee <- run_enrichKEGG(gene_List_Knee$entrez,gene_List$entrez)
+KEGG_Knee@result[KEGG_Knee@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+KEGG_MCP <- run_enrichKEGG(gene_List_MCP$entrez,gene_List$entrez)
+KEGG_MCP@result[KEGG_MCP@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+```
 
 #### Run Hallmark over-representation analysis
 
@@ -223,7 +262,7 @@ msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]# Show enriched terms
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_Knee)
+goplot(ego_Knee,showCategory=20)
 
 # Bar Plot
 barplot(ego_Knee, showCategory=20) 
@@ -242,13 +281,15 @@ dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
 #p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
 #cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
+#KEGG RESULT RA
+#browseKEGG(KEGG_Knee@result[ego_Knee@result$p.adjust<0.05,, drop=F], 'hsa05323')
 
 ```
 ##### MCP ORA Plots
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_MCP)
+goplot(ego_MCP,showCategory=20)
 
 # Bar Plot
 barplot(ego_MCP, showCategory=20) 
@@ -267,6 +308,8 @@ dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
 #p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
 #cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
+#KEGG RESULT RA
+#browseKEGG(KKEGG_MCP@result[ego_MCP@result$p.adjust<0.05,, drop=F], 'hsa05323')
 
 ```
 
@@ -277,15 +320,17 @@ dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
 
 #### Set up genelist
 ```{r DE}
-#Remove NA
-#res = res[-which(is.na(geneList_KneeVsMCP$updated)), ]
+#GSEA gene list
+#res = res[-which(is.na(geneList_KneeVsMCP$updated)), ]#Remove NA
+gse_gene_list = geneList_KneeVsMCP$log2FoldChange #Want log2 fold change 
+names(gse_gene_list) <- geneList_KneeVsMCP$updated #Name the vector with Genesymbol
+gse_gene_list = sort(gse_gene_list, decreasing = TRUE) #Sort the list in decreasing order
 
-#Want log2 fold change 
-gse_gene_list = geneList_KneeVsMCP$log2FoldChange 
-#Name the vector with Genesymbol
-names(gse_gene_list) <- geneList_KneeVsMCP$updated
-#Sort the list in decreasing order (required for clusterProfiler)
-gse_gene_list = sort(gse_gene_list, decreasing = TRUE)
+#KEGG gene list
+gse_gene_list_KEGG = geneList_KneeVsMCP$log2FoldChange #log2 fold change 
+names(gse_gene_list_KEGG) <- geneList_KneeVsMCP$entrez #name the vector with entrezid
+gse_gene_list_KEGG = sort(gse_gene_list_KEGG, decreasing = TRUE)#Sort the list in decreasing order
+
 ```
 
 #### Run GO Gene Set Enrichment Analysis
@@ -302,6 +347,21 @@ gseGO_res@result[gseGO_res@result$p.adjust<0.05,, drop=F]
 dotplot(gseGO_res, showCategory=3, split=".sign") + facet_grid(.~.sign)
 dotplot(gseGO_res, showCategory=30) + ggtitle("dotplot for GSEA")
 ```
+
+
+#### Run KEGG Gene Set Enrichment Analysis
+
+```{r DE}
+#Run gseGO_res
+gseKEGG_res <- run_gseKEGG(gse_gene_list_KEGG)
+gseKEGG_res@result[gseKEGG_res@result$p.adjust<0.05,, drop=F]
+
+#Plot
+gseaplot(gseKEGG_res, geneSetID = 19, by = "runningScore", title = gseKEGG_res$Description[19])
+ridgeplot(gseKEGG_res)
+#dotplot(gseKEGG_res, showCategory=30) + ggtitle("dotplot for GSEA")
+```
+
 
 
 #### Run GSEA Gene Set Enrichment Analysis
@@ -346,7 +406,7 @@ Update Genesymbols
 # Get names for all genes for the background/universe & update the gene symbols 
 gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
 geneList_KneeVsWrist$updated<- gene_List$updated
-
+geneList_KneeVsWrist$entrez<- gene_List$entrez
 ```
 
 ### Over-representation analysis
@@ -370,6 +430,19 @@ ego_Wrist <- run_enrichGO(gene_List_Wrist$updated,gene_List$updated)
 ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]# Show enriched terms
 ```
 
+
+#### Run KEGG over-representation analysis
+
+Run over-representation analysis on set of genes of the KEGG collection
+```{r DE}
+#Convert Genesymbold to IDS
+KEGG_Knee <- run_enrichKEGG(gene_List_Knee$entrez,gene_List$entrez)
+KEGG_Knee@result[KEGG_Knee@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+KEGG_Wrist <- run_enrichKEGG(gene_List_Wrist$entrez,gene_List$entrez)
+KEGG_Wrist@result[KEGG_Wrist@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+```
 
 
 #### Run Hallmark over-representation analysis
@@ -411,7 +484,8 @@ dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
 #p2 <- heatplot(ego, foldChange=mygeneList, showCategory=2)
 #cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
-
+#KEGG RESULT 
+#browseKEGG(KEGG_Knee@result[KEGG_Knee@result$p.adjust<0.05,, drop=F], 'hsa04530')
 
 ```
 
@@ -452,15 +526,17 @@ dotplot(ego_Wrist, showCategory=30) + ggtitle("dotplot for ORA")
 
 #### Set up genelist
 ```{r DE}
+#GSEA Gene list
 #Remove NA
 #res = res[-which(is.na(geneList_KneeVsWrist$updated)), ]
+gse_gene_list = geneList_KneeVsWrist$log2FoldChange #Want log2 fold change 
+names(gse_gene_list) <- geneList_KneeVsWrist$updated #Name the vector with Genesymbol
+gse_gene_list = sort(gse_gene_list, decreasing = TRUE) #Sort the list in decreasing order (required for clusterProfiler)
 
-#Want log2 fold change 
-gse_gene_list = geneList_KneeVsWrist$log2FoldChange 
-#Name the vector with Genesymbol
-names(gse_gene_list) <- geneList_KneeVsWrist$updated
-#Sort the list in decreasing order (required for clusterProfiler)
-gse_gene_list = sort(gse_gene_list, decreasing = TRUE)
+#KEGG gene list
+gse_gene_list_KEGG = geneList_KneeVsWrist$log2FoldChange #log2 fold change 
+names(gse_gene_list_KEGG) <- geneList_KneeVsWrist$entrez #name the vector with entrezid
+gse_gene_list_KEGG = sort(gse_gene_list_KEGG, decreasing = TRUE)#Sort the list in decreasing order
 ```
 
 #### Run GO Gene Set Enrichment Analysis
@@ -476,6 +552,19 @@ gseGO_res@result[gseGO_res@result$p.adjust<0.05,, drop=F]
 ```{r DE}
 dotplot(gseGO_res, showCategory=5, split=".sign") + facet_grid(.~.sign)
 dotplot(gseGO_res, showCategory=30) + ggtitle("dotplot for GSEA")
+```
+
+#### Run KEGG Gene Set Enrichment Analysis
+
+```{r DE}
+#Run gseGO_res
+gseKEGG_res <- run_gseKEGG(gse_gene_list_KEGG)
+gseKEGG_res@result[gseKEGG_res@result$p.adjust<0.05,, drop=F]
+
+#Plot
+#gseaplot(gseKEGG_res, geneSetID = 19, by = "runningScore", title = gseKEGG_res$Description[19])
+#ridgeplot(gseKEGG_res)
+#dotplot(gseKEGG_res, showCategory=30) + ggtitle("dotplot for GSEA")
 ```
 
 
@@ -518,6 +607,7 @@ Update Genesymbols
 # Get names for all genes for the background/universe & update the gene symbols 
 gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
 geneList_MCPVsWrist$updated<- gene_List$updated
+geneList_MCPVsWrist$entrez<- gene_List$entrez
 
 ```
 
@@ -543,16 +633,31 @@ ego_Wrist <- run_enrichGO(gene_List_Wrist$updated,gene_List$updated)
 ego_Wrist@result[ego_Wrist@result$p.adjust<0.05,, drop=F]
 ```
 
+#### Run KEGG over-representation analysis
+
+Run over-representation analysis on set of genes of the KEGG collection
+```{r DE}
+#Convert Genesymbold to IDS
+
+KEGG_MCP <- run_enrichKEGG(gene_List_MCP$entrez,gene_List$entrez)
+KEGG_MCP@result[KEGG_MCP@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+KEGG_Wrist <- run_enrichKEGG(gene_List_Wrist$entrez,gene_List$entrez)
+KEGG_Wrist@result[KEGG_Wrist@result$p.adjust<0.05,, drop=F]# Show enriched terms
+
+```
+
+
 
 #### Run Hallmark over-representation analysis
 
 Run over-representation analysis on set of genes of the Hallmark collection
 ```{r DE}
-msig_Knee <- run_enrichr(gene_List_Knee$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
 msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]
 
-msig_MCP <- run_enrichr(gene_List_MCP$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
-msig_Wrist@result[msig_Knee@result$p.adjust<0.05,, drop=F]
+msig_Wrist <- run_enrichr(gene_List_Wrist$updated,TERM2GENE[,c("gs_name", "gene_symbol")],gene_List$updated)
+msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
 ```
 
 
@@ -584,6 +689,8 @@ dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
 #cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
 
 
+#KEGG RESULT 
+#browseKEGG(KEGG_MCP@result[KEGG_MCP@result$p.adjust<0.05,, drop=F], 'hsa04510')
 
 ```
 
@@ -625,13 +732,14 @@ dotplot(ego_Wrist, showCategory=30) + ggtitle("dotplot for ORA")
 ```{r DE}
 #Remove NA
 #res = res[-which(is.na(geneList_MCPVsWrist$updated)), ]
+gse_gene_list = geneList_MCPVsWrist$log2FoldChange # Want log2 fold change 
+names(gse_gene_list) <- geneList_MCPVsWrist$updated # Name the vector with Genesymbol
+gse_gene_list = sort(gse_gene_list, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
 
-#Want log2 fold change 
-gse_gene_list = geneList_MCPVsWrist$log2FoldChange 
-#Name the vector with Genesymbol
-names(gse_gene_list) <- geneList_MCPVsWrist$updated
-#Sort the list in decreasing order (required for clusterProfiler)
-gse_gene_list = sort(gse_gene_list, decreasing = TRUE)
+#KEGG gene list
+gse_gene_list_KEGG = geneList_MCPVsWrist$log2FoldChange #log2 fold change 
+names(gse_gene_list_KEGG) <- geneList_MCPVsWrist$entrez #name the vector with entrezid
+gse_gene_list_KEGG = sort(gse_gene_list_KEGG, decreasing = TRUE)#Sort the list in decreasing order
 ```
 
 #### Run GO Gene Set Enrichment Analysis
@@ -648,6 +756,21 @@ gseGO_res@result[gseGO_res@result$p.adjust<0.05,, drop=F]
 dotplot(gseGO_res, showCategory=3, split=".sign") + facet_grid(.~.sign)
 dotplot(gseGO_res, showCategory=30) + ggtitle("dotplot for GSEA")
 ```
+
+
+#### Run KEGG Gene Set Enrichment Analysis
+
+```{r DE}
+#Run gseGO_res
+gseKEGG_res <- run_gseKEGG(gse_gene_list_KEGG)
+gseKEGG_res@result[gseKEGG_res@result$p.adjust<0.05,, drop=F]
+
+#Plot
+#gseaplot(gseKEGG_res, geneSetID = 19, by = "runningScore", title = gseKEGG_res$Description[19])
+#ridgeplot(gseKEGG_res)
+#dotplot(gseKEGG_res, showCategory=30) + ggtitle("dotplot for GSEA")
+```
+
 
 
 #### Run GSEA Gene Set Enrichment Analysis

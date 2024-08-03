@@ -121,14 +121,14 @@ head(colData(spe))
 ```{r LibrarySize, warning=FALSE}
 #Plot Library size
 hist(spe$sum,breaks = 100,main ="UMIs per spot",xlab ="UMI")
-abline(v = 750, col = "red")
+abline(v = 200, col = "red")
 plotSpots(spe, annotate = "sum",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
 ```
 
 ```{r GenesDetected, warning=FALSE}
 #Plot Genes detected
 hist(spe$detected,breaks = 100,main ="Genes per spot",xlab ="UMI")
-abline(v = 500, col = "red")
+abline(v = 200, col = "red")
 plotSpots(spe, annotate = "detected",size = 1.7)+  scale_colour_gradient(low = "lightgrey", high = "blue")+labs(title="Libsize")
 
 
@@ -783,5 +783,5 @@ for(i in colnames(mat)){
 ```{r SaveDataL2}
 
 saveRDS(spe, file =paste0(path,'/output/Spatial_knee_SC.rds'))
-saveRDS(res, file =paste0(path,'/output/Spatial_knee_SC.rds'))
+saveRDS(res, file =paste0(path,'/output/Spatial_knee_SC_res.rds'))
 ```

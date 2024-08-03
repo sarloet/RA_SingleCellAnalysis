@@ -423,3 +423,137 @@ write.csv(res_KneeVsMCP, paste0(output_dir,'/MAST_KneeVsMCP_MP.csv'), row.names=
 write.csv(res_KneeVsWrist, paste0(output_dir,'/MAST_KneeVsWrist_MP.csv'), row.names=FALSE)
 write.csv(res_MCPVsWrist, paste0(output_dir,'/MAST_MCPVsWrist_MP.csv'), row.names=FALSE)
 ```
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Run MAST Endothelial 
+
+```{r SaveData}
+#Get only Tissue Residnent Macrophages
+sce.subset <- sce[,sce$Annotation_L1 == "Endothelial"]
+
+dim(sce.subset)
+```
+
+#### Run Function
+
+```{r SaveData}
+##### Knee vs MCPs
+res_KneeVsMCP <- find_de_MAST(sce.subset,cond1="Knee",cond2="MCP")
+##### Knee vs Wrist
+res_KneeVsWrist <- find_de_MAST(sce.subset,cond1="Knee",cond2="Wrist")
+#### MCP vs Wrist
+res_MCPVsWrist <- find_de_MAST(sce.subset,cond1="MCP",cond2="Wrist")
+
+```
+
+
+## Show and Plot Result of DEG
+
+
+### Show tables {.tabset}
+
+```{r SaveData,  results='asis', out.width = '30%',fig.height = 7}
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res<-eval(parse(text = paste0("res_",comp)))
+  
+  table<- res[res$PValue<0.05 & abs(res$log2FoldChange) > 0.1,, drop=F]
+  print(table)
+  dim(table)
+  
+  cat(' \n')
+}
+
+```
+
+### Volcano plot {.tabset}
+
+```{r SaveData,  results='asis', out.width = '30%',fig.height = 7}
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  #Create dd for plotting function
+  res_plot<-eval(parse(text = paste0("res_",comp)))
+  
+  row.names(res_plot)<- res_plot$primerid
+  res_plot <- res_plot[,c("PValue","log2FoldChange")]
+    
+  strspl<-strsplit(comp, split = "Vs")#
+  
+  #Create dd for plotting function
+  volcano_plot<-EnhancedVolcano(res_plot, lab = row.names(res_plot), x = 'log2FoldChange', y = 'PValue',
+                  pCutoff = 0.05, FCcutoff = 0.5,
+                  title = paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
+                  subtitle = paste0("Macrophage"," cluster (MAST)"),
+                  pointSize = 1.0, colAlpha = 1,
+                  legendPosition = 'right',
+                  gridlines.major = FALSE,
+                  gridlines.minor = FALSE)+
+                  scale_y_continuous(expand = c(0,0))+
+                  scale_x_continuous(expand = c(0.1,0))
+    
+  print(volcano_plot)
+  cat(' \n')
+}
+
+```
+
+### Heatmap {.tabset}
+
+```{r SaveData, results='asis'}
+library(ComplexHeatmap)
+#select top denes
+
+for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
+  
+  cat(paste0("#### ", comp, "\n"))
+  
+  res <- get(paste0("res_",comp))
+  
+  # Get top significant marker genes
+  res_sig <- res[res$PValue<0.01 & abs(res$log2FoldChange)> 0.1,, drop=F] #genes for cond1
+  data.table::setorder(res_sig, PValue)
+  res_sig<-head(res_sig,n=25)
+  
+  # Subset sce to keep the tested conditions
+  strspl<-strsplit(comp, split = "Vs")#
+  sce.subset.Joint<-sce.subset[,sce.subset$Joint.Location == c(strspl[[1]][1], strspl[[1]][2])]
+  
+  # Aggregate cells by sample and subset for significant genes
+  sce.subset.aggr <- aggregateAcrossCells(sce.subset.Joint,  ids = sce.subset.Joint$Sample, statistics = "mean",use.assay.type = "logcounts", subset.row = res_sig$primerid)
+  
+  # Create Z-score
+  mat<-logcounts(sce.subset.aggr)
+  mat.z <- t(apply(mat,1,scale))
+  # Add colnames for Heatmap
+  colnames(mat.z) <- unique(paste0(sce.subset.aggr$Sample,":",sce.subset.aggr$Joint.Location))
+  
+  # Plot heatmap
+  heatmap_plot <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 1),#colnames(mat.z),
+    name="Z-score",
+    column_title=paste("Differential expression", strspl[[1]][1], "vs", strspl[[1]][2], sep=' '),
+    top_annotation = HeatmapAnnotation(Joint.Location = sapply(strsplit(colnames(mat.z), split = ":"), "[[", 2),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+  print(heatmap_plot)
+   
+   cat(' \n')
+}
+ 
+```
+
+
+## Save the datasets MP
+
+```{r SaveData}
+write.csv(res_KneeVsMCP, paste0(output_dir,'/MAST_KneeVsMCP_EC.csv'), row.names=FALSE)
+write.csv(res_KneeVsWrist, paste0(output_dir,'/MAST_KneeVsWrist_EC.csv'), row.names=FALSE)
+write.csv(res_MCPVsWrist, paste0(output_dir,'/MAST_MCPVsWrist_EC.csv'), row.names=FALSE)
+```
