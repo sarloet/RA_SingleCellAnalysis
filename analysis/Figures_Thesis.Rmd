@@ -1,5 +1,5 @@
 ---
-title: "Clustering"
+title: "Figures_Thesis"
 subtitle: "Figures_Thesis"
 author: "SarahL."
 date: "`r format(Sys.time(), '%b %e %Y %H:%M:%S')`"
@@ -56,6 +56,11 @@ path <- here::here()
 ```{r}
 # RA DATASET
 sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+
+colData(sce)$Annotation_L2[colData(sce)$Annotation_L2 == "CytotoxCD8 TC"] <- "CD8+ TC"
+colData(sce)$Annotation_L2[colData(sce)$Annotation_L2 == "CytotoxCD4 TC"] <- "CD4+ TC"
+
+#installed.packages()[,c("Package","Version")]
 ```
 
 
@@ -74,6 +79,17 @@ ggplot(as.data.frame(colData(sce)), aes(x=Joint.Location))+geom_bar()+ coord_fli
         aspect.ratio = 2/6)+
   labs(x="Joint Location")+
   scale_y_continuous(expand = c(0,0))
+
+
+ggplot(as.data.frame(colData(sce)), aes(x=Sample))+geom_bar()+ggtitle("Number of cells per Sample") + 
+  theme_classic() + stat_count(geom = "text", colour = "white", size = 3.5,aes(label = ..count..),position=position_stack(vjust=0.8))+
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(angle = 45,hjust=1))+
+  labs(x="Sample")+
+  scale_y_continuous(expand = c(0,0))
+
+
 
 ```
 
@@ -118,6 +134,77 @@ ggplot(as.data.frame(colData(sce))) +
     labs( x='UMAP1', y='UMAP2' )+ 
     theme_classic()+ 
     guides(colour = guide_legend(override.aes = list(size=5 ,shape=15),title = "Annotation"))
+
+
+#OC
+#grid.arrange(p_mito, p_detected, p_sum, p_sample+guides(colour = guide_legend(override.aes = list(size=2 ,shape=15),title = "Joint Location")), p_ribo, p_cellcycle+guides(colour = guide_legend(override.aes = list(size=2 ,shape=15),title = "Joint Location")), nrow = 2, ncol = 3)
+
+```
+
+```{r}
+##Abundances
+
+### Sample
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L1, Sample) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L1 <-factor(ClusterInfo$Annotation_L1)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Sample,y=cells, fill=Annotation_L1)) +
+    geom_bar(stat="identity", position="stack") +
+    scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+    labs(title="Absolute Nr Cells per Celltype",subtitle="Per Sample",x="",y="Number of cells")+
+    theme_classic(base_size = 20)+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+    scale_y_continuous(expand = c(0,0))+
+    guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Sample, y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Sample",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+
+
+
+
+### Joint
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(Annotation_L1, Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ClusterInfo$Annotation_L1 <-factor(ClusterInfo$Annotation_L1)
+
+
+#### Absolute comparison
+ggplot(data=ClusterInfo, aes(x=Joint.Location,y=cells, fill=Annotation_L1)) +
+    geom_bar(stat="identity", position="stack") +
+    scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+    labs(title="Absolute Nr Cells per Celltype",subtitle="Per Joint",x="",y="Number of cells")+
+    theme_classic(base_size = 20)+
+    theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+    scale_y_continuous(expand = c(0,0))+
+    guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
+
+#### Relative comparison
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=Annotation_L1)) +
+  geom_bar(stat="identity", position="fill") +
+  scale_fill_manual( values=meta_colors$Annotation_L1[seq.int(length(unique(sce$Annotation_L1)))] ) +
+  labs(title="Celltype Proportions",subtitle="Per Joint",x="",y="Proportion of cells")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,hjust=1), axis.ticks.x=element_blank())+
+  scale_y_continuous(expand = c(0,0))+
+  guides(fill = guide_legend(override.aes = list(size=4 ,shape=15),title = "Annotation"))
 
 
 
@@ -334,6 +421,8 @@ sce
 
 order=c("PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","POSTN+ FIB","CXCL12+ FIB","TREM2+ MP","FOLR2+ MP","CD48+ MP","S100A12+ MP","cDC","pDC","Neutrophil","Mast cell","B cell","Plasma","CytotoxCD8 TC","Memory TC","Naive TC","NKTcell","CytotoxCD4 TC","Venular EC","Capillary EC","Arteriolar EC","Smooth muscle cell")
 #sce.plot$Annotation_L1 <- factor(sce.plot$Annotation_L1, levels = order)
+
+
 
 ```
 
@@ -608,14 +697,14 @@ Macrophage_signatures <- list(
     MP_TREM2 = c("MERTK","TREM2"),#Tissue resident
     MP_FOLR2 = c("MERTK","FOLR2","LYVE1","ID2","ICAM1"),#Tissue resident
     MP_CD48 = c("CD48","SPP1","ISG15","CLEC10A"),#Tissue infiltrating
-    MP_S100A12 = c("S100A12","CD48","MRC1","FCGR3A")#Monocyte (Downregulated MRC1, FCGR3A)
+    MP_S100A12 = c("S100A12","CD48","FCN1")#Monocyte (Downregulated MRC1, FCGR3A)
 )
 
 
 sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Macrophage_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
 altExp(sce.ucell, 'UCell')
 pll <- lapply(names(Macrophage_signatures), function(x) {
-  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=1) +
   labs( x='UMAP 1', y='UMAP 2' )+
   scale_color_viridis(option="magma",name =paste(x) )
 })
@@ -738,6 +827,7 @@ for (i in seq_along(pll)) {
 
 
 ```
+
 ```{r ClusterInfo}
 # Endothelial
 sce.sc<-sce[,sce$Annotation_L1 == "Endothelial cell"]
@@ -838,7 +928,7 @@ Endothelial_signatures <- list(
 sce.ucell <- ScoreSignatures_UCell(sce.sc, features=Endothelial_signatures, assay = 'counts', name=NULL, BPPARAM=bpp)
 altExp(sce.ucell, 'UCell')
 pll <- lapply(names(Endothelial_signatures), function(x) {
-  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=0.5) +
+  plotReducedDim(sce.ucell, dimred="MNN_UMAP_SC_reduced", colour_by=paste(x),by_exprs_values = "UCell",point_alpha=0.8,point_size=1) +
   labs( x='UMAP 1', y='UMAP 2' )+
   scale_color_viridis(option="magma",name =paste(x) )
 })
@@ -1045,7 +1135,7 @@ ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=Annotation_L2)) +
     geom_bar(width=0.8,position=position_dodge(0.9), stat="identity")+ 
     scale_fill_manual( values=meta_colors$Joint.Location[seq.int(length(unique(ClusterInfo$Joint.Location)))] )+
     theme_classic()+
-    labs(title="Relative cell type abundance in celltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")+
+    labs(title="Relative cell type abundance in subcelltypes", subtitle="Per Joint Location", x="", y="Fraction of cells [%]")+
     theme(axis.text.x = element_text(angle = 45,hjust=1), axis.line = element_line(colour = "black"), panel.background = element_rect(fill = NA)) 
 
 
@@ -1057,6 +1147,9 @@ ggplot(Totalcelltype, aes(fill=Joint.Location, y=freq, x=Annotation_L2)) +
 
 ```{r ClusterInfo}
 #SCproportion
+
+colData(sce)$Annotation_L2[colData(sce)$Annotation_L2 == "CytotoxCD8 TC"] <- "CD8+ TC"
+colData(sce)$Annotation_L2[colData(sce)$Annotation_L2 == "CytotoxCD4 TC"] <- "CD4+ TC"
 
 library(scProportionTest)
 library(SeuratObject)
@@ -1304,6 +1397,11 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
 ```{r SaveData, results='asis'}
 library(VennDiagram)
 
+res_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_EC.csv'))#FB,MP,EC
+res_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_EC.csv'))
+res_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_EC.csv'))
+
+
 set1 <-res_KneeVsMCP[res_KneeVsMCP$FDR<0.1 & abs(res_KneeVsMCP$log2FoldChange)> 0.1,, drop=F]$primerid
 set2 <-res_KneeVsWrist[res_KneeVsWrist$FDR<0.1 & abs(res_KneeVsWrist$log2FoldChange)> 0.1,, drop=F]$primerid
 set3 <-res_MCPVsWrist[res_MCPVsWrist$FDR<0.1 & abs(res_MCPVsWrist$log2FoldChange)> 0.1,, drop=F]$primerid
@@ -1312,15 +1410,20 @@ set3 <-res_MCPVsWrist[res_MCPVsWrist$FDR<0.1 & abs(res_MCPVsWrist$log2FoldChange
 venn.diagram(
   x=list(set1,set2,set3),
   category.names=c("KneeVsMCP","KneeVsWrist","MCPVsWrist"),
-  filename="venn.png",
+  filename="venn_EC.png",
   lwd=2,
   Ity='blank',
-  fill=c("#B17BA6","#A6C2CC","#E78AC3"),
-  cex=0.6,
+  fill=c("#fde724","#FFC88D","#E6F598"),   # "#B17BA6","#A6C2CC","#E78AC3" FB || "#7BAFDE","#CCECE6","#218A9D" MP || EC  "#fde724","#FFC88D","#E6F598"
+  cex=2,
   fontface='bold',
-  fontfamily='sans'
+  fontfamily='sans',
+  
+  cat.cex = 0, #1.6
+  cat.fontface = "bold",
+  
+  
 )
- 
+
 
 #saves in dir
 ```
@@ -1328,6 +1431,17 @@ venn.diagram(
 
 ```{r WilcoxonLabel}
 # Heatmap of DEGS
+
+
+## RA DATASET
+res_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+res_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+res_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
+
+sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+#sce.sc <- sce[,sce$Annotation_L1 == "Endothelial cell"]
+#sce.sc <- sce[,sce$Annotation_L2 %in% c("FOLR2+ MP","TREM2+ MP")]
+
 
 library(ComplexHeatmap)
 
@@ -1348,10 +1462,6 @@ DEGS <- c(set1$primerid,set2$primerid,set3$primerid)
 DEGS<-unique(DEGS)
 
 order=c("MCP","Wrist","Knee")
-
-
-sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
-
 
 
 
@@ -1386,7 +1496,110 @@ gc()
 
 ```
 
+```{r}
+#DEG heatmap in FB sutypes
+library(ComplexHeatmap)
 
+#Fibrblast subset
+sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+
+# Get genes
+genelist <- c("HOXD11","HOXD10","HOXC10","SCGB2B2","MSX1","TENM3","DBN1")
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Joint.Location, statistics = "mean",use.assay.type = "logcounts", subset.row = genelist)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+  
+# Plot heatmap Z score
+heatmap_plot_z <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  col = circlize::colorRamp2(c(-1.5, 0, 1.5), c("#4393C3", "white", "#B2182B")),
+  top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                    col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot_z)
+
+
+
+# Plot heatmap avg
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+
+heatmap_plot_avg <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = colnames(mat.z),
+    name="Average\nexpression",
+    col = circlize::colorRamp2(c(0, 1.5), c("lightgrey", "#B2182B")),
+    top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot_avg)
+
+
+
+
+
+
+
+
+# Get genes
+genelist <- c("HOXD11","HOXD10","HOXC10","SCGB2B2","MSX1","TENM3","DBN1")
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Annotation_L2, statistics = "mean",use.assay.type = "logcounts", subset.row = genelist)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Annotation_L2))
+  
+# Plot heatmap Z score
+heatmap_plot_z <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  col = circlize::colorRamp2(c(-1.5, 0, 1.5), c("#4393C3", "white", "#B2182B")),
+  top_annotation = HeatmapAnnotation(Annotation_L2 =colnames(mat.z),
+                                    col = list(Annotation_L2 = c("PRG4+ FIB" = "#945cb4","CHI3L2+ FIB" = "#B17BA6","POSTN+ FIB" = "#E7298A","CXCL12+ FIB" = "#E78AC3","MFAP5+ FIB" = "#FCCDE5"))))
+
+print(heatmap_plot_z)
+
+
+
+# Plot heatmap avg
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Annotation_L2))
+
+heatmap_plot_avg <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = colnames(mat.z),
+    name="Average\nexpression",
+    col = circlize::colorRamp2(c(0, 1.5), c("lightgrey", "#B2182B")),
+    top_annotation = HeatmapAnnotation(Annotation_L2 =colnames(mat.z),
+                                       col = list(Annotation_L2 = c("PRG4+ FIB" = "#945cb4","CHI3L2+ FIB" = "#B17BA6","POSTN+ FIB" = "#E7298A","CXCL12+ FIB" = "#E78AC3","MFAP5+ FIB" = "#FCCDE5"))))
+
+print(heatmap_plot_avg)
+
+
+
+
+
+
+```
 
 # HOX genes plots
 
@@ -1494,6 +1707,65 @@ do.call("grid.arrange", c(p, nrow=length(p)))
           
 ```
 
+
+
+```{r}
+#Hox heatmap in FB sutypes
+library(ComplexHeatmap)
+
+#Fibrblast subset
+sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+
+# Get genes
+genelist <- c("HOXD13","HOXD11","HOXD10","HOXD-AS2","HOXD9","HOXD8","HOXD3","HOXA3","HOXA5","HOXA6","HOXA7","HOXA9","HOXA10","HOXA11","HOXA11-AS","HOXA13","HOXC10","HOXC6","HOXC9","HOXC8","HOXC4")
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Annotation_L2, statistics = "mean",use.assay.type = "logcounts", subset.row = genelist)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Annotation_L2))
+  
+# Plot heatmap Z score
+heatmap_plot_z <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  col = circlize::colorRamp2(c(-1.5, 0, 1.5), c("#4393C3", "white", "#B2182B")),
+  top_annotation = HeatmapAnnotation(Annotation_L2 =colnames(mat.z),
+                                    col = list(Annotation_L2 = c("PRG4+ FIB" = "#945cb4","CHI3L2+ FIB" = "#B17BA6","POSTN+ FIB" = "#E7298A","CXCL12+ FIB" = "#E78AC3","MFAP5+ FIB" = "#FCCDE5"))))
+
+print(heatmap_plot_z)
+
+
+
+# Plot heatmap avg
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Annotation_L2))
+
+heatmap_plot_avg <- Heatmap(
+    mat.z,cluster_rows = T,cluster_columns = T, 
+    column_labels = colnames(mat.z),
+    name="Average\nexpression",
+    col = circlize::colorRamp2(c(0, 1.5), c("lightgrey", "#B2182B")),
+    top_annotation = HeatmapAnnotation(Annotation_L2 =colnames(mat.z),
+                                       col = list(Annotation_L2 = c("PRG4+ FIB" = "#945cb4","CHI3L2+ FIB" = "#B17BA6","POSTN+ FIB" = "#E7298A","CXCL12+ FIB" = "#E78AC3","MFAP5+ FIB" = "#FCCDE5"))))
+
+print(heatmap_plot_avg)
+
+
+
+
+```
+
+
+
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Sample distances
@@ -1533,7 +1805,7 @@ plot_dist_heatmap <- function(sce, sampleDists) {
 #sce.subset <- sce[rowData(sce)$is_hvg== "TRUE",sce$celltype == "Fibroblast"]
 sce.subset.aggr <- aggregateAcrossCells(sce,  ids = sce$Sample, statistics = "mean",use.assay.type = "logcounts")
 
-sampleDists <- dist(t(assay(sce.subset.aggr)))
+sampleDists <- stats::dist(t(assay(sce.subset.aggr)))
 print(plot_dist_heatmap(sce.subset,sampleDists))
 
 poisd <- PoissonDistance(t(assay(sce.subset.aggr)))
@@ -1575,6 +1847,14 @@ data.frame(head(vars))
 data.frame(vars) %>% arrange(desc(Joint.Location))
 
 plotExplanatoryVariables(vars)
+
+
+#Output path
+output_dir <- here("output","VariableMetrics")
+if(!dir.exists(output_dir)) dir.create(output_dir)
+
+write.csv(vars,"VarianceExplained.csv")
+
 ```
 
 
@@ -1646,29 +1926,58 @@ ego_Wrist_MvW <- run_enrichGO(gene_List_Wrist_MvW$updated,gene_List$updated)
 ```{r LoadDataset}
 #Plot
 
+library(clusterProfiler)
+library(enrichplot)
+
 # Dot plot
 #sample(ego_Knee_KvM$Description)
 #selected=ego_Knee_KvM$Description[][c(20,42,)]
 selected=c("cilium","motile cilium","9+0 non-motile cilium","purine ribonucleoside triphosphate metabolic process" ,"purine ribonucleoside triphosphate biosynthetic process","purine nucleoside triphosphate biosynthetic process", "purine nucleoside triphosphate metabolic process","monoatomic ion transmembrane transporteractivity","proton-transporting two-sector ATPase complex, proton-transporting domain","inorganic cation transmembrane transporter activity")
 mutate(ego_Knee_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
-     barplot(x="qscore", showCategory=selected)+
+     barplot(x="-log(p.adjust)", showCategory=selected)+
      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+#better barplot
+mutate(ego_Knee_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+    barplot(x="qscore", showCategory=selected)+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = "none")+ 
+    scale_fill_gradient(low = "#B2DF8A", high = "#B2DF8A") +labs( x = "-log10(p.adjust)")
 
 
 treeplot(pairwise_termsim(simplify(ego_Knee_KvM)))
 
 #simplify(ego_MCP_KvM)$Description[][]
 
-selected=c("bone development", "response to growth factor","actin filament-based process","actomyosin structure organization","regulation of actin filament organization","transforming growth factor beta binding","SMAD binding","extracellular matrix structural constituent","actin filament bundle","collagen-containing extracellular matrix","focal adhesion","cell body","microfibril","positive regulation of cellular component biogenesis")#"microfibril"
+selected=c("bone development", "response to growth factor","actin filament-based process","actomyosin structure organization","regulation of actin filament organization","transforming growth factor beta binding","SMAD binding","extracellular matrix structural constituent","actin filament bundle","collagen-containing extracellular matrix","focal adhesion","cell body","microfibril","positive regulation of cellular component biogenesis","positive regulation of canonical Wnt signaling pathway")#"microfibril"
 
 mutate(ego_MCP_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
      barplot(x="qscore", showCategory=selected)+
      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
+#better barplot
+mutate(ego_MCP_KvM, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+    barplot(x="qscore", showCategory=selected)+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = "none")+ 
+    scale_fill_gradient(low = "#FB8072", high = "#FB8072") +labs( x = "-log10(p.adjust)")
+
 treeplot(pairwise_termsim(simplify(ego_MCP_KvM)))
 
 termsex=simplify(ego_MCP_KvM)$ID[! simplify(ego_MCP_KvM)$Description %in% c("muscle structure development","muscle organ development","muscle cell differentiation") ]
 dotplot(simplify(ego_MCP_KvM), showCategory=30,term=termsex) + ggtitle("Dotplot for ORA in MCP from MCPvsKnee Comparison")
+
+```
+
+
+```{r LoadDataset}
+#Plot
+ego_Knee_KvM@result[ego_Knee_KvM@result$p.adjust<0.05,, drop=F]
+ego_MCP_KvM@result[ego_MCP_KvM@result$p.adjust<0.05,, drop=F]
+
+ego_Knee_KvW@result[ego_MCP_MvW@result$p.adjust<0.05,, drop=F]
+ego_Wrist_KvW@result[ego_MCP_MvW@result$p.adjust<0.05,, drop=F]
+
+ego_MCP_MvW@result[ego_MCP_MvW@result$p.adjust<0.05,, drop=F]
+ego_Wrist_MvW@result[ego_MCP_MvW@result$p.adjust<0.05,, drop=F]
 
 ```
 
@@ -1686,7 +1995,7 @@ h1<-heatplot(ego_Knee_KvM, showCategory = selected)
 h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2+theme(text=element_text(size=15))
 
 #Plot ribonucleoside associated genes
 #selected=ego_Knee_KvM$Description[][c(20,42,)]
@@ -1696,6 +2005,7 @@ h1<-heatplot(ego_Knee_KvM, showCategory = selected)
 h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
+h2
 
 selected=c("monoatomic ion transmembrane transporter activity","proton-transporting two-sector ATPase complex", "proton-transporting domain","inorganic cation transmembrane transporter activity" )
 
@@ -1703,7 +2013,7 @@ h1<-heatplot(ego_Knee_KvM, showCategory = selected)
 h2<-heatplot(ego_Knee_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2
 #emapplot(pairwise_termsim(ego_Knee_KvM))
 
 
@@ -1717,7 +2027,7 @@ h1<-heatplot(ego_MCP_KvM, showCategory = selected)
 h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2
 
 #Plot focal cell-substrate adhesion process associated genes
 #simplify(ego_MCP_KvM)$Description[][]
@@ -1727,7 +2037,7 @@ h1<-heatplot(ego_MCP_KvM, showCategory = selected)
 h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2
 
 #Plot Cell migration associated genes
 selected=c("positive regulation of locomotion","positive regulation of cell migration"   )
@@ -1736,15 +2046,26 @@ h1<-heatplot(ego_MCP_KvM, showCategory = selected)
 h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2
 
 #Plot Signalling associated genes
 selected=c("SMAD binding","transforming growth factor beta binding","response to growth factor","cellular response to transforming growth factor beta stimulus" ,"positive regulation of canonical Wnt signaling pathway"   )
 
 h1<-heatplot(ego_MCP_KvM, showCategory = selected)
-h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$updated), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
+h2
+
+#Plot Signalling associated genes
+selected=c("SMAD binding","transforming growth factor beta binding","response to growth factor","cellular response to transforming growth factor beta stimulus" ,"positive regulation of canonical Wnt signaling pathway","positive regulation of Wnt signaling pathway","transforming growth factor beta receptor signaling pathway")
+
+h1<-heatplot(ego_MCP_KvM, showCategory = selected)
+h2<-heatplot(ego_MCP_KvM, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$updated), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+cowplot::plot_grid(h1,h2,ncol =1 )
+h2
+
 
 ```
 
@@ -1802,6 +2123,11 @@ mutate(simplify(ego_MCP_MvW), qscore = -log(p.adjust, base=10)) %>% arrange(desc
      barplot(x="qscore")+
      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
+#better barplot
+mutate(ego_MCP_MvW, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+    barplot(x="qscore")+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = "none")+ 
+    scale_fill_gradient(low = "#FB8072", high = "#FB8072") +labs( x = "-log10(p.adjust)")
 
 treeplot(pairwise_termsim(simplify(ego_MCP_MvW)))
 
@@ -1811,10 +2137,18 @@ dotplot(simplify(ego_MCP_MvW),showCategory=20)
 
 
 #Wrist
+selected=c("cilium","motile cilium","9+0 non-motile cilium","purine ribonucleoside triphosphate metabolic process" ,"purine ribonucleoside triphosphate biosynthetic process","purine nucleoside triphosphate biosynthetic process", "purine nucleoside triphosphate metabolic process","monoatomic ion transmembrane transporteractivity","proton-transporting two-sector ATPase complex, proton-transporting domain","inorganic cation transmembrane transporter activity")
 
 mutate(ego_Wrist_MvW, qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
     barplot(x="qscore")+
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+#selected=ego_MCP_MvW$Description[][c(20,42,)]
+
+mutate(simplify(ego_Wrist_MvW), qscore = -log(p.adjust, base=10)) %>% arrange(desc(qscore))%>% 
+    barplot(x="qscore",showCategory=11)+
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = "none")+ 
+    scale_fill_gradient(low = "#7BAFDE", high = "#7BAFDE") +labs( x = "-log10(p.adjust)")
 
 treeplot(pairwise_termsim(simplify(ego_Wrist_MvW)))
 
@@ -1838,16 +2172,16 @@ h1<-heatplot(ego_MCP_MvW, showCategory = selected)
 h2<-heatplot(ego_MCP_MvW, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2+theme(text=element_text(size=15))
 
 #Plot Cell migration associated genes
-selected=c("cell-substrate adhesion","cell-substrate junction", "focal adhesion","actin filament-based process","actin cytoskeleton organization","regulation of actin cytoskeleton organization" ,"regulation of actin filament-based process","integrin binding","myofibril")
+selected=c("cell-substrate adhesion","cell-substrate junction", "focal adhesion","actin filament-based process","actin cytoskeleton organization","regulation of actin cytoskeleton organization" ,"integrin binding","myofibril")
 
 h1<-heatplot(ego_MCP_MvW, showCategory = selected)
 h2<-heatplot(ego_MCP_MvW, foldChange=setNames(abs(geneList_MCPVsWrist$log2FoldChange),geneList_MCPVsWrist$primerid), showCategory = selected)+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2+theme(text=element_text(size=15))
 
 
 ###Wrist MvW
@@ -1858,7 +2192,7 @@ h1<-heatplot(ego_Wrist_MvW,showCategory = selected)
 h2<-heatplot(ego_Wrist_MvW, foldChange=setNames(abs(geneList_MCPVsWrist$log2FoldChange),geneList_MCPVsWrist$primerid),showCategory = selected )+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
 
 cowplot::plot_grid(h1,h2,ncol =1 )
-
+h2+theme(text=element_text(size=15))
 
 
 
@@ -1911,4 +2245,576 @@ heatmap_plot <- Heatmap(
 print(heatmap_plot)
 
 
+```
+
+```{r}
+#Hox heatmap in FB sutypes
+library(ComplexHeatmap)
+
+#Fibrblast subset
+sce.sc<-sce[,sce$Annotation_L1 == "Macrophage"]
+sce.sc<-sce
+
+# Get genes
+genelist <- genelist<- c("IL6", "IL1B", "TNF", "MMP1", "MMP3", "MMP13", "CCL2", "IL8", "RANKL", "VEGF", "COX2", "IL17RA")
+genelist <-genelist[genelist %in% rownames(sce)]
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Joint.Location, statistics = "mean",use.assay.type = "logcounts", subset.row = genelist)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+  
+# Plot heatmap Z score
+heatmap_plot <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot)
+```
+
+# Cell cycle genes
+```{r}
+# RA DATASET
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+
+
+ClusterInfo <- as.data.frame(colData(sce)) %>% 
+  group_by(phase,Joint.Location) %>%
+  summarise(cells = n(),.groups = 'drop') 
+
+ggplot(data=ClusterInfo,aes(x=Joint.Location, y=cells, fill=phase)) +
+  geom_bar(stat="identity", position="fill") +
+  labs(title="Relative comparison",subtitle="Per Condition",x="",y="Number of cells")+
+  theme_classic()+
+  scale_fill_manual( values=c("#6D96CC","#F99636","#68BD49"),name = "phase" )+
+  theme(axis.text.x = element_text(angle = 45,hjust=1))+
+  scale_y_continuous(expand = c(0,0))
+
+
+#Plot PCA after data integration
+plotReducedDim(sce, dimred="MNN_merge", colour_by="phase",point_alpha=0.8,point_size=0.1) +
+  labs( x='PCA 1', y='PCA 2' )+ 
+  ggtitle("PCA colored by Cellcycle")+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+plotReducedDim(sce, dimred="MNN_merge_reduced_UMAP", colour_by="phase",point_alpha=0.7,point_size=0.1) + 
+  ggtitle("UMAP colored by Cellcycle")+
+  labs( x='UMAP 1', y='UMAP 2' )+ 
+  guides(colour = guide_legend(override.aes = list(size=2)))
+
+plotReducedDim(sce, dimred="MNN_merge_reduced", colour_by="phase",point_alpha=0.8,point_size=0.1) + 
+  facet_wrap(~sce$phase)+ 
+  theme(strip.background=element_rect(fill="white"))+
+  guides(colour = guide_legend(override.aes = list(size=2)))+
+  labs( x='PCA 1', y='PCA 2' )
+
+
+```
+
+
+
+
+
+# GSEA
+
+```{r}
+# Run enrichGO
+
+library(enrichplot)
+library(msigdbr)
+
+
+run_gseGO <- function(gene_list) {
+  
+  gseGO_res <- gseGO(
+    gene = gene_list,
+    OrgDb = org.Hs.eg.db,
+    keyType = 'SYMBOL',
+    ont = "all",
+    pAdjustMethod = "BH",
+    minGSSize    = 1,
+    maxGSSize    = 5000,
+    pvalueCutoff = 0.05,
+    verbose      = FALSE)
+  return(gseGO_res) 
+}
+
+
+# Run GSEA
+run_GSEA <- function(gene_list, gene_sets) {
+  
+  GSEA_res <- GSEA(
+    gene_list,
+    TERM2GENE = gene_sets,
+    pAdjustMethod = "BH",
+    minGSSize    = 1,
+    maxGSSize    = 5000,
+    pvalueCutoff = 0.05,
+    verbose      = FALSE)
+  return(GSEA_res) 
+}
+
+
+gene_set_C5 <- msigdbr(species = "Homo sapiens", category = "C5")
+gene_set_C2 <- msigdbr(species = "Homo sapiens", category = "C2")
+gene_set_H <- msigdbr(species = "Homo sapiens", category = "H")
+
+TERM2GENE <- rbind(gene_set_C5, gene_set_C2, gene_set_H) %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
+
+full_msigdbr <- msigdbr(species = "Homo sapiens")
+
+TERM2GENE_full_msigdbr <- full_msigdbr %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
+
+
+```
+
+```{r LoadDataset}
+## RA DATASET
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
+geneList_KneeVsMCP$updated<- gene_List$updated
+geneList_KneeVsMCP$entrez<- gene_List$entrez
+
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
+geneList_KneeVsWrist$updated<- gene_List$updated
+geneList_KneeVsWrist$entrez<- gene_List$entrez
+
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
+geneList_MCPVsWrist$updated<- gene_List$updated
+geneList_MCPVsWrist$entrez<- gene_List$entrez
+```
+
+
+
+```{r LoadDataset}
+## RA DATASET
+gse_gene_list_KneeVsMCP = geneList_KneeVsMCP$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_KneeVsMCP) <- geneList_KneeVsMCP$updated # Name the vector with Genesymbol
+gse_gene_list_KneeVsMCP = sort(gse_gene_list_KneeVsMCP, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_KneeVsMCP <- run_gseGO(gse_gene_list_KneeVsMCP)
+gseGO_res_KneeVsMCP <- run_GSEA(gse_gene_list_KneeVsMCP,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+
+
+gse_gene_list_KneeVsWrist = geneList_KneeVsWrist$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_KneeVsWrist) <- geneList_KneeVsWrist$updated # Name the vector with Genesymbol
+gse_gene_list_KneeVsWrist = sort(gse_gene_list_KneeVsWrist, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_KneeVsWrist <- run_gseGO(gse_gene_list_KneeVsWrist)
+gseGO_res_KneeVsWrist <- run_GSEA(gse_gene_list_KneeVsWrist,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+gse_gene_list_MCPVsWrist = geneList_MCPVsWrist$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_MCPVsWrist) <- geneList_MCPVsWrist$updated # Name the vector with Genesymbol
+gse_gene_list_MCPVsWrist = sort(gse_gene_list_MCPVsWrist, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_MCPVsWrist <- run_gseGO(gse_gene_list_MCPVsWrist)
+gseGO_res_MCPVsWrist <- run_GSEA(gse_gene_list_MCPVsWrist,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+```
+
+
+```{r DE}
+#Run gseGO_res
+gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F]
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$p.adjust<0.05,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F]
+
+
+
+#selected=c("HALLMARK_TNFA_SIGNALING_VIA_NFKB" ,"REACTOME_CYTOKINE_SIGNALING_IN_IMMUNE_SYSTEM","HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOMF_EXTRACELLULAR_MATRIX_STRUCTURAL_CONSTITUENT","GOCC_ACTIN_CYTOSKELETON","GOCC_MICROFIBRIL","REACTOME_SIGNALING_BY_INTERLEUKINS")
+
+#selected=c("NAGASHIMA_EGF_SIGNALING_UP" ,"NAGASHIMA_NRG1_SIGNALING_UP","HALLMARK_TNFA_SIGNALING_VIA_NFKB","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION")
+
+#selected=c("GOMF_EXTRACELLULAR_MATRIX_STRUCTURAL_CONSTITUENT" ,"HALLMARK_TNFA_SIGNALING_VIA_NFKB","GOMF_ACTIN_FILAMENT_BINDING","GOCC_ACTIN_CYTOSKELETON","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOMF_ACTIN_BINDING","GOCC_ANCHORING_JUNCTION","HALLMARK_INTERFERON_GAMMA_RESPONSE","REACTOME_INTERFERON_SIGNALING","NAGASHIMA_EGF_SIGNALING_UP","GOBP_POSITIVE_REGULATION_OF_LEUKOCYTE_CELL_CELL_ADHESION","SARRIO_EPITHELIAL_MESENCHYMAL_TRANSITION_DN","HALLMARK_IL6_JAK_STAT3_SIGNALING","HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION","GOBP_INFLAMMATORY_RESPONSE","GOBP_LOCOMOTION","NAGASHIMA_NRG1_SIGNALING_UP","GOBP_CELL_MIGRATION","GOBP_BONE_MORPHOGENESIS","MEBARKI_HCC_PROGENITOR_WNT_UP","GOBP_RESPONSE_TO_GROWTH_FACTOR","GOBP_OSTEOBLAST_DIFFERENTIATION","HALLMARK_TGF_BETA_SIGNALING","WP_FOCAL_ADHESION")
+
+selected=c("GOCC_MICROFIBRIL","HALLMARK_TGF_BETA_SIGNALING",'GOBP_LOCOMOTION',"GOBP_RESPONSE_TO_GROWTH_FACTOR","HALLMARK_INTERFERON_GAMMA_RESPONSE","GOMF_ACTIN_BINDING","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","FOROUTAN_PRODRANK_TGFB_EMT_UP","GOBP_BONE_MORPHOGENESIS","GOCC_ANCHORING_JUNCTION","WP_FOCAL_ADHESION","GOMF_ACTIN_FILAMENT_BINDING","MEBARKI_HCC_PROGENITOR_WNT_UP")
+
+
+dotplot(gseGO_res_KneeVsMCP, showCategory=selected, orderBy = "setSize", split=".sign") + 
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 10))+
+    scale_x_continuous(breaks = seq(0.2, 0.45, by = 0.1))+
+    facet_grid(.~.sign)
+
+
+dotplot(gseGO_res_KneeVsWrist, showCategory=selected, orderBy = "setSize", split=".sign") +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 10))+
+    #scale_x_continuous(breaks = seq(0.2, 0.45, by = 0.1))+
+    facet_grid(.~.sign)
+
+dotplot(gseGO_res_MCPVsWrist, showCategory=selected, orderBy = "setSize", split=".sign") +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 10))+
+    scale_x_continuous(breaks = seq(0.25, 0.5, by = 0.1))+
+    facet_grid(.~.sign)
+
+
+
+
+heatplot(gseGO_res_KneeVsMCP, foldChange=setNames(geneList_KneeVsMCP$log2FoldChange,geneList_KneeVsMCP$primerid), showCategory = c("MEBARKI_HCC_PROGENITOR_WNT_UP","HALLMARK_TGF_BETA_SIGNALING","FOROUTAN_PRODRANK_TGFB_EMT_UP"))+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+
+heatplot(gseGO_res_KneeVsMCP, foldChange=setNames(geneList_KneeVsMCP$log2FoldChange,geneList_KneeVsMCP$primerid), showCategory = c("NAGASHIMA_NRG1_SIGNALING_UP","HALLMARK_TGF_BETA_SIGNALING"))+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+
+
+
+
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="Knee vs MCP")
+
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="Knee vs Wrist")
+
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="MCP vs Wrist")
+
+```
+
+
+```{r DE}
+#Run gseGO_res
+gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F]
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$p.adjust<0.05,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F]
+
+#cbind(gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F][1,])
+
+#cbind(gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F][1,],gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F][1,])
+
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+
+
+
+#Cell adhesion --> GO:0003779 actin binding, GO:0005925 focal adhesion, GO:0062023 collagen-containing extracellular matrix
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+
+
+#Ridgeplot
+selected=c(1"extracellular matrix structural constituent" ,2"actin filament binding",3"actin binding" , 4"structural molecule activity" ,"cytoskeletal protein binding"  ,"cell adhesion molecule binding","calcium ion binding","collagen binding","integrin binding" ,"cell-substrate junction")
+
+#Ridgeplot of GSEA res
+ridgeplot(simplify(gseGO_res_KneeVsMCP),showCategory = 10)
+ridgeplot(simplify(gseGO_res_KneeVsWrist),showCategory = 10)
+ridgeplot(simplify(gseGO_res_MCPVsWrist),showCategory = 10)
+
+
+
+dotplot(gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$Description==selected,, drop=F])
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$Description==selected,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$Description==selected,, drop=F]
+
+```
+
+```{r DE}
+#GSEA together --> DOES NOT WORK
+
+df_gseGO_res_KneeVsMCP<- as.data.frame(gseGO_res_KneeVsMCP) %>%
+    filter(ID == "GO:0005201")
+
+df_gseGO_res_KneeVsWrist <- as.data.frame(gseGO_res_KneeVsWrist) %>%
+    filter(ID == "GO:0005201")
+
+df_gseGO_res_KneeVsWrist <- as.data.frame(gseGO_res_MCPVsWrist) %>%
+    filter(ID == "GO:0005201")
+
+combined_df <- bind_rows(df_gseGO_res_KneeVsMCP, df_gseGO_res_KneeVsWrist,df_gseGO_res_KneeVsWrist)
+
+
+filtered_gsea <- new("gseaResult",
+                     result = combined_df,
+                     organism = gseGO_res_KneeVsMCP@organism,
+                     setType = gseGO_res_KneeVsMCP@setType,
+                     geneSets = gseGO_res_KneeVsMCP@geneSets,
+                     keytype = gseGO_res_KneeVsMCP@keytype,
+                     geneList = gseGO_res_KneeVsMCP@geneList,
+                     params = gseGO_res_KneeVsMCP@params,
+                     readable = gseGO_res_KneeVsMCP@readable)
+
+gseaplot2(filtered_gsea, geneSetID = 1:3)
+```
+
+
+#Cellchat heatmap
+
+```{r}
+# Heatmap of DEGS
+
+
+## RA DATASET
+library(ComplexHeatmap)
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
+#sce.sc<-sce[,sce$Annotation_L1 == "Fibroblast"]
+sce.sc<-sce
+
+
+genes<-c("IL6","TGFB1","ANGPTL4","ANGPTL2","JUN","WNT","NOTCH")
+genes<-c("TNF","IL6","IL1B","PTPN22","STAT4","CTLA4","HLA-DRB1","TRAF1","CCL5","IRF5", "CD28", "CD40", "IL10", "MIF", "NFKB1", "PADI4", "FCGR2A", "PTPRC", "PTPN2", "SPRED2","REL", "RUNX1", "CTLA4", "STAT3", "HLA-DRB1", "BTLA", "TNFRSF1A", "BCL2L11", "ANKRD55", "KIF5A","UBE2L3", "CCR6", "IL2RA", "TYK2", "IL21", "IRAK1", "IKZF1", "PRDM1", "FCGR3A", "CXCR4", "CD86","CD14", "TNFAIP3", "NFKBIE", "TRAF6", "IL2RB", "IL7R")
+genes <- genes[genes %in% rownames(sce) ]
+
+
+# Aggregate cells by condition and subset for significant genes
+sce.subset.aggr <- aggregateAcrossCells(sce.sc,  ids = sce.sc$Joint.Location, statistics = "mean",use.assay.type = "logcounts", subset.row = genes)
+  
+# Create Z-score
+mat<-logcounts(sce.subset.aggr)
+mat.z <- t(apply(mat,1,scale))#scale
+mat.z[is.na(mat.z)]<-0 #se na to zero
+
+# Add colnames for Heatmap
+colnames(mat.z) <- unique(paste0(sce.subset.aggr$Joint.Location))
+  
+# Plot heatmap
+heatmap_plot <- Heatmap(
+  mat.z,cluster_rows = T,cluster_columns = T, 
+  column_labels = colnames(mat.z),
+  name="Z-score",
+  heatmap_legend_param = list(at = c(-1.5,-1,-0.5, 0, 0.5, 1, 1.5)),
+  col = circlize::colorRamp2(c(-1.5, 0, 1.5), c("#4393C3", "white", "#B2182B")),
+  top_annotation = HeatmapAnnotation(Joint.Location =colnames(mat.z),
+                                       col = list(Joint.Location = c("Knee" = "#00bfff", "MCP" = "#FB8072", "Wrist" = "#33A02C"))))
+
+print(heatmap_plot)
+
+
+
+#rm(sce.plot)
+gc()
+```
+
+
+# GSEA
+
+```{r}
+# Run enrichGO
+
+library(enrichplot)
+library(msigdbr)
+
+
+run_gseGO <- function(gene_list) {
+  
+  gseGO_res <- gseGO(
+    gene = gene_list,
+    OrgDb = org.Hs.eg.db,
+    keyType = 'SYMBOL',
+    ont = "all",
+    pAdjustMethod = "BH",
+    minGSSize    = 1,
+    maxGSSize    = 5000,
+    pvalueCutoff = 0.05,
+    verbose      = FALSE)
+  return(gseGO_res) 
+}
+
+
+# Run GSEA
+run_GSEA <- function(gene_list, gene_sets) {
+  
+  GSEA_res <- GSEA(
+    gene_list,
+    TERM2GENE = gene_sets,
+    pAdjustMethod = "BH",
+    minGSSize    = 1,
+    maxGSSize    = 5000,
+    pvalueCutoff = 0.05,
+    verbose      = FALSE)
+  return(GSEA_res) 
+}
+
+
+gene_set_C5 <- msigdbr(species = "Homo sapiens", category = "C5")
+gene_set_C2 <- msigdbr(species = "Homo sapiens", category = "C2")
+gene_set_H <- msigdbr(species = "Homo sapiens", category = "H")
+
+TERM2GENE <- rbind(gene_set_C5, gene_set_C2, gene_set_H) %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
+
+full_msigdbr <- msigdbr(species = "Homo sapiens")
+
+TERM2GENE_full_msigdbr <- full_msigdbr %>% 
+  dplyr::select(gs_name, human_entrez_gene, gs_cat, human_gene_symbol,gs_id) %>% 
+  distinct() %>% 
+  dplyr::rename(entrez_gene = human_entrez_gene)%>% 
+  dplyr::rename(gene_symbol = human_gene_symbol)
+
+
+```
+
+```{r LoadDataset}
+## RA DATASET
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsMCP$primerid)
+geneList_KneeVsMCP$updated<- gene_List$updated
+geneList_KneeVsMCP$entrez<- gene_List$entrez
+
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_KneeVsWrist$primerid)
+geneList_KneeVsWrist$updated<- gene_List$updated
+geneList_KneeVsWrist$entrez<- gene_List$entrez
+
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
+gene_List<-update_gene_names(geneList_MCPVsWrist$primerid)
+geneList_MCPVsWrist$updated<- gene_List$updated
+geneList_MCPVsWrist$entrez<- gene_List$entrez
+```
+
+
+
+```{r LoadDataset}
+## RA DATASET
+gse_gene_list_KneeVsMCP = geneList_KneeVsMCP$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_KneeVsMCP) <- geneList_KneeVsMCP$updated # Name the vector with Genesymbol
+gse_gene_list_KneeVsMCP = sort(gse_gene_list_KneeVsMCP, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_KneeVsMCP <- run_gseGO(gse_gene_list_KneeVsMCP)
+gseGO_res_KneeVsMCP <- run_GSEA(gse_gene_list_KneeVsMCP,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+
+
+gse_gene_list_KneeVsWrist = geneList_KneeVsWrist$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_KneeVsWrist) <- geneList_KneeVsWrist$updated # Name the vector with Genesymbol
+gse_gene_list_KneeVsWrist = sort(gse_gene_list_KneeVsWrist, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_KneeVsWrist <- run_gseGO(gse_gene_list_KneeVsWrist)
+gseGO_res_KneeVsWrist <- run_GSEA(gse_gene_list_KneeVsWrist,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+gse_gene_list_MCPVsWrist = geneList_MCPVsWrist$log2FoldChange # Want log2 fold change 
+names(gse_gene_list_MCPVsWrist) <- geneList_MCPVsWrist$updated # Name the vector with Genesymbol
+gse_gene_list_MCPVsWrist = sort(gse_gene_list_MCPVsWrist, decreasing = TRUE)# Sort the list in decreasing order (required for clusterProfiler)
+#gseGO_res_MCPVsWrist <- run_gseGO(gse_gene_list_MCPVsWrist)
+gseGO_res_MCPVsWrist <- run_GSEA(gse_gene_list_MCPVsWrist,TERM2GENE[,c("gs_name", "gene_symbol")])
+
+```
+
+
+```{r DE}
+#Run gseGO_res
+gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F]
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$p.adjust<0.05,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F]
+
+
+
+#selected=c("HALLMARK_TNFA_SIGNALING_VIA_NFKB" ,"REACTOME_CYTOKINE_SIGNALING_IN_IMMUNE_SYSTEM","HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOMF_EXTRACELLULAR_MATRIX_STRUCTURAL_CONSTITUENT","GOCC_ACTIN_CYTOSKELETON","GOCC_MICROFIBRIL","REACTOME_SIGNALING_BY_INTERLEUKINS")
+
+#selected=c("NAGASHIMA_EGF_SIGNALING_UP" ,"NAGASHIMA_NRG1_SIGNALING_UP","HALLMARK_TNFA_SIGNALING_VIA_NFKB","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION")
+
+#selected=c("GOMF_EXTRACELLULAR_MATRIX_STRUCTURAL_CONSTITUENT" ,"HALLMARK_TNFA_SIGNALING_VIA_NFKB","GOMF_ACTIN_FILAMENT_BINDING","GOCC_ACTIN_CYTOSKELETON","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOMF_ACTIN_BINDING","GOCC_ANCHORING_JUNCTION","HALLMARK_INTERFERON_GAMMA_RESPONSE","REACTOME_INTERFERON_SIGNALING","NAGASHIMA_EGF_SIGNALING_UP","GOBP_POSITIVE_REGULATION_OF_LEUKOCYTE_CELL_CELL_ADHESION","SARRIO_EPITHELIAL_MESENCHYMAL_TRANSITION_DN","HALLMARK_IL6_JAK_STAT3_SIGNALING","HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION","GOBP_INFLAMMATORY_RESPONSE","GOBP_LOCOMOTION","NAGASHIMA_NRG1_SIGNALING_UP","GOBP_CELL_MIGRATION","GOBP_BONE_MORPHOGENESIS","MEBARKI_HCC_PROGENITOR_WNT_UP","GOBP_RESPONSE_TO_GROWTH_FACTOR","GOBP_OSTEOBLAST_DIFFERENTIATION","HALLMARK_TGF_BETA_SIGNALING","WP_FOCAL_ADHESION")
+
+selected=c("GOCC_MICROFIBRIL","HALLMARK_TGF_BETA_SIGNALING",'GOBP_LOCOMOTION',"GOBP_RESPONSE_TO_GROWTH_FACTOR","HALLMARK_INTERFERON_GAMMA_RESPONSE","GOMF_ACTIN_BINDING","GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","NAGASHIMA_NRG1_SIGNALING_UP","GOBP_BONE_MORPHOGENESIS","GOCC_ANCHORING_JUNCTION","WP_FOCAL_ADHESION","GOMF_ACTIN_FILAMENT_BINDING")
+
+
+dotplot(gseGO_res_KneeVsMCP, showCategory=selected, orderBy = "setSize", split=".sign") + 
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 8))+
+    scale_x_continuous(breaks = seq(0.2, 0.45, by = 0.1))+
+    facet_grid(.~.sign)
+
+
+dotplot(gseGO_res_KneeVsWrist, showCategory=selected, orderBy = "setSize", split=".sign") +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 8))+
+    #scale_x_continuous(breaks = seq(0.2, 0.45, by = 0.1))+
+    facet_grid(.~.sign)
+
+dotplot(gseGO_res_MCPVsWrist, showCategory=selected, orderBy = "setSize", split=".sign") +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size = 8))+
+    scale_x_continuous(breaks = seq(0.25, 0.5, by = 0.1))+
+    facet_grid(.~.sign)
+
+
+
+
+heatplot(gseGO_res_KneeVsMCP, foldChange=setNames(abs(geneList_KneeVsMCP$log2FoldChange),geneList_KneeVsMCP$primerid), showCategory = c("NAGASHIMA_NRG1_SIGNALING_UP","HALLMARK_TGF_BETA_SIGNALING"))+scale_fill_gradientn(colours=colorRampPalette(c("darkgrey","#FB8072","red"))(40),limits=c(0,1),oob=scales::squish,name = "foldChange")
+
+
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="Knee vs MCP")
+
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="Knee vs Wrist")
+
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GOCC_COLLAGEN_CONTAINING_EXTRACELLULAR_MATRIX","GOCC_CELL_SUBSTRATE_JUNCTION","GOMF_ACTIN_FILAMENT_BINDING"),subplots = 1:2,title ="MCP vs Wrist")
+
+```
+
+
+```{r DE}
+#Run gseGO_res
+gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F]
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$p.adjust<0.05,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F]
+
+#cbind(gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F][1,])
+
+#cbind(gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$p.adjust<0.05,, drop=F][1,],gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$p.adjust<0.05,, drop=F][1,])
+
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"))
+
+
+
+#Cell adhesion --> GO:0003779 actin binding, GO:0005925 focal adhesion, GO:0062023 collagen-containing extracellular matrix
+gseaplot2(gseGO_res_KneeVsMCP, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+gseaplot2(gseGO_res_KneeVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+gseaplot2(gseGO_res_MCPVsWrist, geneSetID = c("GO:0005201","GO:0051015","GO:0062023"),subplots = 1:2)
+
+
+#Ridgeplot
+selected=c(1"extracellular matrix structural constituent" ,2"actin filament binding",3"actin binding" , 4"structural molecule activity" ,"cytoskeletal protein binding"  ,"cell adhesion molecule binding","calcium ion binding","collagen binding","integrin binding" ,"cell-substrate junction")
+
+#Ridgeplot of GSEA res
+ridgeplot(simplify(gseGO_res_KneeVsMCP),showCategory = 10)
+ridgeplot(simplify(gseGO_res_KneeVsWrist),showCategory = 10)
+ridgeplot(simplify(gseGO_res_MCPVsWrist),showCategory = 10)
+
+
+
+dotplot(gseGO_res_KneeVsMCP@result[gseGO_res_KneeVsMCP@result$Description==selected,, drop=F])
+gseGO_res_KneeVsWrist@result[gseGO_res_KneeVsWrist@result$Description==selected,, drop=F]
+gseGO_res_MCPVsWrist@result[gseGO_res_MCPVsWrist@result$Description==selected,, drop=F]
+
+```
+
+```{r DE}
+#GSEA together --> DOES NOT WORK
+
+df_gseGO_res_KneeVsMCP<- as.data.frame(gseGO_res_KneeVsMCP) %>%
+    filter(ID == "GO:0005201")
+
+df_gseGO_res_KneeVsWrist <- as.data.frame(gseGO_res_KneeVsWrist) %>%
+    filter(ID == "GO:0005201")
+
+df_gseGO_res_KneeVsWrist <- as.data.frame(gseGO_res_MCPVsWrist) %>%
+    filter(ID == "GO:0005201")
+
+combined_df <- bind_rows(df_gseGO_res_KneeVsMCP, df_gseGO_res_KneeVsWrist,df_gseGO_res_KneeVsWrist)
+
+
+filtered_gsea <- new("gseaResult",
+                     result = combined_df,
+                     organism = gseGO_res_KneeVsMCP@organism,
+                     setType = gseGO_res_KneeVsMCP@setType,
+                     geneSets = gseGO_res_KneeVsMCP@geneSets,
+                     keytype = gseGO_res_KneeVsMCP@keytype,
+                     geneList = gseGO_res_KneeVsMCP@geneList,
+                     params = gseGO_res_KneeVsMCP@params,
+                     readable = gseGO_res_KneeVsMCP@readable)
+
+gseaplot2(filtered_gsea, geneSetID = 1:3)
 ```

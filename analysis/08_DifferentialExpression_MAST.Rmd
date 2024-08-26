@@ -431,7 +431,7 @@ write.csv(res_MCPVsWrist, paste0(output_dir,'/MAST_MCPVsWrist_MP.csv'), row.name
 
 ```{r SaveData}
 #Get only Tissue Residnent Macrophages
-sce.subset <- sce[,sce$Annotation_L1 == "Endothelial"]
+sce.subset <- sce[,sce$Annotation_L1 == "Endothelial cell"]
 
 dim(sce.subset)
 ```
@@ -550,7 +550,7 @@ for (comp in c("KneeVsMCP","KneeVsWrist","MCPVsWrist")){
 ```
 
 
-## Save the datasets MP
+## Save the datasets EC
 
 ```{r SaveData}
 write.csv(res_KneeVsMCP, paste0(output_dir,'/MAST_KneeVsMCP_EC.csv'), row.names=FALSE)

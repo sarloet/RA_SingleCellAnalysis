@@ -49,8 +49,8 @@ meta_colors = list(
   ),
 
   "Annotation_L2" = c(
-    "CytotoxCD4 TC" = "#6ECE56",
-    "CytotoxCD8 TC" = "#BCE52D",
+    "CD4+ TC" = "#6ECE56",#    "CytotoxCD4 TC" = "#6ECE56",
+    "CD8+ TC" = "#BCE52D",#"CytotoxCD8 TC" = "#BCE52D",
     "Memory TC" = "#56ff0d",
     "Naive TC" = "#E6F598",
     "NKTcell" = "#238B45",

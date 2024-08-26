@@ -55,11 +55,12 @@ path <- here::here()
 
 ```{r LoadDataset}
 ## RA DATASET
-sce <- readRDS(file = paste0(path,'/output/05_sce_CelltypeAnnotation.rds'))
+sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
 
 #Select only Fibroblast and Myeloid
-selected_celltype <- c("Fibroblast")
-sce <- sce[,sce$celltype == selected_celltype]
+sce <- sce[,sce$Annotation_L1 == "Fibroblast"]
+#sce <- sce[,sce$Annotation_L2 %in% c("FOLR2+ MP","TREM2+ MP")]
+#sce <- sce[,sce$Annotation_L1 == "Endothelial cell"]
 
 ```
 
@@ -166,7 +167,7 @@ for (method in c("edgeR","DESeq2","limma-voom","edgeR_glm")){
     tbl <- res$table[[cont]]
     #Take the significant entries of the table
     tbl_fil <- lapply(tbl, function(u) {
-      u <- dplyr::filter(u, p_adj.loc < 0.15, abs(logFC) > 0.1)
+      u <- dplyr::filter(u, p_adj.loc < 0.05, abs(logFC) > 0.1)
       dplyr::arrange(u, p_adj.loc)
       dplyr::select(u, gene)
     })
@@ -194,9 +195,9 @@ upset(fromList(listInput), order.by = "freq")
 
 ```{r LoadMAST}
 ## Load MAST
-geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_KneeVsMCP.csv'))
-geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_KneeVsWrist.csv'))
-geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_MCPVsWrist.csv'))
+geneList_KneeVsMCP <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsMCP_FB.csv'))
+geneList_KneeVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_KneeVsWrist_FB.csv'))
+geneList_MCPVsWrist <-read.csv(paste0(path,'/output/MAST_output/MAST_MCPVsWrist_FB.csv'))
 
 ```
 
@@ -206,7 +207,7 @@ glist<-c()
 for (name in c("geneList_KneeVsMCP","geneList_KneeVsWrist","geneList_MCPVsWrist")){
   
   tbl<-eval(parse(text =name))
-  tbl<- tbl[tbl$FDR<0.05 & abs(tbl$log2FoldChange) > 0.1,, drop=F]
+  tbl<- tbl[tbl$FDR<0.1 & abs(tbl$log2FoldChange) > 0.1,, drop=F]
   glist<-c(glist, tbl$primerid )
 }
 glist<-unique(glist)
@@ -219,12 +220,18 @@ listInput <- list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edge
 upset(fromList(listInput), order.by = "freq")
 ```
 
+```{r DEwMAST}
+#Give Genes intersecting
+Reduce(intersect,list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`, edgeRglm = edgeR_glm,MAST=MAST))
+Reduce(intersect,list(edgeR = edgeR, DESeq2 = DESeq2, limmavoom = `limma-voom`,MAST=MAST))
 
+
+```
 
 ## Save the dataset
 
 ```{r SaveData}
 
-saveRDS(sce, file =paste0(path,''))
+#saveRDS(sce, file =paste0(path,''))
 
 ```

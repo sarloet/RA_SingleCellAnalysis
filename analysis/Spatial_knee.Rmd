@@ -220,6 +220,23 @@ dim(counts(spe))
 ```
 
 
+```{r genes}
+#Plot some genes
+
+rowData(spe)$UniqID <-rownames(spe)
+rownames(spe) <- uniquifyFeatureNames(rowData(spe)$UniqID, rowData(spe)$symbol)
+data.frame(rowData(spe))
+
+
+#plotSpots(spe, annotate="DCN")
+plotVisium(spe, fill = "HOXC10", highlight = "in_tissue")
+#p2 <- plotVisium(spe, annotate = "DCN", highlight = "in_tissue")
+
+
+
+```
+
+
 ## Dimensionality Reduction
 
 ### Select Highly Variable Genes
@@ -427,7 +444,7 @@ ggcorrplot::ggcorrplot(
     legend.text = ggplot2::element_text(size = 12),
     legend.title = ggplot2::element_text(size = 15),
     axis.text.x = ggplot2::element_text(angle = 90),
-    axis.text = ggplot2::element_text(size = 18, vjust = 0.5))
+    axis.text = ggplot2::element_text(size = 40, vjust = 0.7,face = "bold"))
 
 ```
 
@@ -544,10 +561,11 @@ sce$SpatialAnno <- sce$Annotation_L2
 unique(sce$SpatialAnno)
 
 sce$SpatialAnno[sce$Annotation_L2 %in% c("CytotoxCD4 TC","Memory TC","Naive TC","CytotoxCD8 TC","NKTcell")] <- "T cell"
-sce$SpatialAnno[sce$Annotation_L2 %in% c("TREM2+ MP","FOLR2+ MP")] <- "Tissue-resident Macrophage"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("TREM2+ MP","FOLR2+ MP")] <- "TR Macrophage"
 sce$SpatialAnno[sce$Annotation_L2 %in% c("S100A12+ MP","CD48+ MP")] <- "Macrophage"
 sce$SpatialAnno[sce$Annotation_L2 %in% c("cDC","pDC")] <- "Dendritic cell"
 sce$SpatialAnno[sce$Annotation_L2 %in% c("Arteriolar EC","Venular EC","Capillary EC")] <- "Endothelial"
+sce$SpatialAnno[sce$Annotation_L2 %in% c("Smooth muscle cell")] <- "SMC"
 #sce$SpatialAnno[sce$Annotation_L2 %in% c("PRG4+ FIB","CHI3L2+ FIB")] <- "Lining Fibroblast"
 #sce$SpatialAnno[sce$Annotation_L2 %in% c("POSTN+ FIB","CXCL12+ FIB","MFAP5+ FIB")] <- "Sub-lining Fibroblast"
 unique(sce$SpatialAnno)

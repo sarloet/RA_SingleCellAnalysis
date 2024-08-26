@@ -262,7 +262,7 @@ msig_MCP@result[msig_MCP@result$p.adjust<0.05,, drop=F]# Show enriched terms
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_Knee,showCategory=20)
+#goplot(ego_Knee,showCategory=20)
 
 # Bar Plot
 barplot(ego_Knee, showCategory=20) 
@@ -285,11 +285,12 @@ dotplot(ego_Knee, showCategory=30) + ggtitle("dotplot for ORA")
 #browseKEGG(KEGG_Knee@result[ego_Knee@result$p.adjust<0.05,, drop=F], 'hsa05323')
 
 ```
+
 ##### MCP ORA Plots
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_MCP,showCategory=20)
+#goplot(ego_MCP,showCategory=20)
 
 # Bar Plot
 barplot(ego_MCP, showCategory=20) 
@@ -374,8 +375,8 @@ GSEA_res@result[GSEA_res@result$p.adjust<0.05,, drop=F]
 
 ##### Plot GSEA results
 ```{r DE}
-dotplot(gseGO_res, showCategory=3, split=".sign") + facet_grid(.~.sign)
-dotplot(gseGO_res, showCategory=30) + ggtitle("dotplot for GSEA")
+dotplot(GSEA_res, showCategory=3, split=".sign") + facet_grid(.~.sign)
+dotplot(GSEA_res, showCategory=30) + ggtitle("dotplot for GSEA")
 ```
 
 
@@ -464,7 +465,7 @@ msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_Knee)
+#goplot(ego_Knee)
 
 # Bar Plot
 barplot(ego_Knee, showCategory=20) 
@@ -668,7 +669,7 @@ msig_Wrist@result[msig_Wrist@result$p.adjust<0.05,, drop=F]
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_MCP)
+#goplot(ego_MCP)
 
 # Bar Plot
 barplot(ego_MCP, showCategory=20) 
@@ -698,7 +699,7 @@ dotplot(ego_MCP, showCategory=30) + ggtitle("dotplot for ORA")
 
 ```{r DE}
 # Visualize enriched GO terms as a directed acyclic graph
-goplot(ego_Wrist)
+#goplot(ego_Wrist)
 
 barplot(ego_Wrist, showCategory=3) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())

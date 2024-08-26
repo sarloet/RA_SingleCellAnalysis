@@ -227,8 +227,8 @@ cellchat
 
 ### Compare the total number of interactions and interaction strength
 ```{r}
-gg1 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"))
-gg2 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"), measure = "weight")
+gg1 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"),color.use =c("#FF5053","#4284FF","#00B600"), size.text = 15)+scale_y_continuous(expand = c(0, 0), limits = c(0, 15900))
+gg2 <- compareInteractions(cellchat, show.legend = F, group = c("MCP","Knee","Wrist"),color.use =c("#FF5053","#4284FF","#00B600"), measure = "weight", size.text = 15)+scale_y_continuous(expand = c(0, 0), limits = c(0, 340))
 gg1 + gg2
 ```
 
@@ -375,36 +375,37 @@ rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, t
 rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), targets.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3))
 
 
-rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), targets.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("SEMA3","GAP","ncWNT","WNT","MMP","PTN","CXCL","FGF","EGF","GAP","ANGPTL","SELE","NOTCH","VEGEF","TGFB","IL16","ADGRL","PDGF","MIF"))
-
-```
-
-
-```{r}
-#cellchat@meta$datasets = factor(cellchat@meta$datasets, levels = c("NL", "LS")) # set factor level
-netVisual_bubble(cellchat, sources.use = c("Tissue-resident Macrophage"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), comparison = c(1, 2), angle.x = 45,remove.isolate = FALSE)
-
-netVisual_bubble(cellchat, comparison = c(1, 2),sources.use = c("CXCL12+ FIB","PRG4+ FIB","Endothelial","Tissue-resident Macrophage"), targets.use = c("CXCL12+ FIB","PRG4+ FIB","Endothelial","Tissue-resident Macrophage",), angle.x = 45,remove.isolate = FALSE,signaling=c("CXCL","IL6"))
-
-netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial","Tissue-resident Macrophage","Neutrophil"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial","Tissue-resident Macrophage","Neutrophil"), angle.x = 45,remove.isolate = FALSE,signaling=c("ICAM"))
-
-#try SMAD3
 
 
 
+#######
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), targets.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("SEMA3","GAP","ncWNT","WNT","MMP","PTN","CXCL","FGF","EGF","GAP","ANGPTL","SELE","NOTCH","VEGF","TGFb","IL16","ADGRL","PDGF","MIF","IL6","VEGEF","ICAM"))
 
 
-pathways.show <- c("CXCL") 
-par(mfrow = c(2,2), xpd=TRUE)
-ht <- list()
-for (i in 1:length(object.list)) {
-    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
-}
-#> Do heatmap based on a single object 
+#Check sig
 
-#> Do heatmap based on a single object
-ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+targets = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial")
 
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = T, do.stat = TRUE,comparison = c(1, 2))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = F, do.stat = TRUE,comparison = c(1, 2))
+
+gg1 + gg2
+
+
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = T, do.stat = TRUE,comparison = c(1, 3))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = F, do.stat = TRUE,comparison = c(1, 3))
+
+gg1 + gg2
+
+
+gg1 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = T, do.stat = TRUE,comparison = c(3, 2))
+gg2 <- rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = targets, targets.use = targets, stacked = F, do.stat = TRUE,comparison = c(3, 2))
+
+gg1 + gg2
+
+
+
+#----IL 6
 
 
 pathways.show <- c("IL6") 
@@ -419,6 +420,10 @@ for (i in 1:length(object.list)) {
 ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
 
 
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Endothelial"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("IL6"))
+
+
+#----WNT
 
 
 pathways.show <- c("WNT") 
@@ -431,6 +436,281 @@ for (i in 1:length(object.list)) {
 #> 
 #> Do heatmap based on a single object
 ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("WNT"))
+
+
+#----VEGF
+
+
+pathways.show <- c("VEGF") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Tissue-resident Macrophage"), targets.use = c("Endothelial"), angle.x = 45,remove.isolate = FALSE,signaling=c("VEGF"))
+
+#####
+
+
+#----MMP
+
+
+pathways.show <- c("MMP") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i])
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial"), angle.x = 45,remove.isolate = FALSE,signaling=c("VEGF"))
+
+
+#----FGF
+pathways.show <- c("FGF") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial"), angle.x = 45,remove.isolate = FALSE,signaling=c("FGF"))
+
+
+
+
+#----FGF
+pathways.show <- c("TGFb") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Endothelial"), angle.x = 45,remove.isolate = FALSE,signaling=c("FGF"))
+
+
+#---PDGF
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("POSTN+ FIB","PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("PDGF"))
+
+
+
+
+
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("ANGPTL"))
+
+
+
+```
+
+
+```{r}
+###PLOTS THIS IS THE ONEEEE
+
+
+
+gg1 <- netVisual_heatmap(cellchat,comparison = c("Knee","MCP"),title.name = "Knee Vs MCP",cluster.rows = TRUE,cluster.cols = TRUE)
+
+gg2 <- netVisual_heatmap(cellchat,comparison = c("Knee","Wrist"),title.name = "Knee Vs Wrist",cluster.rows = TRUE,cluster.cols = TRUE)
+
+gg3 <- netVisual_heatmap(cellchat,comparison = c("MCP","Wrist"),title.name = "MCP Vs Wrist",cluster.rows = TRUE,cluster.cols = TRUE)#,color.use = rep("grey",15)
+
+gg1 + gg2 + gg3
+
+
+
+###CHECK SIG VALUE!!
+
+a<-rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = NULL, targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(1, 3),return.data = TRUE)
+a$signaling.contribution%>% filter(name == "COLLAGEN")
+------
+
+
+
+
+
+##ALL
+
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial","Macrophage"), targets.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","Smooth muscle cell","Endothelial","Macrophage"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("SEMA3","GAP","ncWNT","WNT","MMP","PTN","CXCL","FGF","EGF","GAP","ANGPTL","SELE","NOTCH","VEGF","TGFb","ADGRL","PDGF","MIF","IL6","VEGEF"))
+
+
+
+###IL6
+
+pathways.show <- c("IL6") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Endothelial"), targets.use = c("POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("IL6"))
+
+plotGeneExpression(cellchat, signaling = "IL6", split.by = "datasets", colors.ggplot = T, type = "violin")
+
+
+
+#Circle plots
+pathways.show <- c("IL6") 
+weight.max <- getMaxWeight(object.list, slot.name = c("netP"), attribute = pathways.show) # control the edge weights across different datasets
+par(mfrow = c(1,1), xpd=TRUE)
+for (i in 1:length(object.list)) {
+    netVisual_aggregate(object.list[[i]], signaling = pathways.show, top = 0.1,layout = "circle", edge.weight.max = weight.max[1], edge.width.max = 10, signaling.name = paste(pathways.show, names(object.list)[i]))
+}
+
+
+
+
+##Neutrophil Target
+#signaling=c("PECAM1","NOTCH","SAA","SEMA7","SELE","EPHB","COLLAGEN","IL1","ANGPTL","ADGRE","GALECTIN","PLAU","IGF","SPP1","ANNEXIN","CXCL","CTSG","SELPLG","COMPLEENT","ICAM","THY1")
+signaling=c("COLLAGEN","ADGRE","ANNEXIN")
+rankNet(cellchat, mode = "comparison", measure = "weight", targets.use = c("Neutrophil"), sources.use = NULL,stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=signaling)
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage","Endothelial","PRG4+ FIB","CHI3L2+ FIB","CXCL12+ FIB","Macrophage","MFAP5+ FIB","POSTN+ FIB"), targets.use = c("Neutrophil"), angle.x = 45,remove.isolate = FALSE,signaling=c("ADGRE"),dot.size.max=4)
+
+
+
+
+
+
+###SPATIAL CORR
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3))
+
+
+##MIF
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("MIF"),dot.size.max  =4)
+
+
+##ANGPTL
+
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("ANGPTL"))
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("PRG4+ FIB","CHI3L2+ FIB"), targets.use = c("Tissue-resident Macrophage","PRG4+ FIB","CHI3L2+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("ANGPTL"),dot.size.min =4)
+
+
+
+
+###WNT
+
+pathways.show <- c("WNT") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage"), targets.use = c("PRG4+ FIB","CHI3L2+ FIB","POSTN+ FIB","CXCL12+ FIB","MFAP5+ FIB"), angle.x = 40,remove.isolate = FALSE,signaling=c("WNT"),dot.size.min =4)
+
+
+
+
+plotGeneExpression(cellchat, signaling = "IL6", split.by = "datasets", colors.ggplot = T, type = "violin")
+
+
+
+#Circle plots
+pathways.show <- c("WNT") 
+weight.max <- getMaxWeight(object.list, slot.name = c("netP"), attribute = pathways.show) # control the edge weights across different datasets
+par(mfrow = c(1,1), xpd=TRUE)
+for (i in 1:length(object.list)) {
+    netVisual_aggregate(object.list[[i]], signaling = pathways.show, top = 0.1,layout = "circle", edge.weight.max = weight.max[1], edge.width.max = 10, signaling.name = paste(pathways.show, names(object.list)[i]))
+}
+
+
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage"), targets.use = NULL, stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("WNT"))
+
+###CHECK SIG VALUE!!
+
+a<-rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage"), targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(1, 2),return.data = TRUE)
+a$signaling.contribution%>% filter(name == "WNT")
+
+
+
+
+
+
+
+
+
+###TGFb
+
+pathways.show <- c("TGFb") 
+par(mfrow = c(2,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(object.list)) {
+    ht[[i]] <- netVisual_heatmap(object.list[[i]], signaling = pathways.show, color.heatmap = "Reds",title.name = paste(pathways.show, "signaling ",names(object.list)[i]))
+}
+#> Do heatmap based on a single object 
+#> 
+#> Do heatmap based on a single object
+ComplexHeatmap::draw(ht[[1]] + ht[[2]]+ ht[[3]], ht_gap = unit(0.5, "cm"))
+
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage","Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), targets.use = c("Tissue-resident Macrophage","Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("TGFb"),dot.size.min =4)
+
+netVisual_bubble(cellchat, comparison = c(1, 2, 3),sources.use = c("Tissue-resident Macrophage","Macrophage","POSTN+ FIB"), targets.use = c("Tissue-resident Macrophage","Macrophage","PRG4+ FIB","CHI3L2+ FIB","POSTN+ FIB","CXCL12+ FIB","MFAP5+ FIB"), angle.x = 45,remove.isolate = FALSE,signaling=c("TGFb"),dot.size.min =4)
+
+
+
+plotGeneExpression(cellchat, signaling = "TGFb", split.by = "datasets", colors.ggplot = T, type = "violin")
+
+
+
+#Circle plots
+pathways.show <- c("TGFb") 
+ct<-c("Tissue-resident Macrophage","Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB")
+weight.max <- getMaxWeight(object.list, slot.name = c("netP"), attribute = pathways.show) # control the edge weights across different datasets
+par(mfrow = c(1,1), xpd=TRUE)
+for (i in 1:length(object.list)) {
+    netVisual_aggregate(object.list[[i]], signaling = pathways.show,layout = "circle", edge.weight.max = weight.max[1], edge.width.max = 10, signaling.name = paste(pathways.show, names(object.list)[i]), sources.use= ct, targets.use=ct)
+}
+
+
+rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = ct, targets.use = ct, stacked = F, do.stat = TRUE,comparison = c(1, 2, 3),signaling=c("TGFb"))
+
+###CHECK SIG VALUE!!
+
+a<-rankNet(cellchat, mode = "comparison", measure = "weight", sources.use = c("Tissue-resident Macrophage","POSTN+ FIB","CXCL12+ FIB","PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB"), targets.use = NULL, stacked = T, do.stat = TRUE,comparison = c(1, 2),return.data = TRUE)
+a$signaling.contribution%>% filter(name == "TGFb")
 
 ```
 
