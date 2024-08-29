@@ -207,7 +207,7 @@ glist<-c()
 for (name in c("geneList_KneeVsMCP","geneList_KneeVsWrist","geneList_MCPVsWrist")){
   
   tbl<-eval(parse(text =name))
-  tbl<- tbl[tbl$FDR<0.1 & abs(tbl$log2FoldChange) > 0.1,, drop=F]
+  tbl<- tbl[tbl$FDR<0.05 & abs(tbl$log2FoldChange) > 0.1,, drop=F]
   glist<-c(glist, tbl$primerid )
 }
 glist<-unique(glist)
