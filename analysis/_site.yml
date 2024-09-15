@@ -9,10 +9,10 @@ navbar:
   - text: About
     icon: fa-info
     href: about.html
-  - text: Analysis
-    icon: fa-bar-chart
+  - text: Preprocessing
+    icon: fa-table
     menu:
-    - text: Preprocessing
+    - text: Single-cell
     - text: Data Preparation
       href: 00_DataPreparation.html
     - text: Quality Control
@@ -31,30 +31,30 @@ navbar:
     - text: Subclustering
     - text: Create Subclustering
       href: 07_Subclustering.html
-    - text: Subclustering Annotation
+    - text: Subcluster Annotation
       href: 07_SubClustering_Annotation.html
     - text: Merge Subclusters
       href: 07_SubClustering_Merge.html
-    - text: '---------'
-    - text: Analysis
-    - text: Differential Abundance
-      href: 08_DifferentialAbundance.html
-    - text: Fibroblast Subcluster Profiling
-      href: 09_SC_Fibroblast.html
-    - text: Macrophage Subcluster Profiling
-      href: 09_SC_Macrophage.html
-    - text: Differential Expression
-      href: 10_DifferentialExpression_MAST.html
-    - text: Enrichment Analysis
-      href: 11_EnrichmentAnalysis.html
-    - text: Cell Cell Communication
-      href: 11_EnrichmentAnalysis.html
     - text: '---------'
     - text: Spatial Transcriptomics
     - text: Spatial Transcriptomics Knee
       href: Spatial_knee.html
     - text: Spatial Transcriptomics Hand
       href: Spatial_hand.html
+  - text: Analysis
+    icon: fa-bar-chart
+    menu:
+    - text: Analysis
+    - text: Differential Expression MAST
+      href: 08_DifferentialExpression_MAST.html
+    - text: Differential Expression Pseudobulk
+      href: 08_DifferentialExpression_Pseudobulk.html
+    - text: Differential Abundance
+      href: 09_DifferentialAbundance_miloR.html
+    - text: Enrichment Analysis
+      href: 10_EnrichmentAnalysis.html
+    - text: Cell Chat
+      href: 11_CellChat.html
   - text: License
     href: license.html
 

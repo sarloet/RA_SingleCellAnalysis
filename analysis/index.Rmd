@@ -10,7 +10,11 @@ editor_options:
 
 Welcome to my Project.
 
-Single Cell Data:
+
+### Table of Contents:
+
+
+#### Single Cell Data:
 
 - [Data Preparation](00_DataPreparation.html)
 - [Quality Control](01_QualityControl.html)
@@ -19,18 +23,26 @@ Single Cell Data:
 - [Cellcycle Check](04_CellCycle.html)
 - [Clustering](05_Clustering.html)
 - [Annotation](06_CelltypeAnnotation.html)
-
 - [Subclustering](07_SubClustering.html)
-- [Subclustering Annotation](07_SubClustering_Annotation.html)
-- [Subclustering Merge](07_SubClustering_Merge.html)
+- [Subcluster Annotation](07_SubClustering_Annotation.html)
+- [Subcluster Merge](07_SubClustering_Merge.html)
+
+
+
+#### Spatial Transcriptomics Data:
+
+- [Spatial Knee](Spatial_Knee.html)
+- [Spatial Hand](Spatial_Hand.html)
+
+
+
+#### Analysis
 
 - [Differential Abundance](09_DifferentialAbundance_miloR.html)
-- [Differential Expression](08_DifferentialExpression_MAST.html)
+- [Differential Expression MAST](08_DifferentialExpression_MAST.html)
+- [Differential Expression Pseudobulk](08_DifferentialExpression_Pseudobulk.html)
 - [Enrichmennt Analysis](10_EnrichmentAnalysis.html)
 - [Cell-Cell Communication](11_CellChat.html)
 
 
-Spatial Transcriptomics Data:
 
-- [Spatial Knee](Spatial_Knee.html)
-- [Spatial Hand](Spatial_Hand.html)

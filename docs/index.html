@@ -276,14 +276,14 @@ $(document).ready(function () {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <span class="fa fa-bar-chart"></span>
+    <span class="fa fa-table"></span>
      
-    Analysis
+    Preprocessing
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Preprocessing</li>
+    <li class="dropdown-header">Single-cell</li>
     <li>
       <a href="00_DataPreparation.html">Data Preparation</a>
     </li>
@@ -311,30 +311,10 @@ $(document).ready(function () {
       <a href="07_Subclustering.html">Create Subclustering</a>
     </li>
     <li>
-      <a href="07_SubClustering_Annotation.html">Subclustering Annotation</a>
+      <a href="07_SubClustering_Annotation.html">Subcluster Annotation</a>
     </li>
     <li>
       <a href="07_SubClustering_Merge.html">Merge Subclusters</a>
-    </li>
-    <li class="divider"></li>
-    <li class="dropdown-header">Analysis</li>
-    <li>
-      <a href="08_DifferentialAbundance.html">Differential Abundance</a>
-    </li>
-    <li>
-      <a href="09_SC_Fibroblast.html">Fibroblast Subcluster Profiling</a>
-    </li>
-    <li>
-      <a href="09_SC_Macrophage.html">Macrophage Subcluster Profiling</a>
-    </li>
-    <li>
-      <a href="10_DifferentialExpression_MAST.html">Differential Expression</a>
-    </li>
-    <li>
-      <a href="11_EnrichmentAnalysis.html">Enrichment Analysis</a>
-    </li>
-    <li>
-      <a href="11_EnrichmentAnalysis.html">Cell Cell Communication</a>
     </li>
     <li class="divider"></li>
     <li class="dropdown-header">Spatial Transcriptomics</li>
@@ -343,6 +323,33 @@ $(document).ready(function () {
     </li>
     <li>
       <a href="Spatial_hand.html">Spatial Transcriptomics Hand</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-bar-chart"></span>
+     
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Analysis</li>
+    <li>
+      <a href="08_DifferentialExpression_MAST.html">Differential Expression MAST</a>
+    </li>
+    <li>
+      <a href="08_DifferentialExpression_Pseudobulk.html">Differential Expression Pseudobulk</a>
+    </li>
+    <li>
+      <a href="09_DifferentialAbundance_miloR.html">Differential Abundance</a>
+    </li>
+    <li>
+      <a href="10_EnrichmentAnalysis.html">Enrichment Analysis</a>
+    </li>
+    <li>
+      <a href="11_CellChat.html">Cell Chat</a>
     </li>
   </ul>
 </li>
@@ -404,7 +411,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-07-08
+<strong>Last updated:</strong> 2024-09-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -454,15 +461,15 @@ HTML.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree3714d879f9e082a815eff4cf1ac9513a2ea75f8btargetblank3714d87a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/3714d879f9e082a815eff4cf1ac9513a2ea75f8b" target="_blank">3714d87</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistreef5dcb4a176d6138e48c51ed20a3f8866e7086b0ctargetblankf5dcb4aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomsarloetRASingleCellAnalysistree3714d879f9e082a815eff4cf1ac9513a2ea75f8btargetblank3714d87a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -472,7 +479,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/f5dcb4a176d6138e48c51ed20a3f8866e7086b0c" target="_blank">f5dcb4a</a>.
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/tree/3714d879f9e082a815eff4cf1ac9513a2ea75f8b" target="_blank">3714d87</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -493,16 +500,14 @@ Ignored files:
     Ignored:    analysis/.DS_Store
     Ignored:    data/.DS_Store
     Ignored:    data/cellbender_data_h5/
+    Ignored:    data/metadata/.DS_Store
     Ignored:    data/spatial/
-    Ignored:    output/00_DoubletDetection.rds
     Ignored:    output/00_sce_DataPreparation.rds
     Ignored:    output/01_sce_QualityControl.rds
-    Ignored:    output/01_sce_QualityControl_cellfiltered.rds
     Ignored:    output/02_sce_DimensionalityReduction.rds
     Ignored:    output/03_sce_Integration_Batchelor.rds
     Ignored:    output/03_sce_Integration_Harmony.rds
     Ignored:    output/04_sce_CellCycle.rds
-    Ignored:    output/05_sce_CelltypeAnnotation.rds
     Ignored:    output/05_sce_Clustering.rds
     Ignored:    output/06_sce_CelltypeAnnotation.rds
     Ignored:    output/07_sce_SC_Bcell.rds
@@ -514,44 +519,36 @@ Ignored files:
     Ignored:    output/07_sce_SC_Fibroblast_Anno.rds
     Ignored:    output/07_sce_SC_Macrophage.rds
     Ignored:    output/07_sce_SC_Macrophage_Anno.rds
-    Ignored:    output/07_sce_SC_Mast.rds
     Ignored:    output/07_sce_SC_Merge.rds
     Ignored:    output/07_sce_SC_Neutrophil.rds
     Ignored:    output/07_sce_SC_Plasma.rds
     Ignored:    output/07_sce_SC_SmoothMuscle.rds
     Ignored:    output/07_sce_SC_Tcell.rds
     Ignored:    output/07_sce_SC_Tcell_Anno.rds
-    Ignored:    output/08_DifferentialAbundance_miloR.rds
+    Ignored:    output/08_sce_SC_Mast.rds
+    Ignored:    output/09_DifferentialAbundance_miloR.rds
     Ignored:    output/10_sce_CellChat_Knee.rds
     Ignored:    output/10_sce_CellChat_MCP.rds
     Ignored:    output/10_sce_CellChat_Wrist.rds
-    Ignored:    output/Annotation_L0_Wilcoxon.xlsx
-    Ignored:    output/Annotation_L1_Wilcoxon.xlsx
     Ignored:    output/Annotation_output/
     Ignored:    output/Cluster_Marker_Genes.xlsx
     Ignored:    output/Enrichment_output/
-    Ignored:    output/Knee_KvM.csv
-    Ignored:    output/Knee_KvW.csv
     Ignored:    output/MAST_output/
-    Ignored:    output/MCP_KvM.csv
-    Ignored:    output/MCP_MvW.csv
-    Ignored:    output/ManualAnno_L0_Wilcoxon.xlsx
-    Ignored:    output/ManualAnno_L1_Wilcoxon.xlsx
     Ignored:    output/ScMergeAnnotation_output/
     Ignored:    output/Spatial_knee.rds
     Ignored:    output/Spatial_knee_SC.rds
+    Ignored:    output/Spatial_knee_SC_res.rds
     Ignored:    output/Subcluster_Annotation_output/
-    Ignored:    output/Wrist_KvW.csv
-    Ignored:    output/Wrist_MvW.csv
+    Ignored:    output/VariableMetrics/
+    Ignored:    output/multinichenet_output.rds
     Ignored:    renv/.DS_Store
     Ignored:    renv/library/
     Ignored:    renv/staging/
 
 Unstaged changes:
-    Modified:   analysis/00_DataPreparation.Rmd
-    Modified:   analysis/01_QualityControl.Rmd
-    Modified:   analysis/Spatial_hand.Rmd
-    Modified:   analysis/Spatial_knee.Rmd
+    Modified:   analysis/11_CellChat.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/about.Rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -597,6 +594,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/cdb146173a70f4ef849cc896e5e9af6b2d97228a/analysis/index.Rmd" target="_blank">cdb1461</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+<td>
+Reformat Spatial
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/sarloet/RA_SingleCellAnalysis/blob/9cac662ee8287de91e4741883f6f36e90c559854/analysis/index.Rmd" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+<td>
+Add Spatial
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/sarloet/RA_SingleCellAnalysis/9cac662ee8287de91e4741883f6f36e90c559854/docs/index.html" target="_blank">9cac662</a>
+</td>
+<td>
+sarloet
+</td>
+<td>
+2024-07-08
+</td>
+<td>
+Add Spatial
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -996,7 +1044,10 @@ Start workflowr project.
 </div>
 </div>
 <p>Welcome to my Project.</p>
-<p>Single Cell Data:</p>
+<div id="table-of-contents" class="section level3">
+<h3>Table of Contents:</h3>
+<div id="single-cell-data" class="section level4">
+<h4>Single Cell Data:</h4>
 <ul>
 <li><a href="00_DataPreparation.html">Data Preparation</a></li>
 <li><a href="01_QualityControl.html">Quality Control</a></li>
@@ -1007,15 +1058,32 @@ Reduction</a></li>
 <li><a href="05_Clustering.html">Clustering</a></li>
 <li><a href="06_CelltypeAnnotation.html">Annotation</a></li>
 <li><a href="07_SubClustering.html">Subclustering</a></li>
-<li><a href="07_SubClustering_Annotation.html">Subclustering
+<li><a href="07_SubClustering_Annotation.html">Subcluster
 Annotation</a></li>
-<li><a href="07_SubClustering_Merge.html">Subclustering Merge</a></li>
+<li><a href="07_SubClustering_Merge.html">Subcluster Merge</a></li>
 </ul>
-<p>Spatial Transcriptomics Data:</p>
+</div>
+<div id="spatial-transcriptomics-data" class="section level4">
+<h4>Spatial Transcriptomics Data:</h4>
 <ul>
 <li><a href="Spatial_Knee.html">Spatial Knee</a></li>
 <li><a href="Spatial_Hand.html">Spatial Hand</a></li>
 </ul>
+</div>
+<div id="analysis" class="section level4">
+<h4>Analysis</h4>
+<ul>
+<li><a href="09_DifferentialAbundance_miloR.html">Differential
+Abundance</a></li>
+<li><a href="08_DifferentialExpression_MAST.html">Differential
+Expression MAST</a></li>
+<li><a href="08_DifferentialExpression_Pseudobulk.html">Differential
+Expression Pseudobulk</a></li>
+<li><a href="10_EnrichmentAnalysis.html">Enrichmennt Analysis</a></li>
+<li><a href="11_CellChat.html">Cell-Cell Communication</a></li>
+</ul>
+</div>
+</div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
