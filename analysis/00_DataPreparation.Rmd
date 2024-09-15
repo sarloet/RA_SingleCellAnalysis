@@ -409,6 +409,6 @@ cat("NR of Cells Before Doublet Removal: ", dim_before_doublet[2],"\n",
 
 ## Save the dataset
 
-```{r SaveData}
+```{r SaveData, eval=False}
 saveRDS(sce, file =paste0(path,'/output/00_sce_DataPreparation.rds'))
 ```

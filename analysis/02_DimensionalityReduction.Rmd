@@ -359,6 +359,6 @@ plotReducedDim(sce, dimred="UMAP", by_exprs_values = "logcounts", colour_by= row
 
 ## Save Dataset
 
-```{r SaveData}
+```{r SaveData, eval=False}
 saveRDS(sce, file =paste0(path,'/output/02_sce_DimensionalityReduction.rds'))
 ```

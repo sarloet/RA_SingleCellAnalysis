@@ -516,7 +516,7 @@ plotExplanatoryVariables(vars)
 
 ## Save Dataset
 
-```{r SaveData}
+```{r SaveData, eval=False}
 saveRDS(sce.filtered, file =paste0(path,'/output/01_sce_QualityControl.rds'))
 dim(sce.filtered) # show sce dim
 ```

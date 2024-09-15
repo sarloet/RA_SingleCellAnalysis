@@ -20,7 +20,7 @@ Welcome to my Project.
 - [Quality Control](01_QualityControl.html)
 - [Dimensionality Reduction](02_DimensionalityReduction.html)
 - [Integration](03_Integration_Batchelor.html)
-- [Cellcycle Check](04_CellCycle.html)
+- [Cellcycle Assignement](04_CellCycle.html)
 - [Clustering](05_Clustering.html)
 - [Annotation](06_CelltypeAnnotation.html)
 - [Subclustering](07_SubClustering.html)
