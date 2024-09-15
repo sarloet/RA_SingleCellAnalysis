@@ -58,10 +58,10 @@ path <- here::here()
 sce <- readRDS(file = paste0(path,'/output/07_sce_SC_Merge.rds'))
 
 #Select only Fibroblast and Myeloid
-sce <- sce[,sce$Annotation_L1 == "Fibroblast"]
+#sce <- sce[,sce$Annotation_L1 == "Fibroblast"]
 #sce <- sce[,sce$Annotation_L2 %in% c("FOLR2+ MP","TREM2+ MP")]
 #sce <- sce[,sce$Annotation_L1 == "Endothelial cell"]
-
+sce <- sce[,sce$Annotation_L1 == "Smooth muscle cell"]
 ```
 
 ### Explore Dataset

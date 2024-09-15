@@ -419,7 +419,7 @@ for (i in seq_along(pll.fine)) {
 ```{r }
 sce
 
-order=c("PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","POSTN+ FIB","CXCL12+ FIB","TREM2+ MP","FOLR2+ MP","CD48+ MP","S100A12+ MP","cDC","pDC","Neutrophil","Mast cell","B cell","Plasma","CytotoxCD8 TC","Memory TC","Naive TC","NKTcell","CytotoxCD4 TC","Venular EC","Capillary EC","Arteriolar EC","Smooth muscle cell")
+order=c("PRG4+ FIB","CHI3L2+ FIB","MFAP5+ FIB","POSTN+ FIB","CXCL12+ FIB","TREM2+ MP","FOLR2+ MP","CD48+ MP","S100A12+ MP","cDC","pDC","Neutrophil","Mast cell","B cell","Plasma","CD8+ TC","Memory TC","Naive TC","NKTcell","CD4+ TC TC","Venular EC","Capillary EC","Arteriolar EC","Smooth muscle cell")
 #sce.plot$Annotation_L1 <- factor(sce.plot$Annotation_L1, levels = order)
 
 
